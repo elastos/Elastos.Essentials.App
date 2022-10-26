@@ -1,10 +1,6 @@
 import { VerifiableCredential, VerifiablePresentation } from "@elastosfoundation/did-js-sdk";
 import { Interfaces, Wallet } from "@elastosfoundation/elastos-connectivity-sdk-js";
-import { CredentialDisclosureRequest } from "@elastosfoundation/elastos-connectivity-sdk-js/typings/did";
 import { lazyElastosDIDSDKImport } from "../helpers/import.helper";
-import { DIDURL } from "../identity/model/didurl.model";
-import { AuthService } from "../identity/services/auth.service";
-import { DIDService } from "../identity/services/did.service";
 import { Logger } from "../logger";
 
 declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
@@ -36,7 +32,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
      * For feeds SDK: return an empty presentation, HOPING that all credentials
      * are optional for now.
      */
-    requestCredentials(request: CredentialDisclosureRequest): Promise<VerifiablePresentation> {
+    /* requestCredentials(request: CredentialDisclosureRequest): Promise<VerifiablePresentation> {
         return new Promise(resolve => {
             void AuthService.instance.checkPasswordThenExecute(async () => {
                 // TODO - REMOVE WHEN WE CAN - Mandatory for feeds for now
@@ -60,7 +56,7 @@ export class InternalElastosConnector implements Interfaces.Connectors.IConnecto
                 resolve(null);
             });
         });
-    }
+    } */
 
     generateAppIdCredential(appInstanceDID: string): Promise<VerifiableCredential> {
         Logger.log("connector", "App ID Credential generation flow started");

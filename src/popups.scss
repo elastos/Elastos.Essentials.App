@@ -4,7 +4,7 @@
   //--ion-background-color: transparent !important; // KO for the news configurator if enabled
 
   // Real content inside the modal - apply backgorund on it to be able to user rounded corners as well if needed
-  :first-child {
+  > :first-child {
     //background: #f0f1ff;
     background: var(--ion-background-color);
   }

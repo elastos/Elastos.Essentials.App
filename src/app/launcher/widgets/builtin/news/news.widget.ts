@@ -1,32 +1,21 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
-import { Channel, MyProfile, RuntimeContext } from "feeds-experiment";
-import { GlobalConfig } from 'src/app/config/globalconfig';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
-import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { IWidget } from '../../base/iwidget';
-import { NewsContent, NewsContentItem, PluginConfig } from '../../base/pluginconfig';
+import { NewsContent, PluginConfig } from '../../base/pluginconfig';
 import { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
 import { WidgetState } from '../../base/widgetstate';
+import { FeedsChannel, WidgetsFeedsNewsService } from '../../services/feedsnews.service';
 import { NewsSource, WidgetsNewsService } from '../../services/news.service';
-import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
+import { WidgetsService } from '../../services/widgets.service';
 import { NewsConfiguratorComponent } from './components/configurator/configurator.component';
-
+import { DisplayableNews, NewsHelper } from './helper';
 
 const ROTATION_TIME_SEC = 10;
-
-/**
- * Mix of raw news source config with real news content.
- */
-export type DisplayableNews = {
-  source: NewsSource;
-  config: PluginConfig<NewsContent>; // Whole json plugin parent.
-  news: NewsContentItem;
-}
 
 @Component({
   selector: 'news',
@@ -39,9 +28,15 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
 
   public forSelection: boolean; // Initialized by the widget service
   public editing: boolean; // Widgets container is being edited
+  public refreshingFeedsChannels = false;
 
   private modal: HTMLIonModalElement = null;
 
+  // Raw inputs
+  private newsSources: NewsSource[] = [];
+  private feedsChannels: FeedsChannel[] = [];
+
+  // Displayable
   public news: DisplayableNews[] = [];
 
   public transitioning = false;
@@ -53,8 +48,9 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
   constructor(
     public theme: GlobalThemeService,
     public notificationService: NotificationManagerService,
+    private widgetsService: WidgetsService,
     private widgetsNewsService: WidgetsNewsService,
-    private widgetPluginsService: WidgetPluginsService,
+    private widgetsFeedsNewsService: WidgetsFeedsNewsService,
     private dappBrowserService: DappBrowserService,
     private popoverCtrl: PopoverController,
     private modalController: ModalController
@@ -68,46 +64,6 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
-
-    void this.test();
-  }
-
-  private async test() {
-    const applicationDid = GlobalConfig.ESSENTIALS_APP_DID;
-    const currentNet = "mainnet";
-    const localDataDir = "/data/store/develop1";
-    const resolveCache = '/data/store/catch1';
-
-    RuntimeContext.initialize(applicationDid, currentNet, localDataDir, resolveCache);
-    const appCtx = RuntimeContext.getInstance();
-    let myprofile: MyProfile;
-    if (!appCtx.checkSignin()) {
-
-      try {
-        myprofile = await appCtx.signin();
-        console.log("FEEDS myprofile after sign in", myprofile)
-      }
-      catch (e) {
-        console.error("FEEDS", e)
-      }
-    }
-
-    try {
-      const myProfileHive = await appCtx.signToHive(DIDSessionsStore.signedInDIDString);
-      console.log("FEEDS myProfileHive", myProfileHive)
-
-      const currentTime = new Date().getTime()
-      const subscriptions = await myprofile.querySubscriptions()
-
-      for (let item of subscriptions) {
-        const channel = new Channel(appCtx, item)
-        const postBodys = await channel.queryPosts(currentTime, 10)
-        console.log("FEEDS postBodys", postBodys)
-      }
-    }
-    catch (e) {
-      console.error("FEEDS", e)
-    }
   }
 
   ngOnDestroy() {
@@ -120,8 +76,20 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
   }
 
   attachWidgetState(widgetState: WidgetState) {
-    this.widgetsNewsService.sources.subscribe(newsSources => {
-      void this.prepareNews(newsSources);
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.widgetsNewsService.sources.subscribe(async newsSources => {
+      this.newsSources = newsSources;
+      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    this.widgetsFeedsNewsService.channels.subscribe(async channels => {
+      this.feedsChannels = channels;
+      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+    });
+
+    this.widgetsFeedsNewsService.fetchingChannels.subscribe(fetching => {
+      this.refreshingFeedsChannels = fetching;
     });
   }
 
@@ -130,32 +98,6 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     holder.setOnConfigureIconClickedListener(() => {
       void this.showConfigurator();
     });
-  }
-
-  private async prepareNews(newsSources: NewsSource[]) {
-    let allNews: DisplayableNews[] = [];
-
-    // For each source, get its content.
-    for (let source of newsSources) {
-      if (!source.enabled)
-        continue; // Skip this source if disabled
-
-      let content = <PluginConfig<NewsContent>>await this.widgetPluginsService.getPluginContent(source.url);
-
-      for (let news of content.content.items) {
-        let displayableNews: DisplayableNews = {
-          source,
-          config: content,
-          news
-        };
-        allNews.push(displayableNews);
-      }
-    }
-
-    // Sort all collected news by date
-    allNews.sort((a, b) => b.news.timevalue - a.news.timevalue);
-
-    this.news = allNews;
   }
 
   private updateActiveNews() {
@@ -181,11 +123,11 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
   }
 
   public getIcon(itemIndexInPage: number): string {
-    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].config.logo; // Project logo
+    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].logo; // Project logo
   }
 
   public getSender(itemIndexInPage: number): string {
-    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].config.projectname || "";
+    return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].sender;
   }
 
   public getTitle(itemIndexInPage: number): string {
@@ -259,5 +201,13 @@ export class NewsWidget implements IWidget, OnInit, OnDestroy {
     });
     void modal.onDidDismiss().then(() => { });
     void modal.present();
+  }
+
+  /**
+   * Launches the news refresh process
+   */
+  public refreshAllNews() {
+    // TODO: AFTER MERGE TO MASTER void this.widgetsService.refreshWidgetPluginContent(this.widgetState);
+    // TODO: FEEDS NEWS SERVICE REFRESH
   }
 }

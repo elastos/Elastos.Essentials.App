@@ -4,7 +4,6 @@ import { Logger } from 'src/app/logger';
 import { IWidget } from '../base/iwidget';
 import type { WidgetHolderComponent } from '../base/widget-holder/widget-holder.component';
 import { WidgetState } from '../base/widgetstate';
-import { NewsWidget } from '../builtin/news/news.widget';
 import { WidgetPluginsService } from './plugin.service';
 
 export class WidgetsBuilder {
@@ -98,6 +97,7 @@ export class WidgetsBuilder {
             }
             else if (widgetState.plugin.pluginType === "news") {
                 // News plugin
+                const NewsWidget = (await import('../builtin/news/news.widget')).NewsWidget;
                 widgetComponentClass = NewsWidget;
             }
         }

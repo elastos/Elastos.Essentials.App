@@ -11,6 +11,7 @@ import { NotificationsPage } from './pages/notifications/notifications.page';
 import { OnboardPage } from './pages/onboard/onboard.page';
 import { TipsPage } from './pages/tips/tips.page';
 import { EmptyPage, LauncherRoutingModule } from './routing';
+import { WidgetModule } from './widgets/module';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { EmptyPage, LauncherRoutingModule } from './routing';
     LauncherRoutingModule,
     GlobalDirectivesModule,
     InlineSVGModule,
+    WidgetModule,
     VotingModule // For the vote service
   ],
   providers: [],

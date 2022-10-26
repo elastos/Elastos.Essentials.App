@@ -24,14 +24,15 @@
     }
   }
 
-  .grid {
+  .icons {
     width: 30px;
     display: flex;
     justify-content: flex-end;
 
-    img {
+    .item {
       width: 15px;
       height: 15px;
+      margin-left: 15px;
     }
   }
 }

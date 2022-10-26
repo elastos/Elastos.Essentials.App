@@ -26,8 +26,6 @@ export class InternalHiveAuthHelper {
   constructor() {
     this.didAccess = new DID.DIDAccess();
     this.contextCreationQueue = new Queue(1);
-
-    // Hive SDK is too verbose by default, make it silent
   }
 
   /**
@@ -38,11 +36,51 @@ export class InternalHiveAuthHelper {
       return;
 
     const { Logger: HiveLogger } = await lazyElastosHiveSDKImport();
+
+    // Hive SDK is too verbose by default, make it silent
     HiveLogger.setDefaultLevel(HiveLogger.WARNING);
 
     this.initialized = true;
   }
 
+  public async getAppContextProvider(appDID: string, targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContextProvider> {
+    let appInstanceDIDInfo = await this.didAccess.getOrCreateAppInstanceDID(appDID);
+    let appDidString = appInstanceDIDInfo.did.toString();
+
+    Logger.log("hiveauthhelper", "Getting app instance DID document", appDID, targetDid);
+    let didDocument = await appInstanceDIDInfo.didStore.loadDid(appDidString);
+    Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
+
+    return {
+      getLocalDataDir: (): string => {
+        return "/";
+      },
+      getAppInstanceDocument: (): Promise<DIDDocument> => {
+        return Promise.resolve(didDocument);
+      },
+      getAuthorization: (authenticationChallengeJWtCode: string): Promise<string> => {
+        /**
+         * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
+         * The returned data must be a verifiable presentation, signed by the app instance DID, and
+         * including a appid certification credential provided by the identity application.
+         */
+        Logger.log("hiveauthhelper", "Hive client authentication challenge callback is being called with token:", authenticationChallengeJWtCode, "for DID:", targetDid);
+        try {
+          return this.handleVaultAuthenticationChallenge(appDID, authenticationChallengeJWtCode);
+        }
+        catch (e) {
+          Logger.error("hiveauthhelper", "Exception in authentication handler:", e);
+          if (onAuthError)
+            onAuthError(e);
+          return null;
+        }
+      }
+    }
+  }
+
+  /**
+   * Get a hive app context for ESSENTIALS as app did (important - not feeds)
+   */
   public async getAppContext(targetDid: string, onAuthError?: (e: Error) => void): Promise<AppContext> {
     await this.lazyInit();
 
@@ -55,35 +93,7 @@ export class InternalHiveAuthHelper {
       if (cacheKey in this.contextsCache)
         return this.contextsCache[cacheKey];
 
-      Logger.log("hiveauthhelper", "Getting app instance DID document");
-      let didDocument = await appInstanceDIDInfo.didStore.loadDid(appDidString);
-      Logger.log("hiveauthhelper", "Got app instance DID document. Now creating the Hive client", didDocument.toJSON());
-
-      let appContextProvider: AppContextProvider = {
-        getLocalDataDir: (): string => {
-          return "/";
-        },
-        getAppInstanceDocument: (): Promise<DIDDocument> => {
-          return Promise.resolve(didDocument);
-        },
-        getAuthorization: (authenticationChallengeJWtCode: string): Promise<string> => {
-          /**
-           * Called by the Hive plugin when a hive backend needs to authenticate the user and app.
-           * The returned data must be a verifiable presentation, signed by the app instance DID, and
-           * including a appid certification credential provided by the identity application.
-           */
-          Logger.log("hiveauthhelper", "Hive client authentication challenge callback is being called with token:", authenticationChallengeJWtCode, "for DID:", targetDid);
-          try {
-            return this.handleVaultAuthenticationChallenge(authenticationChallengeJWtCode);
-          }
-          catch (e) {
-            Logger.error("hiveauthhelper", "Exception in authentication handler:", e);
-            if (onAuthError)
-              onAuthError(e);
-            return null;
-          }
-        }
-      }
+      let appContextProvider: AppContextProvider = await this.getAppContextProvider(GlobalConfig.ESSENTIALS_APP_DID, targetDid, onAuthError);
 
       const { AppContext } = await lazyElastosHiveSDKImport();
       let appContext = await AppContext.build(appContextProvider, targetDid, appDidString);
@@ -152,8 +162,8 @@ export class InternalHiveAuthHelper {
     - verify jwt (using local app instance did public key provided before)
     - generate access token
   */
-  public handleVaultAuthenticationChallenge(jwtToken: string): Promise<string> {
-    return this.generateAuthPresentationJWT(jwtToken);
+  public handleVaultAuthenticationChallenge(appDID: string, jwtToken: string): Promise<string> {
+    return this.generateAuthPresentationJWT(appDID, jwtToken);
   }
 
   /**
@@ -161,7 +171,7 @@ export class InternalHiveAuthHelper {
    * That JWT contains a verifiable presentation that contains server challenge info, and the app id credential
    * issued by the end user earlier.
    */
-  private generateAuthPresentationJWT(authChallengeJwttoken: string): Promise<string> {
+  private generateAuthPresentationJWT(appDID: string, authChallengeJwttoken: string): Promise<string> {
     Logger.log("hiveauthhelper", "Starting process to generate hive auth presentation JWT");
 
     // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
@@ -183,18 +193,18 @@ export class InternalHiveAuthHelper {
         let realm = body.get("iss") as string;
 
         Logger.log("hiveauthhelper", "Getting app instance DID");
-        let appInstanceDIDResult = await this.didAccess.getOrCreateAppInstanceDID();
+        let appInstanceDIDResult = await this.didAccess.getOrCreateAppInstanceDID(appDID);
         let appInstanceDID = appInstanceDIDResult.did;
 
-        let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo();
+        let appInstanceDIDInfo = await this.didAccess.getExistingAppInstanceDIDInfo(appDID);
 
         Logger.log("hiveauthhelper", "Getting app identity credential");
-        let appIdCredential = await this.didAccess.getExistingAppIdentityCredential();
+        let appIdCredential = await this.didAccess.getExistingAppIdentityCredential(appDID);
 
         if (!appIdCredential) {
           Logger.log("hiveauthhelper", "Empty app id credential. Trying to generate a new one");
 
-          appIdCredential = await this.generateAppIdCredential();
+          appIdCredential = await this.generateAppIdCredential(appDID);
           if (!appIdCredential) {
             Logger.warn("hiveauthhelper", "Failed to generate a new App ID credential");
             resolve(null);
@@ -247,10 +257,10 @@ export class InternalHiveAuthHelper {
     });
   }
 
-  private generateAppIdCredential(): Promise<VerifiableCredential> {
+  private generateAppIdCredential(appDID: string): Promise<VerifiableCredential> {
     // eslint-disable-next-line no-async-promise-executor, @typescript-eslint/no-misused-promises
     return new Promise(async (resolve) => {
-      let storedAppInstanceDID = await this.didAccess.getOrCreateAppInstanceDID();
+      let storedAppInstanceDID = await this.didAccess.getOrCreateAppInstanceDID(appDID);
       if (!storedAppInstanceDID) {
         resolve(null);
         return;
@@ -266,7 +276,7 @@ export class InternalHiveAuthHelper {
       // Convert cordova-made credential generated by essentials, into a JS credential, as we have to
       // work with the 2 worlds so far.
       let AppIDService = (await import("../identity/services/appid.service")).AppIDService; // Lazy
-      let cordovaCredential = await AppIDService.instance.generateApplicationIDCredential(appInstanceDID.toString(), GlobalConfig.ESSENTIALS_APP_DID);
+      let cordovaCredential = await AppIDService.instance.generateApplicationIDCredential(appInstanceDID.toString(), appDID);
       const { VerifiableCredential } = await lazyElastosDIDSDKImport();
       let credential = VerifiableCredential.parse(await cordovaCredential.toString());
 
