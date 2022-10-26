@@ -24,7 +24,7 @@ import { WalletService } from '../../wallet/services/wallet.service';
     providedIn: 'root'
 })
 export class VoteService {
-    private activeWallet: ElastosStandardNetworkWallet = null;
+    public activeWallet: ElastosStandardNetworkWallet = null;
 
     public networkWallet: AnyNetworkWallet = null;
     public masterWalletId: string;
@@ -42,7 +42,7 @@ export class VoteService {
     public secretaryGeneralDid: string = null;
     public secretaryGeneralPublicKey: string = null;
 
-    public depositAmount = 500000000000; // 5000 ELA
+    public depositAmount = 200000000000; // 2000 ELA
 
     constructor(
         private walletManager: WalletService,
@@ -352,6 +352,30 @@ export class VoteService {
         }
         catch (err) {
             Logger.error(App.CRCOUNCIL_VOTING, 'getCurrentHeight error', err);
+        }
+
+        return 0;
+    }
+
+    async getBlockByHeight(currentHeight: number): Promise<number> {
+        Logger.log(App.CRPROPOSAL_VOTING, 'Get Block By Heightt...');
+
+        const param = {
+            method: 'getblockbyheight',
+            params: {
+                height: currentHeight
+            },
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            Logger.log(App.CRPROPOSAL_VOTING, 'getBlockByHeight', result);
+            if (result && result.time) {
+                return result.time;
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'getBlockByHeight error', err);
         }
 
         return 0;

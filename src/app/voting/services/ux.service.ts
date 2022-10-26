@@ -55,4 +55,33 @@ export class UXService {
         Logger.log(App.VOTING, "Array:", str);
         return str;
     }
+
+    stringArrayToNumberArray(stringArray: [string]): number[] {
+        var numberArray = [] ;
+        for(let i in stringArray) {
+            numberArray.push(Number.parseInt(stringArray[i]));
+        }
+        return numberArray;
+    }
+
+    getStakeDate(days: number): string {
+        var stakeTimestamp = new Date().getTime() / 1000 + days * 24 * 60 * 60;
+        return this.formatDate(stakeTimestamp);
+    }
+
+    checkWalletAddress(address: string) {
+        if (address.match("^[A-Za-z0-9]+$") && address.length == 34
+            && (address.startsWith("E") || address.startsWith("8"))) {
+            return true;
+        }
+        return false;
+    }
+
+    checkStakeAddress(address: string) {
+        if (address.match("^[A-Za-z0-9]+$") && address.length == 34
+            && address.startsWith("S")) {
+            return true;
+        }
+        return false;
+    }
 }

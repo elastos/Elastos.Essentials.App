@@ -1,0 +1,146 @@
+@import "../../root.scss";
+
+.card-row {
+    position: relative;
+    height: 85px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    padding: 20px 13px;
+    overflow: hidden;
+    background-color: #436DDA;
+    // background-image: url("/assets/staking/images/bg.svg");
+    // background-repeat: no-repeat;
+    // background-position: 206px 0;
+    // background-size: 160px 63px;
+    color: white;
+
+    #bg-img {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 160px;
+        height: 63px;
+        opacity: 0.5;
+    }
+
+    .card-title-row {
+
+    }
+
+    .card-label-row {
+        font-size: 31px;
+    }
+}
+
+.item-row {
+    height: 47px;
+    padding: 16px;
+    margin-bottom: 8px;
+
+    font-size: 12px;
+    border-radius: 13px;
+    background: var(--essentials-box-color);
+}
+
+.staked-for-vote {
+    // min-height: 56px;
+    padding: 20px 16px;
+
+    font-size: 12px;
+    border-radius: 13px;
+    background: var(--essentials-box-color);
+
+    .details-col {
+        padding-top: 0;
+
+        .item {
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        h5 {
+            margin: 6px 0 0 0;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        h4 {
+            margin: 6px 0 0 0;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        p {
+            margin: 6px 0 0 0;
+            font-size: 12px;
+            font-weight: 400;
+        }
+
+        .details-btn {
+            // height: 100%;
+            font-size: 12px;
+            font-weight: 400;
+            color: #8530F1;
+        }
+
+        .align-right {
+            display: flex;
+            text-align: right;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+}
+
+#button-list {
+    padding: 0 0;
+    width: 100%;
+    height: 65px;
+    display: flex;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    flex-direction: column;
+    list-style: none;
+    background: var(--essentials-box-color);
+
+    li + li {
+        margin-left: 1%;
+    }
+
+    li {
+        width: 24%;
+    }
+
+    div {
+        margin-top: 0;
+        // padding: 10px 26px;
+        height: 65px;
+        width: 100%;
+        display: inline-block;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        background: var(--ion-background-color);
+        border-radius: 13px;
+
+        img {
+            margin-top: 10px;
+            height: 24px;
+            width: 24px;
+        }
+
+        p {
+            margin: 6px 0;
+            font-size: 12px;
+            font-weight: 400;
+        }
+    }
+
+    div:active {
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+}
+

@@ -1,0 +1,95 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <div *ngIf="!dataFetched">
+        <ion-spinner></ion-spinner>
+    </div>
+
+    <div *ngIf="dataFetched">
+        <app-vote-slider-details *ngIf="showVotesDetails" [index]="voteType"
+            [voteInfos]="stakeService.votesRight.voteInfos">
+        </app-vote-slider-details>
+
+        <div [class.blur]="showVotesDetails" (click)="showVotesDetails=false">
+            <ion-grid class="container ion-no-padding">
+                <ion-row class="card-row">
+                    <img id="bg-img" src="assets/staking/images/bg.svg" />
+                    <ion-row class="card-title-row">
+                        {{ 'staking.staked-amount' | translate }}
+                    </ion-row>
+                    <ion-row class="card-label-row">
+                        {{ stakeService.votesRight.totalVotesRight }} ELA
+                    </ion-row>
+                </ion-row>
+
+                <ion-row *ngFor="let item of showItems" class="item-row">
+                    <ion-col size="9.5" class="left-col">
+                        {{ item.title }}
+                    </ion-col>
+                    <ion-col size="2.5" class="right-col">
+                        {{ item.value }} ELA
+                    </ion-col>
+                </ion-row>
+
+                <ion-row class="staked-for-vote">
+                    <ion-col size="9.5" class="left-col">
+                        {{ 'staking.staked-for-votes' | translate }}
+                    </ion-col>
+                    <ion-col size="2" class="middle-col">
+                        {{ stakeService.votesRight.stakedRatio }}%
+                    </ion-col>
+
+                    <ion-col size="0.5" class="right-col" (click)="detail = !detail">
+                        <img *ngIf="detail"
+                            [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
+                        <img *ngIf="!detail"
+                            [src]="!theme.darkMode ? 'assets/staking/icons/up-arrow.svg' : 'assets/staking/icons/darkmode/up-arrow.svg'" />
+                    </ion-col>
+                    <ion-col *ngIf="detail" class="details-col" size="12">
+                        <ion-grid>
+                            <!-- <h5>{{'Nodes' | translate}}</h5> -->
+                            <div *ngFor="let item of voteItems" class="item">
+                                <ion-row>
+                                    <h4>{{ item.title }}</h4>
+                                </ion-row>
+                                <ion-row>
+                                    <ion-col size="10" class="left-col">
+                                        <p>{{ item.votes}} ELA, {{ item.ratio }}%</p>
+                                        <p *ngIf="item.stakeuntilDate">{{ 'staking.stake-until' | translate }}: {{
+                                            item.stakeuntilDate }}</p>
+                                        <p *ngIf="item.stakeuntilExpired" class="expired-in">{{ 'staking.stake-until' |
+                                            translate }}: {{ item.stakeuntilExpired }}</p>
+                                    </ion-col>
+                                    <ion-col size="2" class="right-col" (click)="clickDetails($event, item.type)">
+                                        <div class="details-btn align-right"> {{ 'staking.details' | translate }}</div>
+                                    </ion-col>
+                                </ion-row>
+                            </div>
+
+                            <ion-row>
+                                <ion-col size="10" class="left-col">
+                                    <h5>{{'staking.locked-ela' | translate}}</h5>
+                                </ion-col>
+                                <ion-col size="2" class="right-col">
+                                    <h5 class="align-right">{{ stakeService.votesRight.staked }} Ela</h5>
+                                </ion-col>
+                            </ion-row>
+                        </ion-grid>
+                    </ion-col>
+                </ion-row>
+            </ion-grid>
+
+            <div class="footer-space"></div>
+            <ion-footer>
+                <ul id="button-list">
+                    <li *ngFor="let button of buttonList" (click)="clickButton(button.url)">
+                        <div class="align-center">
+                            <img [src]="button.icon" />
+                            <p>{{ button.label }}</p>
+                        </div>
+                    </li>
+                </ul>
+            </ion-footer>
+        </div>
+    </div>
+</ion-content>

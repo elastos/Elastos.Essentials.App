@@ -1,0 +1,46 @@
+@import "src/app/voting/root.scss";
+
+
+ion-footer {
+    background: var(--essentials-box-color);
+}
+
+.container {
+    margin: 24px;
+}
+
+#available {
+    margin-top: 5px;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: #6D7175;
+}
+
+#reset-buttons {
+    margin-top: 5px;
+    padding: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    div {
+        margin: 0;
+        padding: 0;
+        width: 50%;
+
+        color: #8052FF;
+        font-size: 13px;
+        font-style: Bold;
+    }
+
+    #max-button {
+        text-align: right;
+    }
+}
+
+.darkContainer {
+    #reset-buttons {
+        color: #C5B0FF;
+    }
+}

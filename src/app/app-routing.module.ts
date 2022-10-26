@@ -15,6 +15,7 @@ const routes: Routes = [
   { path: 'identity', loadChildren: () => import('./identity/services/module').then(x => x.IdentityModule), canActivate: [AuthGuardService] },
   { path: 'wallet', loadChildren: () => import('./wallet/module').then(x => x.WalletModule), canActivate: [AuthGuardService] },
   { path: 'dposvoting', loadChildren: () => import('./voting/dposvoting/module').then(x => x.DPoSVotingModule), canActivate: [AuthGuardService] },
+//   { path: 'dpos2', loadChildren: () => import('./voting/dpos2/module').then(x => x.DPoS2Module), canActivate: [AuthGuardService] },
   { path: 'dposregistration', loadChildren: () => import('./voting/dposregistration/module').then(x => x.DPoSRegistrationModule), canActivate: [AuthGuardService] },
   { path: 'crcouncilvoting', loadChildren: () => import('./voting/crcouncilvoting/module').then(x => x.CRCouncilVotingModule), canActivate: [AuthGuardService] },
   { path: 'crproposalvoting', loadChildren: () => import('./voting/crproposalvoting/module').then(x => x.CRProposalVotingModule), canActivate: [AuthGuardService] },
@@ -25,6 +26,7 @@ const routes: Routes = [
   { path: 'migrator', loadChildren: () => import('./migrator/module').then(x => x.MigratorModule) },
   //{ path: 'easybridge', loadChildren: () => import('./easybridge/module').then(x => x.EasyBridgeModule) },
   { path: 'multiswap', loadChildren: () => import('./multiswap/module').then(x => x.MultiSwapModule) },
+  { path: 'staking', loadChildren: () => import('./voting/staking/module').then(x => x.StakingModule), canActivate: [AuthGuardService] },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

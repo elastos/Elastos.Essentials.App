@@ -22,7 +22,8 @@ class TranslationsLoader {
         "voting",
         "migrator",
         "easybridge",
-        "multiswap"
+        "multiswap",
+        "staking",
     ];
     static languagesToLoad = [
         "en",

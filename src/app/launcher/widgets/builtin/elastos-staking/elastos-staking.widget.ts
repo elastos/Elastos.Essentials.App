@@ -5,6 +5,7 @@ import { AppmanagerService, RunnableAppCategory } from 'src/app/launcher/service
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from 'src/app/model/app.enum';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { StakingInitService } from 'src/app/voting/staking/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WidgetBase } from '../../base/widgetbase';
 
@@ -21,7 +22,8 @@ export class ElastosStakingWidget extends WidgetBase implements OnInit {
     public didService: DIDManagerService,
     private translate: TranslateService,
     public appService: AppmanagerService,
-    public walletNetworkService: WalletNetworkService
+    public walletNetworkService: WalletNetworkService,
+    public stakingInitService: StakingInitService
   ) {
     super();
   }
@@ -38,9 +40,7 @@ export class ElastosStakingWidget extends WidgetBase implements OnInit {
           description: 'launcher.app-elastos-staking-description',
           icon: '/assets/launcher/apps/app-icons/staking.svg',
           hasWidget: false,
-          startCall: async () => {
-            // TODO @dongxiao: open staking screens
-          }
+          startCall: () => this.stakingInitService.start()
         }
       ]
     };

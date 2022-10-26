@@ -11,6 +11,7 @@ export enum App {
     DEVELOPER_TOOLS = "developertools",
     DPOS_VOTING = "dposvoting",
     DPOS_REGISTRATION = "dposregistration",
+    STAKING = "staking",
     HIVE_MANAGER = "hivemanager",
     SETTINGS = "settings",
     SCANNER = "scanner",

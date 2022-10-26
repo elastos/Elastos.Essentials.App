@@ -1,0 +1,48 @@
+@import '../../../root.scss';
+
+ion-grid {
+    margin: 24px;
+}
+
+
+h5 {
+    margin: 2px 0;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: left;
+}
+
+
+.list {
+    height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.item {
+    margin-bottom: 15px;
+}
+
+.label {
+    font-weight: 600;
+}
+
+.vote-slides {
+    position: fixed;
+    top: calc(50vh - 200px);
+    left: 0;
+    right: 0;
+    background: var(--ion-background-color);
+
+    ion-card {
+        min-width: 97%;
+        padding: 0;
+        margin: 10px;
+        border-radius: 10px;
+        background: var(--essentials-box-color);
+
+        ion-grid {
+            padding: 0;
+        }
+    }
+}

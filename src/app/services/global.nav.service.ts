@@ -88,6 +88,9 @@ export class GlobalNavService {
                 case App.DPOS_VOTING:
                     route = '/dposvoting/menu/vote';
                     break;
+                case App.STAKING:
+                    route = '/staking/staking-home';
+                    break;
             }
         } else {
             route = customRoute;
