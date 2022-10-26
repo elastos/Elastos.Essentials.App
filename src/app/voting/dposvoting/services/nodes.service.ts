@@ -273,6 +273,10 @@ export class NodesService {
                 this.totalVotes = result.totalvotes;
                 this._nodes = result.producers;
                 for (const node of result.producers) {
+                    if (node.identity && node.identity == "DPoSV2") {
+                        continue;
+                    }
+
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
                     }
