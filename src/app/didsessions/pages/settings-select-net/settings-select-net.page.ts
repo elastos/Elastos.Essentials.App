@@ -8,6 +8,8 @@ import { GlobalNetworksService } from 'src/app/services/global.networks.service'
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from '../../services/ux.service';
 
+declare let didManager: DIDPlugin.DIDManager;
+
 @Component({
   selector: 'app-select-net',
   templateUrl: './settings-select-net.page.html',
@@ -56,8 +58,21 @@ export class SettingsSelectNetPage implements OnInit {
     if (this.selectedNetworkTemplate !== networkTemplate) {
       this.selectedNetworkTemplate = networkTemplate;
       await this.globalNetworksService.setActiveNetworkTemplate(networkTemplate);
+      await this.resetDIDManager();
 
       void this.globalNavService.showRestartPrompt();
     }
   }
+
+  resetDIDManager(): Promise<void> {
+    return new Promise((resolve, reject) => {
+        Logger.log('didsessions', "resetDIDManager")
+        didManager.reset(() => {
+            resolve();
+        }, (err) => {
+            Logger.error('didsessions', err);
+            resolve();
+        });
+    });
+}
 }
