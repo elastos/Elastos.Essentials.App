@@ -38,7 +38,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
         this.getRootPaymentAddress();
 
-        this.explorerApiUrl = this.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+        this.explorerApiUrl = this.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.NOWNODE_EXPLORER);
     }
 
     public async startBackgroundUpdates(): Promise<void> {

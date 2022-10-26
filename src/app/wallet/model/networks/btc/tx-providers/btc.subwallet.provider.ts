@@ -52,7 +52,7 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
             Logger.log('wallet', 'fetchTransactions page:', page);
 
             let tokenAddress = subWallet.getCurrentReceiverAddress();
-            let rpcApiUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+            let rpcApiUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.NOWNODE_EXPLORER);
             let btcInfo = await GlobalBTCRPCService.instance.address(rpcApiUrl, tokenAddress, MAX_RESULTS_PER_FETCH, page);
             if (btcInfo) {
                 if (btcInfo.txids.length < MAX_RESULTS_PER_FETCH) {
