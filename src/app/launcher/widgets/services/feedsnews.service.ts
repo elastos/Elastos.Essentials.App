@@ -57,7 +57,7 @@ export class WidgetsFeedsNewsService implements GlobalService {
         this.channels.next(this.channels.value);
 
         // Wait a moment after the boot as fetching feeds posts is a heavy process for now.
-        runDelayed(() => this.fetchedSubscribedChannels(true), 10000);
+        runDelayed(() => this.fetchedSubscribedChannels(), 10000);
     }
 
     onUserSignOut(): Promise<void> {
@@ -71,7 +71,7 @@ export class WidgetsFeedsNewsService implements GlobalService {
      *
      * Fetched channels and posts are stored locally and made ready to display by the news widget.
      */
-    private async fetchedSubscribedChannels(onlyExpired = false) {
+    public async fetchedSubscribedChannels(onlyExpired = true) {
         // Already fetching: don't launch 2 parrallel fetches
         if (this.fetchingChannels.value)
             return;
@@ -91,8 +91,8 @@ export class WidgetsFeedsNewsService implements GlobalService {
         const feedsChannels = await this.fetchSubscribedChannels();
         for (let feedsChannel of feedsChannels) {
             let lastFetched = await this.globalStorageService.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, PERSISTENCE_CONTEXT, feedsChannel.getChannelId() + "_lastfetched", 0);
-            if (!now.subtract(MIN_CHANNEL_REFRESH_DELAY_SECS, "seconds").isSameOrAfter(lastFetched)) {
-                // Not a right time to refresh, reuse what we have in cache
+            if (onlyExpired && !now.subtract(MIN_CHANNEL_REFRESH_DELAY_SECS, "seconds").isSameOrAfter(lastFetched)) {
+                // Not a right time to refresh, or forced to refresh, reuse what we have in cache
                 let channel = this.getChannelById(feedsChannel.getChannelId());
                 if (channel) { // Make sure we really have it in cache
                     channels.push(channel);

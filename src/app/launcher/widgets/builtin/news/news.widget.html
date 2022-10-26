@@ -7,7 +7,7 @@
     </ion-col>
     <ion-col size="6" class="icons">
       <ion-spinner class="item" *ngIf="refreshingFeedsChannels"></ion-spinner>
-      <div class="item" inlineSVG="/assets/shared/curcol-icons/reload.svg" (click)="refreshAllNews()"></div>
+      <div class="item" inlineSVG="/assets/shared/curcol-icons/reload.svg" (click)="refreshAllNews($event)"></div>
       <img class="item"
         [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/grid.svg' : '/assets/launcher/icons/grid.svg'"
         (click)="showFullNews($event)" />

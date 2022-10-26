@@ -210,8 +210,9 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   /**
    * Launches the news refresh process
    */
-  public refreshAllNews() {
-    // TODO: AFTER MERGE TO MASTER void this.widgetsService.refreshWidgetPluginContent(this.widgetState);
-    // TODO: FEEDS NEWS SERVICE REFRESH
+  public refreshAllNews(event?: MouseEvent) {
+    event?.stopImmediatePropagation();
+    void this.widgetsService.refreshWidgetPluginContent(this.widgetState);
+    void this.widgetsFeedsNewsService.fetchedSubscribedChannels(false); // Force refreshing all channels
   }
 }

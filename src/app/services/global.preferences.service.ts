@@ -64,7 +64,8 @@ export class GlobalPreferencesService implements GlobalService {
       "network.template": "MainNet",
       "chain.network.config": "",
       "chain.network.configurl": "",
-      "elastosapi.provider": "elastosio"
+      "elastosapi.provider": "elastosio",
+      "help.dailytips.show": true
     };
   }
 
