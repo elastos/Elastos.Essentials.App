@@ -390,14 +390,18 @@ export class CoinTxInfoPage implements OnInit {
         }
     }
 
-    openForBrowseMode(item: TransactionDetail) {
+    async openForBrowseMode(item: TransactionDetail) {
         let action = ''
+        let value = item.value;
         switch (item.type) {
             case 'txid':
             action = '/tx/';
             break;
             case 'blockId':
             action = '/block/';
+            if (this.subWallet.id === StandardCoinName.ELA) {
+                value = await GlobalElastosAPIService.instance.getELABlockHash(item.value)
+            }
             break;
             case 'address':
             action = '/address/';
@@ -408,7 +412,7 @@ export class CoinTxInfoPage implements OnInit {
 
         let browserUrl = WalletNetworkService.instance.activeNetwork.value.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
         if (browserUrl) {
-            let url = browserUrl + action + item.value;
+            let url = browserUrl + action + value;
             void this.dappbrowserService.openForBrowseMode(url, "");
         }
     }

@@ -714,6 +714,27 @@ export class GlobalElastosAPIService extends GlobalService {
         return blockHeight;
     }
 
+    public async getELABlockHash(blockHeight: number) {
+        const param = {
+            method: 'getblockhash',
+            params: {
+                height: blockHeight
+            }
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        if (rpcApiUrl === null) {
+            return '';
+        }
+
+        try {
+            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+            Logger.warn("elastosapi", "getBlockHash exception", e);
+        }
+        return '';
+    }
+
     // dpos
     public async fetchDposNodes(state): Promise<ProducersSearchResponse> {
         Logger.log('elastosapi', 'Fetching Dpos Nodes..');
