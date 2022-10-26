@@ -173,8 +173,8 @@
                   <ng-template>
                     <ion-content>
                       <ion-datetime [locale]="datetime_locale" [cancelText]="'common.cancel'|translate"
-                        [doneText]="'common.confirm'|translate" [(ngModel)]="entry.value"
-                        (ionChange)="formatBirthDay(entry)" [presentation]="month-year" [showDefaultButtons]="true">
+                        [doneText]="'common.confirm'|translate" [value]="entry.value"
+                        (ionChange)="formatBirthDay($event, entry)" [presentation]="month-year" [showDefaultButtons]="true">
                       </ion-datetime>
                     </ion-content>
                   </ng-template>

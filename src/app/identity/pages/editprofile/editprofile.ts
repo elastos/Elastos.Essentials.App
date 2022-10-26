@@ -54,7 +54,6 @@ export class EditProfilePage {
   public updatingVisibility = false; // Lock toggles while updating the document for a short while to avoid parrallel updates
 
   private selectCountrySubscription: Subscription = null;
-  private showmenuSubscription: Subscription = null;
   private hwBackKeySubscription: Subscription = null;
 
   public datetime_locale = 'en-US';
@@ -196,8 +195,9 @@ export class EditProfilePage {
   }
 
   /********** For 'birthDate' entry **********/
-  formatBirthDay(entry) {
-    entry.value = entry.value.split("T")[0];
+  formatBirthDay(event: CustomEvent, entry) {
+    if (event.detail.value)
+        entry.value = event.detail.value.split("T")[0];
   }
 
   /********** For 'nationality' entry **********/
