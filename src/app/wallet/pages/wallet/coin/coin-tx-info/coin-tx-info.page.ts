@@ -21,7 +21,6 @@ import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { OfflineTransactionsService } from 'src/app/wallet/services/offlinetransactions.service';
-import { Config } from '../../../../config/Config';
 import { StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { ElastosEVMSubWallet } from '../../../../model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
@@ -61,7 +60,6 @@ export class CoinTxInfoPage implements OnInit {
     public offlineTransaction: AnyOfflineTransaction = null;
 
     private mainTokenSymbol = '';
-    private blockchain_url = Config.BLOCKCHAIN_URL;
 
     // Header Display Values
     public type: TransactionType;
@@ -89,6 +87,8 @@ export class CoinTxInfoPage implements OnInit {
 
     // List of displayable transaction details
     public txDetails: TransactionDetail[] = [];
+
+    public crossChainNetworkKey = null; // For cross chain transaction, we need to open address in target network explorer.
 
     constructor(
         public events: GlobalEvents,
@@ -319,7 +319,7 @@ export class CoinTxInfoPage implements OnInit {
                 {
                     type: 'address',
                     title: 'wallet.tx-info-receiver-address',
-                    value: this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
+                    value: this.transactionInfo.isCrossChain ? this.targetAddress : this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                     show: true,
                 }
             );
@@ -362,6 +362,7 @@ export class CoinTxInfoPage implements OnInit {
         const withdrawContractAddress = (this.subWallet as ElastosEVMSubWallet).getWithdrawContractAddress();
         if (transaction.to.toLowerCase() === withdrawContractAddress.toLowerCase()) {
             targetAddress = await GlobalElastosAPIService.instance.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
+            this.crossChainNetworkKey = 'elastos';
         }
         return targetAddress;
     }
@@ -393,6 +394,7 @@ export class CoinTxInfoPage implements OnInit {
     async openForBrowseMode(item: TransactionDetail) {
         let action = ''
         let value = item.value;
+        let network = WalletNetworkService.instance.activeNetwork.value;
         switch (item.type) {
             case 'txid':
             action = '/tx/';
@@ -405,12 +407,16 @@ export class CoinTxInfoPage implements OnInit {
             break;
             case 'address':
             action = '/address/';
+
+            if (this.transactionInfo.isCrossChain && this.crossChainNetworkKey) {
+                network = WalletNetworkService.instance.getNetworkByKey(this.crossChainNetworkKey);
+            }
             break;
             default:
             return;
         }
 
-        let browserUrl = WalletNetworkService.instance.activeNetwork.value.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+        let browserUrl = network.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
         if (browserUrl) {
             let url = browserUrl + action + value;
             void this.dappbrowserService.openForBrowseMode(url, "");
