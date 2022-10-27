@@ -21,14 +21,16 @@
  */
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
-import type { VoteContentInfo } from '@elastosfoundation/wallet-js-sdk';
+import { VoteContentInfo, VoteContentType, VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Candidates, VoteType } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { Config } from '../../../config/Config';
@@ -69,6 +71,7 @@ export class DPoSVotePage implements OnInit {
         private translate: TranslateService,
         private globalIntentService: GlobalIntentService,
         private globalNav: GlobalNavService,
+        private stakeService: StakeService,
     ) {
         void this.init();
     }
@@ -115,10 +118,19 @@ export class DPoSVotePage implements OnInit {
 
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(this.subWalletId) as MainChainSubWallet;
         await this.sourceSubwallet.updateBalanceSpendable();
-        let voteInEla = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
-        if (voteInEla.isPositive) {
-            this.voteAmountELA = voteInEla.toString()
-            this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
+
+        await this.stakeService.getVoteRights();
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            let stakeAmount = this.stakeService.votesRight.totalVotesRight;
+            this.voteAmount = stakeAmount.toString();
+            this.voteAmountELA = Util.accMul(stakeAmount, Config.SELA).toString();
+        }
+        else {
+            let voteInEla = this.sourceSubwallet.getRawBalanceSpendable().minus(this.votingFees());
+            if (voteInEla.isPositive) {
+                this.voteAmountELA = voteInEla.toString()
+                this.voteAmount = voteInEla.dividedBy(Config.SELAAsBigNumber).toString();
+            }
         }
         void this.hasPendingVoteTransaction();
     }
@@ -172,6 +184,15 @@ export class DPoSVotePage implements OnInit {
 
         if (!this.voteAmount) return;
 
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            await this.createVoteTransactionV2();
+        }
+        else {
+            await this.createVoteTransaction();
+        }
+    }
+
+    async createVoteTransaction() {
         let candidates: Candidates = {};
 
         // TODO: We should include others voting?
@@ -191,6 +212,43 @@ export class DPoSVotePage implements OnInit {
             '', // Memo, not necessary
         );
         await this.native.hideLoading();
+
+        await this.signAndSendRawTransaction(rawTx);
+    }
+
+    async createVoteTransactionV2() {
+        var votesInfo = [];
+        // TODO: We should include others voting?
+        for (let i = 0, len = this.coinTransferService.publickeys.length; i < len; i++) {
+            votesInfo.push({
+                Candidate: this.coinTransferService.publickeys[i],
+                Votes: this.voteAmount,
+                Locktime: 0
+            })
+        }
+
+        const voteContents: VotesContentInfo[] = [
+            {
+                VoteType: VoteContentType.Delegate,
+                VotesInfo: votesInfo
+            }
+        ];
+
+        const payload: VotingInfo = {
+            Version: 0,
+            Contents: voteContents
+        };
+
+        await this.native.showLoading(this.translate.instant('common.please-wait'));
+        const rawTx = await this.sourceSubwallet.createDPoSV2VoteTransaction(
+            payload,
+            '', // Memo, not necessary
+        );
+        await this.native.hideLoading();
+        await this.signAndSendRawTransaction(rawTx);
+    }
+
+    async signAndSendRawTransaction(rawTx) {
         if (rawTx) {
             const transfer = new Transfer();
             Object.assign(transfer, {
@@ -211,5 +269,6 @@ export class DPoSVotePage implements OnInit {
             );
         }
     }
+
 }
 
