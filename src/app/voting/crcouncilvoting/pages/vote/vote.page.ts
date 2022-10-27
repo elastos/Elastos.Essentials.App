@@ -1,5 +1,6 @@
 import { formatNumber } from '@angular/common';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { VoteContentType, VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -13,6 +14,7 @@ import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
 import { SelectedCandidate } from "../../model/selected.model";
@@ -34,6 +36,7 @@ export class VotePage implements OnInit, OnDestroy {
         private voteService: VoteService,
         public translate: TranslateService,
         public popupProvider: GlobalPopupService,
+        private stakeService: StakeService,
     ) { }
 
     public castingVote = false;
@@ -64,7 +67,13 @@ export class VotePage implements OnInit, OnDestroy {
         //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.my-candidates'));
 
-        this.totalEla = await this.voteService.getMaxVotes();
+        await this.stakeService.getVoteRights();
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            this.totalEla = this.stakeService.votesRight.totalVotesRight;
+        }
+        else {
+            this.totalEla = await this.voteService.getMaxVotes();
+        }
 
         Logger.log('crcouncil', 'My Candidates', this.crCouncilService.selectedCandidates);
         // Initialize candidate percentages with default values
@@ -116,12 +125,23 @@ export class VotePage implements OnInit, OnDestroy {
     /****************** Cast Votes *******************/
     async cast() {
         let votedCandidates = {};
+        let votedCandidatesV2 = [];
         this.crCouncilService.selectedCandidates.map((candidate) => {
             if (candidate.userVotes && candidate.userVotes > 0) {
                 // let userVotes = candidate.userVotes * 100000000;
                 let userVotes = Util.accMul(candidate.userVotes, Config.SELA);
-                let _candidate = { [candidate.cid]: userVotes.toFixed(0) } //SELA, can't with fractions
-                votedCandidates = { ...votedCandidates, ..._candidate }
+
+                if (this.stakeService.votesRight.totalVotesRight > 0) {
+                    let _vote = {
+                        Candidate: candidate.cid,
+                        Votes: userVotes.toFixed(0),
+                        Locktime: 0 };
+                        votedCandidatesV2.push(_vote);
+                }
+                else {
+                    let _candidate = { [candidate.cid]: userVotes.toFixed(0) } //SELA, can't with fractions
+                    votedCandidates = { ...votedCandidates, ..._candidate }
+                }
             } else {
                 candidate.userVotes = 0;
             }
@@ -138,7 +158,12 @@ export class VotePage implements OnInit, OnDestroy {
             await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.crCouncilService.selectedCandidates);
             this.castingVote = true;
             this.votesCasted = false;
-            await this.createVoteCRTransaction(votedCandidates);
+            if (this.stakeService.votesRight.totalVotesRight > 0) {
+                await this.createVoteCRTransactionV2(votedCandidatesV2)
+            }
+            else {
+                await this.createVoteCRTransaction(votedCandidates);
+            }
         }
     }
 
@@ -291,6 +316,43 @@ export class VotePage implements OnInit, OnDestroy {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
                 voteContent,
+                '', //memo
+            );
+            await this.globalNative.hideLoading();
+            Logger.log('wallet', "rawTx:", rawTx);
+
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, "/crcouncilvoting/candidates");
+            if (ret) {
+                this.voteService.toastSuccessfully('voting.vote');
+            }
+        }
+        catch (e) {
+            await this.globalNative.hideLoading();
+            await this.voteService.popupErrorMessage(e);
+        }
+
+        this.castingVote = false;
+        this.signingAndTransacting = false;
+    }
+
+    async createVoteCRTransactionV2(votes: any) {
+        this.signingAndTransacting = true;
+        Logger.log('wallet', 'Creating vote transaction with votes', votes);
+
+        let voteContentInfo: VotesContentInfo = {
+            VoteType: VoteContentType.CRC,
+            VotesInfo: votes
+        };
+
+        const payload: VotingInfo = {
+            Version: 0,
+            Contents: [voteContentInfo],
+        };
+
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
+                payload,
                 '', //memo
             );
             await this.globalNative.hideLoading();
