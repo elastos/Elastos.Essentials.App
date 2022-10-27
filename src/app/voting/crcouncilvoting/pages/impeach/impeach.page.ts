@@ -1,13 +1,16 @@
 import { Component, ViewChild } from '@angular/core';
+import { VoteContentType, VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -35,6 +38,7 @@ export class ImpeachCRMemberPage {
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
         private globalNative: GlobalNativeService,
+        private stakeService: StakeService,
     ) {
 
     }
@@ -43,7 +47,13 @@ export class ImpeachCRMemberPage {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.impeachment'));
         this.member = this.crCouncilService.selectedMember;
         if (!this.updatedBalance) {
-            this.maxVotes = await this.voteService.getMaxVotes();
+            await this.stakeService.getVoteRights();
+            if (this.stakeService.votesRight.totalVotesRight > 0) {
+                this.maxVotes = this.stakeService.votesRight.remainVotes[VoteContentType.CRCImpeachment];
+            }
+            else {
+                this.maxVotes = await this.voteService.getMaxVotes();
+            }
             this.updatedBalance = true;
         }
     }
@@ -90,12 +100,17 @@ export class ImpeachCRMemberPage {
             return false;
         }
 
-        const stakeAmount = Util.accMul(this.amount, Config.SELA);
-        await this.createVoteImpeachTransaction(stakeAmount.toString());
+        const stakeAmount = Util.accMul(this.amount, Config.SELA).toString();
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            await this.createVoteImpeachTransactionV2(stakeAmount);
+        }
+        else {
+            await this.createVoteImpeachTransaction(stakeAmount);
+        }
         return true;
     }
 
-    async createVoteImpeachTransaction(voteAmount) {
+    async createVoteImpeachTransaction(voteAmount: string) {
         this.signingAndTransacting = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
@@ -114,6 +129,50 @@ export class ImpeachCRMemberPage {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
                 voteContent,
+                '', //memo
+            );
+            await this.globalNative.hideLoading();
+            Logger.log('wallet', "rawTx:", rawTx);
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+            if (ret) {
+                this.voteService.toastSuccessfully('crcouncilvoting.impeachment');
+            }
+        }
+        catch (e) {
+            await this.globalNative.hideLoading();
+            await this.voteService.popupErrorMessage(e);
+        }
+
+        this.signingAndTransacting = false;
+    }
+
+    async createVoteImpeachTransactionV2(voteAmount: string) {
+        this.signingAndTransacting = true;
+        Logger.log(App.CRCOUNCIL_VOTING, 'Creating vote transaction with amount', voteAmount);
+        const voteContents: VotesContentInfo[] = [
+            {
+                VoteType: VoteContentType.CRCImpeachment,
+                VotesInfo: [
+                    {
+                        Candidate: this.member.cid,
+                        Votes: voteAmount,
+                        Locktime: 0
+                    }
+                ]
+            }
+        ];
+
+        const payload: VotingInfo = {
+            Version: 0,
+            Contents: voteContents
+        };
+
+        Logger.log(App.CRCOUNCIL_VOTING, 'CR Impeachment payload', payload);
+
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
+                payload,
                 '', //memo
             );
             await this.globalNative.hideLoading();
