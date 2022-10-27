@@ -451,7 +451,6 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         }
     }
 
-
     // TODO: Refine with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
     protected async getTransactionIconPath(transaction: EthTransaction): Promise<string> {
         const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
@@ -459,7 +458,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             if (transaction.isRedPacket) {
                 return './assets/redpackets/images/default-avatar.png';
             } else {
-                return './assets/wallet/buttons/receive.svg';
+                return './assets/wallet/buttons/curcol-receive.svg';
             }
         } else if (direction === TransactionDirection.SENT) {
             return './assets/wallet/tx/send.svg';
