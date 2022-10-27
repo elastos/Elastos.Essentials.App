@@ -79,7 +79,6 @@ export class IdentityService {
         private storage: GlobalStorageService,
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalHiveService: GlobalHiveService,
-        private globalStartupService: GlobalStartupService,
         private globalPasswordService: GlobalPasswordService,
         private didSessions: GlobalDIDSessionsService
     ) {
@@ -143,7 +142,7 @@ export class IdentityService {
                 //}
                 await this.didSessions.signIn(identityEntry, signInOptions);
                 if (goToLauncher) {
-                    await this.globalStartupService.navigateToStartupScreen();
+                    await GlobalStartupService.instance.navigateToStartupScreen();
                     // When everything else is ready, check if there were some intents queued and executed them
                     this.globalIntentService.onPostSignIn();
                 }

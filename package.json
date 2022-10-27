@@ -45,7 +45,6 @@
     "@awesome-cordova-plugins/http": "^5.46.0",
     "@awesome-cordova-plugins/ionic-webview": "5.37.3",
     "@awesome-cordova-plugins/keyboard": "5.37.3",
-    "@awesome-cordova-plugins/lottie-splash-screen": "^5.46.0",
     "@awesome-cordova-plugins/screen-orientation": "5.37.3",
     "@awesome-cordova-plugins/status-bar": "5.37.3",
     "@chainge/sdk": "^0.0.9",

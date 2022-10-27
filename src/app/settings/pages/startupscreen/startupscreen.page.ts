@@ -28,7 +28,6 @@ export class StartupScreenPage implements OnInit {
   constructor(
     public theme: GlobalThemeService,
     public translate: TranslateService,
-    public globalStartupService: GlobalStartupService
   ) { }
 
   async ngOnInit() {
@@ -53,7 +52,7 @@ export class StartupScreenPage implements OnInit {
       }
     ];
 
-    let startupScreenKey = await this.globalStartupService.getStartupScreen(DIDSessionsStore.signedInDIDString);
+    let startupScreenKey = await GlobalStartupService.instance.getStartupScreen(DIDSessionsStore.signedInDIDString);
     this.activeStartupScreen = this.startupScreens.find(s => s.key === startupScreenKey) || this.startupScreens[0];
   }
 
@@ -63,6 +62,6 @@ export class StartupScreenPage implements OnInit {
 
   public useScreen(screen: StartupScreen) {
     this.activeStartupScreen = screen;
-    void this.globalStartupService.setStartupScreen(DIDSessionsStore.signedInDIDString, screen.key);
+    void GlobalStartupService.instance.setStartupScreen(DIDSessionsStore.signedInDIDString, screen.key);
   }
 }

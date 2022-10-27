@@ -114,7 +114,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
         private walletUIService: WalletUIService,
         private storage: LocalStorage,
         private defiService: DefiService,
-        private globalStartupService: GlobalStartupService,
         private events: GlobalEvents,
         private zone: NgZone
     ) {
@@ -226,7 +225,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
         this.startUpdateInterval();
 
-        this.globalStartupService.setStartupScreenReady();
+        GlobalStartupService.instance.setStartupScreenReady();
     }
 
     ionViewWillLeave() {

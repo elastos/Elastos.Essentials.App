@@ -63,7 +63,6 @@ export class HomePage implements OnInit {
     private modalCtrl: ModalController,
     public walletUIService: UiService,
     private globalNetworksService: GlobalNetworksService,
-    private globalStartupService: GlobalStartupService,
     private globalNavService: GlobalNavService,
     private widgetsService: WidgetsService,
     private launcherNotificationsService: NotificationManagerService
@@ -180,7 +179,7 @@ export class HomePage implements OnInit {
   ionViewDidEnter() {
     Logger.log("launcher", "Launcher home screen did enter");
 
-    this.globalStartupService.setStartupScreenReady();
+    GlobalStartupService.instance.setStartupScreenReady();
 
     //console.log(this.widgetContainers)
     this.widgetContainers = this.widgetContainersList.toArray();

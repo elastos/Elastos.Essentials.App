@@ -63,7 +63,6 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         public httpClient: HttpClient,
         public zone: NgZone,
         private platform: Platform,
-        private globalStartupService: GlobalStartupService,
         private globalIntentService: GlobalIntentService,
         private globalStorageService: GlobalStorageService,
         public dappbrowserService: DappBrowserService,
@@ -362,7 +361,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
     }
 
     ionViewDidEnter() {
-        this.globalStartupService.setStartupScreenReady();
+        GlobalStartupService.instance.setStartupScreenReady();
 
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             switch (icon.iconPath) {

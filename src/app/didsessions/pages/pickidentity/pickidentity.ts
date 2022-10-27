@@ -1,5 +1,4 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
-import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -13,6 +12,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
@@ -37,7 +37,6 @@ export class PickIdentityPage {
     public translate: TranslateService,
     private events: GlobalEvents,
     public popupProvider: PopupProvider,
-    private lottieSplashScreen: LottieSplashScreen,
     private globalNetworksService: GlobalNetworksService,
     private didSessions: GlobalDIDSessionsService,
     private nativeService: GlobalNativeService,
@@ -77,7 +76,7 @@ export class PickIdentityPage {
 
   ionViewDidEnter() {
     // We are ready, we can hide the splash screen
-    this.lottieSplashScreen.hide();
+    GlobalStartupService.instance.setStartupScreenReady();
   }
 
   ionViewWillLeave() {

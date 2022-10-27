@@ -103,7 +103,6 @@ export class SettingsPage implements OnInit {
         private native: Native,
         private router: Router,
         private walletCreationService: WalletCreationService,
-        private globalStartupService: GlobalStartupService,
         private globalNativeService: GlobalNativeService,
     ) {
     }
@@ -127,7 +126,7 @@ export class SettingsPage implements OnInit {
 
     ionViewDidEnter() {
         // Hide splash screen if the wallet is the startup screen.
-        this.globalStartupService.setStartupScreenReady();
+        GlobalStartupService.instance.setStartupScreenReady();
     }
 
     public go(item: SettingsEntry) {

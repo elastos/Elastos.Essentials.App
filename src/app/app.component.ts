@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
-import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
 import { StatusBar } from '@awesome-cordova-plugins/status-bar/ngx';
 import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
@@ -49,7 +48,6 @@ export class AppComponent {
 
   constructor(
     private platform: Platform,
-    private lottieSplashScreen: LottieSplashScreen,
     private statusBar: StatusBar,
     public storage: GlobalStorageService,
     public theme: GlobalThemeService,
@@ -85,6 +83,8 @@ export class AppComponent {
   initializeApp() {
     void this.platform.ready().then(async () => {
       Logger.log("Global", "Main app component initialization is starting");
+
+      this.globalStartupService.init();
 
       // Force Essentials orientation to portrait only
       void this.screenOrientation.lock("portrait");

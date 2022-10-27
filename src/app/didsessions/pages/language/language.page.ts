@@ -1,11 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 @Component({
@@ -25,7 +25,6 @@ export class LanguagePage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private uxService: UXService,
-    private lottieSplashScreen: LottieSplashScreen,
     private didSessions: GlobalDIDSessionsService
   ) { }
 
@@ -48,7 +47,7 @@ export class LanguagePage implements OnInit {
 
   ionViewDidEnter() {
     // We are ready, we can hide the splash screen
-    this.lottieSplashScreen.hide();
+    GlobalStartupService.instance.setStartupScreenReady();
   }
 
   ionViewWillLeave() {

@@ -39,7 +39,8 @@
       "elastos-essentials-plugin-internal",
       "elastos-essentials-plugin-dappbrowser",
       "cordova-plugin-camera",
-      "cordova-plugin-ble-central"
+      "cordova-plugin-ble-central",
+      "cordova-plugin-lottie-splashscreen"
     ],
     "lib": [
       "ES2020.BigInt",

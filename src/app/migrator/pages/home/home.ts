@@ -1,5 +1,4 @@
 import { Component, ViewChild } from '@angular/core';
-import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -7,6 +6,7 @@ import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMod
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { MigrationService } from 'src/app/services/migrator/migration.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 
@@ -39,7 +39,6 @@ export class HomePage {
     private globalNavService: GlobalNavService,
     private translate: TranslateService,
     private walletService: WalletService,
-    private lottieSplashScreen: LottieSplashScreen,
     private migrationService: MigrationService,
     public globalNativeService: GlobalNativeService,
   ) { }
@@ -52,7 +51,7 @@ export class HomePage {
 
   ionViewDidEnter() {
     // We are ready, we can hide the splash screen
-    this.lottieSplashScreen.hide();
+    GlobalStartupService.instance.setStartupScreenReady();
 
     // We need to hide loading dialog if the user logs in from the pick did screen.
     void this.globalNativeService.hideLoading();

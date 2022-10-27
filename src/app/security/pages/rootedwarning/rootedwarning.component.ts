@@ -16,14 +16,13 @@ export class RootedWarningPage implements OnInit {
     private popover: PopoverController,
     public translate: TranslateService,
     private globalSecurityService: GlobalSecurityService,
-    private globalStartupService: GlobalStartupService
   ) { }
 
   ngOnInit() {
   }
 
   ionViewDidEnter() {
-    this.globalStartupService.setStartupScreenReady();
+    GlobalStartupService.instance.setStartupScreenReady();
   }
 
   cancel() {
@@ -32,6 +31,6 @@ export class RootedWarningPage implements OnInit {
 
   confirm() {
     void this.globalSecurityService.setRootedDeviceWarningDismissed();
-    void this.globalStartupService.navigateToFirstScreen();
+    GlobalStartupService.instance.navigateToFirstScreen();
   }
 }

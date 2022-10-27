@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { LottieSplashScreen } from '@awesome-cordova-plugins/lottie-splash-screen/ngx';
 import { Logger } from '../logger';
 import { App } from '../model/app.enum';
 import { WalletInitService } from '../wallet/services/init.service';
@@ -19,6 +18,10 @@ import { GlobalThemeService } from './theming/global.theme.service';
   providedIn: 'root'
 })
 export class GlobalStartupService {
+  public static instance: GlobalStartupService;
+
+  private startupScreenReady = false;
+
   constructor(
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
@@ -26,8 +29,15 @@ export class GlobalStartupService {
     private globalNav: GlobalNavService,
     private globalSecurityService: GlobalSecurityService,
     private didSessions: GlobalDIDSessionsService,
-    private theme: GlobalThemeService,
-    private lottieSplashScreen: LottieSplashScreen) {
+    private theme: GlobalThemeService) {
+        GlobalStartupService.instance = this;
+  }
+
+  init() {
+    lottie.splashscreen.on("lottieAnimationEnd", (event)=> {
+        if (this.startupScreenReady)
+            lottie.splashscreen.hide();
+    })
   }
 
   /**
@@ -88,7 +98,9 @@ export class GlobalStartupService {
    * Startup screen is ready (visible), so we can finalize some operations such as hiding the splash screen
    */
   public setStartupScreenReady() {
-    this.lottieSplashScreen.hide();
+    this.startupScreenReady = true;
+    if (lottie.splashscreen.animationEnded)
+        lottie.splashscreen.hide();
   }
 
   public getStartupScreen(did: string): Promise<string> {
