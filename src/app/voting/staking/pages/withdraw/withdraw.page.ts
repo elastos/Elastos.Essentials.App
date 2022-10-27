@@ -138,12 +138,12 @@ export class WithdrawPage {
         }
 
         try {
-            // await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2ClaimRewardTransaction(
                 payload,
                 '', //memo
             );
-            // await this.globalNative.hideLoading();
+            await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.STAKING, '/staking/staking-home');
             if (ret) {
@@ -152,7 +152,7 @@ export class WithdrawPage {
         }
         catch(e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            // await this.globalNative.hideLoading();
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
 

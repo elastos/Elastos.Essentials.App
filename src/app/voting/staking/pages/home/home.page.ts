@@ -1,10 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService, VoteType } from '../../services/stake.service';
 
 
@@ -28,12 +32,15 @@ export class StakingHomePage implements OnInit {
     public voteInfo: any;
 
     public dataFetched = false;
+    public signingAndTransacting = false;
 
     constructor(
         public translate: TranslateService,
         public stakeService: StakeService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
+        private globalNative: GlobalNativeService,
+        private voteService: VoteService,
     ) {
     }
 
@@ -58,7 +65,7 @@ export class StakingHomePage implements OnInit {
         this.showItems.push(
             {
                 title: this.translate.instant('staking.staked'),
-                value: this.stakeService.votesRight.staked,
+                value: this.stakeService.votesRight.maxStaked,
                 active: false
             },
             {
@@ -109,8 +116,8 @@ export class StakingHomePage implements OnInit {
             type: VoteType.DPoSV2,
             votes: this.stakeService.votesRight.votes[VoteType.DPoSV2],
             ratio: Math.floor((this.stakeService.votesRight.votes[VoteType.DPoSV2] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
-            stakeuntilDate: this.stakeService.votesRight.lockTimeDate,
-            stakeuntilExpired: this.stakeService.votesRight.lockTimeExpired,
+            stakeuntilDate: this.stakeService.votesRight.dpos2LockTimeDate,
+            stakeuntilExpired: this.stakeService.votesRight.dpos2LockTimeExpired,
         });
         for (let i = 0; i < 4; i++) {
             var item = {
@@ -123,48 +130,50 @@ export class StakingHomePage implements OnInit {
         }
     }
 
-    unvote() {
+    async unvote() {
         if (!this.stakeService.votesRight.voteInfos) {
             return
         }
 
-        // this.signingAndTransacting = true;
-        // Logger.log('wallet', 'Creating vote transaction with votes', votes);
+        this.signingAndTransacting = true;
 
+        var voteContents: VotesContentInfo[] = [];
+        for (let i = 0; i < 4; i++) {
+            let list = this.stakeService.votesRight.voteInfos[i].list;
+            if (list.length > 0) {
+                voteContents.push({
+                    VoteType: i,
+                    VotesInfo: list
+                })
+            }
+        }
 
-        // let voteContentInfo: VotesContentInfo = {
-        //     VoteType: VoteContentType.DposV2,
-        //     VotesInfo: votes
-        // };
+        const payload: VotingInfo = {
+            Version: 0,
+            Contents: voteContents
+        };
 
-        // try {
-        //     const voteContent = [voteContentInfo];
-        //     const payload: VotingInfo = {
-        //         Version: 0,
-        //         Contents: voteContent
-        //       };
+        Logger.log(App.STAKING, 'unvote payload', payload);
 
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
+                payload,
+                '', //memo
+            );
+            await this.globalNative.hideLoading();
+            Logger.log(App.STAKING, "rawTx:", rawTx);
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+            if (ret) {
+                this.voteService.toastSuccessfully('staking.unvote');
+            }
+        }
+        catch (e) {
+            await this.globalNative.hideLoading();
+            await this.voteService.popupErrorMessage(e);
+        }
 
-        //     await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-        //     const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
-        //         payload,
-        //         '', //memo
-        //     );
-        //     await this.globalNative.hideLoading();
-        //     Logger.log('wallet', "rawTx:", rawTx);
-
-        //     let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING, "/dpos2/menu/list");
-        //     if (ret) {
-        //         this.voteService.toastSuccessfully('voting.vote');
-        //     }
-        // }
-        // catch (e) {
-        //     await this.globalNative.hideLoading();
-        //     await this.voteService.popupErrorMessage(e);
-        // }
-
-        // this.castingVote = false;
-        // this.signingAndTransacting = false;
+         this.signingAndTransacting = false;
     }
 
     clickDetails(event: Event, type: VoteType) {

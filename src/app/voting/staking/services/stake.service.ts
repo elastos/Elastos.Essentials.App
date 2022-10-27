@@ -21,13 +21,14 @@ export enum VoteType {
 
 export type VotesRight = {
     totalVotesRight: number;
-    staked: number;
-    stakedRatio: number;
+    maxStaked: number;
+    maxStakedRatio: number;
     minRemainVoteRight: number;
-    lockTimeDate?: number;
-    lockTimeExpired?: number;
+    dpos2LockTimeDate?: number;
+    dpos2LockTimeExpired?: number;
     voteInfos?: any[];
     votes?: number[];
+    remainVotes?: number[];
 }
 
 export type RewardInfo = {
@@ -44,18 +45,18 @@ export class StakeService {
 
     public votesRight = {
         totalVotesRight: 0,
-        staked: 0,
-        stakedRatio: 0,
+        maxStaked: 0,
+        maxStakedRatio: 0,
         minRemainVoteRight: 0,
 
-    }  as VotesRight;
+    } as VotesRight;
 
     public rewardInfo = {
-            claimable: 0,
-            claiming: 0,
-            claimed: 0,
-            total: 0,
-        } as RewardInfo;
+        claimable: 0,
+        claiming: 0,
+        claimed: 0,
+        total: 0,
+    } as RewardInfo;
 
     public firstAddress: string;
 
@@ -109,11 +110,12 @@ export class StakeService {
 
         this.votesRight = {
             totalVotesRight: 0,
-            staked: 0,
-            stakedRatio: 0,
+            maxStaked: 0,
+            maxStakedRatio: 0,
             minRemainVoteRight: 0,
             votes: [],
-        }  as VotesRight;
+            remainVotes: [],
+        } as VotesRight;
 
         const param = {
             method: 'getvoterights',
@@ -125,30 +127,29 @@ export class StakeService {
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         Logger.log(App.DPOS_VOTING, 'getvoterights', result);
-        if (result && result[0]) {
-            if (result[0].totalvotesright) {
-                this.votesRight.totalVotesRight = Number.parseInt(result[0].totalvotesright);
-            }
+        if (result && result[0] && result[0].totalvotesright) {
+            this.votesRight.totalVotesRight = Number.parseInt(result[0].totalvotesright);
 
             if (result[0].remainvoteright) {
                 let arr = this.uxService.stringArrayToNumberArray(result[0].remainvoteright);
                 if (arr.length > 0) {
                     let min = Math.min(...arr);
-                    this.votesRight.staked = this.votesRight.totalVotesRight - min;
-                    this.votesRight.stakedRatio = Math.floor(((1 - min / this.votesRight.totalVotesRight) * 10000)) / 100;
+                    this.votesRight.maxStaked = this.votesRight.totalVotesRight - min;
+                    this.votesRight.maxStakedRatio = Math.floor(this.votesRight.maxStaked / this.votesRight.totalVotesRight * 10000) / 100;
                     this.votesRight.minRemainVoteRight = min;
-                    for(let i in arr) {
+                    this.votesRight.remainVotes = arr;
+                    for (let i in arr) {
                         this.votesRight.votes.push(this.votesRight.totalVotesRight - arr[i]);
                     }
                 }
             }
 
             //Handle usedvotesinfo
-            if (result[0].usedvotesinfo.useddposv2votes) {
+            if (result[0].usedvotesinfo) {
                 let dposv2votes = result[0].usedvotesinfo.useddposv2votes;
                 if (dposv2votes) {
                     var locktime = Number.MAX_SAFE_INTEGER;
-                    for(let i in dposv2votes) {
+                    for (let i in dposv2votes) {
                         if (dposv2votes[i].Info[0].locktime < locktime) {
                             locktime = dposv2votes[i].Info[0].locktime;
                         }
@@ -156,20 +157,20 @@ export class StakeService {
                     if (locktime != Number.MAX_SAFE_INTEGER) {
                         let ret = await this.getStakeUntil(locktime);
                         if (ret.date) {
-                            this.votesRight.lockTimeDate = ret.date;
+                            this.votesRight.dpos2LockTimeDate = ret.date;
                         }
                         else {
-                            this.votesRight.lockTimeExpired = ret.expired;
+                            this.votesRight.dpos2LockTimeExpired = ret.expired;
                         }
                     }
                 }
-            }
 
-            this.votesRight.voteInfos = [];
-            this.votesRight.voteInfos.push({index: 0, title: "DPoS 1.0", list: result[0].usedvotesinfo.useddposvotes});
-            this.votesRight.voteInfos.push({index: 1, title: "staking.cr-council", list: result[0].usedvotesinfo.usedcrvotes});
-            this.votesRight.voteInfos.push({index: 2, title: "staking.cr-proposal", list: result[0].usedvotesinfo.usedcrcproposalvotes});
-            this.votesRight.voteInfos.push({index: 3, title: "staking.cr-impeachment", list: result[0].usedvotesinfo.usdedcrimpeachmentvotes});
+                this.votesRight.voteInfos = [];
+                this.votesRight.voteInfos.push({ index: 0, title: "DPoS 1.0", list: result[0].usedvotesinfo.useddposvotes });
+                this.votesRight.voteInfos.push({ index: 1, title: "staking.cr-council", list: result[0].usedvotesinfo.usedcrvotes });
+                this.votesRight.voteInfos.push({ index: 2, title: "staking.cr-proposal", list: result[0].usedvotesinfo.usedcrcproposalvotes });
+                this.votesRight.voteInfos.push({ index: 3, title: "staking.cr-impeachment", list: result[0].usedvotesinfo.usdedcrimpeachmentvotes });
+            }
         }
 
         return this.votesRight;
@@ -221,10 +222,10 @@ export class StakeService {
         var until = stakeUntil - currentHeight;
         if (until > 720 * 7) { //more than 7 days
             var stakeTimestamp = until * 120 + currentBlockTimestamp
-            return {date: this.uxService.formatDate(stakeTimestamp)};
+            return { date: this.uxService.formatDate(stakeTimestamp) };
         }
         else {
-            return {expired: await this.voteService.getRemainingTimeString(until)};
+            return { expired: await this.voteService.getRemainingTimeString(until) };
         }
     }
 }

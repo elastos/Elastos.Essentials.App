@@ -92,10 +92,12 @@ export class UnstakePage {
         Logger.warn(App.STAKING, 'payload', payload);
 
         try {
+            let password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
+
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             //Get digest
             const digest = await this.voteService.sourceSubwallet.unstakeDigest(payload);
 
-            let password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
             const signature = await this.voteService.sourceSubwallet.signDigest(this.stakeService.firstAddress, digest, password);
             payload.Signature = signature;
 
@@ -103,7 +105,7 @@ export class UnstakePage {
                 payload,
                 '', //memo
             );
-            // await this.globalNative.hideLoading();
+            await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.STAKING, '/staking/staking-home');
             if (ret) {
@@ -112,7 +114,7 @@ export class UnstakePage {
         }
         catch(e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            // await this.globalNative.hideLoading();
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
 
