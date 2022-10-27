@@ -68,17 +68,6 @@
         </ion-col>
       </ion-row>
 
-      <ion-row *ngIf="profileService.verifiedCredentials.length == 0">
-        <ion-col size="1.5">
-          <img src="/assets/identity/svg/verified-gray.svg" class="verified">
-        </ion-col>
-        <ion-col size="10.5">
-          <ion-label>
-            {{ profileService.verifiedCredentials.length }}/{{ profileService.allCreds.length }}
-            {{ 'identity.credentials-verified' | translate }}
-          </ion-label>
-        </ion-col>
-      </ion-row>
     </ion-grid>
 
     <ion-row *ngIf="profileService.hasModifiedCredentials()" class="actions-row"

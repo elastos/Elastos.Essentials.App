@@ -30,6 +30,10 @@
       height: 10px;
     }
   }
+
+  .grid {
+    text-align: right;
+  }
 }
 
 .notifications-row {
@@ -68,6 +72,7 @@
         .icon {
           height: 18px;
           margin-right: 5px;
+          width: 20px;
         }
 
         .sender {
@@ -90,10 +95,6 @@
       .message {
       }
     }
-  }
-
-  .grid {
-    width: 30px;
   }
 }
 
