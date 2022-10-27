@@ -1,5 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
+import { VoteContentType, VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
@@ -10,6 +11,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -40,6 +42,7 @@ export class VoteForProposalPage {
 
     constructor(
         private crOperations: CROperationsService,
+        private stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,
@@ -64,7 +67,6 @@ export class VoteForProposalPage {
         Logger.log(App.CRPROPOSAL_VOTING, "VoteForProposalCommand", this.onGoingCommand);
 
         this.proposalDetail = await this.crOperations.getCurrentProposal();
-        this.proposalDetailFetched = true;
 
         if (this.proposalDetail) {
             this.keyboard.onKeyboardWillShow().subscribe(() => {
@@ -78,9 +80,16 @@ export class VoteForProposalPage {
                     this.isKeyboardHide = true;
                 });
             });
-
-            this.maxVotes = await this.voteService.getMaxVotes();
+            await this.stakeService.getVoteRights();
+            if (this.stakeService.votesRight.totalVotesRight > 0) {
+                this.maxVotes = this.stakeService.votesRight.totalVotesRight;
+            }
+            else {
+                this.maxVotes = await this.voteService.getMaxVotes();
+            }
         }
+
+        this.proposalDetailFetched = true;
     }
 
     ionViewWillLeave() {
@@ -135,12 +144,17 @@ export class VoteForProposalPage {
             return false;
         }
 
-        const stakeAmount = Util.accMul(this.amount, Config.SELA);
-        await this.createVoteCRProposalTransaction(stakeAmount.toString());
+        const stakeAmount = Util.accMul(this.amount, Config.SELA).toString();
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            await this.createVoteCRProposalTransactionV2(stakeAmount);
+        }
+        else {
+            await this.createVoteCRProposalTransaction(stakeAmount);
+        }
         return true;
     }
 
-    async createVoteCRProposalTransaction(voteAmount) {
+    async createVoteCRProposalTransaction(voteAmount: string) {
         if (!await this.voteService.checkWalletAvailableForVote()) {
             return;
         }
@@ -163,6 +177,48 @@ export class VoteForProposalPage {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
                 voteContent,
+                '', //memo
+            );
+            await this.globalNative.hideLoading();
+
+            await this.crOperations.signAndSendRawTransaction(rawTx);
+        }
+        catch (e) {
+            this.signingAndSendingProposalResponse = false;
+            await this.globalNative.hideLoading();
+            await this.crOperations.popupErrorMessage(e);
+            return;
+        }
+
+        this.signingAndSendingProposalResponse = false;
+        void this.crOperations.sendIntentResponse();
+    }
+
+    async createVoteCRProposalTransactionV2(voteAmount: string) {
+        this.signingAndSendingProposalResponse = true;
+        Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
+        const voteContents: VotesContentInfo[] = [
+            {
+                VoteType: VoteContentType.CRCProposal,
+                VotesInfo: [
+                    {
+                        Candidate: this.onGoingCommand.data.proposalHash,
+                        Votes: voteAmount,
+                        Locktime: 0
+                    }
+                ]
+            }
+        ];
+
+        const payload: VotingInfo = {
+            Version: 0,
+            Contents: voteContents
+        };
+
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
+                payload,
                 '', //memo
             );
             await this.globalNative.hideLoading();
