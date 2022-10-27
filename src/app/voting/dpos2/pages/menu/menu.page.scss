@@ -1,0 +1,28 @@
+@import "../../root.scss";
+
+/*** LIGHT MODE ***/
+ion-tabs {
+    ion-tab-bar {
+        height: 9%;
+
+        ion-tab-button {
+            //--ripple-color: #732dcf;
+            opacity: 0.6;
+
+            ion-icon {
+                color: var(--ion-text-color);
+                font-size: 36px;
+            }
+
+            ion-label {
+                font-size: 10px;
+                font-weight: 600;
+                color: var(--ion-text-color);
+            }
+        }
+
+        ion-tab-button.tab-selected {
+            opacity: 1;
+        }
+    }
+}

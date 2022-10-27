@@ -1,0 +1,275 @@
+@import "src/app/voting/root.scss";
+
+.inactive {
+    color: rgb(231, 81, 81) !important;
+}
+
+/*******************************************
+  GLOBAL HEADER
+  pages ~ vote, search, stats, tx, history
+*******************************************/
+.header {
+    position: fixed;
+    top: 49px;
+    z-index: 10;
+    width: 100%;
+    height: 8%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom-left-radius: 50px;
+    border-bottom-right-radius: 50px;
+    background: var(--ion-background-color);
+
+    ion-label {
+        font-weight: 500;
+        font-size: 18px;
+    }
+
+    .search-container {
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        ion-searchbar {
+            width: 340px;
+        }
+    }
+}
+
+/************************************
+  NODES SLIDES
+  components ~ node-slider
+************************************/
+.node-slides {
+    position: fixed;
+    top: calc(50vh - 200px);
+    left: 0;
+    right: 0;
+    background: var(--ion-background-color);
+
+    ion-card {
+        min-width: 97%;
+        padding: 0;
+        margin: 10px;
+        border-radius: 10px;
+        background: var(--essentials-box-color);
+
+        ion-grid {
+            padding: 0;
+
+            .header-container {
+                padding: 12px;
+                margin-left: 9px;
+                border-bottom: 1.5px solid var(--essentials-border-separator-color);
+
+                .img-container {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    img {
+                        border-radius: 50%;
+                        width: 45px;
+                        height: 45px;
+                        object-fit: cover;
+                    }
+                }
+
+                .name-container {
+                    display: flex;
+                    align-items: center;
+                    justify-content: flex-start;
+
+                    ion-card-title {
+                        font-size: 14px;
+                        font-weight: 600;
+                        overflow: hidden;
+                    }
+                }
+            }
+
+            ion-card-content {
+                padding: 0;
+
+                .detail-container {
+                    justify-content: space-between;
+                    border-bottom: 1.5px solid var(--essentials-border-separator-color);
+                    margin-left: 9px;
+                    padding: 12px 24px;
+
+                    h3,
+                    p {
+                        font-size: 12px !important;
+                        font-weight: 600;
+                        padding-right: 0;
+                        margin: 0;
+                    }
+
+                    h3 {
+                        opacity: 0.7;
+                    }
+                }
+
+                .website {
+                    justify-content: space-between;
+                    border-bottom: 1.5px solid var(--essentials-border-separator-color);
+                    margin-left: 9px;
+                    margin-bottom: 36px;
+                    padding: 12px 24px;
+                    flex-wrap: wrap;
+
+                    h3,
+                    p {
+                        margin: 0;
+                        font-size: 12px !important;
+                        font-weight: 600;
+                    }
+
+                    h3 {
+                        opacity: 0.7;
+                    }
+
+                    p {
+                        padding-right: 10px;
+                    }
+
+                    h3:active {
+                        color: #428cff;
+                    }
+
+                    a {
+                        text-decoration: none;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/************************************
+  NODES LIST
+  pages ~ vote, history, search
+************************************/
+.node-list {
+    padding: 0;
+
+    ion-item {
+        --inner-padding-end: 0px;
+        --padding-start: 0px;
+        //--background: #ffffff;
+        margin: 0 0 2.5px;
+
+        ion-row {
+            padding: 7.5px 0;
+
+            .rank-container {
+                font-size: 12px !important;
+                font-weight: 600;
+                padding-right: 1px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
+
+            .img-container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                img {
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    object-fit: cover;
+                }
+
+                ion-avatar {
+                    max-width: 40px;
+                    max-height: 40px;
+                }
+            }
+
+            .label-col {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                align-self: center;
+
+                h4 {
+                    margin: 0;
+                    font-size: 16px;
+                }
+
+                p {
+                    margin: 0;
+                    opacity: 0.7;
+                    font-size: 12px;
+                }
+            }
+
+            .checkbox-container {
+                display: flex;
+                align-items: center;
+
+                ion-checkbox {
+                    --border-width: 2px;
+                    --border-color: var(--ion-text-color) !important;
+                    --border-color-checked: var(--ion-text-color) !important;
+                    --background-checked: transparent !important;
+                    --checkmark-color: var(--ion-text-color) !important;
+                }
+            }
+
+            ion-label {
+                h4,
+                p {
+                    font-weight: 600;
+                }
+
+                h4 {
+                    font-size: 14px;
+                }
+
+                p {
+                    font-size: 10px;
+                    opacity: 0.7;
+                }
+            }
+        }
+    }
+}
+
+.loading-list {
+    ion-item {
+        ion-grid {
+            ion-row {
+                ion-col {
+                    ion-skeleton-text {
+                        --background-rgb: 77, 77, 77;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.message-container {
+    margin: 24px;
+}
+
+.message {
+    margin: 0;
+    margin-bottom: 10px;
+    height: 52px;
+    border-radius: 10px;
+
+    text-align: left;
+    align-items: center;
+    justify-content: center;
+
+    color: white;
+    background-color: #007BFF;
+}
+

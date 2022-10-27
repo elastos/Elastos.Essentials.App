@@ -1,0 +1,63 @@
+@import "../../root.scss";
+
+.container {
+  min-height: 100%;
+  padding-top: 15%;
+
+  ion-list {
+    padding: 0;
+    margin: 0;
+    min-height: 100%;
+
+    ion-item {
+      --inner-padding-end: 0px;
+      --padding-start: 0px;
+      --background: transparent;
+      --border-color: var(--essentials-border-separator-color);
+      margin: 0;
+      padding: 0;
+
+      ion-row {
+        padding: 5px 0;
+
+        .img-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          img {
+            max-width: 45px;
+            max-height: 45px;
+          }
+        }
+
+        .stat-container {
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+
+          ion-label {
+            h4 {
+              font-size: 14px;
+              font-weight: 300;
+              padding-left: 20px;
+            }
+          }
+        }
+
+        .number-container {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          h4 {
+            font-size: 14px;
+            font-weight: 600;
+            text-align: right;
+            margin: 0;
+          }
+        }
+      }
+    }
+  }
+}

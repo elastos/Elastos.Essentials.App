@@ -1,0 +1,33 @@
+@import '../../../root.scss';
+
+ion-grid {
+    margin: 24px;
+}
+
+h2 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+h5 {
+    margin-bottom: 2px;
+    font-size: 13px;
+    text-align: left;
+}
+
+p {
+    margin-top: 2px;
+    font-size: 14px;
+    text-align: left;
+    color: #111213;
+}
+
+ion-input {
+    background: #ffffff;
+    height: 45px;
+    border:1px solid #C9BFD6;;
+    border-radius: 7px;
+    font-size: 13px;
+    text-align: left;
+    --padding-start: 12px;
+}

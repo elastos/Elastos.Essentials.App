@@ -1,7 +1,7 @@
 export const zh = {
 
     'staking': {
-        'staked-amount': '质押票数',
+        'staked-amount': '质押数量',
         'staked': '质押',
         'your-rewards': '总收益',
         'available-reward': '可取回收益',

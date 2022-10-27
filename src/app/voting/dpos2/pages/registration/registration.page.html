@@ -1,0 +1,90 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <div class="header">
+    </div>
+
+    <div class="align-center title">
+        <h3 *ngIf="dposInfo.state == 'Unregistered'">{{ 'dposvoting.register-header' | translate }}</h3>
+        <h3 *ngIf="dposInfo.state == 'Active'">{{ 'dposvoting.update-header' | translate }}</h3>
+    </div>
+
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+
+        <ion-list *ngIf="state != 'ReturnDeposit'">
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-name' | translate }}</h5>
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm" ngDefaultControl
+                        placeholder="{{'dposvoting.required-placeholder' | translate}}"
+                        [(ngModel)]="dposInfo.nickname">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-publickey' | translate }}</h5>
+                    <ion-input type="text" name="publickey" [attr.disabled]="needConfirm" ngDefaultControl
+                        placeholder="{{'dposvoting.required-placeholder' | translate}}"
+                        [(ngModel)]="dposInfo.nodepublickey" clearInput>
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-url' | translate }}</h5>
+                    <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
+                        placeholder="e.g. https…" [(ngModel)]="dposInfo.url">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
+                    <ion-input type="number" name="stake-until" [attr.disabled]="needConfirm" ngDefaultControl
+                        placeholder="Days" [(ngModel)]="dposInfo.stakeDays">
+                    </ion-input>
+                    <h5>{{ 'dposvoting.expired-date' | translate }}: {{ getDate() }}</h5>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-location' | translate }}</h5>
+                    <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm"
+                        placeholder="{{'dposvoting.node-location-placeholder' | translate}}"
+                        [attr.ok-text]="'common.confirm' | translate" [attr.cancel-text]="'common.cancel' | translate">
+                        <ion-select-option *ngFor="let code of areaList" [value]="code">
+                            {{ 'crcouncilvoting.' + code | translate }}
+                        </ion-select-option>
+                    </ion-select>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <ion-row class="btn-container">
+            <ion-row *ngIf="!needConfirm">
+                <ion-col>
+                <ebutton *ngIf="dposInfo.state == 'Unregistered'" (clicked)="checkValues()"
+                    [title]="'dposvoting.register' | translate"> </ebutton>
+
+                <ebutton *ngIf="dposInfo.state == 'Active'" (clicked)="checkValues()"
+                    [title]="'dposvoting.update' | translate"> </ebutton>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="btn-row" *ngIf="needConfirm">
+                <ion-col class="left-col">
+                    <ebutton mode="cancel" (clicked)="needConfirm = false;" [title]="'common.cancel' | translate">
+                    </ebutton>
+                </ion-col>
+                <ion-col class="right-col" color="success">
+                    <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate "> </ebutton>
+                </ion-col>
+            </ion-row>
+
+        </ion-row>
+    </ion-grid>
+</ion-content>

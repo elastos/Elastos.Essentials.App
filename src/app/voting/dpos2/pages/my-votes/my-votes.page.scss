@@ -1,0 +1,18 @@
+@import "../../root.scss";
+
+.container {
+    margin: 24px;
+}
+
+.update-btn {
+    height: 100%;
+    font-size: 13px;
+    font-weight: 400;
+
+    display: flex;
+    text-align: right;
+    align-items: center;
+    justify-content: center;
+
+    color: #8530F1;
+}

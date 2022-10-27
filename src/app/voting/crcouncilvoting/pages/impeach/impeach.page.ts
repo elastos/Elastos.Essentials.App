@@ -49,7 +49,7 @@ export class ImpeachCRMemberPage {
         if (!this.updatedBalance) {
             await this.stakeService.getVoteRights();
             if (this.stakeService.votesRight.totalVotesRight > 0) {
-                this.maxVotes = this.stakeService.votesRight.remainVotes[VoteContentType.CRCImpeachment];
+                this.maxVotes = this.stakeService.votesRight.totalVotesRight;
             }
             else {
                 this.maxVotes = await this.voteService.getMaxVotes();

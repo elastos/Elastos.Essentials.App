@@ -1,0 +1,107 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+
+        <div *ngIf="dposInfo.state == 'Illegal'" class="message-container">
+            <p class="message">
+                {{ 'dposvoting.illegal-message' | translate }}
+            </p>
+        </div>
+
+        <div *ngIf="dposInfo.state == 'Pending'" class="pending-msg">
+            <p>
+                <span>{{ 'dposvoting.confirm-count-prefix' | translate }}</span>
+                <span>{{ confirmCount }}</span>
+                <span>{{ 'dposvoting.confirm-count-postfix' | translate }}</span>
+            </p>
+            <p>{{ 'dposvoting.confirm-count-6' | translate }}</p>
+        </div>
+
+        <ion-list-header>
+            <h4>{{ 'dposvoting.node-details' | translate }}</h4>
+        </ion-list-header>
+
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.nickname">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-name' | translate }}</h5>
+                    <h4>{{ dpos2Service.dposInfo.nickname }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.state">
+                <div>
+                    <h5>{{ 'dposvoting.node-status' | translate }}</h5>
+                    <h4 class="align-center status_mark" [id]="dpos2Service.dposInfo.state">
+                        {{ 'dposvoting.' + dpos2Service.dposInfo.state | translate }}
+                    </h4>
+                </div>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.votes">
+                <ion-col>
+                    <h5>{{ 'dposvoting.current-votes' | translate }}</h5>
+                    <h4>{{ dpos2Service.dposInfo.votes }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.nodepublickey">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-publickey' | translate }}</h5>
+                    <h4>{{ dpos2Service.dposInfo.nodepublickey }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.url">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-url' | translate }}</h5>
+                    <h4>{{ dpos2Service.dposInfo.url }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.stakeuntil">
+                <ion-col>
+                    <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
+                    <h4>heght: {{ dpos2Service.dposInfo.stakeuntil }} {{ dpos2Service.dposInfo.stakeuntilDate }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.location">
+                <ion-col>
+                    <h5>{{ 'dposvoting.node-location' | translate }}</h5>
+                    <h4>{{'crcouncilvoting.' + dpos2Service.dposInfo.location | translate }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+        <br />
+        <ion-list-header>
+            <h4>{{ 'dposvoting.transaction-details' | translate }}</h4>
+        </ion-list-header>
+
+        <ion-list>
+            <ion-row class="profile-data" *ngIf="transactionInfo.txid">
+                <ion-col>
+                    <h5>{{ 'dposvoting.transaction-id' | translate }}</h5>
+                    <h4>{{ transactionInfo.txid }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="transactionInfo.time">
+                <ion-col>
+                    <h5>{{ 'dposvoting.time-published' | translate }}</h5>
+                    <h4>{{ publishedTime }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="dpos2Service.dposInfo.votes">
+                <ion-col>
+                    <h5>{{ 'dposvoting.block-id' | translate }}</h5>
+                    <h4>{{ transactionInfo.height }}</h4>
+                </ion-col>
+            </ion-row>
+        </ion-list>
+
+    </ion-grid>
+</ion-content>

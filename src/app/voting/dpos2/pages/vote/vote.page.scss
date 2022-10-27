@@ -1,0 +1,171 @@
+@import "../../root.scss";
+
+ion-content {
+    --padding-bottom: 80px;
+
+    .footer {
+        background: #FFF;
+        z-index: 10;
+        transition: transform 0.3s ease-in-out; // Transition on hide/show.
+    }
+}
+
+h5 {
+    font-size: 12px;
+    margin-bottom: 2px;
+}
+
+// ion-input {
+//     margin: 0 !important;
+//     width: 90% !important;
+// }
+
+.overflow {
+    color: red;
+}
+
+.container {
+    padding-top: 10px;
+    // margin-top: 55px;
+
+    .votes-header {
+        border-radius: 17px;
+        padding: 15px;
+        margin: 0 10px 12.5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        font-size: 16px;
+        font-weight: 400;
+
+        .count {
+            display: inline;
+            font-weight: 600;
+            font-size: 20px;
+        }
+    }
+
+    .candidate-list {
+        padding: 0px 0px 1px;
+        padding-bottom: 20%;
+
+        .candidate {
+            display: flex;
+            align-items: flex-start;
+            padding-top:20px;
+            border-bottom: solid 3px #F5F4F8;
+
+            &:first-child {
+                border-top: solid 3px #F5F4F8;
+            }
+
+            .index-col {
+                height: 50px;
+                width: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight:600;
+            }
+
+            .icon-col {
+                height:50px;
+
+                img {
+                    width: 50px;
+                    height: 100%;
+                }
+            }
+
+            .candidate-col {
+                margin-left: 10px;
+                flex: 0.9;
+
+                .name {
+                    font-size: 16px;
+                    font-weight: 500;
+                }
+
+                .navigate {
+                    color: #732CCE;
+                }
+
+                ion-input {
+                    text-align: center;
+                    max-width: 100%;
+                    border-radius: 6px;
+                    --padding-top:6px;
+                    --padding-bottom:6px;
+                    font-weight:bold;
+                    background: #FFF;
+                    border: solid 1px #C9BFD6;
+                }
+
+                // ion-range {
+                //     --bar-background:#C4C4C4;
+                //     --bar-background-active:#732CCE;
+                //     --bar-height:6px;
+                //     --knob-background:#FFF;
+                //     --knob-border-radius:50%;
+                //     --knob-size:20px;
+                //     padding: 0;
+                //     width:80%;
+                // }
+            }
+        }
+    }
+
+    .button {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .footer {
+        flex-direction: row;
+    }
+}
+
+.dark-container {
+    .footer {
+        background: #000;
+    }
+
+    .votes-header {
+    }
+
+    .candidate-list {
+        .candidate {
+            background: #212021;
+            border-bottom: solid 3px #000;
+
+            &:first-child {
+                border-top: solid 3px transparent;
+            }
+
+            .candidate-col {
+                ion-input {
+                    background: #3B3B3B;
+                    border: solid 1px #626262;
+                    color: #ffffff;
+                }
+
+                ion-range {
+                    --knob-background:#C4C4C4;
+                }
+            }
+        }
+    }
+
+    .cancel {
+        box-shadow: 0 3px 6px 0 #151626;
+        background-color: #202039;
+
+        ion-label {
+        }
+    }
+
+    .confirm {
+        box-shadow: 0 3px 15px 0 #151626;
+    }
+}

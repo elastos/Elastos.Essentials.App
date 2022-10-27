@@ -57,6 +57,68 @@ export const zh = {
         'vote-no-nodes-checked': '请最多选择36个节点进行投票',
 
         'dpos-node-info-no-available' : 'DPoS节点信息获取失败, 请稍后再试',
+
+        /********** Registration **********/
+        'registration': '报名参选',
+        'register-header': '注册DPoS节点',
+        'update-header': '更新DPoS节点',
+        'register': '注册',
+        'unregister': '注销',
+        'update': '更新',
+        'retrieve': '取款',
+        'illegal': 'DPoS节点非法',
+        'return': '注销成功',
+        'node-details': 'DPoS节点详情',
+        'node-status': 'DPoS节点状态',
+        'node-name': 'DPoS节点名称',
+        'node-publickey': 'DPoS节点公钥',
+        'required-placeholder': '必填',
+        'node-location': 'DPoS节点国家/地区',
+        'node-location-placeholder': '请选择节点国家/地区',
+        'node-url': 'DPoS节点URL',
+        'registration-confirm': '确认参选',
+        'dpos-node-info': 'DPoS节点信息',
+        'back': '返回',
+        'state': '状态:',
+        'Pending': '确认中',
+        'Active': '有效',
+        'Inactive': '非激活',
+        'Canceled': '已注销',
+        'Illegal': '非法',
+        'Returned': '已取回质押金',
+        'current-votes': '当前票数',
+
+        'transaction-details': '交易详情',
+        'transaction-id': '交易ID',
+        'time-published': '发布时间',
+        'block-id': '区块ID',
+        'confirm-count-6': '在6个确认块后管理节点。',
+        'confirm-count-prefix': '当前',
+        'confirm-count-postfix': '个确认块。',
+
+        'reg-dpos-balance-not-enough': '注册DPoS节点需要2000ELA质押金以及很少的交易费',
+        'dpos-deposit-warning': '您想注册DPoS节点吗？注册DPoS节点需要质押2000ELA，注册交易花费少量的交易费。',
+        'text-dpos-name-already-used': '此DPoS节点名称已经存在',
+        'dpos-unregister-warning': '您要注销DPoS节点吗？',
+        'text-dpos-info-dont-modify': 'DPoS节点信息没有修改。',
+        'text-registration-no-confirm': "上次注册还没确认，请等待。",
+        'text-update-no-confirm': "上次更新还没确认，请等待。",
+
+        //DPoS 2.0
+        'stake-until': '质押至',
+        'expired-in': '将在{{ time }}后过期',
+        'my-votes': '我的投票',
+        'node-exprie-message': '节点将在{{ time }}后过期。请点击更新节点。',
+        'vote-exprie-message': '你的DPoS 2.0投票将于{{ time }}后过期。请点击更新投票。',
+
+        'expired-date': '过期日期',
+        'edit-node': '更新节点',
+        'illegal-message': '节点状态异常，请补充质押金。',
+
+        'dpos2-voting': 'DPoS2节点投票',
+        'stake-more': '质押更多',
+
+        'update-node': '更新节点',
     }
 
 };

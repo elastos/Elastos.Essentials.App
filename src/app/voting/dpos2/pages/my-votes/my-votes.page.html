@@ -1,0 +1,51 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <div *ngIf="!dataFetched">
+        <ion-spinner></ion-spinner>
+    </div>
+
+    <div *ngIf="dataFetched">
+        <app-node-slider-update *ngIf="showNode"  (buttonClick)="onClick($event)" [nodeIndex]="nodeIndex" [node]="node"
+                [totalVotes]="dpos2Service.totalVotes" [_nodes]="votes">
+        </app-node-slider-update>
+
+        <ion-grid class="container ion-no-padding" *ngIf="votes.length">
+            <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
+                <ion-item *ngFor="let node of votes; index as i">
+                    <ion-grid class="ion-no-padding">
+                        <ion-row class="ion-no-padding">
+                            <ion-col size="1" class="rank-container ion-no-padding">
+                                {{ i + 1 }}
+                            </ion-col>
+                            <ion-col size="2" class="img-container">
+                                <img [src]="node.imageUrl ? node.imageUrl : '../assets/shared/essentials-black-circle.svg'"
+                                    src-fallback="assets/shared/essentials-black-circle.svg">
+                            </ion-col>
+                            <ion-col size="7" class="label-col">
+                                <h4>{{ node.nickname }}</h4>
+                                <p>
+                                    <span [class.inactive]="node.state !== 'Active'">
+                                        <ion-icon name="navigate"></ion-icon> {{ node.Location }}
+                                    </span>
+                                    &#8226; {{ node.votes }} Votes
+                                </p>
+                                <p  *ngIf="node.stakeuntilDate">
+                                    {{ 'dposvoting.stake-until' | translate }} {{node.stakeuntilDate}}
+                                </p>
+                                <p  *ngIf="node.stakeuntilExpired" class="expired-in">
+                                    {{ 'dposvoting.expired-in' | translate }} {{node.stakeuntilExpired}}
+                                </p>
+                            </ion-col>
+                            <ion-col size="2" (click)="showUpdateNode(i, node)">
+                                <div class="update-btn"> {{ 'common.update' | translate }} </div>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
+            </ion-list>
+        </ion-grid>
+    </div>
+
+</ion-content>
+

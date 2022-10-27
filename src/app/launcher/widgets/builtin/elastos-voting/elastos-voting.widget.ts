@@ -6,14 +6,15 @@ import { DIDManagerService } from 'src/app/launcher/services/didmanager.service'
 import { App } from 'src/app/model/app.enum';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCouncilVotingInitService } from 'src/app/voting/crcouncilvoting/services/init.service';
+import { DPoS2InitService } from 'src/app/voting/dpos2/services/init.service';
 import { DPoSVotingInitService } from 'src/app/voting/dposvoting/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WidgetBase } from '../../base/widgetbase';
 
 @Component({
-  selector: 'widget-elastos-voting',
-  templateUrl: './elastos-voting.widget.html',
-  styleUrls: ['./elastos-voting.widget.scss'],
+    selector: 'widget-elastos-voting',
+    templateUrl: './elastos-voting.widget.html',
+    styleUrls: ['./elastos-voting.widget.scss'],
 })
 export class ElastosVotingWidget extends WidgetBase implements OnInit {
   public runnableApps: RunnableAppCategory = null;
@@ -25,6 +26,7 @@ export class ElastosVotingWidget extends WidgetBase implements OnInit {
     public appService: AppmanagerService,
     public walletNetworkService: WalletNetworkService,
     private dposVotingInitService: DPoSVotingInitService,
+    private dpos2InitService: DPoS2InitService,
     private crCouncilVotingInitService: CRCouncilVotingInitService,
   ) {
     super();
@@ -42,9 +44,7 @@ export class ElastosVotingWidget extends WidgetBase implements OnInit {
           description: 'launcher.app-dpos2-description',
           icon: '/assets/launcher/apps/app-icons/dpos.svg',
           hasWidget: false,
-          startCall: async () => {
-            // TODO @dongxiao: open dpos 2.0
-          }
+          startCall: () => this.dpos2InitService.start()
         },
         {
           id: 'dpos',

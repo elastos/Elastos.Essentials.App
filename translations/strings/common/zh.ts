@@ -35,6 +35,7 @@ export const zh = {
         'max': '全部',
         'leave': '离开',
         'activate': '启用',
+        'update': '更新',
 
         // Navigation
         'settings': '设置',

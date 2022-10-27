@@ -143,7 +143,7 @@ export class StakingHomePage implements OnInit {
             if (list.length > 0) {
                 voteContents.push({
                     VoteType: i,
-                    VotesInfo: list
+                    VotesInfo: []
                 })
             }
         }

@@ -1,0 +1,103 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <ion-grid class="container ion-no-padding" *ngIf="dpos2Service._nodes.length; else loadingList">
+
+        <div  *ngIf="!showNode" class="message-container">
+            <p *ngIf="dpos2Service.myStakeExpired30" class="message">
+                {{ 'dposvoting.node-exprie-message' | translate : {time: dpos2Service.myStakeExpired30} }}
+            </p>
+            <p *ngIf="dpos2Service.stakeExpired30" class="message">
+                {{ 'dposvoting.vote-exprie-message' | translate : {time: dpos2Service.stakeExpired30} }}
+            </p>
+        </div>
+
+        <app-node-slider-list *ngIf="showNode" [nodeIndex]="nodeIndex" [node]="node"
+            [totalVotes]="dpos2Service.totalVotes" [_nodes]="dpos2Service.dposList">
+        </app-node-slider-list>
+
+        <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
+            <ion-item *ngFor="let node of dpos2Service.dposList">
+                <ion-grid class="ion-no-padding">
+                    <ion-row class="ion-no-padding">
+                        <ion-col size="1" class="rank-container ion-no-padding"
+                            (click)="_showNode(dpos2Service.dposList.indexOf(node), node)">
+                            {{ dpos2Service.dposList.indexOf(node) + 1 }}
+                        </ion-col>
+                        <ion-col size="2" class="img-container"
+                            (click)="_showNode(dpos2Service.dposList.indexOf(node), node)">
+                            <img [src]="node.imageUrl ? node.imageUrl : '../assets/shared/essentials-black-circle.svg'"
+                                src-fallback="assets/shared/essentials-black-circle.svg">
+                        </ion-col>
+                        <ion-col size="7.5" (click)="_showNode(dpos2Service.dposList.indexOf(node), node)"
+                            class="label-col">
+                            <h4>{{ node.nickname }}</h4>
+                            <p>
+                                <span [class.inactive]="node.state !== 'Active'">
+                                    <ion-icon name="navigate"></ion-icon> {{ node.Location }}
+                                </span>
+                                &#8226; {{ getVotePercent(node.votes) }}% of Votes
+                            </p>
+                            <p  *ngIf="node.stakeuntilDate">
+                                {{ 'dposvoting.stake-until' | translate }} {{ node.stakeuntilDate }}
+                            </p>
+                            <p  *ngIf="node.stakeuntilExpired" class="expired-in">
+                                {{ 'dposvoting.expired-in' | translate : { time: node.stakeuntilExpired } }}
+                            </p>
+                        </ion-col>
+                        <ion-col size="1.5" class="checkbox-container" *ngIf="voteService.canVote()">
+                            <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"
+                                (click)="clickCheckBox(node)"
+                                [disabled]="node.state === 'Inactive'">
+                            </ion-checkbox>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </ion-item>
+        </ion-list>
+    </ion-grid>
+
+    <ng-template #loadingList>
+        <ion-grid class="container ion-no-padding">
+            <ion-list class="node-list" [class.darkContainer]="theme.darkMode" [class.loading-list]="!theme.darkMode">
+                <ion-item lines="none" *ngFor='let empty of dpos2Service.emptyList'>
+                    <ion-grid class="ion-no-padding">
+                        <ion-row class="ion-no-padding">
+                            <ion-col size="1" class="rank-container ion-no-padding">
+                                <ion-skeleton-text animated style="width: 30%"></ion-skeleton-text>
+                            </ion-col>
+                            <ion-col size="2" class="img-container">
+                                <ion-avatar>
+                                    <ion-skeleton-text animated></ion-skeleton-text>
+                                </ion-avatar>
+                            </ion-col>
+                            <ion-col size="7.5">
+                                <ion-label>
+                                    <h4>
+                                        <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+                                    </h4>
+                                    <p>
+                                        <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                                    <p>
+                                </ion-label>
+                            </ion-col>
+                            <ion-col size="1.5" class="checkbox-container">
+                                <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
+            </ion-list>
+        </ion-grid>
+    </ng-template>
+</ion-content>
+
+<div *ngIf="dpos2Service.dposList.length > 0 && voteService.canVote() && !voting"
+    class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
+    <div>
+        <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>
+        <h1 *ngIf="!voted">{{ 'dposvoting.vote-not-voted' | translate }}</h1>
+        <p><span>{{ selectedNodes }}</span> {{ 'dposvoting.vote-selected' | translate }}</p>
+    </div>
+    <ion-ripple-effect></ion-ripple-effect>
+</div>

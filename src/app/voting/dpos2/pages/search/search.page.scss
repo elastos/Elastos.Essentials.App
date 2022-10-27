@@ -1,0 +1,27 @@
+@import "../../root.scss";
+
+ion-searchbar {
+  .searchbar-input-container {
+    .searchbar-input {
+      border-radius: 30px !important;
+    }
+  }
+}
+
+.header {
+  .search-container {
+    width: 85%;
+
+    ion-input {
+      height: 45px;
+      background: var(--essentials-box-color);
+      font-size: 15px;
+      border-radius: 50px !important;
+    }
+  }
+}
+
+.container {
+  min-height: 100%;
+  padding-top: 15%;
+}

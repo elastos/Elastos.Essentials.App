@@ -34,6 +34,7 @@ export const fr = {
         'max': 'MAX',
         'leave': 'Leave',
         'activate': 'Activer',
+        'update': 'Update',
 
         // Navigation
         'settings': 'Paramètres',

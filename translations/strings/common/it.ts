@@ -34,6 +34,7 @@ export const it = {
         'max': 'MAX',
         'leave': 'Leave',
         'activate': 'Activate',
+        'update': 'Update',
 
         // Navigation
         'settings': 'Impostazioni',
