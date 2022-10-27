@@ -1,5 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { ModalController, PopoverController } from '@ionic/angular';
+import moment from 'moment';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
@@ -136,6 +137,10 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
 
   public getTitle(itemIndexInPage: number): string {
     return this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].news.title || "";
+  }
+
+  public getDate(itemIndexInPage: number): string {
+    return moment.unix(this.news[this.activePageIndex * this.pageIndexes.length + itemIndexInPage].news.timevalue).startOf('minutes').fromNow() || "";
   }
 
   public getMessage(itemIndexInPage: number): string {

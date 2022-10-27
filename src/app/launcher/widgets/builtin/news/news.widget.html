@@ -1,5 +1,4 @@
-<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode"
-  *ngIf="news.length > 0 || forSelection || editing" (click)="onBackgroundClicked()">
+<ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode" (click)="onBackgroundClicked()">
   <ion-row class="header-row">
     <ion-col size="6" class="title-col">
       {{ 'launcher.news-title' | translate }}
@@ -22,6 +21,7 @@
           <div class="header">
             <img class="icon" [cache]="getIcon(i)" />
             <div class="sender">{{ getSender(i) }}</div>
+            <div class="date">{{ getDate(i) }}</div>
           </div>
           <div class="title">{{ getTitle(i) }}</div>
           <div class="secondary-text message">{{ getMessage(i) }}</div>

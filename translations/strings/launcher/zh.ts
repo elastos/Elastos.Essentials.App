@@ -115,7 +115,7 @@ export const zh = {
         'all-news': '所有消息',
         'news-receive-updates-from': '接收的更新来自：',
         'n-news-sources-selected': '{{ selected }} 已选择',
-        'no-news': '没有可显示的消息。从您最喜欢的 dApp 中添加更多新闻小组件',
+        'no-news': 'No news for now. Add more news widgets from your favorite dApps or use the Feeds mobile app to subscribe to people and projects you like.',
         'change-background-color': '更改背景颜色',
         'selected-theme': '选定：',
         'restore-all-widgets': '将所有小组件恢复为默认值',

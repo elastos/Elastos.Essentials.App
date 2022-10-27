@@ -9,15 +9,16 @@
                         <img [cache]="getIcon(new)" />
                         <h2>{{ getSender(new) }}</h2>
                     </ion-col>
-                    <ion-col class="date-col" size="4.5" (click)="close(notification)">
+                    <ion-col class="date-col" size="4.5">
                         <p>{{ getNotificationDate(new) }}
                         </p>
                     </ion-col>
-                    <ion-col size="12" class="title-col" (click)="start(notification)">
+                    <ion-col size="12" class="title-col">
                         <p>{{ getTitle(new) }}</p>
                     </ion-col>
-                    <ion-col size="12" class="message-col" (click)="start(notification)">
+                    <ion-col size="12" class="message-col">
                         <p>{{ getMessage(new) }}</p>
+                        <img class="media" *ngIf="getMediaPicture(new)" [src]="getMediaPicture(new)" />
                     </ion-col>
                 </ion-row>
                 <ion-ripple-effect></ion-ripple-effect>

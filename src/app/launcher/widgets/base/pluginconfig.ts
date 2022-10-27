@@ -29,6 +29,7 @@ export type NewsContentItem = {
   info: string;
   timevalue: number; // unix timestamp (secs) used to order news by date
   action: string; // url opened when clicking the news
+  picture?: string; // Base64 illustration, if any
 }
 
 export type NewsContent = {

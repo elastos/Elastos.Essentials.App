@@ -15,6 +15,7 @@ export type DisplayableNews = {
   sender: string;
   //config: PluginConfig<NewsContent>; // Whole json plugin parent.
   news: NewsContentItem;
+  type: "plugin" | "feeds";
 }
 
 export class NewsHelper {
@@ -33,7 +34,8 @@ export class NewsHelper {
           //source,
           logo: content.logo,
           sender: content.projectname ?? "",
-          news
+          news,
+          type: "plugin"
         };
         allNews.push(displayableNews);
       }
@@ -53,8 +55,10 @@ export class NewsHelper {
             title: null, // No posts titles in feeds
             info: post.message,
             timevalue: post.timestamp,
-            action: "TODO"
-          }
+            action: NewsHelper.getFeedsPostDeepLink(channel.ownerDID, channel.id, post.id),
+            picture: post.mediaPicture
+          },
+          type: "feeds"
         };
 
         allNews.push(displayableNews);
@@ -67,10 +71,10 @@ export class NewsHelper {
     return allNews;
   }
 
-  public static getFeedsPostDeepLink(baseUrl: string, channelOwnerUserDid: string, channelId: string, postId: string): string {
+  public static getFeedsPostDeepLink(channelOwnerUserDid: string, channelId: string, postId: string): string {
     return FEEDS_DEEPLINK_POST_BASEURL
-      + "/?targetDid=" + channelOwnerUserDid
-      + "&channelId=" + channelId
-      + "&postId=" + postId;
+      + "/?targetDid=" + encodeURIComponent(channelOwnerUserDid)
+      + "&channelId=" + encodeURIComponent(channelId)
+      + "&postId=" + encodeURIComponent(postId);
   }
 }

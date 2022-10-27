@@ -17,6 +17,7 @@ import type { ec } from "elliptic";
 import type PhishingDetector from "eth-phishing-detect";
 import type { providers, utils, Wallet, wordlists } from "ethers";
 import type { defaultPath, HDNode } from "ethers/lib/utils";
+import type { Channel, Logger as FeedsLogger, MediaType, MyProfile, Post, RuntimeContext } from 'feeds-experiment';
 import type { Pair, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import type Web3 from "web3";
 import type { sha3 } from "web3-utils";
@@ -57,17 +58,17 @@ export const lazyEthersImport = async (): Promise<{
 }
 
 export const lazyEthersLibUtilImport = async (): Promise<{
-    HDNode: typeof HDNode,
-    defaultPath: typeof defaultPath,
-  }> => {
-    if (!importsCache["ethers/lib/utils"])
-      importsCache["ethers/lib/utils"] = await import("ethers/lib/utils");
+  HDNode: typeof HDNode,
+  defaultPath: typeof defaultPath,
+}> => {
+  if (!importsCache["ethers/lib/utils"])
+    importsCache["ethers/lib/utils"] = await import("ethers/lib/utils");
 
-    return {
-      HDNode: importsCache["ethers/lib/utils"].HDNode,
-      defaultPath: importsCache["ethers/lib/utils"].defaultPath,
-    }
+  return {
+    HDNode: importsCache["ethers/lib/utils"].HDNode,
+    defaultPath: importsCache["ethers/lib/utils"].defaultPath,
   }
+}
 
 export const lazyEthersContractImport = async (): Promise<typeof Contract> => {
   if (!importsCache["@ethersproject/contracts"])
@@ -194,5 +195,26 @@ export const lazyElastosWalletSDKImport = async (): Promise<{
     MasterWallet: importsCache["@elastosfoundation/wallet-js-sdk"].MasterWallet,
     Mnemonic: importsCache["@elastosfoundation/wallet-js-sdk"].Mnemonic,
     Address: importsCache["@elastosfoundation/wallet-js-sdk"].Address
+  };
+}
+
+export const lazyFeedsSDKImport = async (): Promise<{
+  Channel: typeof Channel,
+  Logger: typeof FeedsLogger,
+  MediaType: typeof MediaType
+  MyProfile: typeof MyProfile
+  Post: typeof Post
+  RuntimeContext: typeof RuntimeContext
+}> => {
+  if (!importsCache["feeds-experiment"])
+    importsCache["feeds-experiment"] = await import("feeds-experiment");
+
+  return {
+    Channel: importsCache["feeds-experiment"].Channel,
+    Logger: importsCache["feeds-experiment"].Logger,
+    MediaType: importsCache["feeds-experiment"].MediaType,
+    MyProfile: importsCache["feeds-experiment"].MyProfile,
+    Post: importsCache["feeds-experiment"].Post,
+    RuntimeContext: importsCache["feeds-experiment"].RuntimeContext,
   };
 }

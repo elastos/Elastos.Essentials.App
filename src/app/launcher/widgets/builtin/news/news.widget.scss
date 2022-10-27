@@ -85,6 +85,14 @@
           white-space: nowrap;
           font-weight: 600;
         }
+
+        .date {
+          margin: 0 10px;
+          font-size: 10px;
+          font-weight: 500;
+          flex: 1;
+          text-align: right;
+        }
       }
 
       .title {

@@ -131,12 +131,8 @@ export class WidgetContainerComponent implements OnInit {
    * Checks if all widgets are ready to display and if so, all widgets can be displayed at once
    */
   private checkAllWidgetsReady() {
-    console.log("All widgets ready");
-
     let nbWidgetsReadyToDisplay = Object.values(this.widgetsReadyToDisplay).filter(ready => ready).length;
     this.allWidgetsReadyToDisplay = this.holdersInstances.length === nbWidgetsReadyToDisplay;
-
-    console.log("widgets", nbWidgetsReadyToDisplay, "/", this.holdersInstances.length);
   }
 
   /**

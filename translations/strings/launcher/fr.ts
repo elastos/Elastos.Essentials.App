@@ -115,7 +115,7 @@ export const fr = {
         'all-news': 'Toutes les actus',
         'news-receive-updates-from': 'Recevoir actus de:',
         'n-news-sources-selected': '{{ selected }} sélectionnés',
-        'no-news': 'Aucune actualité à afficher. Ajoutez plus de widgets d\'actualités depuis vos dApps préférées.',
+        'no-news': 'No news for now. Add more news widgets from your favorite dApps or use the Feeds mobile app to subscribe to people and projects you like.',
         'change-background-color': 'Changement de couleur',
         'selected-theme': 'Sélectionné:',
         'restore-all-widgets': 'Restaurer tous les widgets aux valeurs par défaut',

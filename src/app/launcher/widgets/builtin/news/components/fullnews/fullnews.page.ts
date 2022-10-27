@@ -8,6 +8,8 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, Ti
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { FeedsChannel, WidgetsFeedsNewsService } from 'src/app/launcher/widgets/services/feedsnews.service';
 import { NewsSource, WidgetsNewsService } from 'src/app/launcher/widgets/services/news.service';
+import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DisplayableNews, NewsHelper } from '../../helper';
@@ -39,21 +41,22 @@ export class FullNewsPage implements OnInit {
     public translate: TranslateService,
     private widgetsNewsService: WidgetsNewsService,
     private widgetsFeedsNewsService: WidgetsFeedsNewsService,
-    private dappBrowserService: DappBrowserService
+    private dappBrowserService: DappBrowserService,
+    private globalIntentService: GlobalIntentService
   ) {
   }
 
   ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.widgetsNewsService.sources.subscribe(async newsSources => {
+    this.widgetsNewsService.sources.subscribe(newsSources => {
       this.newsSources = newsSources;
-      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+      void NewsHelper.prepareNews(this.newsSources, this.feedsChannels).then(news => this.news = news);
     });
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.widgetsFeedsNewsService.channels.subscribe(async channels => {
+    this.widgetsFeedsNewsService.channels.subscribe(channels => {
       this.feedsChannels = channels;
-      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+      void NewsHelper.prepareNews(this.newsSources, this.feedsChannels).then(news => this.news = news);
     });
   }
 
@@ -107,8 +110,19 @@ export class FullNewsPage implements OnInit {
     return moment.unix(news.news.timevalue).startOf('minutes').fromNow();
   }
 
-  public openNews(news: DisplayableNews) {
+  public getMediaPicture(news: DisplayableNews) {
+    return news.news.picture;
+  }
+
+  public openNews(dNews: DisplayableNews) {
     void this.closePage();
-    void this.dappBrowserService.openForBrowseMode(news.news.action);
+
+    if (dNews.type === "plugin") {
+      void this.dappBrowserService.openForBrowseMode(dNews.news.action);
+    }
+    else if (dNews.type === "feeds") {
+      Logger.log("news", "Opening feeds deep link with url:", dNews.news.action)
+      void this.globalIntentService.sendIntent('openurl', { url: dNews.news.action });
+    }
   }
 }

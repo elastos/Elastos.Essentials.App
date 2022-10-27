@@ -65,6 +65,14 @@ ion-grid {
                     text-align: left;
                     margin: 0;
                 }
+
+                .media {
+                    opacity: 0.4;
+                    position: absolute;
+                    right: 0;
+                    top: -50px;
+                    transform: rotate(5deg);
+                }
             }
 
             .title-col {
