@@ -3,7 +3,7 @@ import {
   style, transition, trigger
 } from '@angular/animations';
 import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
-import { Component, ComponentRef, Input, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
+import { Component, ComponentRef, Input, NgZone, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import type { WidgetInstance } from 'src/app/launcher/widgets/services/widgets.service';
@@ -58,6 +58,7 @@ export class WidgetContainerComponent implements OnInit {
   public allWidgetsReadyToDisplay = false;
 
   constructor(
+    private zone: NgZone,
     public theme: GlobalThemeService,
     private widgetsService: WidgetsService,
     private widgetsPluginsService: WidgetPluginsService,
@@ -108,8 +109,12 @@ export class WidgetContainerComponent implements OnInit {
 
       for (let holder of this.holdersInstances) {
         holder.instance.widgetComponent.onReadyToDisplay.subscribe(ready => {
-          this.widgetsReadyToDisplay[holder.instance.widgetComponent.widgetState.id] = ready; // Widget not ready yet
-          this.checkAllWidgetsReady();
+          this.zone.run(() => {
+            this.widgetsReadyToDisplay[holder.instance.widgetComponent.widgetState.id] = ready; // Widget not ready yet
+
+            // NOTE: settimeout to solve the "Expression has changed after it was checked" error
+            setTimeout(() => { this.checkAllWidgetsReady(); }, 0);
+          });
         });
       }
 

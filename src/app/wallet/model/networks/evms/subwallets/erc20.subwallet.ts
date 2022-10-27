@@ -286,9 +286,9 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     private async getERC20TransactionDirection(targetAddress: string): Promise<TransactionDirection> {
         const address = this.getTokenAccountAddress();
         if (address === targetAddress.toLowerCase()) {
-            return TransactionDirection.RECEIVED;
+            return await TransactionDirection.RECEIVED;
         } else {
-            return TransactionDirection.SENT;
+            return await TransactionDirection.SENT;
         }
     }
 
@@ -583,7 +583,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return gasPrice;
     }
 
-    private async getNonce() {
+    private getNonce() {
         const address = this.getTokenAccountAddress();
         try {
             return GlobalEthereumRPCService.instance.getETHSCNonce(this.rpcApiUrl, address, this.networkWallet.network.key);
