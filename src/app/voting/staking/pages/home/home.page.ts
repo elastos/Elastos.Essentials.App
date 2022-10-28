@@ -111,22 +111,24 @@ export class StakingHomePage implements OnInit {
 
     addVoteItems() {
         this.voteItems = [];
-        this.voteItems.push({
-            title: "DPoS 2.0",
-            type: VoteType.DPoSV2,
-            votes: this.stakeService.votesRight.votes[VoteType.DPoSV2],
-            ratio: Math.floor((this.stakeService.votesRight.votes[VoteType.DPoSV2] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
-            stakeuntilDate: this.stakeService.votesRight.dpos2LockTimeDate,
-            stakeuntilExpired: this.stakeService.votesRight.dpos2LockTimeExpired,
-        });
-        for (let i = 0; i < 4; i++) {
-            var item = {
-                title: this.translate.instant(this.stakeService.votesRight.voteInfos[i].title),
-                type: i,
-                votes: this.stakeService.votesRight.votes[i],
-                ratio: Math.floor((this.stakeService.votesRight.votes[i] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
-            } as any;
-            this.voteItems.push(item);
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            this.voteItems.push({
+                title: "DPoS 2.0",
+                type: VoteType.DPoSV2,
+                votes: this.stakeService.votesRight.votes[VoteType.DPoSV2],
+                ratio: Math.floor((this.stakeService.votesRight.votes[VoteType.DPoSV2] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
+                stakeuntilDate: this.stakeService.votesRight.dpos2LockTimeDate,
+                stakeuntilExpired: this.stakeService.votesRight.dpos2LockTimeExpired,
+            });
+            for (let i = 0; i < 4; i++) {
+                var item = {
+                    title: this.translate.instant(this.stakeService.votesRight.voteInfos[i].title),
+                    type: i,
+                    votes: this.stakeService.votesRight.votes[i],
+                    ratio: Math.floor((this.stakeService.votesRight.votes[i] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
+                } as any;
+                this.voteItems.push(item);
+            }
         }
     }
 
@@ -201,5 +203,4 @@ export class StakingHomePage implements OnInit {
     goTo(url: string) {
         void this.globalNav.navigateTo(App.STAKING, url);
     }
-
 }

@@ -39,7 +39,7 @@
                         {{ stakeService.votesRight.maxStakedRatio }}%
                     </ion-col>
 
-                    <ion-col size="0.5" class="right-col" (click)="detail = !detail">
+                    <ion-col size="0.5" class="right-col" (click)="detail = !detail" *ngIf="stakeService.votesRight.totalVotesRight > 0">
                         <img *ngIf="detail"
                             [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
                         <img *ngIf="!detail"

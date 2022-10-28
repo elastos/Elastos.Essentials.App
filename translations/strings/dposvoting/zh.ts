@@ -108,6 +108,7 @@ export const zh = {
         'stake-until': '质押至',
         'expired-in': '将在{{ time }}后过期',
         'my-votes': '我的投票',
+        'votes': '票数',
         'node-exprie-message': '节点将在{{ time }}后过期。请点击更新节点。',
         'vote-exprie-message': '你的DPoS 2.0投票将于{{ time }}后过期。请点击更新投票。',
 
