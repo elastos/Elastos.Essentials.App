@@ -29,7 +29,11 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
+import { UIToken } from 'src/app/multiswap/model/uitoken';
+import { MultiSwapHomePageParams } from 'src/app/multiswap/pages/home/home';
+import { ChaingeSwapService } from 'src/app/multiswap/services/chaingeswap.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -125,7 +129,8 @@ export class CoinHomePage implements OnInit {
         private storage: LocalStorage,
         private globalStorage: GlobalStorageService,
         private globalNav: GlobalNavService,
-        private didSessions: GlobalDIDSessionsService
+        private didSessions: GlobalDIDSessionsService,
+        private chaingeSwapService: ChaingeSwapService
     ) {
         void this.init();
     }
@@ -549,13 +554,30 @@ export class CoinHomePage implements OnInit {
         //event.preventDefault();
         //event.stopPropagation();
 
-        this.native.go("/wallet/coin-swap", {
+        /* this.native.go("/wallet/coin-swap", {
             masterWalletId: subWallet.networkWallet.masterWallet.id,
             subWalletId: subWallet.id
+        }); */
+
+        let targetToken: UIToken = {
+            token: this.subWallet.getCoin(),
+            amount: this.subWallet.getBalance()
+        }
+
+        // If there is a balancem use this token as source token for the swap (UI convenience).
+        // If balance is 0, use it as destination (assume user wants to receive that token because he has none).
+        let selectTokenAsSource = targetToken.amount.gt(0);
+        let params: MultiSwapHomePageParams = {
+            sourceToken: selectTokenAsSource ? targetToken : undefined,
+            destinationToken: !selectTokenAsSource ? targetToken : undefined,
+        };
+
+        void this.globalNav.navigateTo(App.MULTI_SWAP, "/multiswap/home", {
+            state: params
         });
     }
 
-    public bridge(subWallet: AnySubWallet) {
+    /* public bridge(subWallet: AnySubWallet) {
         // Prevent from subwallet main div to get the click (do not open transactions list)
         //event.preventDefault();
         //event.stopPropagation();
@@ -564,7 +586,7 @@ export class CoinHomePage implements OnInit {
             masterWalletId: subWallet.networkWallet.masterWallet.id,
             subWalletId: subWallet.id
         });
-    }
+    } */
 
     /**
      * Returns the ion-col size for the transfer/send/receive row, based on the available features.
@@ -576,11 +598,16 @@ export class CoinHomePage implements OnInit {
             return 6; // 2 columns - 2x6 = 12
     }
 
+    public swapsColumnSize(): number {
+        // Can earn ? show 2 buttons, 6 each. Otherzise, only swap, 12 size.
+        return this.canEarn() ? 6 : 12;
+    }
+
     /**
      * Tells if this subwallet can do one of earn, swap or bridge operations
      */
     public canEarnSwapOrBridge(): boolean {
-        return this.canEarn() || this.canSwap() || this.canBridge();
+        return this.canEarn() || this.canSwap() /* || this.canBridge() */;
     }
 
     public canEarn(): boolean {
@@ -588,12 +615,14 @@ export class CoinHomePage implements OnInit {
     }
 
     public canSwap(): boolean {
-        return this.subWallet.getAvailableSwapProviders().length > 0;
+        return this.chaingeSwapService.isNetworkSupported(this.networkWallet.network);
     }
 
-    public canBridge(): boolean {
-        return this.subWallet.getAvailableBridgeProviders().length > 0;
-    }
+    // Deprecated
+    /* public canBridge(): boolean {
+        return false;
+        //return this.subWallet.getAvailableBridgeProviders().length > 0;
+    } */
 
     /**
      * Toggles and saves whether we should show more or less actions for the user in the footer.

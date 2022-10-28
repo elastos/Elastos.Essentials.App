@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { ModalController } from "@ionic/angular";
 import { Logger } from "src/app/logger";
 import { Coin } from "src/app/wallet/model/coin";
-import { AnyNetwork } from "src/app/wallet/model/networks/network";
 import { TokenChooserComponent, TokenChooserComponentOptions, TokenChooserComponentResult } from "../components/token-chooser/token-chooser.component";
 import { UIToken } from "../model/uitoken";
 import { ChaingeSwapService } from "./chaingeswap.service";
@@ -29,7 +28,7 @@ export class SwapUIService {
     let options: TokenChooserComponentOptions = {
       mode: forSource ? "source" : "destination",
       sourceToken,
-      filter: n => this.isNetworkSupported(n)
+      filter: n => this.chaingeSwapService.isNetworkSupported(n)
     };
 
     let modal = await this.modalCtrl.create({
@@ -53,10 +52,5 @@ export class SwapUIService {
       void modal.present();
 
     });
-  }
-
-  private isNetworkSupported(network: AnyNetwork): boolean {
-    let networks = this.chaingeSwapService.getSupportedNetworks();
-    return !!networks.find(n => n.equals(network));
   }
 }

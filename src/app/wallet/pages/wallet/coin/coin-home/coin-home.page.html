@@ -147,21 +147,21 @@
             </ion-col>
         </ion-row>
         <ion-row class="card-btn-row" *ngIf="shouldShowAllActions && canEarnSwapOrBridge()">
-            <ion-col size="4" *ngIf="canEarn()">
-                <ebutton class="btn-box" [uppercase]="true" (clicked)="earn(subWallet)"
-                    topicon="assets/wallet/buttons/curcol-earn.svg" [title]="'wallet.earn' | translate">
-                </ebutton>
-            </ion-col>
-            <ion-col size="4" *ngIf="canSwap()">
+            <ion-col [size]="swapsColumnSize()" *ngIf="canSwap()">
                 <ebutton class="btn-box" [uppercase]="true" (clicked)="swap(subWallet)"
                     topicon="assets/wallet/buttons/curcol-swap.svg" [title]="'wallet.swap' | translate">
                 </ebutton>
             </ion-col>
-            <ion-col size="4" *ngIf="canBridge()">
+            <ion-col [size]="swapsColumnSize()" *ngIf="canEarn()">
+                <ebutton class="btn-box" [uppercase]="true" (clicked)="earn(subWallet)"
+                    topicon="assets/wallet/buttons/curcol-earn.svg" [title]="'wallet.earn' | translate">
+                </ebutton>
+            </ion-col>
+            <!-- <ion-col size="4" *ngIf="canBridge()">
                 <ebutton class="btn-box" [uppercase]="true" (clicked)="bridge(subWallet)"
                     topicon="assets/wallet/buttons/curcol-bridge.svg" [title]="'wallet.bridge' | translate">
                 </ebutton>
-            </ion-col>
+            </ion-col> -->
         </ion-row>
     </div>
 </ion-content>

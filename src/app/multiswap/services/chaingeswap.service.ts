@@ -59,6 +59,11 @@ export class ChaingeSwapService {
     return networks;
   }
 
+  public isNetworkSupported(network: AnyNetwork): boolean {
+    let networks = this.getSupportedNetworks();
+    return !!networks.find(n => n.equals(network));
+  }
+
   /**
    * Converts essentials network names to chainge ones.
    * EG: "elastossmartchain" -> 'ELA'

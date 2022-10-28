@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonInput, ModalController, NavController } from '@ionic/angular';
+import { IonInput, NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { filter, Subscription, take } from 'rxjs';
@@ -20,13 +20,10 @@ import { Coin, ERC20Coin } from 'src/app/wallet/model/coin';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
-import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
-import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Transfer, TransferStep } from '../../model/transfer';
 import { UIToken } from '../../model/uitoken';
-import { ChaingeSwapService } from '../../services/chaingeswap.service';
 import { SwapUIService } from '../../services/swap.ui.service';
 import { TokenChooserService } from '../../services/tokenchooser.service';
 
@@ -82,16 +79,12 @@ export class HomePage {
     public theme: GlobalThemeService,
     private walletService: WalletService,
     private networkService: WalletNetworkService,
-    private chaingeService: ChaingeSwapService,
     private firebase: GlobalFirebaseService,
     private popupService: GlobalPopupService,
     public globalNativeService: GlobalNativeService,
-    private erc20CoinService: ERC20CoinService,
     private dAppBrowserService: DappBrowserService,
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
-    private evmService: EVMService,
-    private modalCtrl: ModalController,
-    private route: ActivatedRoute,
+    route: ActivatedRoute,
     private router: Router,
     private zone: NgZone,
     private tokenChooserService: TokenChooserService,
