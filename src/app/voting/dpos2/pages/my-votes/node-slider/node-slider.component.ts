@@ -4,10 +4,12 @@ import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { DPoS2Node } from '../../../model/nodes.model';
 import { DPoS2Service } from '../../../services/dpos2.service';
 
@@ -91,13 +93,14 @@ export class NodeSliderComponent implements OnInit {
         try {
             let currentHeight = await this.voteService.getCurrentHeight();
             let stakeUntil = currentHeight + node.inputStakeDays * 720;
+            let votes = Util.accMul(parseInt(node.votes), Config.SELA).toString();
 
             let voteContentInfo: RenewalVotesContentInfo = {
                 ReferKey: node.referkey,
                 VoteInfo:
                     {
                         Candidate: node.candidate,
-                        Votes: node.votes,
+                        Votes: votes,
                         Locktime: stakeUntil
                     }
             };
@@ -107,12 +110,14 @@ export class NodeSliderComponent implements OnInit {
                 RenewalVotesContent: [voteContentInfo]
             };
 
+            Logger.log(App.DPOS_VOTING, "Updata vote's payload:", payload);
 
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo
             );
 
+            await this.globalNative.hideLoading();
             Logger.log(App.DPOS_VOTING, "rawTx:", rawTx);
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING, "/dpos2/menu/my-votes");
@@ -123,10 +128,10 @@ export class NodeSliderComponent implements OnInit {
 
         }
         catch (e) {
-
+            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-        await this.globalNative.hideLoading();
+
     }
 
 }

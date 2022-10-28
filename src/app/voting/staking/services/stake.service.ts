@@ -8,7 +8,6 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { UXService } from '../../services/ux.service';
 
 export enum VoteType {
@@ -73,15 +72,9 @@ export class StakeService {
     }
 
     async initData() {
-        this.firstAddress = await this.getFirstAddress();
+        this.firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
         this.votesRight = await this.getVoteRights();
         this.rewardInfo = await this.getRewardInfo();
-    }
-
-    async getFirstAddress(): Promise<string> {
-        let addresses = await this.voteService.activeWallet.safe.getAddresses(0, 1, false, AddressUsage.DEFAULT);
-        Logger.log(App.STAKING, 'getAddresses', addresses);
-        return (addresses && addresses[0]) ? addresses[0] : null;
     }
 
     public async getBalanceByAddress(address: string, spendable = false): Promise<number> {
