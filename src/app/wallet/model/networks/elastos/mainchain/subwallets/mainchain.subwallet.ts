@@ -1654,7 +1654,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
+        var address: any;
+        if (payload.Version == 1) {
+            address = this.getCurrentReceiverAddress();
+        }
+
+        let au = await this.getAvailableUtxo(20000, address);
         if (!au.utxo) return;
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(au.utxo, payload, '10000', memo);
