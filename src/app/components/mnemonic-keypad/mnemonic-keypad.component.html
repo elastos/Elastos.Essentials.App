@@ -1,5 +1,5 @@
 <ion-content [class.dark-container]="theme.darkMode">
-  <ion-grid class="ion-text-center">
+  <ion-grid class="container ion-text-center">
     <div class="suggestions">
       <div *ngFor="let word of suggestedWords" class="word" (click)="onWordSelected(word)">
         {{word}}
@@ -7,11 +7,12 @@
     </div>
     <div class="ongoing">
       {{onGoingInput}}
-      <img class="clear" *ngIf="onGoingInput" src="assets/settings/icon/delete.svg" (click)="clearCurrentInput()" />
+      <div class="clear" *ngIf="onGoingInput" inlineSVG="assets/shared/curcol-icons/delete.svg"
+        (click)="clearCurrentInput()"></div>
 
       <!-- Ability to delete previous words -->
       <div class="previous" *ngIf="!onGoingInput && selectedWords.length > 0" (click)="deletePreviousWord()">
-        <img class="clear" src="assets/settings/icon/delete.svg" />
+        <div class="clear" inlineSVG="assets/shared/curcol-icons/delete.svg"></div>
         <div class="delete">{{ 'common.delete' | translate }} <b>{{ selectedWords[selectedWords.length-1] }}</b></div>
       </div>
     </div>

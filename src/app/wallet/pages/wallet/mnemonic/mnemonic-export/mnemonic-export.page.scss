@@ -5,21 +5,13 @@
     padding: 30px 35px;
 
     ion-input {
-        background: #ffffff;
-        box-shadow: 0 3px 15px 0 #ededf0;
+        background: var(--essentials-box-color);
         font-size: 15px;
         --padding-start: 12px;
     }
 
     .btn-container {
         margin-top: 25px;
-    }
-}
-
-.verify-dark-container {
-    ion-input {
-        background: #2b2c49;
-        box-shadow: 0 3px 15px 0 #151626;
     }
 }
 
@@ -30,7 +22,6 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background-image: url("/assets/wallet/background/background.svg");
     position: relative;
     object-fit: cover;
 
@@ -42,7 +33,6 @@
         line-height: 1.26;
         letter-spacing: -0.46px;
         text-align: center;
-        color: #fdfeff;
     }
 
     .btn-container {
@@ -55,11 +45,9 @@
         margin-top: 0px;
         margin-bottom: 15px;
         padding: 16px;
-        background: rgba(0, 0, 0, 0.4);
-        box-shadow: 0 3px 15px 0 rgb(0 0 0 / 30%);
+        background: var(--essentials-box-color);
         font-size: 12px;
         border-radius: 15px;
-        color: white;
     }
 }
 

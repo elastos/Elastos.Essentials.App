@@ -1,5 +1,5 @@
-ion-content {
-    --ion-background-color: #f0f0f0;
+.container {
+    background: var(--essentials-box-color);
 }
 
 .suggestions {
@@ -15,18 +15,16 @@ ion-content {
     align-content: flex-start;
 
     .word {
-        background: linear-gradient(to bottom, #732dcf, #640fd4);
         margin: 5px;
         min-width: 30px;
         border-radius: 3px;
         padding: 5px;
         font-size: 14px;
         transition: 0.4s all ease;
-        color: white;
     }
 
     .word:active {
-        background: linear-gradient(to bottom, #934def, #842ff4);
+        opacity: 0.5;
     }
 }
 
@@ -40,6 +38,8 @@ ion-content {
 
     .clear {
         margin-left: 5px;
+        margin-right: 5px;
+        height: 12px;
     }
 }
 
@@ -63,7 +63,7 @@ ion-content {
         justify-content: center;
 
         .letter {
-            background: rgba(255, 255, 255, 0.7);
+            background: var(--ion-background-color);
             padding: 5px;
             width: 10vw;
             height: 10vw;
@@ -75,7 +75,7 @@ ion-content {
         }
 
         .letter:active {
-            background: rgba(0, 0, 0, 0.2);
+            opacity: 0.5;
         }
     }
 }
@@ -100,7 +100,7 @@ ion-content {
         }
 
         .selected {
-            background: rgba(255, 255, 255, 0.7);
+            background: var(--ion-background-color);
         }
     }
 
@@ -112,40 +112,6 @@ ion-content {
             width: 30px;
             height: 20px;
             margin-left: 10px;
-        }
-    }
-}
-
-ion-content.dark-container {
-    --ion-background-color: #222;
-
-    .ongoing {
-        color: #ccc;
-    }
-
-    .suggestions {
-        .word {
-            color: inherit;
-        }
-    }
-
-    .keypad {
-        .letter-line {
-            .letter {
-                background: rgba(255, 255, 255, 0.3);
-            }
-
-            .letter:active {
-                background: rgba(255, 255, 255, 0.7);
-            }
-        }
-    }
-
-    .last-row {
-        .languages  {
-            .selected {
-                background: rgba(255, 255, 255, 0.4);
-            }
         }
     }
 }

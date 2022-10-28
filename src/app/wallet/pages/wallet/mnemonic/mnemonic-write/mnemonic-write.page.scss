@@ -1,9 +1,5 @@
 @import "src/app/wallet/root.scss";
 
-ion-content {
-    --background: url("/assets/wallet/background/background.svg");
-}
-
 .container {
     position: relative;
     padding: 10px 0;
@@ -21,13 +17,12 @@ ion-content {
         line-height: 1.26;
         letter-spacing: -0.46px;
         text-align: center;
-        color: #fdfeff;
     }
 
     ion-slides {
         margin: 0;
         width: 100%;
-        --ion-color-primary: #fffeff;
+        --bullet-background-active: var(--ion-text-color);
 
         ion-slide {
             width: 100%;
@@ -37,7 +32,7 @@ ion-content {
 
             .input-row {
                 width: 95%;
-                background: #803fd5;
+                background: var(--essentials-box-color);
                 padding: 0px 10px;
                 border-radius: 8px;
                 margin-bottom: 15px;
@@ -48,11 +43,6 @@ ion-content {
                     justify-content: center;
                     align-items: center;
 
-                    span,
-                    .virtual-input {
-                        color: #fdfeff;
-                    }
-
                     span {
                         font-weight: 500;
                         font-size: 16px;
@@ -61,7 +51,7 @@ ion-content {
                     }
 
                     .virtual-input {
-                        background: #803fd5;
+                        background: var(--essentials-box-color);
                         font-weight: 400;
                         font-size: 18px;
                         text-align: left;
@@ -79,7 +69,7 @@ ion-content {
             }
 
             .currentInput {
-                background: rgba(255, 255, 255, 0.3);
+                opacity: 0.3;
             }
         }
     }
@@ -97,6 +87,5 @@ ion-content {
         padding: 0;
         font-size: 13px;
         font-weight: 400;
-        color: #fdfeff;
     }
 }

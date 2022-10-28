@@ -325,7 +325,7 @@ ion-footer {
 
     ion-col {
         height: 40px;
-        background: #42117d;
+        background: var(--essentials-box-color);
         border-radius: 8px;
         margin-bottom: 20px;
         display: flex;
@@ -339,13 +339,13 @@ ion-footer {
             left: -11px;
             width: 22px;
             height: 22px;
-            background: #42117d;
+            background: var(--ion-text-color);
             border-radius: 100%;
-            border: 2px solid #6a25c4;
+            color: var(--ion-background-color);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 9px;
+            font-size: 11px;
         }
 
         ion-label {

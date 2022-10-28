@@ -2,7 +2,6 @@ import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -131,8 +130,6 @@ export class MnemonicExportPage implements OnInit {
     }
 
     async showMnemonics() {
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
 
         this.mnemonicStr = await this.masterWallet.getMnemonic(this.payPassword);
@@ -153,8 +150,6 @@ export class MnemonicExportPage implements OnInit {
         }
 
         if (!this.hasMnemonic) {
-            this.titleBar.setBackgroundColor('#732cd0');
-            this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
             this.titleBar.setTitle(this.translate.instant('wallet.privatekey'));
         }
     }
@@ -164,10 +159,6 @@ export class MnemonicExportPage implements OnInit {
             { mnemonic: this.mnemonicStr },
             this.intentTransfer.intentId
         );
-    }
-
-    return() {
-        this.native.pop();
     }
 
     copyPrivateKey() {

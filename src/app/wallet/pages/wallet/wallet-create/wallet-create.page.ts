@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonInput } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { ImportWalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -21,7 +20,7 @@ import { NewWallet, WalletCreationService } from '../../../services/walletcreati
 })
 export class WalletCreatePage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-    @ViewChild('input', {static: false}) input: IonInput;
+    @ViewChild('input', { static: false }) input: IonInput;
 
     public useMenmonicPassphrase = false;
     public importByPrivateKey = false;
@@ -48,24 +47,24 @@ export class WalletCreatePage implements OnInit {
     }
 
     ngOnInit() {
-      const navigation = this.router.getCurrentNavigation();
-      if (!Util.isEmptyObject(navigation.extras.state)) {
-          if (navigation.extras.state.importType == ImportWalletType.PRIVATEKEY) {
-            this.importByPrivateKey = true;
-          }
-      }
+        const navigation = this.router.getCurrentNavigation();
+        if (!Util.isEmptyObject(navigation.extras.state)) {
+            if (navigation.extras.state.importType == ImportWalletType.PRIVATEKEY) {
+                this.importByPrivateKey = true;
+            }
+        }
     }
 
     ionViewWillEnter() {
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+        //this.titleBar.setBackgroundColor('#732cd0');
+        //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         if (this.walletCreationService.type === NewWallet.CREATE) {
             this.titleBar.setTitle(this.translate.instant('wallet.launcher-create-wallet'));
         } else {
             if (this.importByPrivateKey) {
-              this.titleBar.setTitle(this.translate.instant('wallet.import-wallet-by-privatekey'));
+                this.titleBar.setTitle(this.translate.instant('wallet.import-wallet-by-privatekey'));
             } else {
-              this.titleBar.setTitle(this.translate.instant('wallet.import-wallet-by-mnemonic'));
+                this.titleBar.setTitle(this.translate.instant('wallet.import-wallet-by-mnemonic'));
             }
         }
     }

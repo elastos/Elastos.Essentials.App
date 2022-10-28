@@ -4,7 +4,6 @@ import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { IonInput, IonSlides, ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -56,8 +55,6 @@ export class MnemonicWritePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('wallet.mnemonic-check-title'));
     }
 

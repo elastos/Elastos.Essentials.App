@@ -6,7 +6,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { lazyElastosWalletSDKImport } from 'src/app/helpers/import.helper';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
-import { TitleBarForegroundMode } from '../../../../../components/titlebar/titlebar.types';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -52,9 +51,6 @@ export class MnemonicCreatePage implements OnInit {
     }
 
     ionViewWillEnter() {
-        // titleBarManager.setBackgroundColor('#732cd0');
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('common.mnemonic'));
     }
 

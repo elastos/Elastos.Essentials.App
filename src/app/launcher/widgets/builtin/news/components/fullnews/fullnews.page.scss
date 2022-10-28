@@ -64,14 +64,16 @@ ion-grid {
                     letter-spacing: 0.14px;
                     text-align: left;
                     margin: 0;
+                    z-index: 1; // Over the background media picture
                 }
 
                 .media {
                     opacity: 0.4;
                     position: absolute;
-                    right: 0;
-                    top: -50px;
+                    right: -20px;
+                    bottom: -20px;
                     transform: rotate(5deg);
+                    border-radius: 10px;
                 }
             }
 
@@ -86,7 +88,7 @@ ion-grid {
             .message-col {
                 p {
                     line-height: 1.6;
-                    opacity: 0.5;
+                    opacity: 0.7;
                 }
             }
         }

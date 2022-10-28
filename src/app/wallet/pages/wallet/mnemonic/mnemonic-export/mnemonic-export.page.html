@@ -23,9 +23,6 @@
         <div *ngIf="evmPrivateKey" class="key" (click)="copyPrivateKey()">
             {{ evmPrivateKey }}
         </div>
-        <ion-row *ngIf="!hideMnemonic && !isFromIntent" class="btn-container">
-            <ebutton (clicked)="return()" [title]="'wallet.back-to-setting' | translate "> </ebutton>
-        </ion-row>
         <ion-row *ngIf="!hideMnemonic && isFromIntent" class="btn-container">
             <ebutton (clicked)="onShare()" [title]="'wallet.text-allow' | translate"> </ebutton>
         </ion-row>

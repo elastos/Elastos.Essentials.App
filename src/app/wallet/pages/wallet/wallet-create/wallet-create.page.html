@@ -16,15 +16,15 @@
                 <h1 *ngIf="!wallet.singleAddress">{{ 'wallet.multiple-address' | translate }}</h1>
             </ion-col>
             <ion-col class="right-col" size="2">
-                <ion-toggle mode="ios" color="secondary" [(ngModel)]="wallet.singleAddress"
-                    (ionChange)="updateSingleAddress($event)"></ion-toggle>
+                <ion-toggle mode="ios" [(ngModel)]="wallet.singleAddress" (ionChange)="updateSingleAddress($event)">
+                </ion-toggle>
             </ion-col>
             <ion-col class="left-col" size="10">
                 <h1 *ngIf="useMenmonicPassphrase">{{ 'wallet.use-passphrase' | translate }}</h1>
                 <h1 *ngIf="!useMenmonicPassphrase">{{ 'wallet.not-use-passphrase' | translate }}</h1>
             </ion-col>
             <ion-col class="right-col" size="2">
-                <ion-toggle mode="ios" color="secondary" [(ngModel)]="useMenmonicPassphrase"></ion-toggle>
+                <ion-toggle mode="ios" [(ngModel)]="useMenmonicPassphrase"></ion-toggle>
             </ion-col>
             <ion-col *ngIf="walletCreationService.type === 2">
                 <p>{{ 'wallet.help:import-password' | translate }}</p>

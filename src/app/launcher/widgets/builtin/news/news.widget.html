@@ -33,5 +33,7 @@
   <!-- No news to show (eg: preview) -->
   <ion-row class="news-row" *ngIf="news.length === 0">
     <p>{{ 'launcher.no-news' | translate }}</p>
+
+    <ebutton lefticon="/assets/launcher/icons/curcol-feeds.svg" title="Try Feeds" (clicked)="tryFeeds()"></ebutton>
   </ion-row>
 </ion-row>

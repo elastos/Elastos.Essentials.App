@@ -44,11 +44,11 @@
       }
 
       .selectedCol {
-        background: linear-gradient(to bottom, #732dcf, #640fd4);
+        background: var(--ion-text-color);
 
         .mnemonic-index {
-          background: linear-gradient(to bottom, #732dcf, #640fd4);
-          color: #f8f8ff;
+          background: var(--ion-text-color);
+          color: var(--essentials-box-color);
         }
 
         ion-label {
@@ -56,7 +56,7 @@
           font-weight: 500;
           line-height: 1.25;
           letter-spacing: -0.29px;
-          color: #f8f8ff;
+          color: var(--essentials-box-color);
         }
       }
     }
@@ -87,8 +87,7 @@
 
     .virtual-textarea {
       width: 100%;
-      background: #ffffff;
-      box-shadow: 0 3px 15px 0 #ededf0;
+      background: var(--essentials-box-color);
       border-radius: 8px;
       font-size: 13px;
       text-transform: lowercase;

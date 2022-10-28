@@ -2,7 +2,7 @@ import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@an
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { Config } from 'src/app/wallet/config/Config';
@@ -58,8 +58,6 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
   }
 
   ionViewWillEnter() {
-    this.titleBar.setBackgroundColor('#732cd0');
-    this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
     this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
@@ -92,14 +90,14 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
 
   async onImport() {
     if (!this.contentIsJsonObj) {
-        if (this.privatekey.startsWith('0x')) {
-            this.privatekey = this.privatekey.substring(2);
-        }
-        const isPrivate = (await import('tiny-secp256k1')).isPrivate;
-        if (!isPrivate(Buffer.from(this.privatekey, 'hex'))) {
-            this.native.toast_trans('wallet.wrong-privatekey-msg');
-            return;
-        }
+      if (this.privatekey.startsWith('0x')) {
+        this.privatekey = this.privatekey.substring(2);
+      }
+      const isPrivate = (await import('tiny-secp256k1')).isPrivate;
+      if (!isPrivate(Buffer.from(this.privatekey, 'hex'))) {
+        this.native.toast_trans('wallet.wrong-privatekey-msg');
+        return;
+      }
     }
 
     const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);

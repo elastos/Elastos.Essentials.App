@@ -275,8 +275,8 @@ a {
 /********************** WALLET **********************/
 .wallet-help-component {
   --width: 66.6%;
-  --background: linear-gradient(to bottom, #4a118d, #39136a);
-  box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);
+  --background: var(--ion-background-color);
+  box-shadow: 0 3px 6px 0 var(--ion-text-color);
 }
 
 .wallet-tx-component {

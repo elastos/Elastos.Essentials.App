@@ -4,6 +4,7 @@ import moment from 'moment';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { NotificationManagerService } from 'src/app/launcher/services/notificationmanager.service';
 import { Logger } from 'src/app/logger';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { NewsContent, PluginConfig } from '../../base/pluginconfig';
 import { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
@@ -53,7 +54,8 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
     private widgetsFeedsNewsService: WidgetsFeedsNewsService,
     private dappBrowserService: DappBrowserService,
     private popoverCtrl: PopoverController,
-    private modalController: ModalController
+    private modalController: ModalController,
+    private globalIntentService: GlobalIntentService
   ) {
     super();
     // NOTE: no auto rotation for now, this makes the UI move up/down depending on news count on each page
@@ -219,5 +221,11 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
     event?.stopImmediatePropagation();
     void this.widgetsService.refreshWidgetPluginContent(this.widgetState);
     void this.widgetsFeedsNewsService.fetchedSubscribedChannels(false); // Force refreshing all channels
+  }
+
+  public tryFeeds() {
+    void this.globalIntentService.sendIntent('openurl', {
+      url: 'https://feeds.trinity-feeds.app/nav/?page=home'
+    });
   }
 }

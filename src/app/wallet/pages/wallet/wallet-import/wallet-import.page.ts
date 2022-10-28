@@ -2,7 +2,6 @@ import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { WalletAlreadyExistException } from 'src/app/model/exceptions/walletalreadyexist.exception';
@@ -68,8 +67,6 @@ export class WalletImportPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setBackgroundColor('#732cd0');
-        this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('wallet.import-wallet'));
     }
 
