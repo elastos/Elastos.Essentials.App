@@ -22,8 +22,9 @@
                     <div class="candidate-col">
                         <div class="name">{{ node.nickname }}</div>
                         <p>
-                            <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
-                            node.location | translate }} • <span class="votes">{{
+                            <!-- <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
+                            node.location | translate }} •  -->
+                            <span class="votes">{{
                                 getVotesRatio(node) }}%</span> {{ 'voting.of-votes' | translate }}
                         </p>
                         <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
