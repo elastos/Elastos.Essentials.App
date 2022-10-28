@@ -297,7 +297,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     switch (direction) {
       case TransactionDirection.RECEIVED:
         if (transaction.isRedPacket) {
-          return './assets/redpackets/images/default-avatar.png';
+          return './assets/wallet/tx/redpacket.svg';
         } else {
           return './assets/wallet/tx/receive.svg';
         }
@@ -479,7 +479,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       if (amount.lte(0))
         return null;
     } else {
-        amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
+      amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
     }
 
     let nonce = nonceArg;

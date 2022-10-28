@@ -456,7 +456,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         if (direction === TransactionDirection.RECEIVED) {
             if (transaction.isRedPacket) {
-                return './assets/redpackets/images/default-avatar.png';
+                return './assets/wallet/tx/redpacket.svg';
             } else {
                 return './assets/wallet/buttons/curcol-receive.svg';
             }

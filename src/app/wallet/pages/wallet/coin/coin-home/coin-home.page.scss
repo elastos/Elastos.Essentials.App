@@ -160,7 +160,11 @@
                 object-fit: contain;
                 border-radius: 100%;
                 background: linear-gradient(305deg, rgba(255, 255, 255, 0.5) 0%, rgba(0, 0, 0, 0.1) 100%);
-                padding: 8px;
+
+                .inline-svg {
+                    width: 24px;
+                    height: 24px;
+                }
             }
 
             /* .purple {
