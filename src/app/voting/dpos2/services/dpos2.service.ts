@@ -10,6 +10,8 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
@@ -74,6 +76,9 @@ export class DPoS2Service {
 
     private initOngoning = false;
 
+    // Storage
+    public lastVotes = [];
+
     // Fetch
     private elaNodeUrl = 'https://elanodes.com/wp-content/uploads/custom/images/';
 
@@ -122,6 +127,24 @@ export class DPoS2Service {
         titleBar.setBackgroundColor("#A25BFE");
         titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         titleBar.setTitle('DPoS Voting');
+    }
+
+    async getStoredVotes() {
+        this.lastVotes = [];
+
+        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dpos2', this.voteService.masterWalletId + '-votes', []).then(data => {
+            if (data) {
+                // filter invalid votes.
+                this.lastVotes = data;
+                Logger.log(App.DPOS_VOTING, 'lastVotes', this.lastVotes);
+            }
+        });
+    }
+
+    async setStoredVotes(keys) {
+        this.lastVotes = keys;
+        Logger.log(App.DPOS_VOTING, 'lastVotes updated', this.lastVotes);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dpos2", this.voteService.masterWalletId + '-votes', this.lastVotes);
     }
 
     async checkBalanceForRegDposNode(): Promise<boolean> {
@@ -178,6 +201,9 @@ export class DPoS2Service {
         this.dposList = [];
         this.stakeExpired30 = null;
         this.myStakeExpired30 = null;
+        if (!this.lastVotes) {
+            this.lastVotes = [];
+        }
 
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
@@ -203,6 +229,9 @@ export class DPoS2Service {
                     if (node.state === 'Active' || (node.state === 'Inactive')) {
                         if (node.state === 'Active') {
                             this.activeNodes.push(node);
+                            if (this.lastVotes.indexOf(node.ownerpublickey) != -1) {
+                                node.isChecked = true;
+                            }
                         }
 
                         var until = node.stakeuntil - currentHeight;

@@ -55,9 +55,6 @@ export class VotePage implements OnInit, OnDestroy {
     private votedEla = 0;
     private toast: any;
 
-    public nodeVotes: { [publicKey: string]: number } = {}; // Map of CID -> votes - for ion-input items temporary model (before applying to crCouncilService.selectedCandidates.userVotes)
-    // public candidatesPercentages: { [cid: string]: number } = {}; // Map of CID -> percentage (0-10000) for 2 decimals precision - for ion-range items
-
     public testValue = 0;
     public overflow = false;
 
@@ -79,32 +76,24 @@ export class VotePage implements OnInit, OnDestroy {
 
         await this.stakeService.getVoteRights();
 
-        this.totalEla = this.stakeService.votesRight.votes[VoteType.DPoSV2];
-
-        this.dpos2Service._nodes.forEach(node => {
-            // if (node.isChecked === true) {
+        this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
+        this.dpos2Service.activeNodes.forEach(node => {
+            if (node.isChecked === true) {
                 if (!node.userVotes) {
                     node.userVotes = 0;
                     node.userStakeDays = 10;
                 }
                 this.selectedNodes.push(node);
-            // }
+            }
         });
 
         Logger.log(App.DPOS_VOTING, 'My votes', this.selectedNodes);
-        // Initialize node percentages with default values
-        this.selectedNodes.forEach((node) => {
-            //console.log("node.userVotes", node.userVotes, Number.isInteger(node.userVotes))
-            this.nodeVotes[node.ownerpublickey] = Number.isInteger(node.userVotes) ? node.userVotes : 0;
-            if (isNaN(this.nodeVotes[node.ownerpublickey])) {
-                this.nodeVotes[node.ownerpublickey] = 0;
-            }
-        });
+
         this.getVotedCount();
 
         //console.log("this.nodeVotes", this.nodeVotes)
 
-        Logger.log(App.DPOS_VOTING, 'ELA Balance', this.totalEla);
+        Logger.log(App.DPOS_VOTING, 'Total stake remain ELA', this.totalEla);
 
         this.dataFetched = true;
 
@@ -134,20 +123,6 @@ export class VotePage implements OnInit, OnDestroy {
         if (this.toast) {
             this.toast.dismiss();
         }
-    }
-
-    distributeEqually() {
-        let votes = Math.floor(this.totalEla / this.selectedNodes.length);
-        Logger.log(App.DPOS_VOTING, 'Equally distributed votes', votes);
-        this.selectedNodes.forEach((node) => {
-            node.userVotes = votes;
-            this.nodeVotes[node.ownerpublickey] = votes;
-        });
-        this.getVotedCount();
-    }
-
-    fixVotes(votes: string) {
-        return parseInt(votes);
     }
 
     /****************** Cast Votes *******************/
@@ -191,8 +166,8 @@ export class VotePage implements OnInit, OnDestroy {
 
     getElaRemainder() {
         this.votedEla = 0;
-        this.selectedNodes.map((can) => {
-            this.votedEla += can.userVotes;
+        this.selectedNodes.map((node) => {
+            this.votedEla += node.userVotes;
         });
         let remainder = this.totalEla - this.votedEla;
         return remainder.toFixed(2);
@@ -202,22 +177,11 @@ export class VotePage implements OnInit, OnDestroy {
      * Percentage of user's votes distribution for this given node, in a formatted way.
      * eg: 3.52 (%)
      */
-    public getDisplayableVotePercentage(node: DPoS2Node) {
+    public getVotesRatio(node: DPoS2Node) {
         if (this.totalEla === 0)
             return "0.00";
 
         return formatNumber(node.userVotes * 100 / this.totalEla, "en", "0.2-2");
-    }
-
-    /**
-     * Returns the number of ELA currently distributed to candidates for voting
-     */
-    public getDistributedEla(): number {
-        return this.selectedNodes.reduce((prev, c) => prev + parseInt(c.userVotes as any), 0) || 0;
-    }
-
-    public onInputFocus(event, node: DPoS2Node) {
-        this.nodeVotes[node.ownerpublickey] = null; // Clear input field for convenient typing
     }
 
     // Event triggered when the text input loses the focus. At this time we can recompute the
@@ -268,10 +232,7 @@ export class VotePage implements OnInit, OnDestroy {
     public getVotedCount() {
         var count = 0;
         this.selectedNodes.forEach((node) => {
-            if (isNaN(this.nodeVotes[node.ownerpublickey])) {
-                this.nodeVotes[node.ownerpublickey] = 0;
-            }
-            count += this.nodeVotes[node.ownerpublickey];
+            count += node.userVotes;
         });
         this.overflow = count > this.totalEla || this.totalEla == 0;
         this.votedEla = count;

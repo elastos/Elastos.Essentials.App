@@ -123,8 +123,19 @@ export class ListPage implements OnInit {
         await this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/registration');
     }
 
-    castVote() {
-        void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/vote');
+    async castVote() {
+        let castedNodeKeys: string[] = [];
+        this.dpos2Service.activeNodes.forEach(node => {
+            if (node.isChecked === true) {
+                castedNodeKeys = castedNodeKeys.concat(node.ownerpublickey);
+            }
+        });
+
+        if (castedNodeKeys.length > 0) {
+            await this.dpos2Service.setStoredVotes(castedNodeKeys);
+            this.voting = true;
+            void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/vote');
+        }
     }
 
     //// Define Values ////

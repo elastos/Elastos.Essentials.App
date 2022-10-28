@@ -24,7 +24,7 @@
                         <p>
                             <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
                             node.location | translate }} • <span class="votes">{{
-                                getDisplayableVotePercentage(node) }}%</span> {{ 'voting.of-votes' | translate }}
+                                getVotesRatio(node) }}%</span> {{ 'voting.of-votes' | translate }}
                         </p>
                         <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
                         <ion-row>
@@ -35,9 +35,8 @@
                             </ion-col>
                             <ion-col size="0.5"> </ion-col>
                             <ion-col size="5.75" class="right-col align-right">
-                                <ion-input type="number" [(ngModel)]="nodeVotes[node.ownerpublickey]"
-                                    placeholder="Votes" (ionBlur)="onInputBlur($event, node)"
-                                    (ionFocus)="onInputFocus($event, node)">
+                                <ion-input type="number" [(ngModel)]="node.userVotes"
+                                    placeholder="Votes" (ionBlur)="onInputBlur($event, node)">
                                 </ion-input>
                             </ion-col>
                         </ion-row>
