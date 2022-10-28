@@ -119,6 +119,8 @@ export const it = {
         'stake-more': 'Stake more',
 
         'update-node': 'Update node',
+        'stakedays-placeholder': 'no less than 300 days',
+        'stakedays-input-err': 'The pledge time of the tokens shall not be less than 300 days.',
     }
 
 };

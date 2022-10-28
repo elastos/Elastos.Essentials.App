@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -74,6 +75,12 @@ export class DPoS2RegistrationPage implements OnInit {
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.dposInfo = Util.clone(this.dpos2Service.dposInfo);
+        if (!this.dposInfo.stakeDays) {
+            this.dposInfo.stakeDays = 300;
+        }
+        if (!this.dposInfo.url) {
+            this.dposInfo.url ="https://"
+        }
 
         switch (this.dposInfo.state) {
             case 'Unregistered':
@@ -126,7 +133,7 @@ export class DPoS2RegistrationPage implements OnInit {
         }
 
         if (this.dposInfo.stakeDays < 300) {
-            formatWrong = this.translate.instant('dposvoting.stake-until') + formatWrong;
+            formatWrong = this.translate.instant('dposvoting.stakedays-input-err');
             this.globalNative.genericToast(formatWrong);
             return;
         }
@@ -178,7 +185,7 @@ export class DPoS2RegistrationPage implements OnInit {
     }
 
     async register() {
-        Logger.log('dposregistration', 'Calling register()', this.dposInfo);
+        Logger.log(App.DPOS_VOTING, 'Calling register()', this.dposInfo);
 
         //Check value
         if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
@@ -194,7 +201,9 @@ export class DPoS2RegistrationPage implements OnInit {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
-                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
+                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, this.dposInfo.stakeDays);
+
+            Logger.log(App.DPOS_VOTING, 'register payload:', payload);
 
             const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
             await this.globalNative.hideLoading();
@@ -220,8 +229,10 @@ export class DPoS2RegistrationPage implements OnInit {
             return;
         }
         try {
+            let currentHeight = await this.voteService.getCurrentHeight();
+            let stakeUntil = currentHeight + this.dposInfo.stakeDays * 720;
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
-                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
+                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");

@@ -16,7 +16,7 @@
                     <h5>{{ 'dposvoting.node-name' | translate }}</h5>
                     <ion-input type="text" name="name" [attr.disabled]="needConfirm" ngDefaultControl
                         placeholder="{{'dposvoting.required-placeholder' | translate}}"
-                        [(ngModel)]="dposInfo.nickname">
+                        [(ngModel)]="dposInfo.nickname" clearInput>
                     </ion-input>
                 </ion-col>
             </ion-row>
@@ -35,7 +35,7 @@
                 <ion-col>
                     <h5>{{ 'dposvoting.node-url' | translate }}</h5>
                     <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
-                        placeholder="e.g. https…" [(ngModel)]="dposInfo.url">
+                        placeholder="e.g. https…" [(ngModel)]="dposInfo.url" clearInput>
                     </ion-input>
                 </ion-col>
             </ion-row>
@@ -44,9 +44,9 @@
                 <ion-col>
                     <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
                     <ion-input type="number" name="stake-until" [attr.disabled]="needConfirm" ngDefaultControl
-                        placeholder="Days" [(ngModel)]="dposInfo.stakeDays">
+                        placeholder="{{'dposvoting.stakedays-placeholder' | translate}}" [(ngModel)]="dposInfo.stakeDays" clearInput>
                     </ion-input>
-                    <h5>{{ 'dposvoting.expired-date' | translate }}: {{ getDate() }}</h5>
+                    <h5 id="expired-date">{{ 'dposvoting.expired-date' | translate }}: {{ getDate() }}</h5>
                 </ion-col>
             </ion-row>
 
