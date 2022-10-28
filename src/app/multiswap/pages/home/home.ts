@@ -8,10 +8,12 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Coin, ERC20Coin } from 'src/app/wallet/model/coin';
@@ -86,6 +88,7 @@ export class HomePage {
     public globalNativeService: GlobalNativeService,
     private erc20CoinService: ERC20CoinService,
     private dAppBrowserService: DappBrowserService,
+    private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private evmService: EVMService,
     private modalCtrl: ModalController,
     private route: ActivatedRoute,
@@ -368,7 +371,7 @@ export class HomePage {
   public supportsMaxTransfer() {
     // Hide max button when selected source token is native token, because of transaction gas cost, can't know the max.
     if (this.selectedSourceToken && this.selectedSourceToken.token instanceof ERC20Coin) {
-        return true;
+      return true;
     } else return false;
   }
 
@@ -389,17 +392,17 @@ export class HomePage {
 
     let transferAmountBN = null;
     if (this.sendMax) {
-        transferAmountBN = this.selectedSourceToken.amount;
+      transferAmountBN = this.selectedSourceToken.amount;
     } else {
-        transferAmountBN = new BigNumber(this.transferAmount);
-        if (!(transferAmountBN.gt(0)))
-          return;
+      transferAmountBN = new BigNumber(this.transferAmount);
+      if (!(transferAmountBN.gt(0)))
+        return;
 
-        // Make sure there is enough balance
-        if (this.selectedSourceToken.amount.lt(this.transferAmount)) {
-          this.lastError = GlobalTranslationService.instance.translateInstant("easybridge.not-enough-tokens");
-          return;
-        }
+      // Make sure there is enough balance
+      if (this.selectedSourceToken.amount.lt(this.transferAmount)) {
+        this.lastError = GlobalTranslationService.instance.translateInstant("easybridge.not-enough-tokens");
+        return;
+      }
     }
 
     Logger.log("multiswap", "Recomputing transfer info", transferAmountBN.toString());
@@ -563,5 +566,28 @@ export class HomePage {
 
   public openGlideFinance() {
     void this.dAppBrowserService.openForBrowseMode("https://glidefinance.io", "Glide Finance");
+  }
+
+  /**
+   * Opens the wallet screen (coin-home) of the received token.
+   * If the active network is not the right one, the network switch prompt is shown first.
+   */
+  public async openDestinationTokenWallet() {
+    let activeNetwork = this.networkService.activeNetwork.value;
+    let targetNetwork = this.activeTransfer.destinationToken.network;
+
+    // Switch to the right network
+    if (!activeNetwork.equals(targetNetwork)) {
+      let switchedToRightNetwork = await this.globalSwitchNetworkService.promptSwitchToNetwork(targetNetwork);
+      if (!switchedToRightNetwork)
+        return;
+    }
+
+    void this.globalNavService.navigateTo(App.WALLET, "/wallet/coin", {
+      state: {
+        masterWalletId: this.activeTransfer.masterWalletId,
+        subWalletId: this.activeTransfer.destinationToken.getID()
+      }
+    });
   }
 }

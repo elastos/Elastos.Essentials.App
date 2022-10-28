@@ -17,21 +17,22 @@ export const fr = {
         'destination-token': 'Jeton cible',
         'pick-a-token': 'Sélectionner un jeton',
         'balance': 'Balance:',
+        'view-received-token': 'Voir le jeton reçu dans le portefeuille',
 
         // Transfer steps
-        "step-not-started": "Not started",
-        "step-publishing": "Exchange is starting",
-        "step-published": "Exchange is on going",
-        "step-failed": "Tokens exchange failed",
-        "step-received": "Completed, tokens received",
+        "step-not-started": "Pas commencé",
+        "step-publishing": "L'échange commence",
+        "step-published": "L'échange est en cours",
+        "step-failed": "L'échange des jetons a échoué",
+        "step-received": "Terminé, jetons reçus",
 
         // Popups
-        "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. On going swap will continue but you won't be able to monitor the progress.",
+        "reset-confirmation-content": "Assurez-vous de ne remettre a zéro le transfert que si le transfert actuel semble bloqué. L'échange en cours continuera mais vous n'en verrez plus la progression.",
 
         // Cannot Execute Reason
-        "unsupported-tokens": "Unsupported tokens for swap",
-        "no-route": "No way to directly route tokens. Please manually swap to intermediate tokens",
-        "amount-too-low": "Amount is too low to cover transaction fees, please set a higher amount",
-        "unknown-error": "Unknown error"
+        "unsupported-tokens": "Jetons non supportés.",
+        "no-route": "Aucun chemin trouvé pour échanger directement ces jetons. Veuillez essayer de passer par un jeton intermédiaire.",
+        "amount-too-low": "Le montant saisi est trop bas pour couvrir les frais. Veuillez augmenter le montant.",
+        "unknown-error": "Erreur inconnue."
     }
 }

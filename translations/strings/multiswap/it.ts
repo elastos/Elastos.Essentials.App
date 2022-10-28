@@ -17,6 +17,7 @@ export const it = {
         'destination-token': 'Destination token',
         'pick-a-token': 'Pick a token',
         'balance': 'Balance:',
+        'view-received-token': 'View received token in wallet',
 
         // Transfer steps
         "step-not-started": "Not started",

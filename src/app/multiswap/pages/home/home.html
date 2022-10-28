@@ -82,12 +82,13 @@
             selectedSourceToken.token.getSymbol() }}</span>
         </div>
         <div class="balance-row">
-            <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}
-            </p>
-            <p class="align-right">
-                {{ 'multiswap.balance' | translate }} {{ getDisplayableAmount(selectedSourceToken.amount) }} <b>{{ selectedSourceToken.token.getSymbol()
-                }}</b>
-            </p>
+          <p *ngIf="supportsMaxTransfer()" id="max-btn" (click)="setMaxTransfer()">{{ 'wallet.max' | translate }}
+          </p>
+          <p class="align-right">
+            {{ 'multiswap.balance' | translate }} {{ getDisplayableAmount(selectedSourceToken.amount) }} <b>{{
+              selectedSourceToken.token.getSymbol()
+              }}</b>
+          </p>
 
         </div>
       </div>
@@ -170,6 +171,11 @@
       <!-- Done -->
       <ebutton (clicked)="done()" *ngIf="isCompleted()" [title]="'easybridge.done' | translate">
       </ebutton>
+
+      <!-- Open token wallet -->
+      <p (click)="openDestinationTokenWallet()" *ngIf="isCompleted()" class="reset">
+        {{ 'multiswap.view-received-token' | translate }}
+      </p>
     </div>
   </div>
 
