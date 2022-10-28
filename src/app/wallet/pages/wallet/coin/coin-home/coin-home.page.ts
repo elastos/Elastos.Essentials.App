@@ -405,7 +405,8 @@ export class CoinHomePage implements OnInit {
             cssClass: 'wallet-warning-component',
             component: WarningComponent,
             componentProps: {
-                warning: 'bakcup',
+                title: this.translate.instant('launcher.backup-title'),
+                message: this.translate.instant('launcher.backup-message')
             },
             translucent: false
         });

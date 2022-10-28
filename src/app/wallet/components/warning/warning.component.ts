@@ -9,7 +9,8 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
   styleUrls: ['./warning.component.scss'],
 })
 export class WarningComponent implements OnInit {
-  private warning = "";
+  public title = '';
+  public message = '';
 
   constructor(
     public theme: GlobalThemeService,
@@ -19,23 +20,8 @@ export class WarningComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.warning = this.navParams.get('warning');
-  }
-
-  public getDisplayableHeader() {
-    if (this.warning === 'delete') {
-      return this.translate.instant('wallet.delete-wallet-confirm-title');
-    } else {
-      return this.translate.instant('launcher.backup-title');
-    }
-  }
-
-  public getDisplayableMessage() {
-    if (this.warning === 'delete') {
-      return this.translate.instant('wallet.delete-wallet-confirm-subtitle');
-    } else {
-      return this.translate.instant('launcher.backup-message');
-    }
+    this.title = this.navParams.get('title');
+    this.message = this.navParams.get('message');
   }
 
   cancel() {

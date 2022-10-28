@@ -217,6 +217,7 @@ export const en = {
         **********************/
         "select-address": "Select Address",
         "cryptonames": "Cryptonames",
+        "delete-contact-confirm-title": "Delete Cryptoname",
 
         /*******************************
         * Confirm Transaction Component *

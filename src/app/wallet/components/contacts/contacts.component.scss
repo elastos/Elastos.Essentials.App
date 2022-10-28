@@ -47,6 +47,15 @@
             }
         }
     }
+
+    .itemOption {
+        background: transparent;
+
+        img {
+          height: 20px;
+          width: 20px;
+        }
+    }
 }
 
 .dark-container {
@@ -55,6 +64,17 @@
             color: #9D9D9D;
             opacity: 1;
         }
+    }
+}
+
+ion-item-sliding {
+    // padding-top: 30px;
+    margin: 0;
+    --ion-item-background: transparent;
+
+    ion-item {
+      --padding-start: 0px;
+      --inner-padding-end: 0px;
     }
 }
 

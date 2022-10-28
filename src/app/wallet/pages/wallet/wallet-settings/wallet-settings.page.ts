@@ -270,7 +270,8 @@ export class WalletSettingsPage implements OnInit {
             cssClass: 'wallet-warning-component',
             component: WarningComponent,
             componentProps: {
-                warning: 'delete',
+                title: this.translate.instant('wallet.delete-wallet-confirm-title'),
+                message: this.translate.instant('wallet.delete-wallet-confirm-subtitle')
             },
             translucent: false
         });

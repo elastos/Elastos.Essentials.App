@@ -217,6 +217,7 @@ export const zh = {
         **********************/
         "select-address": "选择地址",
         "cryptonames": "加密名称",
+        "delete-contact-confirm-title": "删除加密名称",
 
         /*******************************
         * Confirm Transaction Component *

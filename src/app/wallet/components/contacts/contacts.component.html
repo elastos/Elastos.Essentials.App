@@ -5,19 +5,28 @@
                 <p>{{ 'wallet.cryptonames' | translate }}</p>
             </ion-col>
         </ion-row>
-        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-            *ngFor="let contact of supportedCryptoAddresses" (click)="selectContact(contact)">
-            <ion-col size="2" class="left-col">
-                <div class="icon-container">
-                    <img [src]="getResolverLogo(contact)">
-                </div>
-            </ion-col>
-            <ion-col size="10" class="middle-col">
-                <h1>{{ contact.cryptoname }} {{ contact.type }} {{ contact.resolver }} </h1>
-                <p>{{ contact.address.slice(0,30) }}...</p>
-            </ion-col>
-            <ion-ripple-effect></ion-ripple-effect>
-        </ion-row>
+        <ion-item-sliding *ngFor="let contact of supportedCryptoAddresses">
+            <ion-item>
+                <ion-row class="subwallet-row ripple ion-activatable">
+                    <ion-col size="2" class="left-col">
+                        <div class="icon-container">
+                            <img [src]="getResolverLogo(contact)">
+                        </div>
+                    </ion-col>
+                    <ion-col size="10" class="middle-col">
+                        <h1>{{ contact.cryptoname }} {{ contact.type }} {{ contact.resolver }} </h1>
+                        <p>{{ contact.address.slice(0,30) }}...</p>
+                    </ion-col>
+                </ion-row>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-item>
+
+            <ion-item-options side="end">
+                <ion-item-option class="itemOption" (click)="showDeletePrompt(contact)">
+                    <img src="/assets/contacts/images/delete.svg">
+                </ion-item-option>
+            </ion-item-options>
+        </ion-item-sliding>
     </ion-grid>
 </ion-content>
 

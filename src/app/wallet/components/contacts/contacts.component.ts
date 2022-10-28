@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, PopoverController } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
 import { ContactsService } from '../../services/contacts.service';
+import { WarningComponent } from '../warning/warning.component';
 
 type CryptoAddressInfo = {
   cryptoname: string;
@@ -26,6 +28,8 @@ export class ContactsComponent implements OnInit {
     public theme: GlobalThemeService,
     public modalCtrl: ModalController,
     private navParams: NavParams,
+    private popoverCtrl: PopoverController,
+    public translate: TranslateService
   ) {
     this.subWallet = this.navParams.get('subWallet');
   }
@@ -83,5 +87,56 @@ export class ContactsComponent implements OnInit {
         break;
     }
     return logo;
+  }
+
+  async showDeletePrompt(contact: CryptoAddressInfo) {
+
+    let popover = await this.popoverCtrl.create({
+        mode: 'ios',
+        cssClass: 'wallet-warning-component',
+        component: WarningComponent,
+        componentProps: {
+            title: this.translate.instant('wallet.delete-contact-confirm-title'),
+            message: contact.cryptoname + " " + contact.type + " " + contact.resolver
+        },
+        translucent: false
+    });
+
+    popover.onWillDismiss().then(async (params) => {
+        if (params && params.data && params.data.confirm) {
+            await this.deleteContact(contact);
+        }
+    });
+
+    return await popover.present();
+  }
+
+  deleteContact(contact: CryptoAddressInfo) {
+    let contactIndex = this.contactsService.contacts.findIndex( c => {
+        return (c.cryptoname === contact.cryptoname) && (c.type == contact.resolver);
+    })
+    if (contactIndex > -1) {
+        let contactFind = this.contactsService.contacts[contactIndex];
+        if (contactFind.addresses.length === 1) {
+            this.contactsService.contacts.splice(contactIndex, 1);
+        } else {
+            let addressIndex = contactFind.addresses.findIndex( c => {
+                return c.address === contact.address
+            })
+            if (addressIndex > -1) {
+                contactFind.addresses.splice(addressIndex, 1);
+            }
+        }
+    }
+
+    contactIndex = this.supportedCryptoAddresses.findIndex( c => {
+        return (c.cryptoname === contact.cryptoname) && (c.address === contact.address) && (c.resolver === contact.resolver);
+    })
+    if (contactIndex > -1) {
+        this.supportedCryptoAddresses.splice(contactIndex, 1)
+    }
+
+    // save
+    this.contactsService.setContacts()
   }
 }
