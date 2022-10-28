@@ -118,9 +118,9 @@ export const en = {
         'dpos2-voting': 'DPoS2 Node Voting',
         'stake-more': 'Stake more',
 
-        'update-node': 'Update node',
-        'stakedays-placeholder': 'no less than 300 days',
-        'stakedays-input-err': 'The pledge time of the tokens shall not be less than 300 days.',
+        'update-vote': 'Update vote',
+        'stakedays-placeholder': 'no less than {{ days }} days',
+        'stakedays-input-err': 'The pledge time of the tokens shall not be less than {{ days }} days.',
     }
 
 };

@@ -36,7 +36,7 @@ export class SearchPage implements OnInit {
     }
 
     ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
+        this.titleBar.setTitle(this.translate.instant('launcher.app-dpos2-voting'));
         //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
     }
 

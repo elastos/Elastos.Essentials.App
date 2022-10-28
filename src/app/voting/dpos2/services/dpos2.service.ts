@@ -37,6 +37,7 @@ export type DPoS2RegistrationInfo = {
 
     stakeuntil?: number;
     stakeDays?: number;
+    inputStakeDays?: number;
 
     identity?: string;
 }
@@ -235,7 +236,7 @@ export class DPoS2Service {
                         }
 
                         var until = node.stakeuntil - currentHeight;
-                        node.stakeDays = Math.floor(until / 720);
+                        node.stakeDays = Math.ceil(until / 720);
                         if (until > 720 * 7) { //more than 7 days
                             var stakeTimestamp = until * 120 + currentBlockTimestamp
                             node.stakeuntilDate = this.uxService.formatDate(stakeTimestamp);
@@ -342,9 +343,13 @@ export class DPoS2Service {
                             imageUrl: node.imageUrl,
                             nickname: node.nickname,
                             Location: node.Location,
+                            referkey: vote.referkey,
+                            candidate: vote.info.candidate,
                             votes: vote.info.votes,
                             locktime: vote.info.locktime,
+                            lockDays: Math.ceil(locktime / 720),
                         } as any;
+                        item.inputStakeDays = item.lockDays;
 
                         if (locktime > 720 * 7) { //more than 7 days
                             var stakeTimestamp = locktime * 120 + currentBlockTimestamp

@@ -75,9 +75,6 @@ export class DPoS2RegistrationPage implements OnInit {
         this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.dposInfo = Util.clone(this.dpos2Service.dposInfo);
-        if (!this.dposInfo.stakeDays) {
-            this.dposInfo.stakeDays = 300;
-        }
         if (!this.dposInfo.url) {
             this.dposInfo.url ="https://"
         }
@@ -85,6 +82,7 @@ export class DPoS2RegistrationPage implements OnInit {
         switch (this.dposInfo.state) {
             case 'Unregistered':
                 this.originInfo = null;
+                this.dposInfo.stakeDays = 300;
                 this.titleBar.setTitle(this.translate.instant('dposvoting.registration'));
                 break;
             // Active indicates the producer is registered and confirmed by more than
@@ -94,6 +92,7 @@ export class DPoS2RegistrationPage implements OnInit {
                 this.titleBar.setTitle(this.translate.instant('dposvoting.dpos-node-info'));
                 break;
         }
+        this.dposInfo.inputStakeDays = this.dposInfo.stakeDays;
     }
 
     checkValues() {
@@ -132,8 +131,8 @@ export class DPoS2RegistrationPage implements OnInit {
             return;
         }
 
-        if (this.dposInfo.stakeDays < 300) {
-            formatWrong = this.translate.instant('dposvoting.stakedays-input-err');
+        if (this.dposInfo.inputStakeDays < this.dposInfo.stakeDays) {
+            formatWrong = this.translate.instant('dposvoting.stakedays-input-err', {days: this.dposInfo.stakeDays});
             this.globalNative.genericToast(formatWrong);
             return;
         }
@@ -200,8 +199,11 @@ export class DPoS2RegistrationPage implements OnInit {
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
+            let currentHeight = await this.voteService.getCurrentHeight();
+            let stakeUntil = currentHeight + this.dposInfo.stakeDays * 720;
+
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
-                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, this.dposInfo.stakeDays);
+                this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
             Logger.log(App.DPOS_VOTING, 'register payload:', payload);
 

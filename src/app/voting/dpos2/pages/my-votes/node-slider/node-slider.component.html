@@ -5,7 +5,7 @@
             <ion-grid class="container ion-no-padding">
                 <ion-row>
                     <ion-col>
-                        <h2>{{ 'dposvoting.update-node' | translate }}</h2>
+                        <h2>{{ 'dposvoting.update-vote' | translate }}</h2>
                     </ion-col>
                 </ion-row>
 
@@ -26,10 +26,11 @@
                 <ion-row class="profile-data">
                     <ion-col>
                         <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
-                        <ion-input type="number" name="stake-until" ngDefaultControl placeholder="Days"
-                            [(ngModel)]="stakeDays">
+                        <ion-input type="number" name="stake-until" ngDefaultControl
+                            placeholder="{{'dposvoting.stakedays-placeholder' | translate : {days: node.lockDays} }}"
+                            [(ngModel)]="node.inputStakeDays">
                         </ion-input>
-                        <p>{{ 'dposvoting.expired-date' | translate }}: {{ uxService.getStakeDate(stakeDays) }}</p>
+                        <p>{{ 'dposvoting.expired-date' | translate }}: {{ uxService.getStakeDate(node.inputStakeDays) }}</p>
                     </ion-col>
                 </ion-row>
 
@@ -39,7 +40,7 @@
                             [title]="'common.cancel' | translate"> </ebutton>
                     </ion-col>
                     <ion-col>
-                        <ebutton class="btn-container" id="confirm" (clicked)="update(node.index)"
+                        <ebutton class="btn-container" id="confirm" (clicked)="update(node)"
                             [title]="'common.update' | translate"> </ebutton>
                     </ion-col>
                 </ion-row>

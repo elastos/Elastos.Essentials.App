@@ -1,8 +1,13 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { RenewalVotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/Voting';
 import { IonSlides } from '@ionic/angular';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
+import { VoteService } from 'src/app/voting/services/vote.service';
 import { DPoS2Node } from '../../../model/nodes.model';
 import { DPoS2Service } from '../../../services/dpos2.service';
 
@@ -35,7 +40,10 @@ export class NodeSliderComponent implements OnInit {
     constructor(
         public uxService: UXService,
         public dpos2Service: DPoS2Service,
-        public theme: GlobalThemeService
+        public theme: GlobalThemeService,
+        public translate: TranslateService,
+        private globalNative: GlobalNativeService,
+        public voteService: VoteService,
     ) {
     }
 
@@ -67,8 +75,59 @@ export class NodeSliderComponent implements OnInit {
         this.buttonClick.emit(-1);
     }
 
-    update(index: number) {
-        this.buttonClick.emit(index);
+    async update(node: any) {
+        if (node.inputStakeDays < node.lockDays) {
+            let formatWrong = this.translate.instant('dposvoting.stakedays-input-err', {days: node.lockDays});
+            this.globalNative.genericToast(formatWrong);
+        }
+        else {
+            await this.createTransaction(node);
+        }
     }
+
+    async createTransaction(node: any) {
+        await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
+        try {
+            let currentHeight = await this.voteService.getCurrentHeight();
+            let stakeUntil = currentHeight + node.inputStakeDays * 720;
+
+            let voteContentInfo: RenewalVotesContentInfo = {
+                ReferKey: node.referkey,
+                VoteInfo:
+                    {
+                        Candidate: node.candidate,
+                        Votes: node.votes,
+                        Locktime: stakeUntil
+                    }
+            };
+
+            const payload: VotingInfo = {
+                Version: 1,
+                RenewalVotesContent: [voteContentInfo]
+            };
+
+
+            const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
+                payload,
+                '', //memo
+            );
+
+            Logger.log(App.DPOS_VOTING, "rawTx:", rawTx);
+
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING, "/dpos2/menu/my-votes");
+            if (ret) {
+                node.lockDays = node.inputStakeDays;
+                this.voteService.toastSuccessfully('dposvoting.update-vote');
+            }
+
+        }
+        catch (e) {
+
+            await this.voteService.popupErrorMessage(e);
+        }
+        await this.globalNative.hideLoading();
+    }
+
 }
 

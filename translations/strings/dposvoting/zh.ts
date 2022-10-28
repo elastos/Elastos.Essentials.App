@@ -118,9 +118,9 @@ export const zh = {
         'dpos2-voting': 'DPoS2节点投票',
         'stake-more': '质押更多',
 
-        'update-node': '更新节点',
-        'stakedays-placeholder': '不小于300天',
-        'stakedays-input-err': '质押时间不能小于300天。',
+        'update-vote': '更新投票',
+        'stakedays-placeholder': '不小于{{ days }}天',
+        'stakedays-input-err': '质押时间不能小于{{ days }}天。',
     }
 
 };
