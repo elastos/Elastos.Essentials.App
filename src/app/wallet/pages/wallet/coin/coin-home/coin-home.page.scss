@@ -115,17 +115,18 @@
         border-radius: 17px;
 
         .title-col {
+            opacity: 0.6;
+
             h1 {
                 margin: 0;
                 font-weight: 500;
                 font-size: 18px;
                 text-align: left;
             }
-        }
 
-        .active {
-            font-size: 18px;
-            font-weight: 600;
+            &.active {
+                opacity: 1;
+            }
         }
 
         .spinner-col {

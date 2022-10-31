@@ -203,7 +203,7 @@ export class WidgetsFeedsNewsService implements GlobalService {
         const { RuntimeContext } = await lazyFeedsSDKImport();
         if (!RuntimeContext.isInitialized()) {
             let provider = await this.globalHiveService.getRawHiveContextProvider(GlobalConfig.FEEDS_APP_DID, signedInUserDid);
-            RuntimeContext.createInstance(provider, "mainnet", signedInUserDid)
+            RuntimeContext.createInstance(provider, signedInUserDid);
         }
 
         return RuntimeContext.getInstance();
