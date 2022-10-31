@@ -14,12 +14,7 @@
                 [class.selected-wallet]="selectedMasterWallet && masterWallet.id === selectedMasterWallet.id"
                 (click)="selectWallet(masterWallet)">
                 <ion-col size="2" class="color-col">
-                    <div class="color-block" [ngStyle]="
-                        {
-                            'background-image': masterWallet.theme ?
-                            'url(' + masterWallet.theme.background + ')' :
-                            'url(/assets/wallet/cards/maincards/card-purple.svg)'
-                        }"></div>
+                    <div class="inline-svg" inlineSVG="/assets/wallet/settings/curcol-wallet.svg"></div>
                 </ion-col>
                 <ion-col size="8" class="left-col" *ngFor="let netWallet of [getNetworkWallet(masterWallet)]">
                     <!-- ngFor: Hack to get a netWallet variable -->

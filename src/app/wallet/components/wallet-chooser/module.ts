@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { WalletChooserComponent } from './wallet-chooser.component';
 
@@ -13,7 +14,8 @@ import { WalletChooserComponent } from './wallet-chooser.component';
     CommonModule,
     IonicModule,
     TranslateModule,
-    SharedComponentsModule
+    SharedComponentsModule,
+    InlineSVGModule
   ],
   exports: [
     WalletChooserComponent
