@@ -95,8 +95,9 @@ export class WidgetsFeedsNewsService implements GlobalService {
         const feedsChannels = await this.fetchSubscribedChannels(signedInUserDid);
         for (let feedsChannel of feedsChannels) {
             let lastFetched = await this.globalStorageService.getSetting(signedInUserDid, NetworkTemplateStore.networkTemplate, PERSISTENCE_CONTEXT, feedsChannel.getChannelId() + "_lastfetched", 0);
-            if (onlyExpired && !now.subtract(MIN_CHANNEL_REFRESH_DELAY_SECS, "seconds").isSameOrAfter(lastFetched)) {
-                // Not a right time to refresh, or forced to refresh, reuse what we have in cache
+            let rightTimeToRefresh = moment.unix(lastFetched).add(MIN_CHANNEL_REFRESH_DELAY_SECS, "seconds").isSameOrBefore(lastFetched);
+            if (!rightTimeToRefresh && onlyExpired) {
+                // If not a right time to refresh, and not forced to refresh, reuse what we have in cache
                 let channel = this.getChannelById(feedsChannel.getChannelId());
                 if (channel) { // Make sure we really have it in cache
                     channels.push(channel);
@@ -183,7 +184,7 @@ export class WidgetsFeedsNewsService implements GlobalService {
 
         // Update incoming channels enabled state with state in cache
         for (let channel of channels) {
-            let existingChannel = this.getChannelById(channel.id);
+            let existingChannel = this.getChannelById(channel.id, channels);
             if (existingChannel)
                 channel.enabled = existingChannel.enabled;
         }
@@ -246,8 +247,8 @@ export class WidgetsFeedsNewsService implements GlobalService {
         }
     }
 
-    public getChannelById(channelId: string): FeedsChannel {
-        return this.channels.value.find(c => c.id === channelId);
+    public getChannelById(channelId: string, searchedChannels = this.channels.value): FeedsChannel {
+        return searchedChannels.find(c => c.id === channelId);
     }
 
     public async setChannelEnabled(channelId: string, enabled: boolean) {
