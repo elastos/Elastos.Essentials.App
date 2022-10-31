@@ -20,10 +20,6 @@
   * SOFTWARE.
   */
 
-repositories {
-    jcenter()
-}
-
 android {
     useLibrary 'org.apache.http.legacy'
 }

@@ -5,7 +5,7 @@ const patch_dirs = [
   {
     "hook": "before_plugin_install",
     "platform": "android",
-    "plugin_id": "cordova-plugin-firebase-lib",
+    "plugin_id": "cordova-plugin-firebasex",
     "patch_dir": "patches/before_plugin_install_firebase"
   },
   {
