@@ -86,7 +86,7 @@ export const fr = {
         'Canceled': 'Canceled',
         'Illegal': 'Illegal',
         'Returned': 'Returned',
-        'current-votes': 'Votes Actuels',
+        'current-vote-rights': 'Current Vote Rights',
 
         'transaction-details': 'Détails de la Transaction',
         'transaction-id': 'ID de la Transaction',

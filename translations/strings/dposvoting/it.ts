@@ -86,7 +86,7 @@ export const it = {
         'Canceled': 'Annullato',
         'Illegal': 'Illegale',
         'Returned': 'Restituito',
-        'current-votes': 'Voti attuali',
+        'current-vote-rights': 'Current Vote Rights',
 
         'transaction-details': 'Dettagli della Transazione',
         'transaction-id': 'ID Transazione',

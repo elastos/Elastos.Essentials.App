@@ -86,7 +86,7 @@ export const zh = {
         'Canceled': '已注销',
         'Illegal': '非法',
         'Returned': '已取回质押金',
-        'current-votes': '当前票数',
+        'current-vote-rights': '当前票权',
 
         'transaction-details': '交易详情',
         'transaction-id': '交易ID',
