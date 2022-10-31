@@ -30,16 +30,10 @@ export class ListPage implements OnInit {
     // Intent
     public voted = false;
 
-    // Voting
-    public voting = false;
-
     // DPoS2Node Detail
     public showNode = false;
     public nodeIndex: number;
     public node: DPoS2Node;
-
-    // Toast for voteFailed/voteSuccess
-    private toast: any = null;
 
     private inited = false;
 
@@ -101,9 +95,6 @@ export class ListPage implements OnInit {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-        if (this.toast) {
-            this.toast.dismiss();
-        }
     }
 
     async goToRegistration() {
@@ -133,7 +124,6 @@ export class ListPage implements OnInit {
 
         if (castedNodeKeys.length > 0) {
             await this.dpos2Service.setStoredVotes(castedNodeKeys);
-            this.voting = true;
             void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/vote');
         }
     }
@@ -169,78 +159,6 @@ export class ListPage implements OnInit {
 
     return() {
         this.showNode = false;
-    }
-
-    async voteSuccess(txid: string) {
-        this.closeToast();
-        this.toast = await this.toastController.create({
-            position: 'bottom',
-            header: this.translate.instant('common.vote-success'),
-            message: `${txid.slice(0, 16) + '<br>' + txid.slice(16, 32) + '<br>' + txid.slice(32, 48)}`,
-            color: "primary",
-            duration: 2000,
-            buttons: [
-                {
-                    text: this.translate.instant('common.copy'),
-                    handler: () => {
-                        this.toast.dismiss();
-                        this.globalNative.genericToast('common.tx-copied-to-clipboard');
-                        void this.globalNative.copyClipboard(txid);
-                    }
-                },
-                {
-                    text: this.translate.instant('common.dismiss'),
-                    handler: () => {
-                        this.toast.dismiss();
-                    }
-                },
-            ],
-        });
-        this.toast.onWillDismiss(() => {
-            this.toast = null;
-        })
-        this.toast.present();
-    }
-
-    async voteFailed(res: string) {
-        this.closeToast();
-        this.toast = await this.toastController.create({
-            position: 'bottom',
-            header: this.translate.instant('dposvoting.vote-fail'),
-            message: this.translate.instant(res),
-            color: "primary",
-            duration: 2000,
-            buttons: [
-                {
-                    text: this.translate.instant('common.ok'),
-                    handler: () => {
-                        this.toast.dismiss();
-                    }
-                }
-            ]
-        });
-        this.toast.onWillDismiss(() => {
-            this.toast = null;
-        })
-        this.toast.present();
-    }
-
-    // If we get response from sendIntent, we need to close the toast showed for timeout
-    closeToast() {
-        if (this.toast) {
-            this.toast.dismiss();
-            this.toast = null;
-        }
-    }
-
-    async noNodesChecked() {
-        const toast = await this.toastController.create({
-            position: 'bottom',
-            header: this.translate.instant('dposvoting.vote-no-nodes-checked'),
-            color: "primary",
-            duration: 2000
-        });
-        await toast.present();
     }
 
     clickCheckBox(node: any) {

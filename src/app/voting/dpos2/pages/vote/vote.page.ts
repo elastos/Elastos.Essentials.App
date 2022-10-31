@@ -75,8 +75,13 @@ export class VotePage implements OnInit, OnDestroy {
         await this.dpos2Service.init();
 
         await this.stakeService.getVoteRights();
+        if (this.stakeService.votesRight.totalVotesRight > 0) {
+            this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
+        }
+        else {
+            this.totalEla = 0;
+        }
 
-        this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
         this.dpos2Service.activeNodes.forEach(node => {
             if (node.isChecked === true) {
                 if (!node.userVotes) {

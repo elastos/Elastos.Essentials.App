@@ -93,7 +93,7 @@
     </ng-template>
 </ion-content>
 
-<div *ngIf="dpos2Service.dposList.length > 0 && voteService.canVote() && !voting"
+<div *ngIf="dpos2Service.dposList.length > 0 && voteService.canVote()"
     class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
     <div>
         <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>

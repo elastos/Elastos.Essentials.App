@@ -118,6 +118,8 @@ export const zh = {
 
         'dpos2-voting': 'DPoS2节点投票',
         'stake-more': '质押更多',
+        'input-days': '天',
+        'input-votes': '票',
 
         'update-vote': '更新投票',
         'stakedays-placeholder': '不小于{{ days }}天',

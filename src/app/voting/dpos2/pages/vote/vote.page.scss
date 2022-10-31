@@ -31,7 +31,7 @@ h5 {
     .votes-header {
         border-radius: 17px;
         padding: 15px;
-        margin: 0 10px 12.5px;
+        margin: 0;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -46,11 +46,11 @@ h5 {
         }
     }
 
-    .candidate-list {
+    .vote-list {
         padding: 0px 0px 1px;
         padding-bottom: 20%;
 
-        .candidate {
+        .vote {
             display: flex;
             align-items: flex-start;
             padding-top:20px;
@@ -78,41 +78,67 @@ h5 {
                 }
             }
 
-            .candidate-col {
+            p {
+                margin: 0;
+                font-size: 13px;
+                font-weight: 400;
+            }
+
+            .vote-col {
                 margin-left: 10px;
                 flex: 0.9;
 
                 .name {
+                    margin-bottom: 4px;
                     font-size: 16px;
                     font-weight: 500;
                 }
+
 
                 .navigate {
                     color: #732CCE;
                 }
 
-                ion-input {
-                    text-align: center;
-                    max-width: 100%;
-                    border-radius: 6px;
-                    --padding-top:6px;
-                    --padding-bottom:6px;
-                    font-weight:bold;
-                    background: #FFF;
-                    border: solid 1px #C9BFD6;
+                .stake-until {
+                    margin-top: 15px;
                 }
 
-                // ion-range {
-                //     --bar-background:#C4C4C4;
-                //     --bar-background-active:#732CCE;
-                //     --bar-height:6px;
-                //     --knob-background:#FFF;
-                //     --knob-border-radius:50%;
-                //     --knob-size:20px;
-                //     padding: 0;
-                //     width:80%;
-                // }
+                .input-col {
+                    height: 36px;
+                }
+
+                .input-container {
+                    height: 100%;
+                    border-radius: 9px;
+                    padding: 0 6px;
+                    background: #FFF;
+                    border: solid 1px #C9BFD6;
+
+                    ion-input {
+                        height: 100%;
+                        text-align: right;
+
+                        font-size: 13px;
+                        font-weight: 400;
+                        background: #FFF;
+                    }
+
+                    p {
+                        height: 100%;
+
+                        text-align: right;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                }
+
+                .expired-date {
+                    color: #6D7175
+                }
             }
+
+
         }
     }
 
@@ -134,8 +160,8 @@ h5 {
     .votes-header {
     }
 
-    .candidate-list {
-        .candidate {
+    .vote-list {
+        .vote {
             background: #212021;
             border-bottom: solid 3px #000;
 
@@ -143,7 +169,7 @@ h5 {
                 border-top: solid 3px transparent;
             }
 
-            .candidate-col {
+            .vote-col {
                 ion-input {
                     background: #3B3B3B;
                     border: solid 1px #626262;

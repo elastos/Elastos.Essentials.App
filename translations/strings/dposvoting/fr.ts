@@ -118,6 +118,8 @@ export const fr = {
 
         'dpos2-voting': 'DPoS2 Node Voting',
         'stake-more': 'Stake more',
+        'input-days': 'Days',
+        'input-votes': 'Votes',
 
         'update-vote': 'Update vote',
         'stakedays-placeholder': 'no less than {{ days }} days',
