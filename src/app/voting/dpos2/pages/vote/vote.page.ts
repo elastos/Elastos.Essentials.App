@@ -1,4 +1,3 @@
-import { formatNumber } from '@angular/common';
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { VoteContentType, VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
@@ -38,7 +37,7 @@ export class VotePage implements OnInit, OnDestroy {
         public uxService: UXService,
         public dpos2Service: DPoS2Service,
         private globalNav: GlobalNavService,
-        private stakeService: StakeService,
+        public stakeService: StakeService,
         private storage: GlobalStorageService,
         private globalNative: GlobalNativeService,
         public theme: GlobalThemeService,
@@ -66,15 +65,12 @@ export class VotePage implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
-    async ionViewWillEnter() {
+    ionViewWillEnter() {
         this.dataFetched = false;
 
         //this.titleBar.setBackgroundColor("#732CCE");
         //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('dposvoting.dpos2-voting'));
-        await this.dpos2Service.init();
-
-        await this.stakeService.getVoteRights();
         if (this.stakeService.votesRight.totalVotesRight > 0) {
             this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
         }
@@ -182,11 +178,8 @@ export class VotePage implements OnInit, OnDestroy {
      * Percentage of user's votes distribution for this given node, in a formatted way.
      * eg: 3.52 (%)
      */
-    public getVotesRatio(node: DPoS2Node) {
-        if (this.totalEla === 0)
-            return "0.00";
-
-        return formatNumber(node.userVotes * 100 / this.totalEla, "en", "0.2-2");
+    public getVotesPercentage(node: DPoS2Node) {
+        return this.uxService.getPercentage(node.userVotes, this.totalEla);
     }
 
     // Event triggered when the text input loses the focus. At this time we can recompute the

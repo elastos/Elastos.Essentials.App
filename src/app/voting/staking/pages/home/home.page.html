@@ -6,8 +6,7 @@
     </div>
 
     <div *ngIf="dataFetched">
-        <app-vote-slider-details *ngIf="showVotesDetails" [index]="voteType"
-            [voteInfos]="stakeService.votesRight.voteInfos">
+        <app-vote-slider-details *ngIf="showVotesDetails" [index]="voteType">
         </app-vote-slider-details>
 
         <div [class.blur]="showVotesDetails" (click)="showVotesDetails=false">

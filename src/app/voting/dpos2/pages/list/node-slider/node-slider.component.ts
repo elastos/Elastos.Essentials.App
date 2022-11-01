@@ -58,11 +58,6 @@ export class NodeSliderComponent implements OnInit {
     return fixedVotes.toLocaleString().split(/\s/).join(',');
   }
 
-  getVotePercent(votes: string): string {
-    const votePercent: number = parseFloat(votes) / this.totalVotes * 100;
-    return votePercent.toFixed(2);
-  }
-
   getRewards(yearlyRewards: string): string {
     if (yearlyRewards) {
       const dailyRewards: number = parseFloat(yearlyRewards) / 365;

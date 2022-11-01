@@ -1,16 +1,13 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { DPoS2Node } from '../../model/nodes.model';
@@ -41,12 +38,9 @@ export class ListPage implements OnInit {
 
     constructor(
         public dpos2Service: DPoS2Service,
-        private storage: GlobalStorageService,
-        private toastController: ToastController,
         private translate: TranslateService,
         private globalNative: GlobalNativeService,
         private globalNav: GlobalNavService,
-        private globalIntentService: GlobalIntentService,
         public voteService: VoteService,
         public theme: GlobalThemeService,
         public popupProvider: GlobalPopupService,
@@ -143,11 +137,6 @@ export class ListPage implements OnInit {
         });
         this.selectedNodes = selectedNodes;
         return this.selectedNodes;
-    }
-
-    getVotePercent(votes: string): string {
-        const votePercent: number = parseFloat(votes) / this.dpos2Service.totalVotes * 100;
-        return votePercent.toFixed(2);
     }
 
     //// DPoS2Node Detail ////

@@ -44,7 +44,8 @@ export class VoteSliderComponent implements OnInit {
     }
 
     ngOnInit() {
-        let voteInfo = this.stakeService.votesRight.voteInfos[this.index];
+        this.voteInfos = this.stakeService.votesRight.voteInfos.slice(0, 3);
+        let voteInfo = this.voteInfos[this.index];
         this.displayedInfos = this.voteInfos.slice(0, this.index + 2);
         this.slideOpts.initialSlide = this.displayedInfos.indexOf(voteInfo);
         void this.getDPoSV1Data();

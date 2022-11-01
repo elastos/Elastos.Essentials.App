@@ -84,4 +84,13 @@ export class UXService {
         }
         return false;
     }
+
+    getPercentage(numerator: number, denominator: number): number {
+        var ret = 0;
+        if (denominator > 0) {
+            ret = Math.floor(numerator / denominator * 10000) / 100;
+        }
+        return ret;
+    }
+
 }

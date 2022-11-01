@@ -16,6 +16,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { UXService } from '../../services/ux.service';
+import { StakeService, VoteType } from '../../staking/services/stake.service';
 import { DPoS2Node } from '../model/nodes.model';
 import { Block, Mainchain, Price, Voters } from '../model/stats.model';
 
@@ -84,6 +85,7 @@ export class DPoS2Service {
     private elaNodeUrl = 'https://elanodes.com/wp-content/uploads/custom/images/';
 
     constructor(
+        public stakeService: StakeService,
         public uxService: UXService,
         private storage: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
@@ -156,6 +158,28 @@ export class DPoS2Service {
         return true;
     }
 
+    async checkTxConfirm() {
+        this.dposInfo.txConfirm = true;
+        if (this.voteService.sourceSubwallet) {
+            // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
+            let txhistory = await this.voteService.sourceSubwallet.getTransactions();
+            for (let i in txhistory) {
+                if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+                    if (this.dposInfo.state == 'Unregistered') {
+                        if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
+                            this.dposInfo.txConfirm = false;
+                            break;
+                        }
+                    }
+                    else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
+                        this.dposInfo.txConfirm = false;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     async fetchStats() {
         try {
             let result = await this.globalJsonRPCService.httpGet('https://elanodes.com/api/widgets');
@@ -175,6 +199,7 @@ export class DPoS2Service {
         var ownerPublicKey = '';
         let currentHeight = await this.voteService.getCurrentHeight();
         let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+        await this.stakeService.getVoteRights();
 
         //The wallet imported by private key has no ELA subwallet.
         if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
@@ -219,6 +244,7 @@ export class DPoS2Service {
                 for (const node of result.producers) {
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
+                        await this.checkTxConfirm();
                     }
 
                     if (node.identity && node.identity == "DPoSV1") {
@@ -235,6 +261,7 @@ export class DPoS2Service {
                             }
                         }
 
+                        //Check stake Until
                         var until = node.stakeuntil - currentHeight;
                         node.stakeDays = Math.ceil(until / 720);
                         if (until > 720 * 7) { //more than 7 days
@@ -253,6 +280,20 @@ export class DPoS2Service {
                                 expired30 = until;
                             }
                         }
+
+                        //get votes precentage
+                        node.myVotesPrecentage = 0;
+                        if (this.stakeService.votesRight.totalVotesRight > 0) {
+                            let list = this.stakeService.votesRight.voteInfos[VoteType.DPoSV2].list;
+                            let votes = 0;
+                            for (let i in list) {
+                                if (node.ownerpublickey == list[i].candidate) {
+                                    votes += parseFloat(list[i].votes);
+                                }
+                            }
+                            node.myVotesPrecentage = this.uxService.getPercentage(votes, this.stakeService.votesRight.totalVotesRight);
+                        }
+
                         this.dposList.push(node);
                     }
 
@@ -270,26 +311,6 @@ export class DPoS2Service {
         } catch (err) {
             Logger.error('dposvoting', 'fetchNodes error:', err);
             await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
-        }
-
-        this.dposInfo.txConfirm = true;
-        if (this.voteService.sourceSubwallet) {
-            // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
-            let txhistory = await this.voteService.sourceSubwallet.getTransactions();
-            for (let i in txhistory) {
-                if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
-                    if (this.dposInfo.state == 'Unregistered') {
-                        if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
-                            this.dposInfo.txConfirm = false;
-                            break;
-                        }
-                    }
-                    else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
-                        this.dposInfo.txConfirm = false;
-                        break;
-                    }
-                }
-            }
         }
 
         this.needRefreshNodes = false;

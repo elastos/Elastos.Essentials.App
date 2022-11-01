@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -58,6 +59,8 @@ export class StakeService {
     } as RewardInfo;
 
     public firstAddress: string;
+    public ownerDpos2 = false;
+    public ownerPublicKey = '';
 
     constructor(
         public uxService: UXService,
@@ -73,8 +76,11 @@ export class StakeService {
 
     async initData() {
         this.firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
+        this.ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
+
+        await this.checkOwnerDpos2();
         this.votesRight = await this.getVoteRights();
-        this.rewardInfo = await this.getRewardInfo();
+        this.rewardInfo = await this.getRewardInfo(this.firstAddress);
     }
 
     public async getBalanceByAddress(address: string, spendable = false): Promise<number> {
@@ -142,12 +148,17 @@ export class StakeService {
                 //Handle usedvotesinfo
                 if (result[0].usedvotesinfo) {
                     let dposv2votes = result[0].usedvotesinfo.useddposv2votes;
+                    let dpos2List = []
                     if (dposv2votes) {
                         var locktime = Number.MAX_SAFE_INTEGER;
                         for (let i in dposv2votes) {
-                            if (dposv2votes[i].Info[0].locktime < locktime) {
-                                locktime = dposv2votes[i].Info[0].locktime;
+                            for (let j in dposv2votes[i].Info) {
+                                if (dposv2votes[i].Info[j].locktime < locktime) {
+                                    locktime = dposv2votes[i].Info[j].locktime;
+                                }
+                                dpos2List.push(dposv2votes[i].Info[j])
                             }
+
                         }
                         if (locktime != Number.MAX_SAFE_INTEGER) {
                             let ret = await this.getStakeUntil(locktime);
@@ -165,6 +176,7 @@ export class StakeService {
                     this.votesRight.voteInfos.push({ index: 1, title: "staking.cr-council", list: result[0].usedvotesinfo.usedcrvotes });
                     this.votesRight.voteInfos.push({ index: 2, title: "staking.cr-proposal", list: result[0].usedvotesinfo.usedcrcproposalvotes });
                     this.votesRight.voteInfos.push({ index: 3, title: "staking.cr-impeachment", list: result[0].usedvotesinfo.usdedcrimpeachmentvotes });
+                    this.votesRight.voteInfos.push({ index: 4, title: "DPoS 2.0", list: dpos2List });
                 }
             }
         }
@@ -172,9 +184,9 @@ export class StakeService {
         return this.votesRight;
     }
 
-    async getRewardInfo(): Promise<RewardInfo> {
+    async getRewardInfo(address: string): Promise<RewardInfo> {
 
-        this.rewardInfo = {
+        var rewardInfo = {
             claimable: 0,
             claiming: 0,
             claimed: 0,
@@ -184,7 +196,7 @@ export class StakeService {
         const param = {
             method: 'dposv2rewardinfo',
             params: {
-                address: this.firstAddress,
+                address: address,
             },
         };
 
@@ -193,21 +205,21 @@ export class StakeService {
         Logger.log(App.DPOS_VOTING, 'dposv2rewardinfo', result);
         if (result) {
             if (result.claimable) {
-                this.rewardInfo.claimable = Number.parseInt(result.claimable);
+                rewardInfo.claimable = Number.parseInt(result.claimable);
             }
 
             if (result.claiming) {
-                this.rewardInfo.claiming = Number.parseInt(result.claiming);
+                rewardInfo.claiming = Number.parseInt(result.claiming);
             }
 
             if (result.claimed) {
-                this.rewardInfo.claimed = Number.parseInt(result.claimed);
+                rewardInfo.claimed = Number.parseInt(result.claimed);
             }
 
-            this.rewardInfo.total = this.rewardInfo.claimable + this.rewardInfo.claiming + this.rewardInfo.claimed;
+            rewardInfo.total = rewardInfo.claimable + rewardInfo.claiming + rewardInfo.claimed;
         }
 
-        return this.rewardInfo;
+        return rewardInfo;
     }
 
     async getStakeUntil(stakeUntil: number, currentHeight?: number, currentBlockTimestamp?: number): Promise<any> {
@@ -222,6 +234,39 @@ export class StakeService {
         }
         else {
             return { expired: await this.voteService.getRemainingTimeString(until) };
+        }
+    }
+
+    async checkOwnerDpos2() {
+
+
+        //Get ower dpos info
+        const param = {
+            method: 'listproducers',
+            params: {
+                state: "all"
+            },
+        };
+
+        this.ownerDpos2 = false;
+
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        try {
+            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+
+            if (result && !Util.isEmptyObject(result.producers)) {
+                Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
+
+                for (const node of result.producers) {
+                    if (node.ownerpublickey == this.ownerPublicKey) {
+                        this.ownerDpos2 = true;
+                        return;
+                    }
+                }
+            }
+        } catch (err) {
+            Logger.error(App.STAKING, 'checkOwnerDpos2 error:', err);
+            await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
         }
     }
 }
