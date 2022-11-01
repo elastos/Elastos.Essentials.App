@@ -70,12 +70,12 @@ export class StakingHomePage implements OnInit {
             },
             {
                 title: this.translate.instant('staking.your-rewards'),
-                value: this.stakeService.rewardInfo.total,
+                value: this.stakeService.totalRewardInfo.total,
                 active: false
             },
             {
                 title: this.translate.instant('staking.available-reward'),
-                value: this.stakeService.rewardInfo.claimable,
+                value: this.stakeService.totalRewardInfo.claimable,
                 active: false
             },
         );

@@ -32,6 +32,7 @@ export class WithdrawPage {
     public advanced = false;
     public address = "";
     public isMultiWallet = false;
+    public isNodeReward = false;
 
     constructor(
         public uxService: UXService,
@@ -48,10 +49,10 @@ export class WithdrawPage {
 
     }
 
-    async ionViewWillEnter() {
+    ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('staking.withdraw'));
 
-        this.available = await this.stakeService.rewardInfo.claimable;
+        this.available = this.stakeService.rewardInfo.claimable;
         this.address = this.stakeService.firstAddress;
 
         if (this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD
@@ -165,6 +166,17 @@ export class WithdrawPage {
 
     clickMax() {
         this.amount = this.available;
+    }
+
+    onRewardChange(event) {
+        if (this.isNodeReward) {
+            this.available = this.stakeService.nodeRewardInfo.claimable;
+            this.address = this.stakeService.ownerAddress;
+        }
+        else {
+            this.available = this.stakeService.rewardInfo.claimable;
+            this.address = this.stakeService.firstAddress;
+        }
     }
 
 }

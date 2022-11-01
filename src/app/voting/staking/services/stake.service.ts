@@ -51,14 +51,12 @@ export class StakeService {
 
     } as VotesRight;
 
-    public rewardInfo = {
-        claimable: 0,
-        claiming: 0,
-        claimed: 0,
-        total: 0,
-    } as RewardInfo;
+    public rewardInfo: RewardInfo;
+    public nodeRewardInfo: RewardInfo;
+    public totalRewardInfo: RewardInfo;
 
     public firstAddress: string;
+    public ownerAddress: string;
     public ownerDpos2 = false;
     public ownerPublicKey = '';
 
@@ -77,10 +75,23 @@ export class StakeService {
     async initData() {
         this.firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
         this.ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
+        this.ownerAddress = this.voteService.sourceSubwallet.getOwnerAddress();
 
         await this.checkOwnerDpos2();
         this.votesRight = await this.getVoteRights();
         this.rewardInfo = await this.getRewardInfo(this.firstAddress);
+        if (this.ownerDpos2 && this.firstAddress != this.ownerAddress) {
+            this.totalRewardInfo = Util.clone(this.rewardInfo);
+            let rewardInfo = await this.getRewardInfo(this.ownerAddress);
+            this.totalRewardInfo.claimable += rewardInfo.claimable;
+            this.totalRewardInfo.claiming += rewardInfo.claiming;
+            this.totalRewardInfo.claimed += rewardInfo.claimed;
+            this.totalRewardInfo.total += rewardInfo.total;
+            this.nodeRewardInfo = rewardInfo;
+        }
+        else {
+            this.totalRewardInfo = this.rewardInfo;
+        }
     }
 
     public async getBalanceByAddress(address: string, spendable = false): Promise<number> {

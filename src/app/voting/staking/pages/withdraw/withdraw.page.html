@@ -22,6 +22,16 @@
             </ion-col>
         </ion-row>
 
+        <ion-row *ngIf="stakeService.ownerDpos2" class="toggle-row">
+            <ion-col size="10.25" class="left-col">
+                <p>{{ 'staking.withdraw-node-reward' | translate }}</p>
+            </ion-col>
+            <ion-col size="1.75" class="right-col">
+                <ion-toggle [(ngModel)]="isNodeReward" (ngModelChange)="onRewardChange($event)" color="dark">
+                </ion-toggle>
+            </ion-col>
+        </ion-row>
+
         <ion-row class="staked-for-vote">
             <ion-col size="9.5" class="left-col">
                 {{ 'staking.staked-for-votes' | translate }}
@@ -42,8 +52,9 @@
                     <h5>{{ 'staking.send-to' | translate }}</h5>
                 </ion-row>
                 <ion-row>
-                    <ion-input id="max-votes" type="text" name="address" [attr.disabled]="isMultiWallet" ngDefaultControl
-                        placeholder="{{'staking.reciever-address' | translate}}" [(ngModel)]="address" clearInput>
+                    <ion-input id="max-votes" type="text" name="address" [attr.disabled]="isMultiWallet"
+                        ngDefaultControl placeholder="{{'staking.reciever-address' | translate}}" [(ngModel)]="address"
+                        clearInput>
                     </ion-input>
                 </ion-row>
             </ion-col>

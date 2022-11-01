@@ -25,6 +25,7 @@ export const fr = {
         'available': 'Available',
         'send-to': 'Send to',
         'reciever-address': 'Reciever address',
+        'withdraw-node-reward': "Withdraw the node’s reward",
     }
 
 };

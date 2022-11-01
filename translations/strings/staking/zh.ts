@@ -25,6 +25,7 @@ export const zh = {
         'available': '有效票数',
         'send-to': '发送到',
         'reciever-address': '接收地址',
+        'withdraw-node-reward': '领取节点收益',
     }
 
 };
