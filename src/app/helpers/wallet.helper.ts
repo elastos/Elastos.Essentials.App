@@ -1,4 +1,7 @@
 import { Logger } from "../logger";
+import { BiometricAuthenticationFailedException } from "../model/exceptions/biometricauthenticationfailed.exception";
+import { BiometricLockedoutException } from "../model/exceptions/biometriclockedout.exception";
+import { PasswordManagerCancellationException } from "../model/exceptions/passwordmanagercancellationexception";
 import { WalletAlreadyExistException } from "../model/exceptions/walletalreadyexist.exception";
 import { Web3Exception } from "../model/exceptions/web3.exception";
 
@@ -50,6 +53,33 @@ export class WalletExceptionHelper {
         }
 
         Logger.log("wallet", "No specific exception info");
+        return e; // No more info - return the raw error.
+    }
+
+    /**
+     * From a raw JS exception, try to extract more usable information and return clearer
+     * exception types such as PasswordManagerCancellationException.
+     */
+     static reworkedPasswordException(e: any) {
+        if (e && e.message) {
+            if (e.message.includes("MasterPasswordCancellation")) {
+                return new PasswordManagerCancellationException();
+            }
+
+            if (e.message.includes("Authentication error [10]")) {
+                return new PasswordManagerCancellationException();
+            }
+
+            if (e.message.includes("BIOMETRIC_AUTHENTICATION_FAILED")) {
+                return new BiometricAuthenticationFailedException();
+            }
+
+            if (e.message.includes("BIOMETRIC_LOCKED_OUT")) {
+                return new BiometricLockedoutException();
+            }
+        }
+
+        Logger.log("wallet", "No specific password exception info", e);
         return e; // No more info - return the raw error.
     }
 }

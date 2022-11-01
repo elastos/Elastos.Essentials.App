@@ -3,7 +3,12 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
+import { BiometricAuthenticationFailedException } from 'src/app/model/exceptions/biometricauthenticationfailed.exception';
+import { BiometricLockedoutException } from 'src/app/model/exceptions/biometriclockedout.exception';
+import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
+import { WrongPasswordException } from 'src/app/model/exceptions/wrongpasswordexception.exception';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PrivateKeyType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -100,7 +105,20 @@ export class WalletImportByPrivateKeyPage implements OnInit, OnDestroy {
       }
     }
 
-    const payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
+    let payPassword = null;
+    try {
+        payPassword = await this.authService.createAndSaveWalletPassword(this.masterWalletId);
+    } catch(e) {
+        let reworkedEx = WalletExceptionHelper.reworkedPasswordException(e);
+        if (reworkedEx instanceof PasswordManagerCancellationException || reworkedEx instanceof WrongPasswordException
+            || reworkedEx instanceof BiometricAuthenticationFailedException || reworkedEx instanceof BiometricLockedoutException) {
+            // Nothing to do, just stop the flow here.
+        }
+        else {
+            throw e;
+        }
+    }
+
     if (payPassword) {
       try {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
