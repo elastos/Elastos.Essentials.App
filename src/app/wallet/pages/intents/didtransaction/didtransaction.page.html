@@ -1,49 +1,45 @@
 <ion-content>
-    <app-titlebar title="text-vote-crcouncil"></app-titlebar>
-    <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <ion-card>
-            <img [src]="!theme.darkMode ? 'assets/wallet/intents/did.svg' : 'assets/wallet/intents/darkmode/did.svg'">
-            <ion-card-title>{{ 'wallet.didtransaction-publish-identity' | translate }}</ion-card-title>
-            <ion-card-subtitle>{{ 'wallet.didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
-        </ion-card>
-        <div class="msg-container" *ngIf="networkWallet">
-            <p>{{ 'wallet.didtransaction-intro' | translate }}</p>
-        </div>
-        <div class="msg-container" *ngIf="!networkWallet">
-            <p class="warning">{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
-        </div>
+  <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+  <ion-grid class="container" [class.dark-container]="theme.darkMode">
+    <ion-card>
+      <div class="img" inlineSVG="assets/shared/curcol-icons/fingerprint.svg"></div>
+      <ion-card-title>{{ 'wallet.didtransaction-publish-identity' | translate }}</ion-card-title>
+      <ion-card-subtitle>{{ 'wallet.didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
+    </ion-card>
+    <div class="msg-container" *ngIf="networkWallet">
+      <p>{{ 'wallet.didtransaction-intro' | translate }}</p>
+    </div>
+    <div class="msg-container" *ngIf="!networkWallet">
+      <p class="warning">{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+    </div>
 
-        <ion-row class="item-row ripple ion-activatable" *ngIf="fee">
-          <ion-col size="5">
-            <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
-          </ion-col>
-          <ion-col size="6" class="price">
-            <span> {{ feeDisplay }} </span>
-          </ion-col>
-          <ion-col size="1" class="edit-gas-col">
-            <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
-          </ion-col>
-        </ion-row>
-        <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
-          <ion-col size="6">
-            <div>{{ 'wallet.eth-gasprice' | translate }}</div>
-            <ion-input autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPriceGwei"
-              (ionChange)="updateGasprice($event)" mode="ios">
-            </ion-input>
-          </ion-col>
-          <ion-col size="6">
-            <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
-            <ion-input autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
-            </ion-input>
-          </ion-col>
-        </ion-row>
-        <div class="btn cancel ion-activatable ripple" (click)="cancelOperation()">
-            <ion-label>{{ 'common.cancel' | translate}}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-        <div class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-            <ion-label>{{ 'common.confirm' | translate}}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
-    </ion-grid>
+    <ion-row class="item-row ripple ion-activatable" *ngIf="fee">
+      <ion-col size="5">
+        <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
+      </ion-col>
+      <ion-col size="6" class="price">
+        <span> {{ feeDisplay }} </span>
+      </ion-col>
+      <ion-col size="1" class="edit-gas-col">
+        <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
+      </ion-col>
+    </ion-row>
+    <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
+      <ion-col size="6">
+        <div>{{ 'wallet.eth-gasprice' | translate }}</div>
+        <ion-input autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPriceGwei"
+          (ionChange)="updateGasprice($event)" mode="ios">
+        </ion-input>
+      </ion-col>
+      <ion-col size="6">
+        <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
+        <ion-input autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
+        </ion-input>
+      </ion-col>
+    </ion-row>
+
+    <ebutton class="btn cancel" mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate">
+    </ebutton>
+    <ebutton class="btn confirm" (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
+  </ion-grid>
 </ion-content>

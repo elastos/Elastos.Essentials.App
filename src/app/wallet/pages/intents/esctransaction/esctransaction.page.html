@@ -8,8 +8,7 @@
     <!-- CARD HEADER -->
     <div [ngSwitch]="transactionInfo.type">
       <ion-card *ngSwitchCase="'erc20_token_approve'">
-        <img
-          [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
+        <div class="img" inlineSVG="assets/wallet/intents/curcol-smartcontracts.svg"></div>
         <ion-card-title>{{ 'wallet.esctransaction-approve-token' | translate
           }}<br /><b>{{transactionInfo.symbol}}</b></ion-card-title>
         <ion-card-subtitle>
@@ -18,8 +17,7 @@
         </ion-card-subtitle>
       </ion-card>
       <ion-card *ngSwitchDefault>
-        <img
-          [src]="!theme.darkMode ? 'assets/wallet/intents/smartcontracts.svg' : 'assets/wallet/intents/darkmode/smartcontracts.svg'">
+        <div class="img" inlineSVG="assets/wallet/intents/curcol-smartcontracts.svg"></div>
         <ion-card-title>{{ 'wallet.esctransaction-smart-contract' | translate }}</ion-card-title>
         <ion-card-subtitle>
           {{ 'wallet.esctransaction-intro' | translate }}
@@ -95,15 +93,11 @@
     </div>
 
     <!-- BUTTONS FOOTER -->
-    <div class="btn cancel ion-activatable ripple" [class.expand]="!balanceIsEnough()" (click)="cancelOperation()">
-      <h3 *ngIf="!balanceIsEnough()">{{ 'wallet.insufficient-balance' | translate }}</h3>
-      <ion-label>{{ 'common.cancel' | translate}}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-    <div *ngIf="balanceIsEnough()" class="btn confirm ion-activatable ripple" (click)="goTransaction()">
-      <ion-label>{{ 'common.confirm' | translate}}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
-
+    <ebutton class="btn cancel" [class.expand]="!balanceIsEnough()" [disabled]="!balanceIsEnough()" mode="cancel"
+      (clicked)="cancelOperation()"
+      [title]="(!balanceIsEnough() ? 'wallet.insufficient-balance' : 'common.cancel') | translate">
+    </ebutton>
+    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" (clicked)="goTransaction()"
+      [title]="'common.confirm' | translate"></ebutton>
   </ion-grid>
 </ion-content>

@@ -89,7 +89,7 @@
                     .state {
                         font-size: 13px;
                         font-weight: 600;
-                        color: #B91212;
+                        color: #b91212;
                     }
                 }
             }
@@ -100,9 +100,11 @@
                 justify-content: flex-start;
 
                 ion-checkbox {
-                    --border-color: #732dcf;
-                    --border-color-checked: #732dcf;
+                    --border-color: var(--ion-text-color);
+                    --border-color-checked: var(--ion-text-color);
                     --border-width: 1.5px;
+                    --checkmark-color: var(--ion-text-color);
+                    --background-checked: transparent !important;
                 }
             }
         }
@@ -122,7 +124,7 @@
                     }
 
                     .state {
-                        color: #EA8F8F;
+                        color: #ea8f8f;
                     }
                 }
             }

@@ -5,23 +5,21 @@
     flex-direction: column;
     min-height: 100%;
     padding: 20px 10px;
-    background-image: url("/assets/wallet/background/intent.svg");
     object-fit: cover;
 
     ion-card {
         position: relative;
         margin: 50px 10px 30px;
-        background: #ffffff;
+        background: var(--essentials-box-color);
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        box-shadow: 0 3px 15px 0 #ededf0;
         border-radius: 15px;
         padding: 25px 15px 30px;
         overflow: visible;
 
-        img {
+        .img {
             width: 116px;
             height: 95px;
             position: absolute;
@@ -34,7 +32,6 @@
             font-size: 21px;
             font-weight: 600;
             line-height: 1.29;
-            color: #2e2f4e;
             margin: 40px 15px 10px;
         }
 
@@ -44,7 +41,6 @@
             font-size: 13px;
             font-weight: 500;
             line-height: 1.46;
-            color: #161740;
             margin: 0 15px;
         }
     }
@@ -152,7 +148,7 @@
             }
 
             ion-input {
-                --background: rgba(0, 0, 0, 0.1);
+                --background: var(--essentials-box-color);
                 height: 30px;
                 margin-top: 10px;
             }
@@ -160,39 +156,17 @@
     }
 
     .btn {
-        height: 47px;
         width: 46.5%;
         position: fixed;
         bottom: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 8px;
-
-        ion-label {
-            font-size: 17px;
-            font-weight: 500;
-        }
     }
 
     .cancel {
         left: 2%;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
-
-        ion-label {
-            color: #000000;
-        }
     }
 
     .confirm {
         right: 2%;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #6e23d0;
-
-        ion-label {
-            color: #ffffff;
-        }
     }
 
     .expand {
@@ -213,106 +187,10 @@
 }
 
 .warning {
-  margin: 0;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1.25;
-  text-align: center;
-  color: darkorange
-}
-
-.dark-container {
-    background-image: url("/assets/wallet/background/darkmode/intent.svg");
-
-    ion-card {
-        background: #2e2f4e;
-        box-shadow: 0 3px 15px 0 #151626;
-
-        ion-card-title {
-            color: #ffffff;
-        }
-
-        ion-card-subtitle {
-            color: #cfd1f7;
-        }
-    }
-
-    .cancel {
-        box-shadow: 0 3px 6px 0 #151626;
-        background-color: #202039;
-
-        ion-label {
-            color: #ffffff;
-        }
-    }
-
-    .confirm {
-        box-shadow: 0 3px 15px 0 #151626;
-    }
-
-    .msg-container {
-        .edit-gas-row {
-            background: rgba(255, 255, 255, 0.2);
-            margin-top: 10px;
-
-            ion-input {
-                --background: rgba(255, 255, 255, 0.1);
-            }
-        }
-    }
-}
-
-/* @import "../../../../functions.scss";
-
-.text-right {
-    text-align: right;
-}
-.bottom-border {
-    border-bottom: 1px solid #dddddd;
-}
-.top-border {
-    border-top: 1px solid #dddddd;
-}
-.font-size-1 {
-    font-size: 16px;
-}
-
-ion-note {
+    margin: 0;
     font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    color: darkorange;
 }
-
-ion-icon {
-    margin-left: px2rem(20px);
-    width: px2rem(32px);
-    height: px2rem(32px);
-}
-
-.intro {
-    font-size: 2em;
-    margin:14vw;
-}
-
-.number-of-idchain {
-    font-size: 1.7em;
-    margin-top: 20px;
-}
-
-.number-of-idchain-value {
-    font-weight: bold;
-    font-size: 2.2em;
-    margin: 5px;
-}
-
-.notes {
-    margin-top: 5vh;
-}
-
-.note {
-    text-transform: uppercase;
-    font-weight: bold;
-    font-size:1.2em;
-}
-
-.note-entry {
-    margin-bottom:10px;
-} */

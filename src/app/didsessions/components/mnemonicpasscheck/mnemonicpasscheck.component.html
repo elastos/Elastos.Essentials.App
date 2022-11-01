@@ -1,6 +1,6 @@
 <div *ngIf="!askedIfHasPassphrase" class="container" [class.dark-container]="theme.darkMode">
   <ion-row class="header-row">
-    <img src="/assets/didsessions/default/securityWarning.svg">
+    <div class="img" inlineSVG="/assets/shared/curcol-icons/warning.svg"></div>
     <h1 class="ion-text-center">{{ 'didsessions.mnemonicpasscheck-question' | translate }}</h1>
   </ion-row>
 

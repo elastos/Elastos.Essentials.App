@@ -1,4 +1,4 @@
-@import 'src/app/didsessions/root.scss';
+@import "src/app/didsessions/root.scss";
 
 .container {
   padding: 0 20px 20px;
@@ -15,9 +15,10 @@
 
   .item {
     width: 100%;
-    border-bottom: 1px solid #EAEAEA;
+    border-bottom: 1px solid #eaeaea;
 
-    .id-col, .checkbox-col {
+    .id-col,
+    .checkbox-col {
       padding: 15px 0;
       display: flex;
       flex-direction: column;
@@ -44,10 +45,11 @@
       align-items: flex-end;
 
       ion-checkbox {
-        --border-width: 2px;
-        --border-color: #732dcf !important;
-        --border-color-checked: #732dcf !important;
-        --background-checked: #732dcf !important;
+        --border-color: var(--ion-text-color);
+        --border-color-checked: var(--ion-text-color);
+        --border-width: 1.5px;
+        --checkmark-color: var(--ion-text-color);
+        --background-checked: transparent !important;
       }
     }
   }
@@ -58,4 +60,3 @@
     border-bottom: 1px solid #464646;
   }
 }
-
