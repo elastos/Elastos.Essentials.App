@@ -12,7 +12,7 @@ export class CronosAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case CronosApiType.RPC: return 'https://evm.cronos.org';
-          case CronosApiType.ETHERSCAN_API: return 'https://cronos.org/explorer/api';
+          case CronosApiType.ETHERSCAN_API: return 'https://api.cronoscan.com/api';
           case CronosApiType.BLOCK_EXPLORER: return 'https://cronoscan.com/';
           default:
             throw new Error("Cronos API - Unknown api type " + type);
