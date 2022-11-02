@@ -1,5 +1,6 @@
 package org.elastos.essentials.plugins.internal;
 
+import android.graphics.Color;
 import android.view.ViewGroup;
 
 import org.apache.cordova.CordovaPlugin;
@@ -24,6 +25,7 @@ public class InternalPlugin extends CordovaPlugin {
     @Override
     public void pluginInitialize() {
         instance = this;
+        webView.getView().setBackgroundColor(Color.BLACK);
     }
 
         @Override

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <style name="EssentialsTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+      <item name="android:windowBackground">#000000</item>
+      <item name="android:navigationBarColor">#000000</item>
+      <item name="colorPrimary">#000000</item>
+      <item name="colorPrimaryDark">#000000</item>
+      <item name="colorAccent">#000000</item>
+  </style>
+</resources>

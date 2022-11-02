@@ -21,7 +21,7 @@
     <allow-navigation href="data:*" />
     <allow-navigation href="asset://*" />
     <allow-navigation href="ionic://*" />
-    <preference name="LottieFullScreen" value="false" />
+    <preference name="LottieFullScreen" value="true" />
     <preference name="LottieAnimationLocation" value="www/assets/essentials_anim.json" />
     <preference name="LottieBackgroundColor" value="000000" />
     <preference name="LottieCacheDisabled" value="true" />
@@ -44,6 +44,9 @@
         </edit-config>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
             <application android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="true" tools:replace="android:allowBackup" />
+        </edit-config>
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity[@android:label='@string/activity_name']">
+            <activity android:theme="@style/EssentialsTheme" />
         </edit-config>
         <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
             <uses-library android:name="org.apache.http.legacy" android:required="false" />

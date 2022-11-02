@@ -17,6 +17,8 @@
         <source-file src="src/android/InternalPlugin.java" target-dir="src/org/elastos/essentials/plugins/internal" />
         <source-file src="src/android/CheckRooted.java" target-dir="src/org/elastos/essentials/plugins/internal" />
         <source-file src="src/android/Security.java" target-dir="src/org/elastos/essentials/plugins/internal" />
+
+        <resource-file src="src/android/essentials-theme.xml" target="res/values/essentials-theme.xml" />
     </platform>
     <platform name="ios">
         <config-file parent="/*" target="config.xml">

@@ -251,7 +251,6 @@
       "cordova-plugin-app-version": {},
       "elastos-essentials-plugin-intent": {},
       "cordova-plugin-statusbar": {},
-      "elastos-essentials-plugin-internal": {},
       "cordova-sqlite-storage": {},
       "cordova-plugin-firebasex": {
         "FIREBASE_ANALYTICS_COLLECTION_ENABLED": "true",
@@ -271,7 +270,8 @@
       "cordova-plugin-lottie-splashscreen": {},
       "cordova-plugin-advanced-http": {
         "ANDROIDBLACKLISTSECURESOCKETPROTOCOLS": "SSLv3,TLSv1"
-      }
+      },
+      "elastos-essentials-plugin-internal": {}
     },
     "platforms": [
       "android",
