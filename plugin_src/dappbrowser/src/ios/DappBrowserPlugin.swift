@@ -1,449 +1,464 @@
- /*
-  * Copyright (c) 2021 Elastos Foundation
-  *
-  * Permission is hereby granted, free of charge, to any person obtaining a copy
-  * of this software and associated documentation files (the "Software"), to deal
-  * in the Software without restriction, including without limitation the rights
-  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  * copies of the Software, and to permit persons to whom the Software is
-  * furnished to do so, subject to the following conditions:
-  *
-  * The above copyright notice and this permission notice shall be included in all
-  * copies or substantial portions of the Software.
-  *
-  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-  * SOFTWARE.
-  */
+/*
+ * Copyright (c) 2021 Elastos Foundation
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 
- import Foundation
+import Foundation
 
- @objc(DappBrowserPlugin)
- class DappBrowserPlugin : CDVPlugin {
-    var callbackId: String? = nil;
-    var msgListener: ((Int, String, String)->(Void))? = nil;
-    var intentCallbackId: String? = nil;
-    var intentListener:  ((String, String?, String, Int64)->(Void))? = nil;
+@objc(DappBrowserPlugin)
+class DappBrowserPlugin : CDVPlugin {
+   var callbackId: String? = nil;
+   var msgListener: ((Int, String, String)->(Void))? = nil;
+   var intentCallbackId: String? = nil;
+   var intentListener:  ((String, String?, String, Int64)->(Void))? = nil;
 
-    private var _beforeload: String = "";
+   private var _beforeload: String = "";
 //    private var _waitForBeforeload: Bool = false;
-    private var _previousStatusBarStyle: NSInteger = -1;
-    var webViewHandler: WebViewHandler!
+   private var _previousStatusBarStyle: NSInteger = -1;
+   var webViewHandler: WebViewHandler!
+    var injectedJs: String? = nil
 
-    static var instance: DappBrowserPlugin?;
+   static var instance: DappBrowserPlugin?;
 
-    static let kDappBrowserTargetSelf = "_self"
-    static let kDappBrowserTargetSystem = "_system"
-    static let kDappBrowserTargetBlank = "_blank"
+   static let kDappBrowserTargetSelf = "_self"
+   static let kDappBrowserTargetSystem = "_system"
+   static let kDappBrowserTargetBlank = "_blank"
 
-    static func getInstance() -> DappBrowserPlugin {
-        return instance!;
-    }
+   static func getInstance() -> DappBrowserPlugin {
+       return instance!;
+   }
 
-    override func pluginInitialize() {
-        DappBrowserPlugin.instance = self;
-    }
+   override func pluginInitialize() {
+       DappBrowserPlugin.instance = self;
+   }
 
-    //---------------------------------------------------------
-    func success(_ command: CDVInvokedUrlCommand) {
-        let result = CDVPluginResult(status: CDVCommandStatus_OK)
+   //---------------------------------------------------------
+   func success(_ command: CDVInvokedUrlCommand) {
+       let result = CDVPluginResult(status: CDVCommandStatus_OK)
 
-        self.commandDelegate?.send(result, callbackId: command.callbackId)
-    }
+       self.commandDelegate?.send(result, callbackId: command.callbackId)
+   }
 
-     func success(_ command: CDVInvokedUrlCommand, _ retAsBool: Bool) {
-         let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                      messageAs: retAsBool);
-
-         self.commandDelegate?.send(result, callbackId: command.callbackId)
-     }
-
-    func success(_ command: CDVInvokedUrlCommand, _ retAsString: String) {
+    func success(_ command: CDVInvokedUrlCommand, _ retAsBool: Bool) {
         let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: retAsString);
+                                     messageAs: retAsBool);
 
         self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
 
-    func success(_ callbackId: String, retAsDict: [String : Any]) {
-        let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: retAsDict);
+   func success(_ command: CDVInvokedUrlCommand, _ retAsString: String) {
+       let result = CDVPluginResult(status: CDVCommandStatus_OK,
+                                    messageAs: retAsString);
 
-        self.commandDelegate?.send(result, callbackId: callbackId)
-    }
+       self.commandDelegate?.send(result, callbackId: command.callbackId)
+   }
 
-    func success(_ callbackId: String, retAsArray: [String]) {
-        let result = CDVPluginResult(status: CDVCommandStatus_OK,
-                                     messageAs: retAsArray);
+   func success(_ callbackId: String, retAsDict: [String : Any]) {
+       let result = CDVPluginResult(status: CDVCommandStatus_OK,
+                                    messageAs: retAsDict);
 
-        self.commandDelegate?.send(result, callbackId: callbackId)
-    }
+       self.commandDelegate?.send(result, callbackId: callbackId)
+   }
 
-    func error(_ command: CDVInvokedUrlCommand, _ retAsString: String) {
-        let result = CDVPluginResult(status: CDVCommandStatus_ERROR,
-                                     messageAs: retAsString);
+   func success(_ callbackId: String, retAsArray: [String]) {
+       let result = CDVPluginResult(status: CDVCommandStatus_OK,
+                                    messageAs: retAsArray);
 
-        self.commandDelegate?.send(result, callbackId: command.callbackId)
-    }
+       self.commandDelegate?.send(result, callbackId: callbackId)
+   }
 
-    func sendCallback(_ command: CDVInvokedUrlCommand, _ status: CDVCommandStatus, _ keepCallback:Bool, _ retAsString: String?) {
-        var result: CDVPluginResult? = nil;
-        if (status != CDVCommandStatus_NO_RESULT) {
-            result = CDVPluginResult(status: status, messageAs: retAsString);
-        }
-        else {
-            result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
-        }
-        result?.setKeepCallbackAs(keepCallback);
+   func error(_ command: CDVInvokedUrlCommand, _ retAsString: String) {
+       let result = CDVPluginResult(status: CDVCommandStatus_ERROR,
+                                    messageAs: retAsString);
 
-        self.commandDelegate?.send(result, callbackId: command.callbackId)
-    }
+       self.commandDelegate?.send(result, callbackId: command.callbackId)
+   }
+
+   func sendCallback(_ command: CDVInvokedUrlCommand, _ status: CDVCommandStatus, _ keepCallback:Bool, _ retAsString: String?) {
+       var result: CDVPluginResult? = nil;
+       if (status != CDVCommandStatus_NO_RESULT) {
+           result = CDVPluginResult(status: status, messageAs: retAsString);
+       }
+       else {
+           result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
+       }
+       result?.setKeepCallbackAs(keepCallback);
+
+       self.commandDelegate?.send(result, callbackId: command.callbackId)
+   }
 
 
-    @objc override func onReset() {
+   @objc override func onReset() {
+       if (self.webViewHandler != nil) {
+           self.webViewHandler.close();
+       }
+   }
+
+   @objc func close(_ command: CDVInvokedUrlCommand) {
+       if (self.webViewHandler != nil) {
+           let mode = command.arguments[0] as? String;
+           self.webViewHandler.close();
+       }
+
+       // Things are cleaned up in browserExit.
+
+       self.success(command);
+   }
+
+   func isSystemUrl(_ url: URL) -> Bool {
+       if (url.absoluteString == "itunes.apple.com") {
+           return true;
+       }
+
+       return false;
+   }
+
+   @objc func open(_ command: CDVInvokedUrlCommand) {
+       let url = command.arguments[0] as? String;
+       var target = command.arguments[1] as? String ?? DappBrowserPlugin.kDappBrowserTargetSelf;
+       let options = command.arguments[2] as? String ?? "";
+
+       var pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR,
+                                      messageAs: "incorrect number of arguments");
+
+       if (url != nil) {
+           let baseUrl = self.webViewEngine.url();
+           let absoluteUrl = URL(string: url!, relativeTo: baseUrl)?.absoluteURL;
+
+           if (absoluteUrl != nil) {
+               if (self.isSystemUrl(absoluteUrl!)) {
+                   target = DappBrowserPlugin.kDappBrowserTargetSystem;
+               }
+
+               do {
+                   if (target == DappBrowserPlugin.kDappBrowserTargetSelf) {
+                       self.openInCordovaWebView(absoluteUrl!, withOptions:options);
+                   }
+                   else if (target == DappBrowserPlugin.kDappBrowserTargetSystem) {
+                       self.openInSystem(absoluteUrl!);
+                   } else { // _webview or anything else
+                       try self.openInDappBrowser(url: url!, withOptions:options);
+                   }
+               } catch let error {
+                   self.error(command, error.localizedDescription);
+               }
+
+               pluginResult = CDVPluginResult(status: CDVCommandStatus_OK);
+           }
+       }
+
+       self.commandDelegate?.send(pluginResult, callbackId: command.callbackId)
+   }
+
+   func openInDappBrowser(url: String, withOptions options: String) throws {
+       let browserOptions = try DappBrowserOptions.parseOptions(options);
+       self.webViewHandler = WebViewHandler(self, url, browserOptions, injectedJs: self.injectedJs);
+   }
+
+   func openInCordovaWebView(_ url: URL, withOptions options: String) {
+       let request = URLRequest.init(url: url);
+       // the webview engine itself will filter for this according to <allow-navigation> policy
+       // in config.xml for cordova-ios-4.0
+       self.webViewEngine.load(request);
+   }
+
+   func openInSystem(_ url: URL) {
+//        if (UIApplication.shared.canOpenURL(url)) {
+           NotificationCenter.default.post(Notification.init(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url));
+           UIApplication.shared.open(url);
+//        }
+   }
+
+   @objc func loadAfterBeforeload(_ command: CDVInvokedUrlCommand) {
+       let urlStr = command.arguments[0] as? String;
+
+       if (self.webViewHandler == nil) {
+           NSLog("Tried to invoke loadAfterBeforeload on DAB after it was closed.");
+           return;
+       }
+
+       if (urlStr == nil) {
+           NSLog("loadAfterBeforeload called with nil argument, ignoring.");
+           return;
+       }
+
+       self.webViewHandler.loadAfterBeforeload(urlStr!);
+   }
+
+
+    @objc func show(_ command: CDVInvokedUrlCommand) {
         if (self.webViewHandler != nil) {
-            self.webViewHandler.close();
+            self.webViewHandler.show()
         }
-    }
-
-    @objc func close(_ command: CDVInvokedUrlCommand) {
-        if (self.webViewHandler != nil) {
-            let mode = command.arguments[0] as? String;
-            self.webViewHandler.close();
-        }
-
-        // Things are cleaned up in browserExit.
-
         self.success(command);
     }
 
-    func isSystemUrl(_ url: URL) -> Bool {
-        if (url.absoluteString == "itunes.apple.com") {
-            return true;
-        }
 
-        return false;
+    @objc func hide(_ command: CDVInvokedUrlCommand) {
+        if (self.webViewHandler != nil) {
+            self.webViewHandler.hide();
+        }
+        self.success(command);
     }
 
-    @objc func open(_ command: CDVInvokedUrlCommand) {
+    @objc func loadUrl(_ command: CDVInvokedUrlCommand) {
         let url = command.arguments[0] as? String;
-        var target = command.arguments[1] as? String ?? DappBrowserPlugin.kDappBrowserTargetSelf;
-        let options = command.arguments[2] as? String ?? "";
+        if (url != nil && self.webViewHandler != nil) {
+            self.webViewHandler.loadUrl(url!);
+        }
+        self.success(command);
+    }
 
-        var pluginResult = CDVPluginResult(status: CDVCommandStatus_ERROR,
-                                       messageAs: "incorrect number of arguments");
+    @objc func reload(_ command: CDVInvokedUrlCommand) {
+        if (self.webViewHandler != nil) {
+            self.webViewHandler.reload();
+        }
+        self.success(command);
+    }
 
-        if (url != nil) {
-            let baseUrl = self.webViewEngine.url();
-            let absoluteUrl = URL(string: url!, relativeTo: baseUrl)?.absoluteURL;
-
-            if (absoluteUrl != nil) {
-                if (self.isSystemUrl(absoluteUrl!)) {
-                    target = DappBrowserPlugin.kDappBrowserTargetSystem;
-                }
-
-                do {
-                    if (target == DappBrowserPlugin.kDappBrowserTargetSelf) {
-                        self.openInCordovaWebView(absoluteUrl!, withOptions:options);
-                    }
-                    else if (target == DappBrowserPlugin.kDappBrowserTargetSystem) {
-                        self.openInSystem(absoluteUrl!);
-                    } else { // _webview or anything else
-                        try self.openInDappBrowser(url: url!, withOptions:options);
-                    }
-                } catch let error {
-                    self.error(command, error.localizedDescription);
-                }
-
-                pluginResult = CDVPluginResult(status: CDVCommandStatus_OK);
-            }
+    @objc func canGoBack(_ command: CDVInvokedUrlCommand) {
+        var canGoBack = false;
+        if (self.webViewHandler != nil) {
+            canGoBack = self.webViewHandler.canGoBack()
         }
 
-        self.commandDelegate?.send(pluginResult, callbackId: command.callbackId)
+        self.success(command, canGoBack);
     }
 
-    func openInDappBrowser(url: String, withOptions options: String) throws {
-        let browserOptions = try DappBrowserOptions.parseOptions(options);
-        self.webViewHandler = WebViewHandler(self, url, browserOptions);
-    }
 
-    func openInCordovaWebView(_ url: URL, withOptions options: String) {
-        let request = URLRequest.init(url: url);
-        // the webview engine itself will filter for this according to <allow-navigation> policy
-        // in config.xml for cordova-ios-4.0
-        self.webViewEngine.load(request);
-    }
-
-    func openInSystem(_ url: URL) {
-//        if (UIApplication.shared.canOpenURL(url)) {
-            NotificationCenter.default.post(Notification.init(name: NSNotification.Name.CDVPluginHandleOpenURL, object: url));
-            UIApplication.shared.open(url);
-//        }
-    }
-
-    @objc func loadAfterBeforeload(_ command: CDVInvokedUrlCommand) {
-        let urlStr = command.arguments[0] as? String;
-
-        if (self.webViewHandler == nil) {
-            NSLog("Tried to invoke loadAfterBeforeload on DAB after it was closed.");
-            return;
+    @objc func goBack(_ command: CDVInvokedUrlCommand) {
+        if (self.webViewHandler != nil) {
+            self.webViewHandler.goBack();
         }
-
-        if (urlStr == nil) {
-            NSLog("loadAfterBeforeload called with nil argument, ignoring.");
-            return;
-        }
-
-        self.webViewHandler.loadAfterBeforeload(urlStr!);
+        self.success(command);
     }
 
-
-     @objc func show(_ command: CDVInvokedUrlCommand) {
-         if (self.webViewHandler != nil) {
-             self.webViewHandler.show()
-         }
-         self.success(command);
-     }
-
-
-     @objc func hide(_ command: CDVInvokedUrlCommand) {
-         if (self.webViewHandler != nil) {
-             self.webViewHandler.hide();
-         }
-         self.success(command);
-     }
-
-     @objc func loadUrl(_ command: CDVInvokedUrlCommand) {
-         let url = command.arguments[0] as? String;
-         if (url != nil && self.webViewHandler != nil) {
-             self.webViewHandler.loadUrl(url!);
-         }
-         self.success(command);
-     }
-
-     @objc func reload(_ command: CDVInvokedUrlCommand) {
-         if (self.webViewHandler != nil) {
-             self.webViewHandler.reload();
-         }
-         self.success(command);
-     }
-
-     @objc func canGoBack(_ command: CDVInvokedUrlCommand) {
-         var canGoBack = false;
-         if (self.webViewHandler != nil) {
-             canGoBack = self.webViewHandler.canGoBack()
-         }
-
-         self.success(command, canGoBack);
-     }
-
-
-     @objc func goBack(_ command: CDVInvokedUrlCommand) {
-         if (self.webViewHandler != nil) {
-             self.webViewHandler.goBack();
-         }
-         self.success(command);
-     }
-
-     @objc func getWebViewShot(_ command: CDVInvokedUrlCommand) {
-         var ret = "";
-         if (webViewHandler != nil) {
-             ret = webViewHandler.getWebViewShot();
-         }
-         self.success(command, ret);
-     }
-
-     @objc func setAlpha(_ command: CDVInvokedUrlCommand) {
-         let alpha = command.arguments[0] as? CGFloat;
-         if (alpha != nil && self.webViewHandler != nil) {
-             self.webViewHandler.setAlpha(alpha!);
-         }
-         self.success(command);
-     }
-
-     @objc func addEventListener(_ command: CDVInvokedUrlCommand) {
-         self.callbackId = command.callbackId;
-         // Don't return any result now
-         let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
-         result?.setKeepCallbackAs(true);
-         self.commandDelegate?.send(result, callbackId: command.callbackId)
-     }
-
-
-     @objc func removeEventListener(_ command: CDVInvokedUrlCommand) {
-         self.callbackId = nil;
-         let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
-         result?.setKeepCallbackAs(false);
-         self.commandDelegate?.send(result, callbackId: command.callbackId)
-     }
-
-    // This is a helper method for the inject{Script|Style}{Code|File} API calls, which
-    // provides a consistent method for injecting JavaScript code into the document.
-    //
-    // If a wrapper string is supplied, then the source string will be JSON-encoded (adding
-    // quotes) and wrapped using string formatting. (The wrapper string should have a single
-    // '%@' marker).
-    //
-    // If no wrapper is supplied, then the source string is executed directly.
-
-    func injectDeferredObject(_ source: String, withWrapper jsWrapper: String?) {
-        // Ensure a message handler bridge is created to communicate with the CDVWKInAppBrowserViewController
-        self.evaluateJavaScript(String(format: "(function(w){if(!w._cdvMessageHandler) {w._cdvMessageHandler = function(id,d){w.webkit.messageHandlers.%@.postMessage({d:d, id:id});}}})(window)", WebViewHandler.DAB_BRIDGE_NAME));
-
-        if (jsWrapper != nil) {
-            let jsonData = try? JSONSerialization.data(withJSONObject:[source], options: []);
-            let sourceArrayString = String.init(data: jsonData!, encoding: .utf8);
-
-            if ((sourceArrayString) != nil) {
-                let startIndex = sourceArrayString!.index(sourceArrayString!.startIndex, offsetBy: 1)
-                let endIndex =  sourceArrayString!.index(sourceArrayString!.endIndex, offsetBy: -1)
-                let sourceString = String(sourceArrayString![startIndex..<endIndex])
-
-                let jsToInject = String(format:jsWrapper!, sourceString);
-                self.evaluateJavaScript(jsToInject);
-            }
-        }
-        else {
-            self.evaluateJavaScript(source);
-        }
-    }
-
-    //Synchronus helper for javascript evaluation
-    func evaluateJavaScript(_ script: String) {
+    @objc func getWebViewShot(_ command: CDVInvokedUrlCommand) {
+        var ret = "";
         if (webViewHandler != nil) {
-            self.webViewHandler.webView.evaluateJavaScript(script, completionHandler: { (result, error) in
-                if (error == nil) {
-                    if (result != nil) {
-                        NSLog("evaluateJavaScript result : \(result)");
-                    }
-                }
-                else {
-                    NSLog("evaluateJavaScript error : %@ : %@", error!.localizedDescription, script);
-                }
-            });
+            ret = webViewHandler.getWebViewShot();
         }
+        self.success(command, ret);
     }
 
-    @objc func injectScriptCode(_ command: CDVInvokedUrlCommand) {
-        guard let source = command.arguments[0] as? String else {
-            return;
+    @objc func setAlpha(_ command: CDVInvokedUrlCommand) {
+        let alpha = command.arguments[0] as? CGFloat;
+        if (alpha != nil && self.webViewHandler != nil) {
+            self.webViewHandler.setAlpha(alpha!);
         }
-
-        var jsWrapper: String? = nil;
-
-        if (command.callbackId != nil && command.callbackId != "INVALID") {
-            jsWrapper = String(format: "_cdvMessageHandler('%@',JSON.stringify([eval(%%@)]));", command.callbackId);
-        }
-        self.injectDeferredObject(source, withWrapper:jsWrapper);
+        self.success(command);
     }
 
-    @objc func injectScriptFile(_ command: CDVInvokedUrlCommand) {
-        guard let source = command.arguments[0] as? String else {
-            return;
-        }
-
-        var jsWrapper: String? = nil;
-
-        if (command.callbackId != nil && command.callbackId != "INVALID") {
-            jsWrapper = String(format: "(function(d) { var c = d.createElement('script'); c.src = %%@; c.onload = function() { _cdvMessageHandler('%@'); }; d.body.appendChild(c); })(document)", command.callbackId);
-        }
-        else {
-            jsWrapper = "(function(d) { var c = d.createElement('script'); c.src = %@; d.body.appendChild(c); })(document)";
-        }
-        self.injectDeferredObject(source, withWrapper:jsWrapper);
+    @objc func addEventListener(_ command: CDVInvokedUrlCommand) {
+        self.callbackId = command.callbackId;
+        // Don't return any result now
+        let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
+        result?.setKeepCallbackAs(true);
+        self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
 
-    @objc func injectStyleCode(_ command: CDVInvokedUrlCommand) {
-        guard let source = command.arguments[0] as? String else {
-            return;
-        }
 
-        var jsWrapper: String? = nil;
-
-        if (command.callbackId != nil && command.callbackId != "INVALID") {
-            jsWrapper = String(format: "(function(d) { var c = d.createElement('style'); c.innerHTML = %%@; c.onload = function() { _cdvMessageHandler('%@'); }; d.body.appendChild(c); })(document)", command.callbackId);
-        }
-        else {
-            jsWrapper = "(function(d) { var c = d.createElement('style'); c.innerHTML = %@; d.body.appendChild(c); })(document)";
-        }
-        self.injectDeferredObject(source, withWrapper:jsWrapper);
+    @objc func removeEventListener(_ command: CDVInvokedUrlCommand) {
+        self.callbackId = nil;
+        let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
+        result?.setKeepCallbackAs(false);
+        self.commandDelegate?.send(result, callbackId: command.callbackId)
     }
 
-    @objc func injectStyleFile(_ command: CDVInvokedUrlCommand) {
-        guard let source = command.arguments[0] as? String else {
-            return;
-        }
+   // This is a helper method for the inject{Script|Style}{Code|File} API calls, which
+   // provides a consistent method for injecting JavaScript code into the document.
+   //
+   // If a wrapper string is supplied, then the source string will be JSON-encoded (adding
+   // quotes) and wrapped using string formatting. (The wrapper string should have a single
+   // '%@' marker).
+   //
+   // If no wrapper is supplied, then the source string is executed directly.
 
-        var jsWrapper: String? = nil;
+   func injectDeferredObject(_ source: String, withWrapper jsWrapper: String?) {
+       // Ensure a message handler bridge is created to communicate with the CDVWKInAppBrowserViewController
+       self.evaluateJavaScript(String(format: "(function(w){if(!w._cdvMessageHandler) {w._cdvMessageHandler = function(id,d){w.webkit.messageHandlers.%@.postMessage({d:d, id:id});}}})(window)", WebViewHandler.DAB_BRIDGE_NAME));
 
-        if (command.callbackId != nil && command.callbackId != "INVALID") {
-            jsWrapper = String(format: "(function(d) { var c = d.createElement('link'); c.rel='stylesheet'; c.type='text/css'; c.href = %%@; c.onload = function() { _cdvMessageHandler('%@'); }; d.body.appendChild(c); })(document)", command.callbackId);
-        }
-        else {
-            jsWrapper = "(function(d) { var c = d.createElement('link'); c.rel='stylesheet', c.type='text/css'; c.href = %@; d.body.appendChild(c); })(document)";
-        }
-        self.injectDeferredObject(source, withWrapper:jsWrapper);
-    }
+       if (jsWrapper != nil) {
+           let jsonData = try? JSONSerialization.data(withJSONObject:[source], options: []);
+           let sourceArrayString = String.init(data: jsonData!, encoding: .utf8);
 
-    public func sendEventCallback(_ ret: [String: Any?]) {
-        if (self.callbackId != nil) {
-            let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: ret);
+           if ((sourceArrayString) != nil) {
+               let startIndex = sourceArrayString!.index(sourceArrayString!.startIndex, offsetBy: 1)
+               let endIndex =  sourceArrayString!.index(sourceArrayString!.endIndex, offsetBy: -1)
+               let sourceString = String(sourceArrayString![startIndex..<endIndex])
 
-            pluginResult.setKeepCallbackAs(ret["type"] as! String != "exit");
+               let jsToInject = String(format:jsWrapper!, sourceString);
+               self.evaluateJavaScript(jsToInject);
+           }
+       }
+       else {
+           self.evaluateJavaScript(source);
+       }
+   }
 
-            self.commandDelegate?.send(pluginResult, callbackId: self.callbackId);
-        }
-    }
+   //Synchronus helper for javascript evaluation
+   func evaluateJavaScript(_ script: String) {
+       if (webViewHandler != nil) {
+           self.webViewHandler.webView.evaluateJavaScript(script, completionHandler: { (result, error) in
+               if (error == nil) {
+                   if (result != nil) {
+                       NSLog("evaluateJavaScript result : \(result)");
+                   }
+               }
+               else {
+                   NSLog("evaluateJavaScript error : %@ : %@", error!.localizedDescription, script);
+               }
+           });
+       }
+   }
 
-    public func sendMessageEvent(_ message: WKScriptMessage) {
-        var pluginResult: CDVPluginResult? = nil;
+   @objc func injectScriptCode(_ command: CDVInvokedUrlCommand) {
+       guard let source = command.arguments[0] as? String else {
+           return;
+       }
 
-        if(message.body is [String: Any]){
-            let messageContent = message.body as! [String: Any];
-            let scriptCallbackId = messageContent["id"] as! String;
+       var jsWrapper: String? = nil;
 
-            pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: []);
-            if(messageContent["d"] != nil){
-                let scriptResult = messageContent["d"] as! String;
-                do {
-                    let decodedResult = try JSONSerialization.jsonObject(with: scriptResult.data(using: .utf8)!, options:[]);
-                    if (decodedResult is Array<Any>) {
-                        pluginResult = CDVPluginResult(status: CDVCommandStatus_OK,
-                                                       messageAs: decodedResult as? Array<Any>);
-                    }
-                }
-                catch {
-                    pluginResult = CDVPluginResult.init(status: CDVCommandStatus_JSON_EXCEPTION)
-                }
+       if (command.callbackId != nil && command.callbackId != "INVALID") {
+           jsWrapper = String(format: "_cdvMessageHandler('%@',JSON.stringify([eval(%%@)]));", command.callbackId);
+       }
+       self.injectDeferredObject(source, withWrapper:jsWrapper);
+   }
 
-             }
+   @objc func injectScriptFile(_ command: CDVInvokedUrlCommand) {
+       guard let source = command.arguments[0] as? String else {
+           return;
+       }
 
-            self.commandDelegate.send(pluginResult, callbackId:scriptCallbackId);
-        }
-        else if(self.callbackId != nil){
-             // Send a message event
-            let messageContent = message.body as! String;
-            do {
-                let decodedResult = try JSONSerialization.jsonObject(with: messageContent.data(using: .utf8)!, options:[]);
-                let dResult = ["type": WebViewHandler.MESSAGE_EVENT, "data": decodedResult];
-                self.sendEventCallback(dResult);
+       var jsWrapper: String? = nil;
+
+       if (command.callbackId != nil && command.callbackId != "INVALID") {
+           jsWrapper = String(format: "(function(d) { var c = d.createElement('script'); c.src = %%@; c.onload = function() { _cdvMessageHandler('%@'); }; d.body.appendChild(c); })(document)", command.callbackId);
+       }
+       else {
+           jsWrapper = "(function(d) { var c = d.createElement('script'); c.src = %@; d.body.appendChild(c); })(document)";
+       }
+       self.injectDeferredObject(source, withWrapper:jsWrapper);
+   }
+
+   @objc func injectStyleCode(_ command: CDVInvokedUrlCommand) {
+       guard let source = command.arguments[0] as? String else {
+           return;
+       }
+
+       var jsWrapper: String? = nil;
+
+       if (command.callbackId != nil && command.callbackId != "INVALID") {
+           jsWrapper = String(format: "(function(d) { var c = d.createElement('style'); c.innerHTML = %%@; c.onload = function() { _cdvMessageHandler('%@'); }; d.body.appendChild(c); })(document)", command.callbackId);
+       }
+       else {
+           jsWrapper = "(function(d) { var c = d.createElement('style'); c.innerHTML = %@; d.body.appendChild(c); })(document)";
+       }
+       self.injectDeferredObject(source, withWrapper:jsWrapper);
+   }
+
+   @objc func injectStyleFile(_ command: CDVInvokedUrlCommand) {
+       guard let source = command.arguments[0] as? String else {
+           return;
+       }
+
+       var jsWrapper: String? = nil;
+
+       if (command.callbackId != nil && command.callbackId != "INVALID") {
+           jsWrapper = String(format: "(function(d) { var c = d.createElement('link'); c.rel='stylesheet'; c.type='text/css'; c.href = %%@; c.onload = function() { _cdvMessageHandler('%@'); }; d.body.appendChild(c); })(document)", command.callbackId);
+       }
+       else {
+           jsWrapper = "(function(d) { var c = d.createElement('link'); c.rel='stylesheet', c.type='text/css'; c.href = %@; d.body.appendChild(c); })(document)";
+       }
+       self.injectDeferredObject(source, withWrapper:jsWrapper);
+   }
+
+   public func sendEventCallback(_ ret: [String: Any?]) {
+       if (self.callbackId != nil) {
+           let pluginResult: CDVPluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: ret);
+
+           pluginResult.setKeepCallbackAs(ret["type"] as! String != "exit");
+
+           self.commandDelegate?.send(pluginResult, callbackId: self.callbackId);
+       }
+   }
+
+   public func sendMessageEvent(_ message: WKScriptMessage) {
+       var pluginResult: CDVPluginResult? = nil;
+
+       if(message.body is [String: Any]){
+           let messageContent = message.body as! [String: Any];
+           let scriptCallbackId = messageContent["id"] as! String;
+
+           pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: []);
+           if(messageContent["d"] != nil){
+               let scriptResult = messageContent["d"] as! String;
+               do {
+                   let decodedResult = try JSONSerialization.jsonObject(with: scriptResult.data(using: .utf8)!, options:[]);
+                   if (decodedResult is Array<Any>) {
+                       pluginResult = CDVPluginResult(status: CDVCommandStatus_OK,
+                                                      messageAs: decodedResult as? Array<Any>);
+                   }
+               }
+               catch {
+                   pluginResult = CDVPluginResult.init(status: CDVCommandStatus_JSON_EXCEPTION)
+               }
+
             }
-            catch let error {
-                print("JSONSerialization.jsonObject error: \(error)");
-            }
-         }
-     }
 
-     @objc func clearData(_ command: CDVInvokedUrlCommand) {
-         let url = command.arguments[0] as? String;
-         if (url != nil) {
-             WebViewHandler.clearData(url!);
-         }
-         self.success(command);
-     }
+           self.commandDelegate.send(pluginResult, callbackId:scriptCallbackId);
+       }
+       else if(self.callbackId != nil){
+            // Send a message event
+           let messageContent = message.body as! String;
+           do {
+               let decodedResult = try JSONSerialization.jsonObject(with: messageContent.data(using: .utf8)!, options:[]);
+               let dResult = ["type": WebViewHandler.MESSAGE_EVENT, "data": decodedResult];
+               self.sendEventCallback(dResult);
+           }
+           catch let error {
+               print("JSONSerialization.jsonObject error: \(error)");
+           }
+        }
+    }
 
- }
+    @objc func clearData(_ command: CDVInvokedUrlCommand) {
+        let url = command.arguments[0] as? String;
+        if (url != nil) {
+            WebViewHandler.clearData(url!);
+        }
+        self.success(command);
+    }
+
+    @objc func setInjectedJavascript(_ command: CDVInvokedUrlCommand) {
+       let injectedJs = command.arguments[0] as? String;
+       if (injectedJs != nil) {
+           self.injectedJs = injectedJs;
+
+           // Client already initialized, directly set the injected JS.
+           // Otherwise, we will inject the JS when creating the handler.
+           if (webViewHandler != nil) {
+               webViewHandler.setInjectedJavascript(injectedJs!)
+           }
+       }
+
+       self.success(command);
+   }
+}

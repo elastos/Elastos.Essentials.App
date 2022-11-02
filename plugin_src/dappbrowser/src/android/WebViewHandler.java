@@ -83,15 +83,16 @@ public class WebViewHandler {
     public final static int FILECHOOSER_REQUESTCODE = 1;
     private static LinearLayout linearLayout = null;
 
-    public WebViewHandler(DappBrowserPlugin brwoserPlugin, String url, DappBrowserOptions options) {
+    public WebViewHandler(DappBrowserPlugin brwoserPlugin, String url, DappBrowserOptions options, String injectedJs) {
         this.brwoserPlugin = brwoserPlugin;
         this.activity = brwoserPlugin.cordova.getActivity();
         this.options = options;
 
-        options.atdocumentstartscript += "window.open = function(url, target) {return window.essentialsExtractor.windowOpen(url, target);};";
-
         // clearWebViewCache(this.activity);
         createWebView();
+
+        injectedJs += "window.open = function(url, target) {return window.essentialsExtractor.windowOpen(url, target);};";
+        currentClient.setInjectedJavascript(injectedJs);
 
         //Set Background Color
         webView.setBackgroundColor(Color.parseColor(options.backgroundcolor));
@@ -174,7 +175,7 @@ public class WebViewHandler {
             }
         });
 
-        currentClient = new DappBrowserClient(brwoserPlugin, options.atdocumentstartscript, beforeload);
+        currentClient = new DappBrowserClient(brwoserPlugin, beforeload);
         webView.setWebViewClient(currentClient);
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);

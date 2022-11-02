@@ -54,13 +54,11 @@ class WebViewHandler:  NSObject {
 
     static let DAB_BRIDGE_NAME = "essentialsExtractor";
 
-    init(_ brwoserPlugin: DappBrowserPlugin, _ url: String, _ options: DappBrowserOptions) {
-
-
-        self.brwoserPlugin = brwoserPlugin;
+    init(_ browserPlugin: DappBrowserPlugin, _ url: String, _ options: DappBrowserOptions, injectedJs: String?) {
+        self.brwoserPlugin = browserPlugin;
         self.options = options;
         self.waitForBeforeload = options.beforeload != "";
-        self.settings = brwoserPlugin.commandDelegate.settings as? [String : Any];
+        self.settings = browserPlugin.commandDelegate.settings as? [String : Any];
         self.alertTitle = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as! String;
 
         super.init();
@@ -73,7 +71,10 @@ class WebViewHandler:  NSObject {
             }
         }
 
-        self.createWebView(brwoserPlugin.viewController.view);
+        self.createWebView(browserPlugin.viewController.view)
+        if injectedJs != nil {
+            self.setInjectedJavascript(injectedJs!)
+        }
 
         //Set Background Color
         self.webView.isOpaque = false
@@ -179,20 +180,6 @@ class WebViewHandler:  NSObject {
         configuration.userContentController.add(self, name:WebViewHandler.DAB_BRIDGE_NAME);
         configuration.userContentController.add(self, name:"windowOpen");
 
-        //Inject the js script at document start
-        let replaceWindownOpen = "window.open = function(url, target) {" +
-                    "    let param = {" +
-                    "        url: url," +
-                    "        target: target," +
-                    "    };" +
-                    "    window.webkit.messageHandlers.windowOpen.postMessage(JSON.stringify(param));" +
-                    "}; ";
-        let atdocumentstartscript = replaceWindownOpen + options.atdocumentstartscript;
-
-        let atDocumentStartScript = WKUserScript(source: atdocumentstartscript, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: true);
-
-        configuration.userContentController.addUserScript(atDocumentStartScript);
-
         //WKWebView options
         configuration.allowsInlineMediaPlayback = options.allowinlinemediaplayback;
         if #available(iOS 10.0, *) {
@@ -271,6 +258,22 @@ class WebViewHandler:  NSObject {
         let frame =  CGRect(x: 0, y: 0, width: webViewBounds.width, height: 4.0);
         self.progressView = UIProgressView.init(frame: frame)
         webView.addSubview(self.progressView)
+    }
+
+    public func setInjectedJavascript(_ injectedJs: String) {
+        //Inject the js script at document start
+        let replaceWindowOpen = "window.open = function(url, target) {" +
+                    "    let param = {" +
+                    "        url: url," +
+                    "        target: target," +
+                    "    };" +
+                    "    window.webkit.messageHandlers.windowOpen.postMessage(JSON.stringify(param));" +
+                    "}; ";
+        let atdocumentstartscript = replaceWindowOpen + injectedJs;
+
+        let atDocumentStartScript = WKUserScript(source: atdocumentstartscript, injectionTime: WKUserScriptInjectionTime.atDocumentStart, forMainFrameOnly: true);
+
+        webView.configuration.userContentController.addUserScript(atDocumentStartScript);
     }
 
     @objc override func observeValue(forKeyPath keyPath: String?, of object: Any?, change:  [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

@@ -97,12 +97,15 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onExit(mode?: string) {
-        this.dappbrowserService.setClient(null);
         switch (mode) {
             case "goToLauncher":
+                this.dappbrowserService.setClient(null);
                 void this.nav.goToLauncher();
                 break;
+            case "reload":
+                break;
             default:
+                this.dappbrowserService.setClient(null);
                 void this.nav.navigateBack();
         }
     }

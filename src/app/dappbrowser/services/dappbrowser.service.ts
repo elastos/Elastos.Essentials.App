@@ -87,10 +87,10 @@ export interface DappBrowserClient {
 export class DappBrowserService implements GlobalService {
     public static instance: DappBrowserService = null;
 
+    // Latest data sent to the provider, still while in app
     private userAddress: string = null;
-    private web3ProviderCode: string = null;
-    private elastosConnectorCode: string = null;
     private activeChainID: number;
+
     private rpcUrl: string = null;
     private dabClient: DappBrowserClient = null;
     public title: string = null;
@@ -279,31 +279,14 @@ export class DappBrowserService implements GlobalService {
             this.activeChainID = 0;
         }
 
-        // Prepare our web3 provider bridge and elastos connectors for injection
-        Logger.log("dappbrowser", "Loading the IAB web3 provider");
-        this.web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
-        this.web3ProviderCode = this.web3ProviderCode + `
-        console.log('Essentials Web3 provider is being created');
-        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
-        window.web3 = {
-            currentProvider: window.ethereum
-        };
-        console.log('Essentials Web3 provider is injected', window.ethereum, window.web3);`;
-
-        Logger.log("dappbrowser", "Loading the IAB elastos connector");
-        this.elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
-        this.elastosConnectorCode = this.elastosConnectorCode + "\
-        console.log('Essentials dapp browser connector is being created'); \
-        window.elastos = new EssentialsDABConnector();\
-        console.log('Essentials dapp browser connector is injected', window.elastos);";
-
         var options: any = {
             titlebarheight: 50,
             backgroundcolor: "#bfbfbf",
             hidden: (target == "_webview"),
-            did: DIDSessionsStore.signedInDIDString.replace(/:/g, "_"),
-            atdocumentstartscript: this.web3ProviderCode + this.elastosConnectorCode, // Inject the web3 provider and connector at document start
+            did: DIDSessionsStore.signedInDIDString.replace(/:/g, "_")
         }
+
+        await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
 
         if (title && title != null) {
             this.title = title;
@@ -336,12 +319,37 @@ export class DappBrowserService implements GlobalService {
     }
 
     /**
+     * Javascript code to inject at documents start
+     */
+    private async getInjectedJs(): Promise<string> {
+        // Prepare our web3 provider bridge and elastos connectors for injection
+        Logger.log("dappbrowser", "Loading the IAB web3 provider");
+        let web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
+        web3ProviderCode = web3ProviderCode + `
+        console.log('Essentials Web3 provider is being created');
+        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
+        window.web3 = {
+            currentProvider: window.ethereum
+        };
+        console.log('Essentials Web3 provider is injected', window.ethereum, window.web3);`;
+
+        Logger.log("dappbrowser", "Loading the IAB elastos connector");
+        let elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
+        elastosConnectorCode = elastosConnectorCode + "\
+        console.log('Essentials dapp browser connector is being created'); \
+        window.elastos = new EssentialsDABConnector();\
+        console.log('Essentials dapp browser connector is injected', window.elastos);";
+
+        return web3ProviderCode + elastosConnectorCode;
+    }
+
+    /**
      * Closes the active browser, if any.
      *
      * Check browser.ts in the browser screen for the list of special modes when closing, for specific follow up action.
      * If no mode is given, the navigation simply goes back.
      */
-    public close(mode?: "goToLauncher"): Promise<void> {
+    public close(mode?: "goToLauncher" | "reload"): Promise<void> {
         return dappBrowser.close(mode);
     }
 
@@ -350,6 +358,19 @@ export class DappBrowserService implements GlobalService {
      */
     public hideActiveBrowser() {
         dappBrowser.hide();
+    }
+
+    public async reload() {
+        // Trick / Note:
+        // - When we first open the browser we create the web3 provider constructor JS code, and the cordova plugin decides what is the right
+        // time to inject it (different on android and ios.
+        // - When we reload the page, the browser re-injects this JS code as it was originally.
+        // - Though, the network can have been changed in the meantime from the status bar, by the user or programatically by the dapp.
+        // - Because of that, apps like ELK think we are on the wrong (old) network but we are not, and our provider is not up-to-date with the right
+        // chain id, so the app is stuck in a loop trying to request a network change that never happens.
+        // - So we close the webview and we reopen it for simplicity.
+        await this.close("reload");
+        void this.open(this.url, this.title);
     }
 
     public async handleEvent(event: DappBrowserPlugin.DappBrowserEvent) {
@@ -427,6 +448,7 @@ export class DappBrowserService implements GlobalService {
 
         Logger.log("dappbrowser", "Sending active network to dapp", activeNetwork.key, this.activeChainID, this.rpcUrl);
 
+        await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
         void dappBrowser.executeScript({
             code: `
                 window.ethereum.setRPCApiEndpoint(${this.activeChainID}, '${this.rpcUrl}');
@@ -446,6 +468,7 @@ export class DappBrowserService implements GlobalService {
 
                 Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
 
+                await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
                 void dappBrowser.executeScript({
                     code: " \
                       window.ethereum.setAddress('"+ this.userAddress + "');\
@@ -573,18 +596,6 @@ export class DappBrowserService implements GlobalService {
     }
 
     private handleHtmlHeader(event: DappBrowserPlugin.DappBrowserEvent): Promise<Document> {
-        // Trick / Note:
-        // - When we first open the browser we create the web3 provider constructor JS code, and the cordova plugin decides what is the right
-        // time to inject it (different on android and ios.
-        // - When we reload the page, the browser re-injects this JS code as it was originally.
-        // - Though, the network can have been changed in the meantime from the status bar, by the user or programatically by the dapp.
-        // - Because of that, apps like ELK think we are on the wrong (old) network but we are not, and our provider is not up-to-date with the right
-        // chain id, so the app is stuck in a loop trying to request a network change that never happens.
-        // - So we "refresh" the real active network here when receiving the "head" event (not too early - loadstart doesn't work)
-        // so that our provider and the app are up to date.
-        void this.sendActiveNetworkToDApp(WalletNetworkService.instance.activeNetwork.value);
-        void this.sendActiveWalletToDApp(WalletService.instance.activeNetworkWallet.value);
-
         return this.extractHtmlInfoAndUpdatedBrowsedDApp(event.data, this.url);
     }
 

@@ -121,7 +121,7 @@ export class MenuPage {
     }
 
     public reloadPage() {
-        void dappBrowser.reload();
+        void this.dappBrowserService.reload();
         void this.goback();
     }
 

@@ -52,8 +52,6 @@ public class DappBrowserOptions {
     public boolean shouldPauseOnSuspend = false;
     public boolean hadwareBackButton = true;
 
-    public String atdocumentstartscript = "";
-
     static DappBrowserOptions parseOptions(String options) throws Exception {
         DappBrowserOptions obj = new DappBrowserOptions();
 

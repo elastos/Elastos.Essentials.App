@@ -66,22 +66,25 @@ public class DappBrowserClient extends WebViewClient {
     private DappBrowserPlugin brwoserPlugin;
     public String originUrl;
     public String redirectUrl;
-    public String atDocumentStartScript;
-//    private Boolean injected = false;
+    private String atDocumentStartScript;
+    // private Boolean injected = false;
 
     private String[] customSchemeFilters;
 
-    public DappBrowserClient(DappBrowserPlugin brwoserPlugin, String atdocumentstartscript, String beforeload) {
+    public DappBrowserClient(DappBrowserPlugin brwoserPlugin, String beforeload) {
         this.beforeload = beforeload;
         this.waitForBeforeload = beforeload != null;
         this.brwoserPlugin = brwoserPlugin;
         this.activity = brwoserPlugin.cordova.getActivity();
         this.webView = brwoserPlugin.webView;
-        this.atDocumentStartScript = atdocumentstartscript + "window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}};"
-                                        + "window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML);";
 
         String filters = brwoserPlugin.getPreferences().getString("CustomSchemeFilters", "");
         customSchemeFilters = filters.split(" ");
+    }
+
+    public void setInjectedJavascript(String injectedJs) {
+        this.atDocumentStartScript = injectedJs + "window.webkit={messageHandlers:{essentialsExtractor:essentialsExtractor}};"
+                + "window.essentialsExtractor.processHTML((!document || !document.getElementsByTagName || document.getElementsByTagName('head').length == 0) ? '' : document.getElementsByTagName('head')[0].innerHTML);";
     }
 
     /**

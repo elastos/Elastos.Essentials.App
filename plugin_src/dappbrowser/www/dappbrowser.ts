@@ -34,10 +34,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'open', [url, target, options]);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'open', [url, target, options]);
         });
     }
 
@@ -46,10 +46,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'loadAfterBeforeload', [strUrl]);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'loadAfterBeforeload', [strUrl]);
         });
     }
 
@@ -58,10 +58,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'show', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'show', []);
         });
     }
 
@@ -70,10 +70,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'close', [mode]);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'close', [mode]);
         });
     }
 
@@ -82,10 +82,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'hide', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'hide', []);
         });
     }
 
@@ -98,10 +98,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 exec((ret) => {
                     resolve(ret);
                 },
-                (err) => {
-                    reject(err);
-                },
-                'DappBrowser', 'injectScriptCode', [script.code, true]);
+                    (err) => {
+                        reject(err);
+                    },
+                    'DappBrowser', 'injectScriptCode', [script.code, true]);
             });
         }
         else if (script.file) {
@@ -109,10 +109,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 exec((ret) => {
                     resolve(ret);
                 },
-                (err) => {
-                    reject(err);
-                },
-                'DappBrowser', 'injectScriptFile', [script.file, true]);
+                    (err) => {
+                        reject(err);
+                    },
+                    'DappBrowser', 'injectScriptFile', [script.file, true]);
             });
         }
         else {
@@ -129,10 +129,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 exec((ret) => {
                     resolve(ret);
                 },
-                (err) => {
-                    reject(err);
-                },
-                'DappBrowser', 'injectStyleCode', [css.code, true]);
+                    (err) => {
+                        reject(err);
+                    },
+                    'DappBrowser', 'injectStyleCode', [css.code, true]);
             });
         }
         else if (css.file) {
@@ -140,10 +140,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
                 exec((ret) => {
                     resolve(ret);
                 },
-                (err) => {
-                    reject(err);
-                },
-                'DappBrowser', 'injectStyleFile', [css.file, true]);
+                    (err) => {
+                        reject(err);
+                    },
+                    'DappBrowser', 'injectStyleFile', [css.file, true]);
             });
         }
         else {
@@ -156,10 +156,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'loadUrl', [url]);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'loadUrl', [url]);
         });
     }
 
@@ -168,58 +168,58 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'reload', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'reload', []);
         });
     }
 
-    setTitle(title: string): Promise<void>{
+    setTitle(title: string): Promise<void> {
         return new Promise((resolve, reject) => {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'setTitle', [title]);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'setTitle', [title]);
         });
     }
 
-    canGoBack(): Promise<Boolean>{
+    canGoBack(): Promise<boolean> {
         return new Promise((resolve, reject) => {
             exec((ret) => {
                 resolve(ret);
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'canGoBack', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'canGoBack', []);
         });
     }
 
-    goBack(): Promise<void>{
+    goBack(): Promise<void> {
         return new Promise((resolve, reject) => {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'goBack', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'goBack', []);
         });
     }
 
-    getWebViewShot(): Promise<string>{
+    getWebViewShot(): Promise<string> {
         return new Promise((resolve, reject) => {
             exec((ret) => {
                 resolve(ret);
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'getWebViewShot', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'getWebViewShot', []);
         });
     }
 
@@ -228,10 +228,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'setAlpha', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'setAlpha', []);
         });
     }
 
@@ -252,10 +252,10 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
-            },
-            'DappBrowser', 'removeEventListener', []);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'removeEventListener', []);
         });
     }
 
@@ -264,10 +264,22 @@ class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
             exec(() => {
                 resolve();
             },
-            (err) => {
-                reject(err);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'clearData', [url]);
+        });
+    }
+
+    setInjectedJavascript(injectedJs: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            exec(() => {
+                resolve();
             },
-            'DappBrowser', 'clearData', [url]);
+                (err) => {
+                    reject(err);
+                },
+                'DappBrowser', 'setInjectedJavascript', [injectedJs]);
         });
     }
 }

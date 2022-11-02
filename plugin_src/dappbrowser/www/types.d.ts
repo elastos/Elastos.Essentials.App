@@ -144,7 +144,7 @@ declare namespace DappBrowserPlugin {
     }
 
     type DappBrowserEventType = 'loadstart' | 'loadstop' | 'loaderror' | 'exit' | 'beforeload'
-                                    | 'message' | 'customscheme' | 'progress' | 'urlchanged' | 'menu' | 'head';
+        | 'message' | 'customscheme' | 'progress' | 'urlchanged' | 'menu' | 'head';
     type DappBrowserEvent = {
         /** the event name */
         type: DappBrowserEventType;
@@ -241,7 +241,7 @@ declare namespace DappBrowserPlugin {
         /**
          * Check DappBrowser whether can go back
          */
-        canGoBack(): Promise<Boolean>;
+        canGoBack(): Promise<boolean>;
 
         /**
          *  DappBrowser go back
@@ -264,7 +264,7 @@ declare namespace DappBrowserPlugin {
          *
          * @param callback   The function receive the event.
          */
-        addEventListener(callback: (event: DappBrowserEvent)=>void);
+        addEventListener(callback: (event: DappBrowserEvent) => void);
 
         /**
          *
@@ -280,5 +280,11 @@ declare namespace DappBrowserPlugin {
          */
         clearData(url: string): Promise<void>;
 
+        /**
+         * Sets the JS code that has to be injected when HTML documents start.
+         * For Essentials, these are the web3 provider (window.ethereum) and the elastos
+         * connectivity provider (window.elastos).
+         */
+        setInjectedJavascript(injectedJs: string): Promise<void>;
     }
 }

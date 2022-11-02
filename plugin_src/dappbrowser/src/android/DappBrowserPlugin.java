@@ -70,6 +70,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     private CallbackContext callbackContext;
     public WebViewHandler webViewHandler = null;
+    private String injectedJs = null; // JS to injected in the internal browser when loeading a html page
     static DappBrowserPlugin instance = null;
 
     static DappBrowserPlugin getInstance() {
@@ -93,10 +94,10 @@ public class DappBrowserPlugin extends CordovaPlugin {
         swController.setServiceWorkerClient(new ServiceWorkerClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebResourceRequest request) {
-               if (webViewHandler != null && webViewHandler.currentClient != null) {
+                if (webViewHandler != null && webViewHandler.currentClient != null) {
                     LOG.d(LOG_TAG, "ServiceWorkerClient: isMainFrame:"+request.isForMainFrame() +": " + request.getUrl());
-                   return webViewHandler.currentClient.shouldInterceptRequest(null, request);
-               }
+                    return webViewHandler.currentClient.shouldInterceptRequest(null, request);
+                }
                 return null;
             }
         });
@@ -156,16 +157,17 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 case "setAlpha":
                     this.setAlpha(args, callbackContext);
                     break;
-
                 case "addEventListener":
                     this.addEventListener(callbackContext);
                     break;
                 case "removeEventListener":
                     this.removeEventListener(callbackContext);
                     break;
-
                 case "clearData":
                     this.clearData(args, callbackContext);
+                    break;
+                case "setInjectedJavascript":
+                    this.setInjectedJavascript(args, callbackContext);
                     break;
             }
         } catch (Exception e) {
@@ -195,6 +197,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
             case "addEventListener":
             case "removeEventListener":
             case "clearData":
+                case "setInjectedJavascript":
                 break;
             default:
                 return false;
@@ -255,7 +258,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
 
     private String openInDappBrowser(final String url, String options) throws Exception {
         DappBrowserOptions browserOptions = DappBrowserOptions.parseOptions(options);
-        this.webViewHandler = new WebViewHandler(this, url, browserOptions);
+        this.webViewHandler = new WebViewHandler(this, url, browserOptions, injectedJs);
 
         return "";
     }
@@ -466,6 +469,19 @@ public class DappBrowserPlugin extends CordovaPlugin {
     private void clearData(JSONArray args, CallbackContext callbackContext) throws JSONException {
         final String url = args.getString(0);
         WebViewHandler.clearData(url, callbackContext);
+    }
+
+    private void setInjectedJavascript(JSONArray args, CallbackContext callbackContext) throws JSONException {
+        final String injectedJs = args.getString(0);
+
+        this.injectedJs = injectedJs;
+
+        // Client already initialized, directly set the injected JS.
+        // Otherwise, we will inject the JS when creating the handler.
+        if (webViewHandler != null && webViewHandler.currentClient != null)
+            webViewHandler.currentClient.setInjectedJavascript(injectedJs);
+
+        callbackContext.success();
     }
 
     /**
