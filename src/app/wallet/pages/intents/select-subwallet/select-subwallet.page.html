@@ -34,9 +34,7 @@
             </ion-row>
         </div>
 
-        <div class="btn ion-activatable ripple" (click)="cancelOperation()">
-            <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-            <ion-ripple-effect></ion-ripple-effect>
-        </div>
+        <ebutton class="btn cancel" mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate">
+        </ebutton>
     </ion-grid>
 </ion-content>

@@ -28,10 +28,8 @@
     </p>
 
     <!-- BUTTONS FOOTER -->
-    <div class="btn confirm ion-activatable ripple" (click)="continue()" *ngIf="canContinue()">
-      <ion-label>{{ 'common.confirm' | translate}}</ion-label>
-      <ion-ripple-effect></ion-ripple-effect>
-    </div>
+    <ebutton class="btn confirm" (clicked)="continue()" [title]="'common.confirm' | translate"
+      [disabled]="!canContinue()"></ebutton>
 
   </ion-grid>
 </ion-content>
