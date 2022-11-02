@@ -27,7 +27,7 @@
     <preference name="LottieCacheDisabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResizeMode" value="ionic" />
-    <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net  https://did.web3essentials.io https://wallet.web3essentials.io https://hive.web3essentials.io https://contact.web3essentials.io https://scanner.web3essentials.io https://elink.web3essentials.io" />
+    <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net https://essentials.web3essentials.io https://did.web3essentials.io https://wallet.web3essentials.io https://hive.web3essentials.io https://contact.web3essentials.io https://scanner.web3essentials.io https://elink.web3essentials.io" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc: https://wallet.web3essentials.io/wc:" />
     <preference name="CustomSchemeFilters" value="wc:" />
