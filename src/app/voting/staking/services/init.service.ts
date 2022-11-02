@@ -13,6 +13,10 @@ export class StakingInitService {
     }
 
     public async start() {
-        await this.voteService.selectWalletAndNavTo(App.DPOS_VOTING, '/staking/staking-home');
+        await this.voteService.selectWalletAndNavTo(App.STAKING, '/staking/staking-home');
+    }
+
+    public async startStake() {
+        await this.voteService.selectWalletAndNavTo(App.STAKING, '/staking/stake');
     }
 }
