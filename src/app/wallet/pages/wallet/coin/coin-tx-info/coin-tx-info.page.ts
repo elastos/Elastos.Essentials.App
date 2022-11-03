@@ -397,7 +397,10 @@ export class CoinTxInfoPage implements OnInit {
         let network = WalletNetworkService.instance.activeNetwork.value;
         switch (item.type) {
             case 'txid':
-                action = '/tx/';
+                if (network.key === 'telos') {
+                    action = '/transaction/';
+                } else
+                    action = '/tx/';
             break;
             case 'blockId':
                 // TODO: use '/block/' after the eid explorer is upgraded.
