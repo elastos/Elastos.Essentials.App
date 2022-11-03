@@ -139,6 +139,10 @@
             display: flex;
             align-items: center;
 
+            ion-label {
+                overflow: auto; // Wrap title if too long
+            }
+
             .title {
                 font-size: 14px;
                 margin-bottom: 3px;
