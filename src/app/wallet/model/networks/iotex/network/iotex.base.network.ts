@@ -35,6 +35,8 @@ export class IoTeXBaseNetwork extends EVMNetwork {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return IoTeXAPI.getApiUrl(IoTeXApiType.RPC, this.networkTemplate);
+    else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
+      return IoTeXAPI.getApiUrl(IoTeXApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
       throw new Error(`IoTeXBaseNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
   }
