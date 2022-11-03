@@ -39,6 +39,7 @@ import android.webkit.ServiceWorkerWebSettings;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 
 import org.apache.cordova.CallbackContext;
@@ -103,6 +104,9 @@ public class DappBrowserPlugin extends CordovaPlugin {
         });
         ServiceWorkerWebSettings settings = swController.getServiceWorkerWebSettings();
         settings.setAllowContentAccess(true);
+        // No cache for web workers, so they need to be fetched every time. Attempt to not let
+        // service workers serve an offline index.html that cannot be used for our provider injection.
+        settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
     }
 
     public boolean isMainThread() {
