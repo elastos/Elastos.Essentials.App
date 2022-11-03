@@ -368,6 +368,13 @@ export class HomePage {
     } else return false;
   }
 
+  public highPriceImpactWarning(): boolean {
+    if (!this.activeTransfer || !this.activeTransfer.swapStep)
+      return false;
+
+    return this.activeTransfer.swapStep.slippage > 0.05; // More than 5% is high slippage
+  }
+
   /**
    * Rebuilds the list of possible destination tokens based on the selected source token.
    */

@@ -113,12 +113,14 @@
       </div>
 
       <!-- Swap slippage. Only when DEXes are involved, not pure bridges -->
-      <ion-row *ngIf="activeTransfer.swapStep && activeTransfer.swapStep.slippage">
+      <ion-row *ngIf="activeTransfer.swapStep && activeTransfer.swapStep.slippage" class="slippage">
         <ion-col size="5">
           {{ 'easybridge.swap-price-impact' | translate }}
         </ion-col>
-        <ion-col size="7">
+        <ion-col size="7" class="value">
           {{ getDisplayableSwapPriceImpact() }} %
+          <div class="warning" inlineSVG="/assets/shared/curcol-icons/warning.svg" *ngIf="highPriceImpactWarning()">
+          </div>
         </ion-col>
       </ion-row>
 
