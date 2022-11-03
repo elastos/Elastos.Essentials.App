@@ -397,20 +397,24 @@ export class CoinTxInfoPage implements OnInit {
         let network = WalletNetworkService.instance.activeNetwork.value;
         switch (item.type) {
             case 'txid':
-            action = '/tx/';
+                action = '/tx/';
             break;
             case 'blockId':
-            action = '/block/';
-            if (this.subWallet.id === StandardCoinName.ELA) {
-                value = await GlobalElastosAPIService.instance.getELABlockHash(item.value)
-            }
+                // TODO: use '/block/' after the eid explorer is upgraded.
+                if (network.key === 'elastosidchain') {
+                    action = '/blocks/';
+                } else
+                    action = '/block/';
+                if (this.subWallet.id === StandardCoinName.ELA) {
+                    value = await GlobalElastosAPIService.instance.getELABlockHash(item.value)
+                }
             break;
             case 'address':
-            action = '/address/';
+                action = '/address/';
 
-            if (this.transactionInfo.isCrossChain && this.crossChainNetworkKey) {
-                network = WalletNetworkService.instance.getNetworkByKey(this.crossChainNetworkKey);
-            }
+                if (this.transactionInfo.isCrossChain && this.crossChainNetworkKey) {
+                    network = WalletNetworkService.instance.getNetworkByKey(this.crossChainNetworkKey);
+                }
             break;
             default:
             return;
