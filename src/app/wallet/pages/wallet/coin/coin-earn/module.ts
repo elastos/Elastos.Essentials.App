@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { CoinEarnPage } from './coin-earn.page';
 
@@ -15,6 +16,7 @@ import { CoinEarnPage } from './coin-earn.page';
         FormsModule,
         IonicModule,
         TranslateModule,
+        InlineSVGModule,
         RouterModule.forChild([{ path: '', component: CoinEarnPage }])
     ],
     exports: [RouterModule],
