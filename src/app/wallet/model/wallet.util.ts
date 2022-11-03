@@ -77,6 +77,21 @@ export class WalletUtil {
     }
   }
 
+  public static getFriendlyBalance(balance: BigNumber, decimalplace = -1): string {
+    if (!balance || balance.isNaN()) {
+      return '...';
+    }
+
+    if (decimalplace == -1) {
+      decimalplace = CurrencyService.instance.selectedCurrency.decimalplace;
+    }
+    if (!balance.isGreaterThan(1)) {
+      decimalplace = 8;
+    }
+
+    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
+  }
+
   public static getAmountWithoutScientificNotation(amount: BigNumber | number, precision: number): string {
     let amountBN = new BigNumber(amount);
     if (amountBN.isInteger())

@@ -24,6 +24,7 @@ import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core'
 import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -45,10 +46,12 @@ import { WarningComponent } from 'src/app/wallet/components/warning/warning.comp
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EthContractEvent } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { TransactionListType } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
 import { CoinType, StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
@@ -83,6 +86,8 @@ export class CoinHomePage implements OnInit {
 
     public transactionListType = TransactionListType.NORMAL;
     public hasInternalTransactions = false;
+
+    public stakedELA = null; // ELA staked on ELA main chian
 
     // Total transactions today
     public todaysTransactions = 0;
@@ -197,6 +202,8 @@ export class CoinHomePage implements OnInit {
 
             this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
 
+            void this.getStakedELA();
+
             this.startUpdateInterval();
         }
 
@@ -262,6 +269,7 @@ export class CoinHomePage implements OnInit {
     async updateWalletInfo() {
         // Update balance and get the latest transactions.
         await this.subWallet.update();
+        await this.getStakedELA();
     }
 
     async checkInternalTransactions() {
@@ -696,5 +704,20 @@ export class CoinHomePage implements OnInit {
             return [];
 
         return extTxInfo.evm.txInfo.events;
+    }
+
+    // Get the ELA amount staked on ELA mian chain.
+    public async getStakedELA() {
+        this.stakedELA = null;
+        if (WalletNetworkService.instance.isActiveNetworkElastosMainchain() && this.networkWallet) {
+            let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
+            this.stakedELA = await subwallet.getStakedBalance();
+        }
+    }
+
+    public getStakedELABalanceInCurrency() {
+        let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedELA),
+            this.networkWallet.network, this.currencyService.selectedCurrency.symbol);
+        return WalletUtil.getFriendlyBalance(balance);
     }
 }

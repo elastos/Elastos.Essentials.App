@@ -128,15 +128,7 @@ export class StakeService {
             voteInfos: [],
         } as VotesRight;
 
-        const param = {
-            method: 'getvoterights',
-            params: {
-                stakeaddresses: [stakeAddress],
-            },
-        };
-
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await this.globalElastosAPIService.getVoteRights(stakeAddress);
         Logger.log(App.DPOS_VOTING, 'getvoterights', result);
         if (result && result[0] && result[0].totalvotesright) {
             this.votesRight.totalVotesRight = Number.parseInt(result[0].totalvotesright);

@@ -30,12 +30,12 @@
                 <div class="wallet-name">{{ masterWalletMap.masterWallet.name }}</div>
                 <!-- Balance -->
                 <div *ngIf="masterWalletMap.networkWallet && !currencyService.useCurrency" class="balance">
-                  {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(),
+                  {{ WalletUtil.getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalance(),
                   masterWalletMap.networkWallet.getDecimalPlaces()) }}
                   {{ masterWalletMap.networkWallet.getDisplayTokenName() }}
                 </div>
                 <div *ngIf="masterWalletMap.networkWallet && currencyService.useCurrency" class="balance">
-                  {{ getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()) }}
+                  {{ WalletUtil.getFriendlyBalance(masterWalletMap.networkWallet.getDisplayBalanceInActiveCurrency()) }}
                   {{ currencyService.selectedCurrency.symbol }}
                 </div>
 

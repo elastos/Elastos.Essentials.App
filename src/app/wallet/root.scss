@@ -97,7 +97,8 @@ ion-footer {
         h1,
         h2,
         h3,
-        h4 {
+        h4,
+        h5 {
             padding: 0 10px;
             margin: 0;
             line-height: 1;
@@ -123,7 +124,8 @@ ion-footer {
             margin-bottom: 4px;
         }
 
-        h4 {
+        h4,
+        h5 {
             font-size: 42px;
             letter-spacing: 1.05px;
             line-height: 0.85;
@@ -143,6 +145,16 @@ ion-footer {
             .ela {
                 font-size: 21px;
                 letter-spacing: 0.53px;
+            }
+        }
+
+        h5 {
+            font-size: 28px;
+            margin-top: 5px;
+            margin-bottom: 5px;
+
+            .ela {
+                font-size: 16px;
             }
         }
     }

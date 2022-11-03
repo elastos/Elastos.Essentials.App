@@ -125,8 +125,7 @@ export class WalletJSSDKHelper {
       return false; // Can't continue without the signing wallet password - cancel the initialization
 
     let seed = await signingWallet.getSeed(signingWalletPayPassword);
-
-    if (await signingWallet.getSeed(signingWalletPayPassword)) {
+    if (seed) {
       const sdkMasterWallet = await this.masterWalletManager.createMultiSignMasterWalletWithSeed(
         masterWallet.id,
         seed,

@@ -757,20 +757,19 @@ export class GlobalElastosAPIService extends GlobalService {
     }
 
     // dpos 2.0
-    public async getVoteRights(stakeAddresses: string): Promise<StakeInfo> {
+    public async getVoteRights(stakeAddresses: string): Promise<StakeInfo[]> {
         Logger.log('elastosapi', 'Get Vote Rights..');
         const param = {
             method: 'getvoterights',
             params: {
-                stakeaddresses: stakeAddresses
+                stakeaddresses: [stakeAddresses]
             },
         };
 
         const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
         try {
-            const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-            return dposNodes;
+            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         } catch (e) {
             Logger.warn("elastosapi", "getVoteRights exception", e);
         }

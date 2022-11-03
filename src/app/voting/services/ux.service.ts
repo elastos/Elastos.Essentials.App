@@ -56,7 +56,7 @@ export class UXService {
         return str;
     }
 
-    stringArrayToNumberArray(stringArray: [string]): number[] {
+    stringArrayToNumberArray(stringArray: string[]): number[] {
         var numberArray = [] ;
         for(let i in stringArray) {
             numberArray.push(Number.parseInt(stringArray[i]));

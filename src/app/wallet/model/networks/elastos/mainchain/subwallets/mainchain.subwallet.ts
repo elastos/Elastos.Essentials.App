@@ -889,6 +889,15 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         // Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
     }
 
+    public async getStakedBalance() {
+        var stakeAddress = this.getOwnerStakeAddress()
+        const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);
+        if (result && result[0] && result[0].totalvotesright) {
+            return Number.parseInt(result[0].totalvotesright);
+        } else
+            return 0;
+    }
+
     public getOwnerAddress(): string {
         if (!this.ownerAddress) {
             this.ownerAddress = (this.networkWallet.safe as any as ElastosMainChainSafe).getOwnerAddress();

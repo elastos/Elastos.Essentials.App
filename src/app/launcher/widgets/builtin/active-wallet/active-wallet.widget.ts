@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSlides, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
@@ -12,6 +11,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -49,6 +49,8 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     speed: 200,
     spaceBetween: 10
   };
+
+  public WalletUtil = WalletUtil;
 
   constructor(
     public theme: GlobalThemeService,
@@ -123,21 +125,6 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
 
   public pickNetwork() {
     void this.walletNetworkUIService.chooseActiveNetwork();
-  }
-
-  public getFriendlyBalance(balance: BigNumber, decimalplace = -1): string {
-    if (!balance || balance.isNaN()) {
-      return '...';
-    }
-
-    if (decimalplace == -1) {
-      decimalplace = this.currencyService.selectedCurrency.decimalplace;
-    }
-    if (!balance.isGreaterThan(1)) {
-      decimalplace = 8;
-    }
-
-    return balance.decimalPlaces(decimalplace, BigNumber.ROUND_DOWN).toFixed();
   }
 
   private updateWidgetMainWallet() {

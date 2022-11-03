@@ -42,6 +42,16 @@
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>
                     </div>
+
+                    <h3 *ngIf="stakedELA">{{ 'staking.staked' | translate }}</h3>
+                    <div *ngIf="stakedELA" (click)="currencyService.toggleCurrencyDisplay()">
+                        <h5 *ngIf="!currencyService.useCurrency">{{ stakedELA }}
+                            <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
+                        </h5>
+                        <h5 *ngIf="currencyService.useCurrency">{{ getStakedELABalanceInCurrency() }}
+                            <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
+                        </h5>
+                    </div>
                 </ion-row>
             </ion-row>
 

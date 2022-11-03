@@ -35,6 +35,7 @@ import { CoinType } from 'src/app/wallet/model/coin';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { NFT } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -69,6 +70,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public networkWallet: AnyNetworkWallet = null;
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;
+
+    public stakedELA = null; // ELA staked on ELA main chian
 
     public refreshingStakedAssets = false;
 
@@ -149,6 +152,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 this.stakedAssetsUpdateSubscription = this.networkWallet.stakedAssetsUpdate.subscribe((data) => {
                     this.refreshStakingAssetsList();
                 })
+
+                void this.getStakedELA();
             }
             else {
                 if (this.masterWallet && (this.masterWallet.type === WalletType.LEDGER)) {
@@ -333,6 +338,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     async updateCurrentWalletInfo() {
         if (this.networkWallet) {
             await this.networkWallet.update();
+            await this.getStakedELA();
             // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         }
     }
@@ -454,5 +460,20 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     public getAddressFromLedger() {
         this.native.go("/wallet/ledger/scan", { device: (this.masterWallet as LedgerMasterWallet).deviceID, type: LedgerConnectType.AddAccount });
+    }
+
+    // Get the ELA amount staked on ELA mian chain.
+    public async getStakedELA() {
+        this.stakedELA = null;
+        if (WalletNetworkService.instance.isActiveNetworkElastosMainchain() && this.networkWallet) {
+            let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
+            this.stakedELA = await subwallet.getStakedBalance();
+        }
+    }
+
+    public getStakedELABalanceInCurrency() {
+        let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedELA),
+            this.networkWallet.network, this.currencyService.selectedCurrency.symbol);
+        return WalletUtil.getFriendlyBalance(balance);
     }
 }

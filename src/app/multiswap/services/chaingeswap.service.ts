@@ -45,7 +45,6 @@ export class ChaingeSwapService {
    */
   public getSupportedNetworks(): AnyNetwork[] {
     if (NetworkTemplateStore.networkTemplate !== MAINNET_TEMPLATE) {
-      Logger.warn("chainge", "No network supported outside of mainnet");
       return [];
     }
 
