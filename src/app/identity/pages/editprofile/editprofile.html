@@ -37,7 +37,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
@@ -64,7 +64,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
@@ -90,7 +90,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
@@ -115,7 +115,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
@@ -147,7 +147,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
@@ -172,9 +172,10 @@
                 <ion-modal class="datetime-modal" trigger="open-datetime">
                   <ng-template>
                     <ion-content>
-                      <ion-datetime [locale]="datetime_locale" [cancelText]="'common.cancel'|translate"
-                        [doneText]="'common.confirm'|translate" [value]="entry.value"
-                        (ionChange)="formatBirthDay($event, entry)" [presentation]="month-year" [showDefaultButtons]="true">
+                      <ion-datetime class="modal-datetime" [locale]="datetime_locale"
+                        [cancelText]="'common.cancel'|translate" [doneText]="'common.confirm'|translate"
+                        [value]="entry.value" (ionChange)="formatBirthDay($event, entry)" [presentation]="month-year"
+                        [showDefaultButtons]="true">
                       </ion-datetime>
                     </ion-content>
                   </ng-template>
@@ -184,7 +185,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
@@ -204,7 +205,7 @@
           </ion-grid>
         </ion-col>
         <ion-col size="2" class="toggle-col">
-          <ion-toggle color="tertiary" mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>

@@ -1,5 +1,9 @@
 @import "src/app/identity/root.scss";
 
+.modal-datetime {
+  --background: var(--ion-background-color);
+}
+
 .container {
   .header-row {
     .avatar-col {

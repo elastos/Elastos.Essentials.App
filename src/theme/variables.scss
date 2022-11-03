@@ -138,17 +138,13 @@ $app-theme: mat-light-theme($app-primary, $app-accent, $app-warn);
     [aria-checked="true"].sc-ion-alert-ios .alert-radio-label.sc-ion-alert-ios,
     .alert-radio-inner.sc-ion-alert-ios {
       font-weight: 600;
-      color: #565bdb;
+      //color: #565bdb;
     }
   }
 
   /* ion-slides {
     --bullet-background: #808080;
   } */
-
-  ion-datetime {
-    --background: #ffffff;
-  }
 }
 
 /*
@@ -230,22 +226,22 @@ body.dark {
   --ion-color-light-tint: #ffffff; */
 
   ion-alert {
-    --background: #121212;
-    --ion-text-color: #ffffff;
+    //--background: #121212;
+    //--ion-text-color: #ffffff;
 
     h2 {
-      color: #ffffff;
+      //color: #ffffff;
     }
 
     button {
       span {
-        color: #ffffff;
+        //color: #ffffff;
       }
     }
 
     [aria-checked="true"].sc-ion-alert-ios .alert-radio-label.sc-ion-alert-ios,
     .alert-radio-inner.sc-ion-alert-ios {
-      color: #565bdb;
+      //color: #565bdb;
       font-weight: 600;
     }
   }
@@ -253,10 +249,6 @@ body.dark {
   /* ion-slides {
     --bullet-background: #f5f5fd;
   } */
-
-  ion-datetime {
-    --background: #121212;
-  }
 }
 
 /*

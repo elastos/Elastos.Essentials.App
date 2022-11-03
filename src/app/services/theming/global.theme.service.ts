@@ -172,6 +172,7 @@ export class GlobalThemeService extends GlobalService {
 
     // Set ionic background color and variants
     document.body.style.setProperty('--ion-text-color', mainTextColor);
+    document.body.style.setProperty('--ion-color-primary', mainTextColor);
     document.body.style.setProperty('--ion-card-color', mainTextColor);
     document.body.style.setProperty('--ion-item-color', mainTextColor);
     document.body.style.setProperty('--ion-background-color', variant.color);
