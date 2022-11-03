@@ -608,15 +608,26 @@ export class CoinHomePage implements OnInit {
     }
 
     public swapsColumnSize(): number {
-        // Can earn ? show 2 buttons, 6 each. Otherzise, only swap, 12 size.
-        return this.canEarn() ? 6 : 12;
+        let item = 0;
+        if (this.canSwap()) item++;
+        if (this.canEarn()) item++;
+        if (this.canStakeELA()) item++;
+
+        switch (item) {
+            case 1:
+                return 12; // 1 columns
+            case 2:
+                return 6; // 2 columns - 2x6 = 12
+            default:
+                return 4; // 3 columns - 3x4 = 12
+        }
     }
 
     /**
      * Tells if this subwallet can do one of earn, swap or bridge operations
      */
     public canEarnSwapOrBridge(): boolean {
-        return this.canEarn() || this.canSwap() /* || this.canBridge() */;
+        return this.canEarn() || this.canSwap() || this.canStakeELA() /* || this.canBridge() */;
     }
 
     public canEarn(): boolean {
@@ -625,6 +636,10 @@ export class CoinHomePage implements OnInit {
 
     public canSwap(): boolean {
         return this.chaingeSwapService.isNetworkSupported(this.networkWallet.network);
+    }
+
+    public canStakeELA(): boolean {
+        return WalletNetworkService.instance.isActiveNetworkElastosMainchain();
     }
 
     // Deprecated
@@ -719,5 +734,9 @@ export class CoinHomePage implements OnInit {
         let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedELA),
             this.networkWallet.network, this.currencyService.selectedCurrency.symbol);
         return WalletUtil.getFriendlyBalance(balance);
+    }
+
+    public goStakeApp(s) {
+        void this.globalNav.navigateTo(App.STAKING, "/staking/staking-home");
     }
 }
