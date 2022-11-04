@@ -42,6 +42,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { StakingInitService } from 'src/app/voting/staking/services/init.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -135,7 +136,8 @@ export class CoinHomePage implements OnInit {
         private globalStorage: GlobalStorageService,
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService,
-        private chaingeSwapService: ChaingeSwapService
+        private chaingeSwapService: ChaingeSwapService,
+        public stakingInitService: StakingInitService
     ) {
         void this.init();
     }
@@ -736,6 +738,6 @@ export class CoinHomePage implements OnInit {
     }
 
     public goStakeApp(s) {
-        void this.globalNav.navigateTo(App.STAKING, "/staking/staking-home");
+        this.stakingInitService.start()
     }
 }
