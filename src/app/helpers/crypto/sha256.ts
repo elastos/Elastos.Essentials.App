@@ -23,8 +23,11 @@
 import createHash from 'create-hash';
 
 export class SHA256 {
-    public static sha256Hash(buffer: Buffer): Buffer {
-        return createHash('sha256').update(buffer).digest();
+    public static sha256Hash(buffer: Buffer): Buffer;
+    public static sha256Hash(buffer: Buffer, encoding: createHash.encoding): string;
+
+    public static sha256Hash(buffer: Buffer, encoding?: createHash.encoding): Buffer | string {
+        return createHash('sha256').update(buffer).digest(encoding);
     }
 
     public static hashTwice(buffer: Buffer): Buffer {

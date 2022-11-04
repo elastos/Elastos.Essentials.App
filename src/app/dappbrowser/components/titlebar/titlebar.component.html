@@ -1,5 +1,7 @@
-<ion-header class="ion-no-border" [class.darkContainer]="themeService.darkMode" [class.lightContainer]="!themeService.darkMode">
+<ion-header class="ion-no-border" [class.darkContainer]="themeService.darkMode"
+    [class.lightContainer]="!themeService.darkMode">
     <ion-row [ngStyle]="{ 'background': theme.backgroundColor }">
+        <!-- Left icons -->
         <ion-col size="1.25">
             <div class="img-btn">
                 <img *ngIf="icons[0].visible" [src]="getIconPath(0)" (click)="onIconClicked(0)">
@@ -10,16 +12,21 @@
                 <img *ngIf="icons[1].visible" [src]="getIconPath(1)" (click)="onIconClicked(1)">
             </div>
         </ion-col>
-        <ion-col *ngIf="_title != null" size="7">
-            <ion-title [ngStyle]="{ 'color': theme.color }">{{ _title }}</ion-title>
-        </ion-col>
-        <ion-col *ngIf="_title == null" [size]="urlBoxColSize">
-            <ion-input type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
+
+        <!-- Middle area -->
+        <ion-col [size]="getMiddleColumnSize()" class="middle-col">
+            <div class="title-with-url" *ngIf="showTitleAndUrl" (click)="toggleTitle()">
+                <div class="title" [ngStyle]="{ 'color': theme.color }" [class.reduced]="!_title">{{ _title }}</div>
+                <div class="url" [ngStyle]="{ 'color': theme.color }" [class.expanded]="!_title">{{ _url }}</div>
+            </div>
+            <ion-input #input *ngIf="!showTitleAndUrl" type="text" name="url" ngDefaultControl (keyup.enter)="emit()"
                 [placeholder]="'dappbrowser.input-custom-address' | translate" [(ngModel)]="_url" class="url-input"
-                inputmode="url" enterkeyhint="go" clearInput>
+                inputmode="url" enterkeyhint="go" clearInput (ionFocus)="onInputFocus()" (ionBlur)="onInputBlur()"
+                (ionInput)="onInputKey($event.target.value)" (ionChange)="onInputKey($event.target.value)">
             </ion-input>
         </ion-col>
 
+        <!-- Right icons -->
         <ion-col *ngIf="browserMode" size="1.25">
             <div class="img-btn img-btn-mark">
                 <img [src]="getIconPath(2)" (click)="onIconClicked(2)">

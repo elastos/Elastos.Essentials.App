@@ -29,6 +29,11 @@ export class BrowserPage implements DappBrowserClient {
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
     private backButtonSub: Subscription;
 
+    private inputStatusSub: Subscription;
+    private restoreWebviewTimeout;
+    public shouldShowAssistant = false;
+    public urlInputAssistantFilter = "";
+
     constructor(
         public translate: TranslateService,
         private nav: GlobalNavService,
@@ -37,16 +42,20 @@ export class BrowserPage implements DappBrowserClient {
         public zone: NgZone,
         public keyboard: Keyboard,
         private platform: Platform,
-        public dappbrowserService: DappBrowserService,
+        private dAppBrowserService: DappBrowserService,
         private walletNetworkUIService: WalletNetworkUIService,
         private globalIntentService: GlobalIntentService,
     ) {
+        this.dAppBrowserService.activeBrowsedAppInfo.subscribe(appInfo => {
+            if (appInfo) {
+                this.titleBar.setTitle(appInfo.title ?? null);
+                this.titleBar.setUrl(appInfo.url ?? null);
+            }
+        });
     }
 
-
     ionViewWillEnter() {
-        this.dappbrowserService.setClient(this);
-        this.titleBar.setTitle(this.dappbrowserService.title);
+        this.dAppBrowserService.setClient(this);
         this.titleBar.setCloseMode(true);
         this.titleBar.setBrowserMode(true);
 
@@ -62,7 +71,7 @@ export class BrowserPage implements DappBrowserClient {
                 case BuiltInIcon.NETWORK:
                     dappBrowser.hide();
                     await this.walletNetworkUIService.chooseActiveNetwork();
-                    this.dappbrowserService.showWebView();
+                    this.dAppBrowserService.showWebView();
                     break;
                 case BuiltInIcon.VERTICAL_MENU:
                     this.onMenu();
@@ -75,10 +84,29 @@ export class BrowserPage implements DappBrowserClient {
         this.backButtonSub = this.platform.backButton.subscribeWithPriority(10000, () => {
             void this.onGoBack();
         });
-        this.dappbrowserService.showWebView();
+        this.dAppBrowserService.showWebView();
+
+        this.inputStatusSub = this.titleBar.inputStatus.subscribe(editing => {
+            if (editing) {
+                this.dAppBrowserService.hideActiveBrowser();
+                this.shouldShowAssistant = true;
+            }
+            else {
+                // Give some time to the url assistant to catch and send the click on a url to us, before remove the component from UI
+                this.restoreWebviewTimeout = setTimeout(() => {
+                    this.shouldShowAssistant = false;
+                    this.dAppBrowserService.showWebView();
+                }, 500);
+            }
+        });
     }
 
     ionViewWillLeave() {
+        clearTimeout(this.restoreWebviewTimeout);
+        this.shouldShowAssistant = false;
+
+        this.inputStatusSub.unsubscribe();
+
         void this.zone.run(async () => {
             this.shot = await dappBrowser.getWebViewShot();
         });
@@ -93,35 +121,32 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onLoadStart() {
-
     }
+
+    onHtmlHead?: (head: Document) => void;
 
     onExit(mode?: string) {
         switch (mode) {
             case "goToLauncher":
-                this.dappbrowserService.setClient(null);
+                this.dAppBrowserService.setClient(null);
                 void this.nav.goToLauncher();
                 break;
             case "reload":
                 break;
             default:
-                this.dappbrowserService.setClient(null);
+                this.dAppBrowserService.setClient(null);
                 void this.nav.navigateBack();
         }
     }
 
-    async onUrlChanged(url: string) {
-        this.zone.run(() => {
-            this.titleBar.setUrl(url);
-        });
-
-        let domain = this.dappbrowserService.getDomain(url);
-        if (await this.dappbrowserService.checkScamDomain(domain)) {
+    async onUrlConfirmed(url: string) {
+        let domain = this.dAppBrowserService.getDomain(url);
+        if (await this.dAppBrowserService.checkScamDomain(domain)) {
             void this.zone.run(async () => {
                 this.shot = await dappBrowser.getWebViewShot();
                 await dappBrowser.hide();
 
-                let ret = await this.dappbrowserService.showScamWarning(domain);
+                let ret = await this.dAppBrowserService.showScamWarning(domain);
                 if (ret) {
                     void dappBrowser.close();
                 }
@@ -132,8 +157,18 @@ export class BrowserPage implements DappBrowserClient {
         }
     }
 
+    // URL being typed, not yet confirmed
+    onUrlTyped(urlOrKeywords: string) {
+        this.urlInputAssistantFilter = urlOrKeywords;
+    }
+
     public onUrlInput(url: string) {
         void dappBrowser.loadUrl(url);
+    }
+
+    public onRecentAppPicked(url: string) {
+        // Reload a url, but don't navigate because we are already in the browser screen
+        void this.dAppBrowserService.open(url, null, null, false);
     }
 
     onGoToLauncher() {

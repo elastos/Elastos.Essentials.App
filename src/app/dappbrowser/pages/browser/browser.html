@@ -1,7 +1,10 @@
 <ion-content class="ion-text-center">
-    <browser-titlebar (urlChanged)="onUrlInput($event)"></browser-titlebar>
+    <browser-titlebar (urlConfirmed)="onUrlConfirmed($event)" (urlChanged)="onUrlTyped($event)"></browser-titlebar>
+
+    <url-input-assistant *ngIf="shouldShowAssistant" (urlPicked)="onRecentAppPicked($event)"
+        [filter]="urlInputAssistantFilter"></url-input-assistant>
 
     <div [class.darkContainer]="theme.darkMode">
-        <img *ngIf="shot != null" [src]="shot" />
+        <img *ngIf="shot != null && !shouldShowAssistant" [src]="shot" />
     </div>
 </ion-content>

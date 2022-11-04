@@ -1,6 +1,10 @@
 <ion-content class="ion-text-center">
-    <browser-titlebar (urlChanged)="onUrlInput($event)" [attr.disabled]="dabRunning"></browser-titlebar>
+    <browser-titlebar (urlConfirmed)="onUrlInput($event)" (urlChanged)="onUrlTyped($event)"
+        [attr.disabled]="dabRunning"></browser-titlebar>
     <ion-grid *ngIf="!dabRunning" class="container" [class.dark-container]="theme.darkMode">
+
+        <url-input-assistant *ngIf="shouldShowAssistant" (urlPicked)="onRecentAppPicked($event)"
+            [filter]="urlInputAssistantFilter"></url-input-assistant>
 
         <ion-row class="header-row">
             <ion-col size="12">

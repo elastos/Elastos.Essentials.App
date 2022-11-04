@@ -1,0 +1,15 @@
+<div class="container">
+    <ion-row *ngFor="let recentApp of recentApps" (click)="onRecentAppClicked(recentApp)"
+        class="recent-app ripple ion-activatable">
+        <ion-col class="left-col" size="2">
+            <div class="icon-container">
+                <img [cache]="recentApp.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg">
+            </div>
+        </ion-col>
+        <ion-col class="middle-col" size="10">
+            <div class="title">{{ recentApp.title }}</div>
+            <div class="description">{{ getShortRecentAppDescription(recentApp) }}</div>
+        </ion-col>
+        <ion-ripple-effect></ion-ripple-effect>
+    </ion-row>
+</div>

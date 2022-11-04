@@ -343,6 +343,10 @@ public class DappBrowserPlugin extends CordovaPlugin {
             }
             webViewHandler.closeWithModeMainThread(mode, callbackContext);
         }
+        else {
+            // Nothing to close, return success
+            callbackContext.success();
+        }
     }
 
     private void loadAfterBeforeload(JSONArray args, CallbackContext callbackContext) throws JSONException {

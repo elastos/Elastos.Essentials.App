@@ -1,0 +1,62 @@
+.container {
+    padding: 5px;
+
+    .recent-app {
+        padding: 10px;
+        text-align: left;
+        margin-top: 5px;
+        margin-bottom: 5px;
+        border-radius: 17px;
+        font-weight: 500;
+        padding: 10px;
+        background-color: var(--essentials-box-color);
+
+        .left-col {
+            align-items: center;
+            display: flex;
+            align-self: start;
+            flex-direction: column-reverse;
+
+            .icon-container {
+                align-items: center;
+                justify-content: center;
+                display: flex;
+                background: var(--essentials-box-color);
+                width: 34px;
+                height: 34px;
+                border-radius: 30%;
+                overflow: hidden;
+
+                img {
+                    max-width: 100%;
+                    max-height: 100%;
+                    border: 0;
+                    padding: 0;
+                }
+            }
+        }
+
+        .middle-col {
+            padding-left: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            align-self: center;
+
+            .title {
+                font-size: 14px;
+                margin-bottom: 3px;
+                font-weight: 600;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                width: 100%;
+                overflow: hidden;
+            }
+
+            .description {
+                font-size: 12px;
+                font-weight: 300;
+            }
+        }
+    }
+}

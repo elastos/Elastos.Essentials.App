@@ -35,7 +35,7 @@ import type { BrowsedAppInfo } from '../model/browsedappinfo';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
-const MAX_RECENT_APPS = 10;
+const MAX_RECENT_APPS = 100;
 
 export type DABMessage = {
     type: "message";
@@ -245,8 +245,11 @@ export class DappBrowserService implements GlobalService {
      * @param title The dApp title to show, if have title the url bar hide, otherwise show url bar.
      *
      */
-    public async open(url: string, title?: string, target?: string) {
+    public async open(url: string, title?: string, target?: string, navigate = true) {
         this.url = url;
+
+        // Close any previous browser if needed, without going back in navigation
+        await this.close("reload");
 
         if (await this.checkScamUrl(url)) {
             return;
@@ -301,8 +304,8 @@ export class DappBrowserService implements GlobalService {
         });
 
         await dappBrowser.open(url, target, options);
-        if (target == "_webview") {
-            void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser');
+        if (target == "_webview" && navigate) {
+            void this.nav.navigateTo(App.DAPP_BROWSER, '/dappbrowser/browser', { animated: false });
         }
 
         // Remember this application as browsed permanently.

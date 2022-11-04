@@ -10,6 +10,7 @@ import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { NetworkChooserComponentModule } from '../wallet/components/network-chooser/module';
 import { WalletChooserComponentModule } from '../wallet/components/wallet-chooser/module';
 import { BrowserTitleBarComponent } from './components/titlebar/titlebar.component';
+import { URLInputAssistantComponent } from './components/url-input-assistant/url-input-assistant.component';
 import { BrowserPage } from './pages/browser/browser';
 import { EditFavoritePage } from './pages/edit-favorite/edit-favorite';
 import { HomePage } from './pages/home/home';
@@ -22,7 +23,8 @@ import { DAppBrowserRoutingModule } from './routing';
     BrowserPage,
     MenuPage,
     EditFavoritePage,
-    BrowserTitleBarComponent
+    BrowserTitleBarComponent,
+    URLInputAssistantComponent
   ],
   imports: [
     CommonModule,
