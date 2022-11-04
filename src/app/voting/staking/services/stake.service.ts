@@ -137,7 +137,14 @@ export class StakeService {
                 if (result[0].remainvoteright) {
                     let arr = this.uxService.stringArrayToNumberArray(result[0].remainvoteright);
                     if (arr.length > 0) {
-                        let min = Math.min(...arr);
+                        let dposvotes = result[0].usedvotesinfo.useddposvotes;
+                        var min = 0;
+                        if (dposvotes.length > 0) {
+                            min = Math.min(...arr);
+                        }
+                        else {
+                            min = Math.min(...(arr.slice(1, 5)));
+                        }
                         this.votesRight.maxStaked = this.votesRight.totalVotesRight - min;
                         this.votesRight.maxStakedRatio = Math.floor(this.votesRight.maxStaked / this.votesRight.totalVotesRight * 10000) / 100;
                         this.votesRight.minRemainVoteRight = min;
