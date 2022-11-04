@@ -130,6 +130,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
             this.masterWallet = this.walletManager.getActiveMasterWallet();
 
+            this.stakedELA = null;
+
             if (activeNetworkWallet) {
                 this.checkLedgerWallet();
 
@@ -168,6 +170,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
             this.currentNetwork = activeNetwork;
 
             this.checkLedgerWallet();
+
+            this.stakedELA = null;
         });
 
         this.sendTransactionSubscription = this.events.subscribe("wallet:transactionsent", () => {
@@ -464,7 +468,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     // Get the ELA amount staked on ELA mian chain.
     public async getStakedELA() {
-        this.stakedELA = null;
         if (WalletNetworkService.instance.isActiveNetworkElastosMainchain() && this.networkWallet) {
             let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
             this.stakedELA = await subwallet.getStakedBalance();

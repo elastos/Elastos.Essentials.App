@@ -139,7 +139,9 @@ export enum RawTransactionType {
   CrCouncilMemberClaimNode = 0x31,
 
   RevertToPOW = 0x41,
-  RevertToDPOS = 0x42
+  RevertToDPOS = 0x42,
+
+  ReturnSideChainDepositCoin = 0x51
 }
 
 // Base transaction type for all networks, all chains

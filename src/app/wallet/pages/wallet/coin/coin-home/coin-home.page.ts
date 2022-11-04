@@ -723,7 +723,6 @@ export class CoinHomePage implements OnInit {
 
     // Get the ELA amount staked on ELA mian chain.
     public async getStakedELA() {
-        this.stakedELA = null;
         if (WalletNetworkService.instance.isActiveNetworkElastosMainchain() && this.networkWallet) {
             let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
             this.stakedELA = await subwallet.getStakedBalance();
