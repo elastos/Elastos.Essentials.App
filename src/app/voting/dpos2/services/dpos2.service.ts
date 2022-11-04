@@ -62,9 +62,6 @@ export class DPoS2Service {
 
     public updateInfo: any;
 
-    public needRefreshNodes = true;
-
-
     // Stats
     public statsFetched = false;
     public currentHeight = 0;
@@ -83,6 +80,9 @@ export class DPoS2Service {
 
     // Fetch
     private elaNodeUrl = 'https://elanodes.com/wp-content/uploads/custom/images/';
+
+    //Votes
+    public myVotes = [];
 
     constructor(
         public stakeService: StakeService,
@@ -109,6 +109,9 @@ export class DPoS2Service {
 
     async init() {
         Logger.log("dposvoting", "Initializing the nodes service");
+
+        if (!this.voteService.needFetchData[App.DPOS_VOTING]) return;
+
         if (this.initOngoning) return;
 
         this.initOngoning = true;
@@ -118,12 +121,14 @@ export class DPoS2Service {
 
         try {
             await this.fetchNodes();
-            await this.getAllVoteds();
+            await this.geMyVoteds();
         }
         catch (err) {
             Logger.warn('dposvoting', 'Initialize node error:', err)
         }
         this.initOngoning = false;
+
+        this.voteService.needFetchData[App.DPOS_VOTING] = false;
     }
 
     // Titlebar
@@ -303,8 +308,6 @@ export class DPoS2Service {
             Logger.error('dposvoting', 'fetchNodes error:', err);
             await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
         }
-
-        this.needRefreshNodes = false;
     }
 
     async getConfirmCount(txid: string): Promise<number> {
@@ -326,7 +329,7 @@ export class DPoS2Service {
         return -1;
     }
 
-    async getAllVoteds(): Promise<any[]> {
+    async geMyVoteds(): Promise<any[]> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS_VOTING, 'getOwnerStakeAddress', stakeAddress);
         let currentHeight = await this.voteService.getCurrentHeight();
@@ -339,7 +342,7 @@ export class DPoS2Service {
             },
         };
 
-        var ret = [];
+        this.myVotes = [];
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         Logger.log(App.DPOS_VOTING, 'getalldetaileddposv2votes', result);
@@ -375,7 +378,7 @@ export class DPoS2Service {
                             expired30 = locktime;
                         }
 
-                        ret.push(item);
+                        this.myVotes.push(item);
                     }
                 }
             }
@@ -385,7 +388,7 @@ export class DPoS2Service {
             }
         }
 
-        return ret;
+        return this.myVotes;
     }
 
     getNodeIcon(node: DPoS2Node) {

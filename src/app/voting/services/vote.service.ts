@@ -44,6 +44,8 @@ export class VoteService {
 
     public depositAmount = 200000000000; // 2000 ELA
 
+    public needFetchData = {};
+
     constructor(
         private walletManager: WalletService,
         public globalPopupService: GlobalPopupService,
@@ -60,6 +62,9 @@ export class VoteService {
 
     public init() {
         Logger.log(App.VOTING, "VoteService init");
+
+        this.needFetchData[App.DPOS_VOTING] = true;
+
         // //Get cr members
         // if (this.crmembers.length > 0) {
         //     void this.getCRMembers();
@@ -68,6 +73,7 @@ export class VoteService {
 
     public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
         this.clear();
+        this.needFetchData[context] = true;
 
         // Make sure the active network is elastos, otherwise, ask user to change
         const elastosNetwork = await this.globalSwitchNetworkService.promptSwitchToElastosNetworkIfDifferent();

@@ -1,7 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <ion-grid class="container ion-no-padding" *ngIf="dpos2Service._nodes.length; else loadingList">
+    <ion-grid class="container ion-no-padding" *ngIf="dataFetched; else loadingList">
 
         <div  *ngIf="!showNode" class="message-container">
             <p *ngIf="dpos2Service.myStakeExpired30" class="message" (click)="goTo('/dpos2/update')">
@@ -93,7 +93,7 @@
     </ng-template>
 </ion-content>
 
-<div *ngIf="dpos2Service.dposList.length > 0 && voteService.canVote()"
+<div *ngIf="dataFetched && dpos2Service.dposList.length > 0 && voteService.canVote()"
     class="vote-btn ion-activatable ripple animate-btn" (click)="castVote()">
     <div>
         <h1 *ngIf="voted">{{ 'dposvoting.vote-voted' | translate }}</h1>

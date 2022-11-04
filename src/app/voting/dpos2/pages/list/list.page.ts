@@ -32,7 +32,7 @@ export class ListPage implements OnInit {
     public nodeIndex: number;
     public node: DPoS2Node;
 
-    private inited = false;
+    public dataFetched = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -49,7 +49,7 @@ export class ListPage implements OnInit {
     ) {
         const navigation = this.router.getCurrentNavigation();
         if (navigation.extras.state && navigation.extras.state.refreash) {
-            void this.dpos2Service.init();
+            void this.initData();
         }
 
         GlobalFirebaseService.instance.logEvent("voting_dpos_vote_enter");
@@ -59,32 +59,32 @@ export class ListPage implements OnInit {
 
     }
 
-    private async setRegistrationIcon() {
-        if (!this.inited) {
+    private async initData() {
+        this.dataFetched = false;
             await this.dpos2Service.init();
             await this.getSelectedNodes();
-            this.inited = true;
-        }
 
-        if (this.dpos2Service.dposInfo.state == 'Unregistered'
-                || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.goToRegistration();
-            });
-        }
-        else if (this.dpos2Service.dposInfo.state != 'Returned') {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposvoting/icon/my-node.png' });
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/node-detail');
-            });
-        }
+            if (this.dpos2Service.dposInfo.state == 'Unregistered'
+                    || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.goToRegistration();
+                });
+            }
+            else if (this.dpos2Service.dposInfo.state != 'Returned') {
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposvoting/icon/my-node.png' });
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/node-detail');
+                });
+            }
+
+        this.dataFetched = true;
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos2-voting'));
         //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        void this.setRegistrationIcon();
+        void this.initData();
     }
 
     ionViewWillLeave() {

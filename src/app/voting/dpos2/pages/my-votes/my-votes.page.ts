@@ -39,16 +39,18 @@ export class MyVotesPage implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
-    async ionViewWillEnter() {
+    async initData() {
+        this.dataFetched = false;
+        await this.dpos2Service.init();
+        this.votes = this.dpos2Service.myVotes;
+        this.dataFetched = true;
+    }
+
+    ionViewWillEnter() {
         //this.titleBar.setBackgroundColor("#732CCE");
         //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('dposvoting.my-votes'));
-
-        this.dataFetched = false;
-        if (this.dpos2Service.needRefreshNodes) {
-            await this.dpos2Service.init();
-        }
-        this.dataFetched = true;
+        void this.initData();
     }
 
     ionViewDidEnter() {
