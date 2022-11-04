@@ -249,7 +249,6 @@ export class DPoS2Service {
                 for (const node of result.producers) {
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
-                        await this.checkTxConfirm();
                     }
 
                     if (node.identity && node.identity == "DPoSV1") {
@@ -308,6 +307,8 @@ export class DPoS2Service {
             Logger.error('dposvoting', 'fetchNodes error:', err);
             await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
         }
+
+        await this.checkTxConfirm();
     }
 
     async getConfirmCount(txid: string): Promise<number> {

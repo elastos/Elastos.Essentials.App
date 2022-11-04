@@ -14,7 +14,6 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DPoS2RegistrationInfo, DPoS2Service } from '../../services/dpos2.service';
 
 @Component({
@@ -54,7 +53,6 @@ export class DPoS2RegistrationPage implements OnInit {
         public uxService: UXService,
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletService,
         public voteService: VoteService,
         private authService: AuthService,
         public popupProvider: PopupProvider,
@@ -157,6 +155,7 @@ export class DPoS2RegistrationPage implements OnInit {
             if (this.dposInfo.nickname == this.originInfo.nickname
                 && this.dposInfo.location == this.originInfo.location
                 && this.dposInfo.url == this.originInfo.url
+                && this.dposInfo.inputStakeDays == this.originInfo.stakeDays
                 && this.dposInfo.nodepublickey == this.originInfo.nodepublickey) {
                 this.globalNative.genericToast('dposvoting.text-dpos-info-dont-modify');
                 return;
@@ -216,6 +215,8 @@ export class DPoS2RegistrationPage implements OnInit {
             }
         } catch (e) {
             await this.globalNative.hideLoading();
+            await this.voteService.popupErrorMessage(e);
+            this.needConfirm = false;
         }
     }
 
@@ -236,6 +237,7 @@ export class DPoS2RegistrationPage implements OnInit {
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
+            Logger.log(App.DPOS_VOTING, 'Update node payload:', payload);
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
             await this.globalNative.hideLoading();
@@ -245,6 +247,8 @@ export class DPoS2RegistrationPage implements OnInit {
             }
         } catch (e) {
             await this.globalNative.hideLoading();
+            await this.voteService.popupErrorMessage(e);
+            this.needConfirm = false;
         }
     }
 
