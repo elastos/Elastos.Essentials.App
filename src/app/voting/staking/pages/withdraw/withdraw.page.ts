@@ -91,11 +91,11 @@ export class WithdrawPage {
             return false;
         }
         else if (this.amount > this.available) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
+            await this.popupProvider.ionicAlert('staking.withdraw', 'crproposalvoting.greater-than-max-votes');
             return false;
         }
         else if (this.amount <= 0) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.less-than-equal-zero-votes');
+            await this.popupProvider.ionicAlert('staking.withdraw', 'crproposalvoting.less-than-equal-zero-votes');
             return false;
         }
 
