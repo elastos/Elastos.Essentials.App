@@ -74,12 +74,15 @@ export class ChooseActiveNetworkWidget extends WidgetBase implements OnInit, OnD
       this.walletNetworkService.getNetworkByKey("heco")
     ].filter(n => !!n); // Filter undefined networks to make sure we are ready
 
-    let networksList = lastUsedNetworks.list.map(lun => lun.network).slice(0, 4); // Keep only the last 4 entries
+    // only one network on LRW.
+    let maxCount = defaultNetworks.length > 4 ? 4 : defaultNetworks.length;
+
+    let networksList = lastUsedNetworks.list.map(lun => lun.network).slice(0, maxCount); // Keep only the last 4 entries
 
     // Complete user's last used networks with default networks, if we don't have 4 yet.
     // Only append networks that are not already in the list.
     let checkedIndex = 0;
-    while (networksList.length < 4) {
+    while (networksList.length < maxCount) {
       let existingIndex = networksList.findIndex(n => n.key === defaultNetworks[checkedIndex].key);
       if (existingIndex < 0)
         networksList.push(defaultNetworks[checkedIndex]);
