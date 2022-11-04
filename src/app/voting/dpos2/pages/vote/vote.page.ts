@@ -137,7 +137,7 @@ export class VotePage implements OnInit, OnDestroy {
                 let _vote = {
                     Candidate: node.ownerpublickey,
                     Votes: userVotes,
-                    Locktime: currentHeight + node.userStakeDays * 720 };
+                    Locktime: currentHeight + node.userStakeDays * 720 + 5 }; // Add 10 minutes for time buffer
                 votedCandidates.push(_vote);
             }
             else {
