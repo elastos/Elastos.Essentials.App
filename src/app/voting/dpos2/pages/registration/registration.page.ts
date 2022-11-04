@@ -25,7 +25,7 @@ export class DPoS2RegistrationPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public masterWalletId: string;
-    public areaList = areaList;
+    public areaList = areaList.filter(a => a != 1001);
     public dposInfo: DPoS2RegistrationInfo = {
         nickname: "",
         location: 0,

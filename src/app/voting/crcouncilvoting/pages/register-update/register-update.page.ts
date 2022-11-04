@@ -93,8 +93,8 @@ export class RegisterUpdatePage implements OnInit {
     }
 
     public getAreaList() {
-        // Remove United Stated from the list as CR council members cannot register in that country
-        return areaList.filter(a => a != 1);
+        // Filter out United States, as supernodes are not allowed to register in that country.
+        return areaList.filter(a => a != 1001);
     }
 
     checkValues() {
