@@ -8,6 +8,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { NodeDetailPage } from './pages/node-detail/node-detail.page';
 import { DPoS2RegistrationPage } from './pages/registration/registration.page';
 import { VotePage } from './pages/vote/vote.page';
@@ -28,6 +29,7 @@ import { DPoS2RoutingModule } from './routing';
     IonicModule,
     IonicStorageModule,
     SharedComponentsModule,
+    StdTransactionComponentModule,
     GlobalDirectivesModule
   ],
   bootstrap: [],
