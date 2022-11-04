@@ -127,6 +127,7 @@ export class ERC20Coin extends Coin {
 
         // JSON serializer cannot work with decorators in constructor (runtime JS undefined errors)
         this.erc20ContractAddress = erc20ContractAddress;
+
         this.decimals = decimals;
         this.isCustom = isCustom;
         this.initiallyShowInWallet = initiallyShowInWallet;
@@ -156,7 +157,9 @@ export class ERC20Coin extends Coin {
         let coin = erc20CoinsSerializer.deserializeObject(jsonCoin, ERC20Coin);
 
         // Backward compatibility: fix wrong decimal type (string instead of number)
-        coin.decimals = parseInt("" + coin.decimals);
+        if (!coin.decimals) coin.decimals = -1
+        else coin.decimals = parseInt("" + coin.decimals);
+
         coin.network = network;
 
         return coin;

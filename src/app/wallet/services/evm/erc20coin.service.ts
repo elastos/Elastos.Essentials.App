@@ -80,7 +80,11 @@ export class ERC20CoinService {
         let coinDecimals = 0;
         const erc20Contract = new ((await this.evmService.getWeb3(network)).eth.Contract)(this.erc20ABI, address);
         if (erc20Contract) {
-            coinDecimals = await erc20Contract.methods.decimals().call();
+            let ret = await erc20Contract.methods.decimals().call();
+            if (typeof ret === 'string')
+                coinDecimals = Number.parseInt(ret)
+            else
+                coinDecimals = ret
             Logger.log('wallet', 'Coin decimals:', coinDecimals);
         }
         return coinDecimals;
