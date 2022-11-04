@@ -46,6 +46,12 @@ export class StakePage {
 
         this.dataFetched = false;
         this.maxStake = await this.stakeService.getBalanceByFirstAddress();
+        if (this.maxStake >= 1) {
+            this.maxStake - 1
+        }
+        else {
+            this.maxStake = 0;
+        }
         this.dataFetched = true;
     }
 
