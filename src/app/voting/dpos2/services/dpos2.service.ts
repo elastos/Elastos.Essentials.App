@@ -118,6 +118,7 @@ export class DPoS2Service {
 
         try {
             await this.fetchNodes();
+            await this.getAllVoteds();
         }
         catch (err) {
             Logger.warn('dposvoting', 'Initialize node error:', err)
@@ -240,7 +241,6 @@ export class DPoS2Service {
                 this.totalVotes = result.totalvotes;
                 this._nodes = result.producers;
 
-                var expired30 = 7 * 30;
                 for (const node of result.producers) {
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
@@ -272,13 +272,8 @@ export class DPoS2Service {
                             node.stakeuntilExpired = await this.voteService.getRemainingTimeString(until);
                         }
 
-                        if (until < 720 * 30) { //less than 30 days
-                            if (node == this.dposInfo) {
-                                this.myStakeExpired30 = await this.voteService.getRemainingTimeString(until);
-                            }
-                            else if (until < expired30) {
-                                expired30 = until;
-                            }
+                        if ((until < 720 * 30) && (node == this.dposInfo)) { //less than 30 days
+                            this.myStakeExpired30 = await this.voteService.getRemainingTimeString(until);
                         }
 
                         //get votes precentage
@@ -298,10 +293,6 @@ export class DPoS2Service {
                     }
 
                     this.getNodeIcon(node);
-                }
-
-                if (expired30 < 720 * 30) {
-                    this.stakeExpired30 = await this.voteService.getRemainingTimeString(until);
                 }
 
                 Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
@@ -354,11 +345,11 @@ export class DPoS2Service {
         Logger.log(App.DPOS_VOTING, 'getalldetaileddposv2votes', result);
         if (result) {
             var index = 0;
+            var expired30 = 720 * 30;
             for (const vote of result) {
                 for (const node of this.activeNodes) {
                     if (vote.producerownerkey ==  node.ownerpublickey) {
                         let locktime = vote.info.locktime - currentHeight;
-
                         var item =  {
                             index: index++,
                             imageUrl: node.imageUrl,
@@ -380,9 +371,17 @@ export class DPoS2Service {
                             item.stakeuntilExpired = await this.voteService.getRemainingTimeString(locktime);
                         }
 
+                        if (locktime < expired30) { //less than 30 days
+                            expired30 = locktime;
+                        }
+
                         ret.push(item);
                     }
                 }
+            }
+
+            if (expired30 < 720 * 30) {
+                this.stakeExpired30 = await this.voteService.getRemainingTimeString(expired30);
             }
         }
 

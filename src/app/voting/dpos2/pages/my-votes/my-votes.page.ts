@@ -1,12 +1,9 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CRCouncilService } from 'src/app/voting/crcouncilvoting/services/crcouncil.service';
-import { VoteService } from 'src/app/voting/services/vote.service';
 import { DPoS2Service } from '../../services/dpos2.service';
 
 @Component({
@@ -29,10 +26,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
     constructor(
         public dpos2Service: DPoS2Service,
         public crCouncilService: CRCouncilService,
-        private storage: GlobalStorageService,
-        private globalNative: GlobalNativeService,
         public theme: GlobalThemeService,
-        private voteService: VoteService,
         public translate: TranslateService,
         public popupProvider: GlobalPopupService,
     ) { }
@@ -52,9 +46,8 @@ export class MyVotesPage implements OnInit, OnDestroy {
 
         this.dataFetched = false;
         if (this.dpos2Service.needRefreshNodes) {
-            await this.dpos2Service.fetchNodes();
+            await this.dpos2Service.init();
         }
-        this.votes = await this.dpos2Service.getAllVoteds();
         this.dataFetched = true;
     }
 
