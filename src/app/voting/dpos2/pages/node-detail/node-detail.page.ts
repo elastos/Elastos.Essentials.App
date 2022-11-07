@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
@@ -103,7 +103,7 @@ export class NodeDetailPage implements OnInit {
 
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);
         this.masterWalletId = this.voteService.masterWalletId;
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        // this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.dposInfo = this.dpos2Service.dposInfo;
         if (this.dpos2Service.dposInfo.state == 'Pending') {
