@@ -38,8 +38,12 @@ p {
     font-size: 13px;
 }
 
-#expired-date {
+.expired-date {
     margin-top: 8px;
+
+    .less-than {
+        color: red;
+    }
 }
 
 .darkContainer {

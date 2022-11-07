@@ -31,3 +31,9 @@ ion-input {
     text-align: left;
     --padding-start: 12px;
 }
+
+.expired-date {
+    .less-than {
+        color: red;
+    }
+}

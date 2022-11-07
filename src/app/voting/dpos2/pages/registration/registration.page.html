@@ -42,12 +42,12 @@
 
             <ion-row class="profile-data">
                 <ion-col>
-                    <h5>{{ 'dposvoting.stake-until' | translate }}</h5>
+                    <h5>{{ 'dposvoting.stake-until' | translate }}({{ 'dposvoting.input-days' | translate }})</h5>
                     <ion-input type="number" name="stake-until" [attr.disabled]="needConfirm" ngDefaultControl
                         placeholder="{{'dposvoting.stakedays-placeholder' | translate : {days: dposInfo.stakeDays} }}"
                         [(ngModel)]="dposInfo.inputStakeDays" clearInput>
                     </ion-input>
-                    <h5 id="expired-date">{{ 'dposvoting.expired-date' | translate }}: {{ getDate() }}</h5>
+                    <p class="expired-date">{{ 'dposvoting.expired-date' | translate }}: <span [class.less-than]="dposInfo.inputStakeDays < dposInfo.stakeDays">{{ uxService.getStakeDate(dposInfo.inputStakeDays) }}</span></p>
                 </ion-col>
             </ion-row>
 

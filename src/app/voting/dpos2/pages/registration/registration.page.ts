@@ -251,9 +251,4 @@ export class DPoS2RegistrationPage implements OnInit {
         }
     }
 
-    getDate(): string {
-        var stakeTimestamp = new Date().getTime() / 1000 + this.dposInfo.stakeDays * 24 * 60 * 60;
-        return this.uxService.formatDate(stakeTimestamp);
-    }
-
 }

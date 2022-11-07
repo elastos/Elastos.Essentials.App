@@ -45,7 +45,7 @@
                                 </ion-row>
                             </ion-col>
                         </ion-row>
-                        <p class="expired-date">{{ 'dposvoting.expired-date' | translate }}: {{ getDate(node.userStakeDays) }}</p>
+                        <p class="expired-date">{{ 'dposvoting.expired-date' | translate }}: <span [class.less-than]="node.userStakeDays < 10">{{ uxService.getStakeDate(node.userStakeDays) }}</span></p>
                     </div>
                 </div>
             </div>

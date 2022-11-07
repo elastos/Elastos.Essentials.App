@@ -236,11 +236,6 @@ export class VotePage implements OnInit, OnDestroy {
         this.votedEla = count;
     }
 
-    getDate(days: number): string {
-        var stakeTimestamp = new Date().getTime() / 1000 + days * 24 * 60 * 60;
-        return this.uxService.formatDate(stakeTimestamp);
-    }
-
     stakeMore() {
         void this.globalNav.navigateTo(App.STAKING, "/staking/stake");
     }

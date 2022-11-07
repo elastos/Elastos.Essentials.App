@@ -134,7 +134,11 @@ h5 {
                 }
 
                 .expired-date {
-                    color: #6D7175
+                    color: #6D7175;
+
+                    .less-than {
+                        color: red;
+                    }
                 }
             }
 
