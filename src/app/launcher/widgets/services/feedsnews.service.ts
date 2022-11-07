@@ -8,6 +8,7 @@ import { compressImage, transparentPixelIconDataUrl } from 'src/app/helpers/pict
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -204,7 +205,8 @@ export class WidgetsFeedsNewsService implements GlobalService {
         const { RuntimeContext } = await lazyFeedsSDKImport();
         if (!RuntimeContext.isInitialized()) {
             let provider = await this.globalHiveService.getRawHiveContextProvider(GlobalConfig.FEEDS_APP_DID, signedInUserDid);
-            RuntimeContext.createInstance(provider, signedInUserDid);
+            let didResolverUrl = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.EID_RPC);
+            RuntimeContext.createInstance(provider, signedInUserDid, didResolverUrl);
         }
 
         return RuntimeContext.getInstance();
