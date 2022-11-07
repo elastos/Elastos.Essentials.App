@@ -129,6 +129,12 @@ export class ElastosTransactionsHelper {
           case RawTransactionType.CrcProposalWithdraw:
             transactionName = "wallet.coin-op-proposal-withdraw";
             break;
+          case RawTransactionType.UnstakeRealWithdraw:
+            transactionName = "wallet.coin-op-unstake-withdraw";
+            break;
+          case RawTransactionType.DposV2ClaimRewardRealWithdraw:
+            transactionName = "wallet.coin-op-dpos2-reward-withdraw";
+            break;
         }
         break;
       case TransactionDirection.SENT:
@@ -154,13 +160,29 @@ export class ElastosTransactionsHelper {
           case RawTransactionType.RegisterCR:
             transactionName = "wallet.coin-op-cr-register";
             break;
+          case RawTransactionType.Stake:
+            transactionName = "wallet.coin-op-stake";
+            break;
         }
         break;
       case TransactionDirection.MOVED:
         if (transaction.votecategory !== 0) {
           transactionName = this.getVoteName(transaction.votecategory);
         } else {
-          transactionName = "wallet.coin-op-transfered-token";
+          switch (transaction.txtype) {
+            case RawTransactionType.Voting:
+                transactionName = "wallet.coin-op-dpos2-voting";
+            break;
+            case RawTransactionType.Unstake:
+                transactionName = "wallet.coin-op-unstake";
+            break;
+            case RawTransactionType.DposV2ClaimReward:
+                transactionName = "wallet.coin-op-dpos2-claim-reward";
+            break;
+            default:
+              transactionName = "wallet.coin-op-transfered-token";
+            break;
+          }
         }
         break;
     }

@@ -141,7 +141,19 @@ export enum RawTransactionType {
   RevertToPOW = 0x41,
   RevertToDPOS = 0x42,
 
-  ReturnSideChainDepositCoin = 0x51
+  ReturnSideChainDepositCoin = 0x51,
+
+  // DPoS2.0
+  DposV2ClaimReward = 0x60,
+  DposV2ClaimRewardRealWithdraw = 0x61,
+  Stake = 0x62,
+  Voting = 0x63,
+  // CancelVotes = 0x64, // removed
+  Unstake = 0x64,
+  UnstakeRealWithdraw = 0x65,
+  // DPoS2.0 end
+
+  TypeMaxCount
 }
 
 // Base transaction type for all networks, all chains
