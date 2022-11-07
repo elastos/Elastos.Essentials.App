@@ -1,6 +1,4 @@
 import { Injectable, NgZone } from '@angular/core';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -129,13 +127,6 @@ export class DPoS2Service {
         this.initOngoning = false;
 
         this.voteService.needFetchData[App.DPOS_VOTING] = false;
-    }
-
-    // Titlebar
-    setTitlebar(titleBar: TitleBarComponent) {
-        titleBar.setBackgroundColor("#A25BFE");
-        titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        titleBar.setTitle('DPoS Voting');
     }
 
     async getStoredVotes() {
@@ -339,7 +330,7 @@ export class DPoS2Service {
         const param = {
             method: 'getalldetaileddposv2votes',
             params: {
-                stakeaddresses: [stakeAddress],
+                stakeaddress: stakeAddress,
             },
         };
 
