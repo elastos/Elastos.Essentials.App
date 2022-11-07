@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import * as crypto from 'crypto';
 import JSZip from 'jszip';
+import { SHA256 } from 'src/app/helpers/crypto/sha256';
 @Injectable({
     providedIn: 'root'
 })
 export class DraftService {
     constructor() { }
 
-    private sha256(str: Buffer) {
-        const hash = crypto.createHash('sha256')
-        return hash.update(str).digest('hex')
+    private sha256(buf: Buffer) {
+        return SHA256.sha256Hash(buf, 'hex');
     }
 
     public reverseHash(draftHash: string): string {
