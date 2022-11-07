@@ -115,6 +115,8 @@ export const zh = {
         'expired-date': '过期日期',
         'edit-node': '更新节点',
         'illegal-message': '节点状态异常，请补充质押金。',
+        'height': '高度',
+        'about': '大约',
 
         'dpos2-voting': 'DPoS2节点投票',
         'stake-more': '质押更多',

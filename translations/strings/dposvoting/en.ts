@@ -115,6 +115,8 @@ export const en = {
         'expired-date': 'Expired date',
         'edit-node': 'Edit node',
         'illegal-message': 'The node is illegal, please add the deposit.',
+        'height': 'Height',
+        'about': 'About',
 
         'dpos2-voting': 'DPoS2 Node Voting',
         'stake-more': 'Stake more',
