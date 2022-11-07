@@ -112,6 +112,7 @@ export const en = {
         'node-exprie-message': 'Node is about to expire in {{ time }}. Please click to update the node.',
         'vote-exprie-message': 'Your votes for DPoS 2.0 is about to expire in {{ time }}. Please click to update the vote.',
 
+        'node2-details': 'DPoS 2.0 Node Details',
         'expired-date': 'Expired date',
         'edit-node': 'Edit node',
         'illegal-message': 'The node is illegal, please add the deposit.',

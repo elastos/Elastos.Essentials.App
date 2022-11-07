@@ -112,6 +112,8 @@ export const zh = {
         'node-exprie-message': '节点将在{{ time }}后过期。请点击更新节点。',
         'vote-exprie-message': '你的DPoS 2.0投票将于{{ time }}后过期。请点击更新投票。',
 
+        'dpos2-node-info': 'DPoS 2.0节点信息',
+        'node2-details': 'DPoS 2.0节点详情',
         'expired-date': '预计过期日期',
         'edit-node': '更新节点',
         'illegal-message': '节点状态异常，请补充质押金。',

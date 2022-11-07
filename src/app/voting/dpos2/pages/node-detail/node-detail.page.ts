@@ -99,7 +99,7 @@ export class NodeDetailPage implements OnInit {
 
     async ionViewWillEnter() {
 
-        this.titleBar.setTitle(this.translate.instant('dposvoting.dpos-node-info'));
+        this.titleBar.setTitle(this.translate.instant('dposvoting.dpos2-node-info'));
 
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);
         this.masterWalletId = this.voteService.masterWalletId;
