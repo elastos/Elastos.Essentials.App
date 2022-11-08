@@ -198,7 +198,7 @@ export class DPoS2RegistrationPage implements OnInit {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
             let currentHeight = await this.voteService.getCurrentHeight();
-            let stakeUntil = currentHeight + this.dposInfo.stakeDays * 720;
+            let stakeUntil = currentHeight + this.dposInfo.inputStakeDays * 720;
 
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
@@ -232,7 +232,7 @@ export class DPoS2RegistrationPage implements OnInit {
         }
         try {
             let currentHeight = await this.voteService.getCurrentHeight();
-            let stakeUntil = currentHeight + this.dposInfo.stakeDays * 720;
+            let stakeUntil = currentHeight + this.dposInfo.inputStakeDays * 720;
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
