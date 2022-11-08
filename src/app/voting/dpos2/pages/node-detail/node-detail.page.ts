@@ -243,28 +243,23 @@ export class NodeDetailPage implements OnInit {
         var menuItems =  [] as TitleBarMenuItem[];
 
         if (state == 'Active' || state == 'Inactive') {
-            menuItems.push(
-                {
-                    key: "edit-node",
-                    iconPath: !darkMode ? '/assets/voting/icons/edit.svg' : '/assets/voting/icons/darkmode/edit.svg',
-                    title: "dposvoting.edit-node"
-                },
-            );
+            menuItems.push({
+                key: "edit-node",
+                iconPath: !darkMode ? '/assets/voting/icons/edit.svg' : '/assets/voting/icons/darkmode/edit.svg',
+                title: "dposvoting.edit-node"
+            });
         }
 
-        if (state == 'Active' || state == 'Inactive' || state == 'Canceled') {
+        let identity = this.dpos2Service.dposInfo.identity;
+        if ((identity == "DPoSV1V2" && (state == 'Active' || state == 'Inactive')) || state == 'Canceled') {
             await this.getDepositcoin();
-            this.available = 1;
             if (this.available > 0) {
-                menuItems.push(
-                    {
-                        key: "withdraw",
-                        iconPath: !darkMode ? '/assets/voting/icons/withdraw.svg' : '/assets/voting/icons/darkmode/withdraw.svg',
-                        title: "dposvoting.retrieve"
-                    },
-                );
+                menuItems.push({
+                    key: "withdraw",
+                    iconPath: !darkMode ? '/assets/voting/icons/withdraw.svg' : '/assets/voting/icons/darkmode/withdraw.svg',
+                    title: "dposvoting.retrieve"
+                });
             }
-
         }
 
         if (menuItems.length > 0) {
@@ -282,8 +277,6 @@ export class NodeDetailPage implements OnInit {
                 }
             });
         }
-
-
     }
 
 }
