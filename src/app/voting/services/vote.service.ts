@@ -445,23 +445,23 @@ export class VoteService {
 
     getRemainingTimeString(remainingTime: number): Promise<string> {
         var ret;
-        if (remainingTime >= (1440 * 2)) { //more 2 days
-            ret = Math.floor(remainingTime / 1440) + " " + this.translate.instant('voting.days');
+        if (remainingTime >= (720 * 2)) { //more 2 days
+            ret = Math.floor(remainingTime / 720) + " " + this.translate.instant('voting.days');
         }
-        else if (remainingTime > 1440) {
-            ret = "1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingTime % 1440) / 60) + " " + this.translate.instant('voting.hours');
+        else if (remainingTime > 720) {
+            ret = "1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingTime % 720) / 30) + " " + this.translate.instant('voting.hours');
         }
-        else if (remainingTime == 1440) {
+        else if (remainingTime == 720) {
             ret = "1 " + this.translate.instant('voting.day');
         }
-        else if (remainingTime > 120) {
-            ret = Math.floor(remainingTime / 60) + " " + this.translate.instant('voting.hours');
-        }
         else if (remainingTime > 60) {
-            ret = Math.floor(remainingTime / 60) + " " + this.translate.instant('voting.hours') + " "
-                + Math.floor(remainingTime % 60) + " " + this.translate.instant('voting.minutes');
+            ret = Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours');
         }
-        else if (remainingTime == 60) {
+        else if (remainingTime > 30) {
+            ret = Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours') + " "
+                + Math.floor(remainingTime % 30) + " " + this.translate.instant('voting.minutes');
+        }
+        else if (remainingTime == 30) {
             ret = "1 " + this.translate.instant('voting.hours');
         }
         else {
