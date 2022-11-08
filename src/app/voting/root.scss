@@ -235,3 +235,7 @@ ion-row {
 .expired-in {
     color: red;
 }
+
+.row-list {
+    border-bottom: 1px solid var(--essentials-border-separator-color);
+}
