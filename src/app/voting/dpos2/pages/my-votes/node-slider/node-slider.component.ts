@@ -83,6 +83,10 @@ export class NodeSliderComponent implements OnInit {
             this.globalNative.genericToast(formatWrong);
         }
         else {
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                return;
+            }
+
             await this.createTransaction(node);
         }
     }

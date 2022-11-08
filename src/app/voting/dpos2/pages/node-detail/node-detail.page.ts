@@ -213,6 +213,10 @@ export class NodeDetailPage implements OnInit {
     async retrieve() {
         Logger.log('wallet', 'Calling retrieve()', this.dposInfo);
 
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 

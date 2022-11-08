@@ -190,6 +190,11 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     async createVoteCRTransaction(votes: any) {
+
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         this.signingAndTransacting = true;
         Logger.log('wallet', 'Creating vote transaction with votes', votes);
 

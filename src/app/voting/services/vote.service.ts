@@ -218,10 +218,10 @@ export class VoteService {
     }
 
     public async checkWalletAvailableForVote(): Promise<boolean> {
-        // if (await this.sourceSubwallet.hasPendingBalance()) {
-        //     await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
-        //     return false;
-        // }
+        if (await this.sourceSubwallet.hasPendingBalance()) {
+            await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
+            return false;
+        }
 
         let enoughBalance = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
         if (!enoughBalance) {

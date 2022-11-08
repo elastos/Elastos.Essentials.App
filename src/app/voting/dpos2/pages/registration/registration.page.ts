@@ -184,6 +184,10 @@ export class DPoS2RegistrationPage implements OnInit {
     async register() {
         Logger.log(App.DPOS2, 'Calling register()', this.dposInfo);
 
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         //Check value
         if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
             return;
