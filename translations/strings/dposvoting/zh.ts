@@ -105,7 +105,8 @@ export const zh = {
         'text-update-no-confirm': "上次更新还没确认，请等待。",
 
         //DPoS 2.0
-        'stake-until': '质押',
+        'stake': '质押',
+        'stake-until': '质押至',
         'expired-in': '将在{{ time }}后过期',
         'my-votes': '我的投票',
         'votes': '票数',
@@ -114,7 +115,7 @@ export const zh = {
 
         'dpos2-node-info': 'DPoS 2.0节点信息',
         'node2-details': 'DPoS 2.0节点详情',
-        'expired-date': '预计过期日期',
+        'expiration-date': '预计过期日期',
         'edit-node': '更新节点',
         'illegal-message': '节点状态异常，请补充质押金。',
         'height': '高度',
