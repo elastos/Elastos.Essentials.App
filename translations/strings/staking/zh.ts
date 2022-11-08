@@ -21,8 +21,8 @@ export const zh = {
         'withdraw': '提现',
         'unvote': '取消投票',
 
-        'enter-amount': '输入票数',
-        'available': '有效票数',
+        'enter-amount': '输入数量',
+        'available': '有效数量',
         'send-to': '发送到',
         'reciever-address': '接收地址',
         'withdraw-node-reward': '领取节点收益',
