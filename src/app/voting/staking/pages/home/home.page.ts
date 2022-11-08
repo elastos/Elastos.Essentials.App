@@ -63,20 +63,17 @@ export class StakingHomePage implements OnInit {
     addShowItems() {
         this.showItems = [];
         this.showItems.push(
-            {
-                title: this.translate.instant('staking.staked'),
-                value: this.stakeService.votesRight.maxStaked,
-                active: false
-            },
+            // {
+            //     title: this.translate.instant('staking.staked'),
+            //     value: this.stakeService.votesRight.maxStaked,
+            // },
             {
                 title: this.translate.instant('staking.your-rewards'),
                 value: this.stakeService.totalRewardInfo.total,
-                active: false
             },
             {
                 title: this.translate.instant('staking.available-reward'),
                 value: this.stakeService.totalRewardInfo.claimable,
-                active: false
             },
         );
     }
@@ -89,7 +86,6 @@ export class StakingHomePage implements OnInit {
                 label: this.translate.instant('staking.stake'),
                 icon: 'assets/staking/icons/stake.svg',
                 url: '/staking/stake',
-
             },
             {
                 label: this.translate.instant('staking.unstake'),

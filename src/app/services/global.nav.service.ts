@@ -89,6 +89,9 @@ export class GlobalNavService {
                 case App.STAKING:
                     route = '/staking/staking-home';
                     break;
+                case App.DPOS2:
+                    route = '/dpos2/menu/list';
+                    break;
             }
         } else {
             route = customRoute;
