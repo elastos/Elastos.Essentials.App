@@ -255,6 +255,8 @@ export class DappBrowserService implements GlobalService {
             return;
         }
 
+        Logger.log("dappbrowser", "Opening url", url);
+
         if (!target || target == null) {
             target = "_webview";
         }
@@ -353,6 +355,7 @@ export class DappBrowserService implements GlobalService {
      * If no mode is given, the navigation simply goes back.
      */
     public close(mode?: "goToLauncher" | "reload"): Promise<void> {
+        Logger.log("dappbrowser", "Closing current webview, if any");
         return dappBrowser.close(mode);
     }
 
@@ -360,10 +363,13 @@ export class DappBrowserService implements GlobalService {
      * Hides the active browser, if any
      */
     public hideActiveBrowser() {
+        Logger.log("dappbrowser", "Hiding active browser");
         dappBrowser.hide();
     }
 
     public async reload() {
+        Logger.log("dappbrowser", "Reloading current url");
+
         // Trick / Note:
         // - When we first open the browser we create the web3 provider constructor JS code, and the cordova plugin decides what is the right
         // time to inject it (different on android and ios.
@@ -373,7 +379,7 @@ export class DappBrowserService implements GlobalService {
         // chain id, so the app is stuck in a loop trying to request a network change that never happens.
         // - So we close the webview and we reopen it for simplicity.
         await this.close("reload");
-        void this.open(this.url, this.title);
+        void this.open(this.url, this.title, null, false);
     }
 
     public async handleEvent(event: DappBrowserPlugin.DappBrowserEvent) {
@@ -1152,6 +1158,7 @@ export class DappBrowserService implements GlobalService {
 
     public showWebView() {
         if (!this.confirming) {
+            Logger.log("dappbrowser", "Showing web view");
             void dappBrowser.show();
         }
     }

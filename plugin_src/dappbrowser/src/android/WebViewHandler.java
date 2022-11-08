@@ -332,6 +332,7 @@ public class WebViewHandler {
         childView.setWebViewClient(new WebViewClient() {
             // NB: wait for about:blank before dismissing
             public void onPageFinished(WebView view, String url) {
+                linearLayout.removeView(webView);
                 webView.destroy();
                 brwoserPlugin.webViewHandler = null;
                 webView = null;

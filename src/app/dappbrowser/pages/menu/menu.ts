@@ -120,9 +120,11 @@ export class MenuPage {
         void this.globalIntentService.sendIntent('openurl', { url: this.browsedAppInfo.url });
     }
 
-    public reloadPage() {
-        void this.dappBrowserService.reload();
-        void this.goback();
+    public async reloadPage() {
+        // Reload first then go back - because when reloading, the webview gets opened but hidden.
+        // And the browser screen shows it when it's ready
+        await this.dappBrowserService.reload(); // await is important here!
+        await this.goback();
     }
 
     public copyUrl() {

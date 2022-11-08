@@ -342,6 +342,7 @@ public class DappBrowserPlugin extends CordovaPlugin {
                 mode = null;
             }
             webViewHandler.closeWithModeMainThread(mode, callbackContext);
+            webViewHandler = null;
         }
         else {
             // Nothing to close, return success
