@@ -121,7 +121,7 @@ export const en = {
         'height': 'Height',
         'about': 'About',
 
-        'dpos2-voting': 'DPoS2 Node Voting',
+        'dpos2-voting': 'DPoS 2.0 Node Voting',
         'stake-more': 'Stake more',
         'input-days': 'Days',
         'input-votes': 'Votes',

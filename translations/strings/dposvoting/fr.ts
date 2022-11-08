@@ -114,14 +114,14 @@ export const fr = {
         'vote-exprie-message': 'Your votes for DPoS 2.0 are about to expire in {{ time }}. Please click to update your votes.',
 
         'dpos2-node-info': 'DPoS 2.0 Node Info',
-        'node2-details': 'DPoS2.0 Node Details',
+        'node2-details': 'DPoS 2.0 Node Details',
         'expiration-date': 'Expiration date',
         'edit-node': 'Edit node',
         'illegal-message': 'The node is illegal, please add the deposit.',
         'height': 'Height',
         'about': 'About',
 
-        'dpos2-voting': 'DPoS2 Node Voting',
+        'dpos2-voting': 'DPoS 2.0 Node Voting',
         'stake-more': 'Stake more',
         'input-days': 'Days',
         'input-votes': 'Votes',
