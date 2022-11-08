@@ -18,7 +18,7 @@ export const zh = {
 
         'stake': '质押',
         'unstake': '取回质押',
-        'withdraw': '取回',
+        'withdraw': '提现奖励',
         'unvote': '取消投票',
 
         'enter-amount': '输入票数',

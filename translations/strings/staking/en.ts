@@ -18,7 +18,7 @@ export const en = {
 
         'stake': 'Stake',
         'unstake': 'Unstake',
-        'withdraw': 'Withdraw',
+        'withdraw': 'Withdraw Reward',
         'unvote': 'Unvote',
 
         'enter-amount': 'Enter amount',
