@@ -46,6 +46,11 @@
                 </ion-item>
             </ion-list>
         </ion-grid>
+
+        <div *ngIf="!votes.length" class="no-data">
+            {{ 'dposvoting.no-voting' | translate }}
+        </div>
+
     </div>
 
 </ion-content>

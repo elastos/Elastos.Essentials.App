@@ -22,6 +22,10 @@
                             <h5><span class="label">{{ 'staking.votes' | translate }}:</span> {{ item.votes }}</h5>
                         </ion-col>
                     </ion-row>
+
+                    <div *ngIf="!info.list.length" class="no-data">
+                        {{ 'dposvoting.no-voting' | translate }}
+                    </div>
                 </div>
 
             </ion-grid>

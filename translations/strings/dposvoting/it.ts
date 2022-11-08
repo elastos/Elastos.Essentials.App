@@ -129,6 +129,7 @@ export const it = {
         'update-vote': 'Update vote',
         'stakedays-placeholder': 'no less than {{ days }} days',
         'stakedays-input-err': 'The pledge time of the tokens shall not be less than {{ days }} days.',
+        'no-voting': 'No voting data',
     }
 
 };

@@ -129,6 +129,7 @@ export const zh = {
         'update-vote': '更新投票',
         'stakedays-placeholder': '不小于{{ days }}天',
         'stakedays-input-err': '质押时间不能小于{{ days }}天。',
+        'no-voting': '没有投票数据',
     }
 
 };
