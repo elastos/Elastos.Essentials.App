@@ -102,7 +102,7 @@ export class VoteService {
             }
         }
         else {
-            await this.navigateTo(this.activeWallet);
+            await this.navigateTo(this.activeWallet, context);
         }
     }
 
@@ -120,9 +120,14 @@ export class VoteService {
     }
 
     //For select-wallet page call
-    public async navigateTo(networkWallet: ElastosStandardNetworkWallet) {
+    private async navigateTo(networkWallet: ElastosStandardNetworkWallet, context: string) {
         this.networkWallet = networkWallet;
         this.masterWalletId = networkWallet.id;
+
+        var supportMulti = false;
+        if (context == App.DPOS2 || context == App.STAKING) {
+            supportMulti = true;
+        }
 
         switch (networkWallet.masterWallet.type) {
             case WalletType.STANDARD:
@@ -132,8 +137,11 @@ export class VoteService {
                 return;
             case WalletType.MULTI_SIG_STANDARD:
             case WalletType.MULTI_SIG_EVM_GNOSIS:
-                await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
-                return;
+                if (!supportMulti) {
+                    await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+                    return;
+                }
+                break;
             default:
                 // Should not happen.
                 Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type)

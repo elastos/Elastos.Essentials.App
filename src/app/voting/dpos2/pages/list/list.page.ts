@@ -74,7 +74,7 @@ export class ListPage implements OnInit {
         else if (this.dpos2Service.dposInfo.state != 'Returned') {
             this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
             this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/node-detail');
+                void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
             });
         }
 
@@ -105,7 +105,7 @@ export class ListPage implements OnInit {
             return;
         }
 
-        await this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/registration');
+        await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
     }
 
     async castVote() {
@@ -118,7 +118,7 @@ export class ListPage implements OnInit {
 
         if (castedNodeKeys.length > 0) {
             await this.dpos2Service.setStoredVotes(castedNodeKeys);
-            void this.globalNav.navigateTo(App.DPOS_VOTING, '/dpos2/vote');
+            void this.globalNav.navigateTo(App.DPOS2, '/dpos2/vote');
         }
     }
 
@@ -166,7 +166,7 @@ export class ListPage implements OnInit {
     }
 
     goTo(url: string) {
-        void this.globalNav.navigateTo(App.DPOS_VOTING, url);
+        void this.globalNav.navigateTo(App.DPOS2, url);
     }
 
 }

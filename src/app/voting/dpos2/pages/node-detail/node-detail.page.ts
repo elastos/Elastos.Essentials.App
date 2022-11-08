@@ -118,7 +118,7 @@ export class NodeDetailPage implements OnInit {
             this.transactionInfo = txRawList[0].result.txhistory[0] as DPoSTransactionInfo;
             // this.publishedTime = (new Date(this.transactionInfo.time * 1000)).toLocaleString();
             this.publishedTime = Util.timestampToDateTime(this.transactionInfo.time * 1000);
-            Logger.log(App.DPOS_VOTING, "transactionInfo:", this.transactionInfo);
+            Logger.log(App.DPOS2, "transactionInfo:", this.transactionInfo);
         }
 
         await this.addCandidateOperationIcon(this.theme.darkMode);
@@ -163,7 +163,7 @@ export class NodeDetailPage implements OnInit {
             return;
         }
 
-        void this.globalNav.navigateTo(App.DPOS_VOTING, '/dposregistration/registration');
+        void this.globalNav.navigateTo(App.DPOS2, '/dposregistration/registration');
     }
 
     async getDepositcoin() {
@@ -176,15 +176,15 @@ export class NodeDetailPage implements OnInit {
         };
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
-        Logger.log(App.DPOS_VOTING, "getdepositcoin:", result);
+        Logger.log(App.DPOS2, "getdepositcoin:", result);
         if (!Util.isEmptyObject(result.available)) {
             this.available = result.available;
-            Logger.log(App.DPOS_VOTING, "available:", this.available);
+            Logger.log(App.DPOS2, "available:", this.available);
         }
     }
 
     async unregister() {
-        Logger.log(App.DPOS_VOTING, 'Calling createUnregisterDPoSTransaction()');
+        Logger.log(App.DPOS2, 'Calling createUnregisterDPoSTransaction()');
 
         if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
@@ -218,7 +218,7 @@ export class NodeDetailPage implements OnInit {
 
             let depositAddress = await this.voteService.sourceSubwallet.getOwnerDepositAddress();
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
-            Logger.log(App.DPOS_VOTING, "utxoArray:", utxoArray);
+            Logger.log(App.DPOS2, "utxoArray:", utxoArray);
 
             let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
 

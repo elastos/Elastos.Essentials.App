@@ -110,7 +110,7 @@ export class NodeSliderComponent implements OnInit {
                 RenewalVotesContent: [voteContentInfo]
             };
 
-            Logger.log(App.DPOS_VOTING, "Updata vote's payload:", payload);
+            Logger.log(App.DPOS2, "Updata vote's payload:", payload);
 
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
@@ -118,9 +118,9 @@ export class NodeSliderComponent implements OnInit {
             );
 
             await this.globalNative.hideLoading();
-            Logger.log(App.DPOS_VOTING, "rawTx:", rawTx);
+            Logger.log(App.DPOS2, "rawTx:", rawTx);
 
-            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING, "/dpos2/menu/my-votes");
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
             if (ret) {
                 node.lockDays = node.inputStakeDays;
                 this.voteService.toastSuccessfully('dposvoting.update-vote');

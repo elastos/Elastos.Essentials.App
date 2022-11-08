@@ -88,13 +88,13 @@ export class VotePage implements OnInit, OnDestroy {
             }
         });
 
-        Logger.log(App.DPOS_VOTING, 'My votes', this.selectedNodes);
+        Logger.log(App.DPOS2, 'My votes', this.selectedNodes);
 
         this.getVotedCount();
 
         //console.log("this.nodeVotes", this.nodeVotes)
 
-        Logger.log(App.DPOS_VOTING, 'Total stake remain ELA', this.totalEla);
+        Logger.log(App.DPOS2, 'Total stake remain ELA', this.totalEla);
 
         this.dataFetched = true;
 
@@ -152,7 +152,7 @@ export class VotePage implements OnInit, OnDestroy {
             void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
         }
         else {
-            Logger.log(App.DPOS_VOTING, votedCandidates);
+            Logger.log(App.DPOS2, votedCandidates);
             await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.selectedNodes);
             this.castingVote = true;
             this.votesCasted = false;
@@ -162,7 +162,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     /****************** Misc *******************/
     setInputDefault(event) {
-        Logger.log(App.DPOS_VOTING, event);
+        Logger.log(App.DPOS2, event);
     }
 
     getElaRemainder() {
@@ -213,7 +213,7 @@ export class VotePage implements OnInit, OnDestroy {
             await this.globalNative.hideLoading();
             Logger.log('wallet', "rawTx:", rawTx);
 
-            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS_VOTING, "/dpos2/menu/list");
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/list");
             if (ret) {
                 this.voteService.toastSuccessfully('voting.vote');
             }

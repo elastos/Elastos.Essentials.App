@@ -182,7 +182,7 @@ export class DPoS2RegistrationPage implements OnInit {
     }
 
     async register() {
-        Logger.log(App.DPOS_VOTING, 'Calling register()', this.dposInfo);
+        Logger.log(App.DPOS2, 'Calling register()', this.dposInfo);
 
         //Check value
         if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
@@ -203,7 +203,7 @@ export class DPoS2RegistrationPage implements OnInit {
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
-            Logger.log(App.DPOS_VOTING, 'register payload:', payload);
+            Logger.log(App.DPOS2, 'register payload:', payload);
 
             const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
             await this.globalNative.hideLoading();
@@ -236,7 +236,7 @@ export class DPoS2RegistrationPage implements OnInit {
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
-            Logger.log(App.DPOS_VOTING, 'Update node payload:', payload);
+            Logger.log(App.DPOS2, 'Update node payload:', payload);
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
             await this.globalNative.hideLoading();

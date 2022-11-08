@@ -108,7 +108,7 @@ export class DPoS2Service {
     async init() {
         Logger.log("dposvoting", "Initializing the nodes service");
 
-        if (!this.voteService.needFetchData[App.DPOS_VOTING]) return;
+        if (!this.voteService.needFetchData[App.DPOS2]) return;
 
         if (this.initOngoning) return;
 
@@ -126,7 +126,7 @@ export class DPoS2Service {
         }
         this.initOngoning = false;
 
-        this.voteService.needFetchData[App.DPOS_VOTING] = false;
+        this.voteService.needFetchData[App.DPOS2] = false;
     }
 
     async getStoredVotes() {
@@ -136,14 +136,14 @@ export class DPoS2Service {
             if (data) {
                 // filter invalid votes.
                 this.lastVotes = data;
-                Logger.log(App.DPOS_VOTING, 'lastVotes', this.lastVotes);
+                Logger.log(App.DPOS2, 'lastVotes', this.lastVotes);
             }
         });
     }
 
     async setStoredVotes(keys) {
         this.lastVotes = keys;
-        Logger.log(App.DPOS_VOTING, 'lastVotes updated', this.lastVotes);
+        Logger.log(App.DPOS2, 'lastVotes updated', this.lastVotes);
         await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dpos2", this.voteService.masterWalletId + '-votes', this.lastVotes);
     }
 
@@ -233,7 +233,7 @@ export class DPoS2Service {
             const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
 
             if (result && !Util.isEmptyObject(result.producers)) {
-                Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
+                Logger.log(App.DPOS2, "dposlist:", result.producers);
                 this.totalVotes = result.totalvotes;
                 this._nodes = result.producers;
 
@@ -323,7 +323,7 @@ export class DPoS2Service {
 
     async geMyVoteds(): Promise<any[]> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
-        Logger.log(App.DPOS_VOTING, 'getOwnerStakeAddress', stakeAddress);
+        Logger.log(App.DPOS2, 'getOwnerStakeAddress', stakeAddress);
         let currentHeight = await this.voteService.getCurrentHeight();
         let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
 
@@ -337,7 +337,7 @@ export class DPoS2Service {
         this.myVotes = [];
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-        Logger.log(App.DPOS_VOTING, 'getalldetaileddposv2votes', result);
+        Logger.log(App.DPOS2, 'getalldetaileddposv2votes', result);
         if (result) {
             var index = 0;
             var expired30 = 720 * 30;

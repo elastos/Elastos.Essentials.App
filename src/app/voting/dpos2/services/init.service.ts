@@ -13,7 +13,7 @@ export class DPoS2InitService {
     }
 
     public async start() {
-        await this.voteService.selectWalletAndNavTo(App.DPOS_VOTING, '/dpos2/menu/list');
+        await this.voteService.selectWalletAndNavTo(App.DPOS2, '/dpos2/menu/list');
     }
 
 }
