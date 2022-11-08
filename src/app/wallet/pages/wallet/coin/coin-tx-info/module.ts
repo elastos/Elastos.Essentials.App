@@ -7,6 +7,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from 'src/app/wallet/components/components.module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { TxDetailsMultisigComponentModule } from 'src/app/wallet/components/tx-details-multisig/module';
 import { CoinTxInfoPage } from './coin-tx-info.page';
 
@@ -18,6 +19,7 @@ import { CoinTxInfoPage } from './coin-tx-info.page';
         ComponentsModule,
         FormsModule,
         IonicModule,
+        StdTransactionComponentModule,
         TranslateModule,
         TxDetailsMultisigComponentModule,
         InlineSVGModule,

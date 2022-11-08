@@ -15,7 +15,7 @@
     flex-direction: column !important;
 
     ion-row {
-      height: 40px !important;
+      height: 50px !important;
     }
 
     .cosigner-name {
@@ -24,13 +24,12 @@
 
     .cosigner-signed {
       align-self: center;
+      text-align: center;
     }
 
-    ion-button {
-      &.sign {
-        width:100%;
-        height:100%;
-      }
+    ebutton {
+        width: auto;
+        position: fixed;
     }
   }
 }

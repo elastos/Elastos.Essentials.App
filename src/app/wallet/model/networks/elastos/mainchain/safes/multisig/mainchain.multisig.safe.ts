@@ -2,7 +2,7 @@ import type {
     CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
     CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
     CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet as SDKMainchainSubWallet,
-    MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo,
+    MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo,
     RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo,
     UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
@@ -51,31 +51,27 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
   }
 
   public getOwnerAddress(): string {
-    return null; // Not supported by multisig wallets.
+    return this.elaSubWallet.getOwnerAddress()
   }
 
   public getOwnerDepositAddress(): string {
-    // TODO: Do not support.
-    return null;
+    return this.elaSubWallet.getOwnerDepositAddress()
   }
 
   public getOwnerStakeAddress(): string {
-    // TODO: Do not support.
-    return null;
+    return this.elaSubWallet.getOwnerStakeAddress();
   }
 
   public getCodeofOwnerStakeAddress(): string {
-    // TODO: Do not support.
-    return null;
+    return this.elaSubWallet.getCodeofOwnerStakeAddress();
   }
 
   public getOwnerPublicKey(): string {
-    return null; // Not supported by multisig wallets.
+    return this.elaSubWallet.getOwnerPublicKey();
   }
 
-  public getPublicKeys(start: number, count: number, internal: boolean): string[] {
-    // TODO: Do not support.
-    return null;
+  public getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo {
+    return this.elaSubWallet.getPublicKeys(start, count, internal);
   }
 
   public signDigest(address: string, digest: string, passwd: string): Promise<string> {
