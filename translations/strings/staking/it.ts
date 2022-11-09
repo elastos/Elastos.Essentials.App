@@ -23,6 +23,7 @@ export const it = {
 
         'enter-amount': 'Enter amount',
         'available': 'Available',
+        'available-memo': "Memo: The balance of the wallet's first receiving address",
         'send-to': 'Send to',
         'reciever-address': 'Reciever address',
         'withdraw-node-reward': "Withdraw the node’s reward",
