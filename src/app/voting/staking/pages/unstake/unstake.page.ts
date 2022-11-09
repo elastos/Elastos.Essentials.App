@@ -11,7 +11,6 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService } from '../../services/stake.service';
@@ -82,24 +81,16 @@ export class UnstakePage {
         this.signingAndTransacting = true;
         Logger.log(App.STAKING, 'Creating stake transaction with amount', unstakeAmount);
 
-        const code = this.voteService.sourceSubwallet.getCodeofOwnerStakeAddress();
         const payload: UnstakeInfo = {
             ToAddress: this.stakeService.firstAddress,
-            Code: code,
             Value: unstakeAmount.toString(),
         };
 
         Logger.warn(App.STAKING, 'payload', payload);
 
         try {
-            let password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
 
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-            //Get digest
-            const digest = await this.voteService.sourceSubwallet.unstakeDigest(payload);
-
-            const signature = await this.voteService.sourceSubwallet.signDigest(this.stakeService.firstAddress, digest, password);
-            payload.Signature = signature;
 
             const rawTx = await this.voteService.sourceSubwallet.createUnstakeTransaction(
                 payload,

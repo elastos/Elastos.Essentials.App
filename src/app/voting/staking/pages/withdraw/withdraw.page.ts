@@ -10,8 +10,6 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
-import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService } from '../../services/stake.service';
@@ -31,7 +29,6 @@ export class WithdrawPage {
     public amount = 0;
     public advanced = false;
     public address = "";
-    public isMultiWallet = false;
     public isNodeReward = false;
 
     constructor(
@@ -55,10 +52,6 @@ export class WithdrawPage {
         this.available = this.stakeService.rewardInfo.claimable;
         this.address = this.stakeService.firstAddress;
 
-        if (this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD
-                || this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_EVM_GNOSIS) {
-            this.isMultiWallet = true;
-        }
 
         this.keyboard.onKeyboardWillShow().subscribe(() => {
             this.zone.run(() => {
@@ -113,30 +106,10 @@ export class WithdrawPage {
         this.signingAndTransacting = true;
         Logger.log(App.STAKING, 'Creating withdraw transaction with amount', stakeAmount);
 
-        var payload: any;
-        if (this.isMultiWallet) {
-            payload = {
-                Value: stakeAmount,
-                ToAddress: this.stakeService.firstAddress
-            };
-        }
-        else {
-            const code = this.voteService.sourceSubwallet.getCodeofOwnerStakeAddress();
-            const digest = this.voteService.sourceSubwallet.getDPoSV2ClaimRewardDigest({
-                ToAddress: this.address,
-                Code: code,
-                Value: stakeAmount,
-            });
-
-            const password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
-            const signature = await this.voteService.sourceSubwallet.signDigest( this.address, digest, password);
-            payload = {
-                ToAddress: this.address,
-                Code: code,
-                Value: stakeAmount,
-                Signature: signature
-            };
-        }
+        let payload = {
+            Value: stakeAmount,
+            ToAddress: this.stakeService.firstAddress
+        };
 
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));

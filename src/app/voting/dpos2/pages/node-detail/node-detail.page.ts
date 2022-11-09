@@ -183,32 +183,6 @@ export class NodeDetailPage implements OnInit {
         }
     }
 
-    async unregister() {
-        Logger.log(App.DPOS2, 'Calling createUnregisterDPoSTransaction()');
-
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
-            return;
-        }
-
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
-
-        const payPassword = await this.authService.getWalletPassword(this.masterWalletId);
-        if (payPassword === null) {// cancelled by user
-            return;
-        }
-
-        const payload = await this.voteService.sourceSubwallet.generateCancelProducerPayload(this.dposInfo.ownerpublickey, payPassword);
-
-        await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-        const rawTx = await this.voteService.sourceSubwallet.createCancelProducerTransaction(payload, "");
-        await this.globalNative.hideLoading();
-        let ret = await this.voteService.signAndSendRawTransaction(rawTx);
-        if (ret) {
-            this.voteService.toastSuccessfully('dposvoting.unregister');
-        }
-    }
 
     async retrieve() {
         Logger.log('wallet', 'Calling retrieve()', this.dposInfo);

@@ -64,18 +64,20 @@ export class ListPage implements OnInit {
         await this.dpos2Service.init();
         await this.getSelectedNodes();
 
-        if (this.dpos2Service.dposInfo.state == 'Unregistered'
-            || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.goToRegistration();
-            });
-        }
-        else if (this.dpos2Service.dposInfo.state != 'Returned') {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
-            });
+        if (!this.voteService.isMuiltWallet()) {
+            if (this.dpos2Service.dposInfo.state == 'Unregistered'
+                || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.goToRegistration();
+                });
+            }
+            else if (this.dpos2Service.dposInfo.state != 'Returned') {
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                    void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
+                });
+            }
         }
 
         this.dataFetched = true;

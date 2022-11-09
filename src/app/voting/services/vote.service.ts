@@ -506,4 +506,11 @@ export class VoteService {
         return ret1 == ret2;
     }
 
+    isMuiltWallet(): boolean {
+        if (this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD
+                || this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_EVM_GNOSIS) {
+            return true;
+        }
+        return false
+    }
 }
