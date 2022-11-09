@@ -65,6 +65,7 @@
     "@ionic/angular": "^6.3.0",
     "@ionic/storage": "2.3.1",
     "@iotexproject/iotex-address-ts": "^1.0.4",
+    "@kava-labs/javascript-sdk": "^9.0.3-beta-10",
     "@ledgerhq/devices": "^6.27.1",
     "@ledgerhq/errors": "^6.11.1",
     "@ledgerhq/hw-app-btc": "^6.27.1",
@@ -219,7 +220,8 @@
   "browser": {
     "http": false,
     "https": false,
-    "os": false
+    "os": false,
+    "fs": false
   },
   "browserslist": [
     "> 0.5%",

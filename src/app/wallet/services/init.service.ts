@@ -39,6 +39,8 @@ import { HooMainNetNetwork } from '../model/networks/hoo/network/hoo.mainnet.net
 import { HooTestNetNetwork } from '../model/networks/hoo/network/hoo.testnet.network';
 import { IoTeXMainNetNetwork } from '../model/networks/iotex/network/iotex.mainnet.network';
 import { IoTeXTestNetNetwork } from '../model/networks/iotex/network/iotex.testnet.network';
+import { KavaMainNetNetwork } from '../model/networks/kava/network/kava.mainnet.network';
+import { KavaTestNetNetwork } from '../model/networks/kava/network/kava.testnet.network';
 import { AnyNetwork } from '../model/networks/network';
 import { PolygonMainNetNetwork } from '../model/networks/polygon/network/polygon.mainnet.network';
 import { PolygonTestNetNetwork } from '../model/networks/polygon/network/polygon.testnet.network';
@@ -163,6 +165,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new GnosisMainNetNetwork());
     await this.createAndRegisterNetwork(new FuseMainNetNetwork());
     await this.createAndRegisterNetwork(new CronosMainNetNetwork());
+    await this.createAndRegisterNetwork(new KavaMainNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
@@ -180,6 +183,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new IoTeXTestNetNetwork());
     await this.createAndRegisterNetwork(new HooTestNetNetwork());
     await this.createAndRegisterNetwork(new CronosTestNetNetwork());
+    await this.createAndRegisterNetwork(new KavaTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
 
