@@ -1,3 +1,4 @@
+import { Transaction } from "@elastosfoundation/wallet-js-sdk/typings/transactions/Transaction";
 import { AnySubWallet } from "../networks/base/subwallets/subwallet";
 import { SignTransactionResult } from "./safe.types";
 
@@ -23,9 +24,9 @@ export interface MultiSigSafe {
   hasEnoughSignaturesToPublish(signedTx: any): Promise<boolean>;
 
   /**
-   * Returns the hash of the raw / partly signed transaction currently in an offline transaction.
+   * Returns the raw / partly signed transaction currently in an offline transaction.
    * This method is mostly used to be able to match offline transactions with published transactions
    * so we can clenaup offline transactions locally.
    */
-  getOfflineTransactionHash(tx: any): Promise<string>;
+  getOfflineTransaction(tx: any): Promise<Transaction>;
 }

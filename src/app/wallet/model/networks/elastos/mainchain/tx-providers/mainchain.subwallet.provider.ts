@@ -348,7 +348,8 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
     let offlineTransactions = await OfflineTransactionsService.instance.getTransactions(this.subWallet);
 
     for (let offlineTransaction of offlineTransactions) {
-      let offlineTransactionHash = await safe.getOfflineTransactionHash(offlineTransaction);
+      let offlineTransactionDecoded = await safe.getOfflineTransaction(offlineTransaction);
+      let offlineTransactionHash = offlineTransactionDecoded.getHashString();
 
       for (let transaction of transactions) {
         console.log("offlineTransaction hash", offlineTransactionHash, "transaction.txid", transaction.txid);

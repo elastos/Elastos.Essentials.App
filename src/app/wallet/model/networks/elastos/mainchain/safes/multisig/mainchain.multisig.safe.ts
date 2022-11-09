@@ -6,6 +6,7 @@ import type {
     RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo,
     UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
+import { Transaction } from "@elastosfoundation/wallet-js-sdk/typings/transactions/Transaction";
 import moment from "moment";
 import { md5 } from "src/app/helpers/crypto/md5";
 import { lazyElastosWalletSDKImport } from "src/app/helpers/import.helper";
@@ -477,11 +478,11 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
    * for unsigned transactions, or partly signed ones.
    * The returns "hash" corresponds to the txid on chain.
    */
-  public async getOfflineTransactionHash(offlineTransaction: AnyOfflineTransaction): Promise<string> {
+  public async getOfflineTransaction(offlineTransaction: AnyOfflineTransaction): Promise<Transaction> {
     try {
-      return await this.elaSubWallet.decodeTx(offlineTransaction.rawTx).getHashString();
+      return await this.elaSubWallet.decodeTx(offlineTransaction.rawTx);
     } catch (e) {
-      Logger.error("wallet", "Multisig safe: getOfflineTransactionHash() error:", e);
+      Logger.error("wallet", "Multisig safe: getOfflineTransaction() error:", e);
     }
   }
 }

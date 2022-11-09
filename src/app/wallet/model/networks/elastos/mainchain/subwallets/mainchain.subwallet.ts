@@ -8,7 +8,6 @@ import type {
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
-import { ELATransactionCoder } from 'src/app/helpers/ela/ela.transaction.coder';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
@@ -18,6 +17,7 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { Candidates, VoteType } from 'src/app/wallet/model/elastos.types';
 import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
+import { MultiSigSafe } from 'src/app/wallet/model/safes/multisig.safe';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
@@ -206,16 +206,21 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): Promise<TransactionInfo> {
         let receiverAddress: string = null;
         let amount: BigNumber = null;
+
         try {
-            let buffer = Buffer.from(transaction.rawTx.Data, "base64");
-            let decoded = await ELATransactionCoder.decodeTx(buffer, false);
-            if (decoded && decoded.Outputs && decoded.Outputs.length > 0) {
-                receiverAddress = decoded.Outputs[0].Address;
-                amount = new BigNumber(decoded.Outputs[0].Value).dividedBy(Config.SELA);
+            let safe = <MultiSigSafe><any>this.networkWallet.safe;
+            let offlineTransactionDecoded = await safe.getOfflineTransaction(transaction);
+
+            if (offlineTransactionDecoded) {
+                let outputs = offlineTransactionDecoded.getOutputs();
+                if (outputs && outputs.length > 0) {
+                    receiverAddress = outputs[0].getAddress().string();
+                    amount = new BigNumber(outputs[0].amount()).dividedBy(Config.SELA);
+                }
             }
         }
         catch (e) {
-            Logger.warn("Failed to decode elastos mainchain raw transaction from offline transaction", e);
+            Logger.warn("wallet", "Failed to decode elastos mainchain raw transaction from offline transaction", e);
         }
 
         let txInfo: TransactionInfo = {
