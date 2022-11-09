@@ -6,5 +6,9 @@
       <item name="colorPrimary">#000000</item>
       <item name="colorPrimaryDark">#000000</item>
       <item name="colorAccent">#000000</item>
+
+      <!-- Android 12 (API 31) -->
+      <item name="android:windowSplashScreenBackground">#000000</item>
+      <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
   </style>
 </resources>
