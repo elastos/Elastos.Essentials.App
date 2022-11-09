@@ -36,11 +36,11 @@
 
                 <ion-row>
                     <ion-col class="left-col">
-                        <ebutton class="btn-container" id="cancel" (clicked)="cancel()"
+                        <ebutton class="btn-container" (clicked)="cancel()"
                             [title]="'common.cancel' | translate"> </ebutton>
                     </ion-col>
                     <ion-col>
-                        <ebutton class="btn-container" id="confirm" (clicked)="update(node)"
+                        <ebutton class="btn-container" (clicked)="update(node)" [attr.disabled]="signingAndTransacting"
                             [title]="'common.update' | translate"> </ebutton>
                     </ion-col>
                 </ion-row>

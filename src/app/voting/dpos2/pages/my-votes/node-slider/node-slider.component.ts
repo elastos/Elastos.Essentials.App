@@ -31,6 +31,7 @@ export class NodeSliderComponent implements OnInit {
 
     public displayedNodes: DPoS2Node[] = [];
     public stakeDays = 0;
+    public signingAndTransacting = false;
 
     slideOpts = {
         initialSlide: 1,
@@ -92,6 +93,7 @@ export class NodeSliderComponent implements OnInit {
     }
 
     async createTransaction(node: any) {
+        this.signingAndTransacting = true;
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
         try {
@@ -128,6 +130,7 @@ export class NodeSliderComponent implements OnInit {
             if (ret) {
                 node.lockDays = node.inputStakeDays;
                 this.voteService.toastSuccessfully('dposvoting.update-vote');
+                this.buttonClick.emit(node.index);
             }
 
         }
@@ -135,6 +138,7 @@ export class NodeSliderComponent implements OnInit {
             await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
+        this.signingAndTransacting = false;
 
     }
 

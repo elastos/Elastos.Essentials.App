@@ -67,17 +67,6 @@ export class MyVotesPage implements OnInit, OnDestroy {
     }
 
     onClick(index: number) {
-        if (index == -1) {
-            this.showNode = false;
-        }
-        else {
-            this.update(index);
-        }
+        this.showNode = false;
     }
-
-    update(index: number) {
-        alert(index);
-    }
-
-
 }
