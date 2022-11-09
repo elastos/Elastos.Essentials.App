@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService, VoteType } from '../../services/stake.service';
@@ -41,6 +42,7 @@ export class StakingHomePage implements OnInit {
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
         private voteService: VoteService,
+        public popupProvider: GlobalPopupService,
     ) {
     }
 
@@ -131,6 +133,26 @@ export class StakingHomePage implements OnInit {
     async unvote() {
         if (!this.stakeService.votesRight.voteInfos) {
             return
+        }
+
+        var voteContents: VotesContentInfo[] = [];
+        for (let i = 0; i < 4; i++) {
+            let list = this.stakeService.votesRight.voteInfos[i].list;
+            if (list.length > 0) {
+                voteContents.push({
+                    VoteType: i,
+                    VotesInfo: []
+                })
+            }
+        }
+
+        if (voteContents.length == 0) {
+            this.globalNative.genericToast('dposvoting.no-voting');
+            return;
+        }
+
+        if (!await this.popupProvider.ionicConfirm('staking.unvote', 'staking.unvote-message', 'common.ok', 'common.cancel')) {
+            return;
         }
 
         this.signingAndTransacting = true;
