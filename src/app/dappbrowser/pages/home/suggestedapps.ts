@@ -222,6 +222,15 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     url: 'https://app.sushi.com/',
     useExternalBrowser: false,
     walletConnectSupported: true,
-    networks: ["ethereum", "fantom", "bsc", "polygon", "telos"]
+    networks: ["ethereum", "fantom", "bsc", "kava", "polygon", "telos"]
+  },
+  {
+    icon: '/assets/browser/dapps/kava.svg',
+    title: 'Kava',
+    description: "Kava is the DeFi lending platform for the world's largest cryptocurrencies.",
+    url: 'https://app.kava.io/',
+    useExternalBrowser: false,
+    walletConnectSupported: true,
+    networks: ["kava"]
   },
 ];
