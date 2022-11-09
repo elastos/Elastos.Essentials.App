@@ -18,7 +18,7 @@
       <ion-virtual-scroll [items]="filteredNodes" approxItemHeight="240px">
         <ion-item *virtualItem="let node">
           <ion-grid class="ion-no-padding">
-            <ion-row class="ion-no-padding">
+            <ion-row class="ion-no-padding row-list">
               <ion-col size="1" class="rank-container ion-no-padding"
                 (click)="_showNode(filteredNodes.indexOf(node), node)">
                 {{ node.index }}
