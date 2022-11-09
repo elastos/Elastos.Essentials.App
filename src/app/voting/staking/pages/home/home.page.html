@@ -38,7 +38,8 @@
                         {{ stakeService.votesRight.maxStakedRatio }}%
                     </ion-col>
 
-                    <ion-col size="0.5" class="right-col" (click)="detail = !detail" *ngIf="stakeService.votesRight.totalVotesRight > 0">
+                    <ion-col size="0.5" class="right-col" (click)="detail = !detail"
+                        *ngIf="stakeService.votesRight.totalVotesRight > 0">
                         <img *ngIf="detail"
                             [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
                         <img *ngIf="!detail"
@@ -80,14 +81,10 @@
 
             <div class="footer-space"></div>
             <ion-footer>
-                <ul id="button-list">
-                    <li *ngFor="let button of buttonList" (click)="clickButton(button.url)">
-                        <div class="align-center">
-                            <img [src]="button.icon" />
-                            <p>{{ button.label }}</p>
-                        </div>
-                    </li>
-                </ul>
+                <div id="button-list">
+                    <ebutton *ngFor="let button of buttonList" [topicon]="button.icon" [title]="button.label"
+                        (clicked)="clickButton(button.url)"></ebutton>
+                </div>
             </ion-footer>
         </div>
     </div>

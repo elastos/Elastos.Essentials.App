@@ -7,7 +7,7 @@
     margin-bottom: 32px;
     padding: 20px 13px;
     overflow: hidden;
-    background-color: #436DDA;
+    background-color: #436dda;
     // background-image: url("/assets/staking/images/bg.svg");
     // background-repeat: no-repeat;
     // background-position: 206px 0;
@@ -24,7 +24,6 @@
     }
 
     .card-title-row {
-
     }
 
     .card-label-row {
@@ -80,10 +79,9 @@
             // height: 100%;
             font-size: 12px;
             font-weight: 400;
-            color: #8530F1;
+            color: #8530f1;
         }
     }
-
 }
 
 #button-list {
@@ -99,38 +97,7 @@
     list-style: none;
     background: var(--essentials-box-color);
 
-    li + li {
-        margin-left: 1%;
-    }
-
-    li {
+    ebutton {
         width: 24%;
     }
-
-    div {
-        margin-top: 0;
-        // padding: 10px 26px;
-        height: 65px;
-        width: 100%;
-        display: inline-block;
-        text-align: center;
-        align-items: center;
-        justify-content: center;
-        background: var(--ion-background-color);
-        border-radius: 13px;
-
-        img {
-            margin-top: 10px;
-            height: 24px;
-            width: 24px;
-        }
-
-        p {
-            margin: 6px 0;
-            font-size: 12px;
-            font-weight: 400;
-        }
-    }
-
 }
-

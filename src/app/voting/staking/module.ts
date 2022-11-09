@@ -6,6 +6,7 @@ import { WebView } from '@awesome-cordova-plugins/ionic-webview/ngx';
 import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
@@ -34,7 +35,8 @@ import { StakingRoutingModule } from './routing';
         IonicStorageModule,
         SharedComponentsModule,
         StdTransactionComponentModule,
-        GlobalDirectivesModule
+        GlobalDirectivesModule,
+        InlineSVGModule
     ],
     bootstrap: [],
     entryComponents: [
