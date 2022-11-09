@@ -13,7 +13,7 @@
             </div>
 
             <div class="vote-list">
-                <div *ngFor="let node of selectedNodes; index as i" class="vote" lines="none">
+                <div *ngFor="let node of selectedNodes; index as i" class="vote row-list" lines="none">
                     <div class="index-col">{{ i+1 }}</div>
                     <div class="icon-col">
                         <img [src]="node.avatar ? node.avatar : '/assets/crcouncilvoting/icon/avatar.png'"

@@ -54,11 +54,11 @@ h5 {
             display: flex;
             align-items: flex-start;
             padding-top:20px;
-            border-bottom: solid 3px #F5F4F8;
+            padding-bottom: 16px;
 
-            &:first-child {
-                border-top: solid 3px #F5F4F8;
-            }
+            // &:first-child {
+            //     border-top: solid 3px #F5F4F8;
+            // }
 
             .index-col {
                 height: 50px;
