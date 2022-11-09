@@ -37,8 +37,10 @@
         <preference name="AndroidXEnabled" value="true" />
         <preference name="GradlePluginKotlinEnabled" value="true" />
         <preference name="LottieEnableHardwareAcceleration" value="true" />
-        <preference name="android-targetSdkVersion" value="31" />
+        <preference name="android-targetSdkVersion" value="32" />
         <preference name="android-minSdkVersion" value="24" />
+        <preference name="SplashScreenDelay" value="1" />
+        <preference name="AndroidWindowSplashScreenBackground" value="#000000" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />
         </edit-config>
@@ -46,7 +48,7 @@
             <application android:allowBackup="false" android:fullBackupContent="false" android:usesCleartextTraffic="true" tools:replace="android:allowBackup" />
         </edit-config>
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application/activity[@android:label='@string/activity_name']">
-            <activity android:theme="@style/EssentialsTheme" />
+            <activity android:theme="@style/EssentialsSplashTheme" />
         </edit-config>
         <config-file parent="/manifest/application" target="app/src/main/AndroidManifest.xml">
             <uses-library android:name="org.apache.http.legacy" android:required="false" />

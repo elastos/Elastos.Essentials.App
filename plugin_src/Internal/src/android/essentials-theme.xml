@@ -6,9 +6,19 @@
       <item name="colorPrimary">#000000</item>
       <item name="colorPrimaryDark">#000000</item>
       <item name="colorAccent">#000000</item>
+  </style>
+
+  <style name="EssentialsSplashTheme" parent="@style/Theme.App.SplashScreen">
+      <item name="android:windowBackground">#000000</item>
+      <item name="android:navigationBarColor">#000000</item>
+      <item name="colorPrimary">#000000</item>
+      <item name="colorPrimaryDark">#000000</item>
+      <item name="colorAccent">#000000</item>
 
       <!-- Android 12 (API 31) -->
-      <item name="android:windowSplashScreenBackground">#000000</item>
-      <item name="android:windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+      <item name="windowSplashScreenBackground">#000000</item>
+      <item name="windowSplashScreenAnimatedIcon">@android:color/transparent</item>
+      <item name="windowSplashScreenAnimationDuration">10</item>
+      <item name="postSplashScreenTheme">@style/EssentialsTheme</item>
   </style>
 </resources>
