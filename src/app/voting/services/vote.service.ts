@@ -64,6 +64,7 @@ export class VoteService {
         Logger.log(App.VOTING, "VoteService init");
 
         this.needFetchData[App.DPOS_VOTING] = true;
+        this.needFetchData[App.STAKING] = true;
 
         // //Get cr members
         // if (this.crmembers.length > 0) {

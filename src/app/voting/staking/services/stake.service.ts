@@ -73,6 +73,9 @@ export class StakeService {
     }
 
     async initData() {
+
+        if (!this.voteService.needFetchData[App.STAKING]) return;
+
         this.firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
         this.ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
         this.ownerAddress = this.voteService.sourceSubwallet.getOwnerAddress();
@@ -92,6 +95,8 @@ export class StakeService {
         else {
             this.totalRewardInfo = this.rewardInfo;
         }
+
+        this.voteService.needFetchData[App.STAKING] = false;
     }
 
     public async getBalanceByAddress(address: string, spendable = false): Promise<number> {
