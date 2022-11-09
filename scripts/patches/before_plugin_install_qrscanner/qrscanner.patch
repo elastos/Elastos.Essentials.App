@@ -34,15 +34,16 @@ diff -ruN origin_plugins/cordova-plugin-qrscanner/src/android/QRScanner.java plu
 diff -ruN origin_plugins/cordova-plugin-qrscanner/src/android/qrscanner.gradle plugins/cordova-plugin-qrscanner/src/android/qrscanner.gradle
 --- origin_plugins/cordova-plugin-qrscanner/src/android/qrscanner.gradle	null
 +++ plugins/cordova-plugin-qrscanner/src/android/qrscanner.gradle	null
-@@ -1,10 +1,6 @@
+@@ -1,10 +1,7 @@
 -repositories {
 -    jcenter()
 -}
--
+
  dependencies {
-     compile 'com.journeyapps:zxing-android-embedded:3.3.0'
+-    compile 'com.journeyapps:zxing-android-embedded:3.3.0'
 -    compile 'com.android.support:appcompat-v7:23.1.0'
-+    compile 'androidx.appcompat:appcompat:1.0.0'
++    implementation 'com.journeyapps:zxing-android-embedded:3.3.0'
++    implementation 'com.android.support:appcompat-v7:23.1.0'
  }
 
  android {
