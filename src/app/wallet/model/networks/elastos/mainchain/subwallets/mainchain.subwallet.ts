@@ -58,6 +58,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     private votingAmountSELA = 0; // ELA
     private votingUtxoArray: Utxo[] = null;
 
+    private lastUnConfirmedTransactionId: string = null;
+
     private ownerAddress: string = null;
 
     private externalAddressCount = 110; // Addresses for user.
@@ -450,7 +452,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
      */
     public async publishTransaction(transaction: string): Promise<string> {
         await TransactionService.instance.displayGenericPublicationLoader();
-        return await this.sendRawTransaction(this.id as StandardCoinName, transaction);
+        let txId = await this.sendRawTransaction(this.id as StandardCoinName, transaction);
+        this.lastUnConfirmedTransactionId = txId;
+        return txId;
     }
 
     protected async sendRawTransaction(subWalletId: StandardCoinName, payload: string): Promise<string> {
@@ -517,16 +521,32 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             await this.fetchNewestTransactions();
         }
 
-        let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
+        let findLastUnConfirmedTx = false;
+
+        let transactions = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];
-        for (let i = 0, len = transaction.length; i < len; i++) {
-            if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
-                pendingTransactions.push(transaction[i].txid);
+        for (let i = 0, len = transactions.length; i < len; i++) {
+            if (this.lastUnConfirmedTransactionId && this.lastUnConfirmedTransactionId === transactions[i].txid) {
+                this.lastUnConfirmedTransactionId = null;
+                findLastUnConfirmedTx = true;
+            }
+            if (transactions[i].Status !== TransactionStatus.CONFIRMED) {
+                pendingTransactions.push(transactions[i].txid);
             } else {
                 // the transactions list is sorted by block height.
                 break;
             }
         }
+
+        if (this.lastUnConfirmedTransactionId && !findLastUnConfirmedTx) {
+            let tx = await this.getTransactionDetails(this.lastUnConfirmedTransactionId);
+            if (tx.confirmations < 1) {
+                pendingTransactions.push(this.lastUnConfirmedTransactionId);
+            } else {
+                this.lastUnConfirmedTransactionId = null;
+            }
+        }
+
         Logger.log('wallet', 'Pending Transactions:', pendingTransactions);
         return pendingTransactions;
     }
