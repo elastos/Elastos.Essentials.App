@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { ChannelInfo, PostBody, RuntimeContext } from 'feeds-experiment';
+import type { ChannelInfo, PostBody, RuntimeContext } from '@feedsnetwork/feeds-js-sdk';
 import moment from 'moment';
 import { BehaviorSubject } from 'rxjs';
 import { GlobalConfig } from 'src/app/config/globalconfig';

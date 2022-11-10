@@ -11,13 +11,13 @@ import type { AlreadyExistsException, AppContext, DIDResolverAlreadySetupExcepti
 import type { Address, MasterWallet, MasterWalletManager, Mnemonic, WalletErrorException } from "@elastosfoundation/wallet-js-sdk";
 import type { Contract } from "@ethersproject/contracts";
 import type { JsonRpcProvider } from "@ethersproject/providers";
+import type { Channel, Logger as FeedsLogger, MediaType, MyProfile, Post, RuntimeContext } from '@feedsnetwork/feeds-js-sdk';
 import type { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import type WalletConnect from "@walletconnect/client";
 import type { ec } from "elliptic";
 import type PhishingDetector from "eth-phishing-detect";
 import type { providers, utils, Wallet, wordlists } from "ethers";
 import type { defaultPath, HDNode } from "ethers/lib/utils";
-import type { Channel, Logger as FeedsLogger, MediaType, MyProfile, Post, RuntimeContext } from 'feeds-experiment';
 import type { Pair, Trade } from 'src/app/thirdparty/custom-uniswap-v2-sdk/src';
 import type Web3 from "web3";
 import type { sha3 } from "web3-utils";
@@ -206,15 +206,15 @@ export const lazyFeedsSDKImport = async (): Promise<{
   Post: typeof Post
   RuntimeContext: typeof RuntimeContext
 }> => {
-  if (!importsCache["feeds-experiment"])
-    importsCache["feeds-experiment"] = await import("feeds-experiment");
+  if (!importsCache["@feedsnetwork/feeds-js-sdk"])
+    importsCache["@feedsnetwork/feeds-js-sdk"] = await import("@feedsnetwork/feeds-js-sdk");
 
   return {
-    Channel: importsCache["feeds-experiment"].Channel,
-    Logger: importsCache["feeds-experiment"].Logger,
-    MediaType: importsCache["feeds-experiment"].MediaType,
-    MyProfile: importsCache["feeds-experiment"].MyProfile,
-    Post: importsCache["feeds-experiment"].Post,
-    RuntimeContext: importsCache["feeds-experiment"].RuntimeContext,
+    Channel: importsCache["@feedsnetwork/feeds-js-sdk"].Channel,
+    Logger: importsCache["@feedsnetwork/feeds-js-sdk"].Logger,
+    MediaType: importsCache["@feedsnetwork/feeds-js-sdk"].MediaType,
+    MyProfile: importsCache["@feedsnetwork/feeds-js-sdk"].MyProfile,
+    Post: importsCache["@feedsnetwork/feeds-js-sdk"].Post,
+    RuntimeContext: importsCache["@feedsnetwork/feeds-js-sdk"].RuntimeContext,
   };
 }
