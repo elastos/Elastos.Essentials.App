@@ -3,7 +3,7 @@ import { NavController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -49,7 +49,7 @@ export class HomePage {
     GlobalFirebaseService.instance.logEvent("redpackets_home_enter");
   }
 
-  async ionViewWillEnter() {
+  ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.red-packets"));
     this.titleBar.setBackgroundColor("#701919");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
@@ -64,7 +64,7 @@ export class HomePage {
     }
 
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-      iconPath: 'assets/redpackets/images/settings.svg',
+      iconPath: BuiltInIcon.SETTINGS,
       key: 'settings'
     })
 
