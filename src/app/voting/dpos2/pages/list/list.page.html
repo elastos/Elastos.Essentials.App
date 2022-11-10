@@ -37,7 +37,7 @@
                                     <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                                 </span>
                                 &#8226;  -->
-                                {{ node.myVotesPrecentage }}% {{ 'voting.of-votes' | translate }}
+                                {{ node.votesPrecentage }}% {{ 'voting.of-votes' | translate }}
                             </p>
                             <p  *ngIf="node.stakeuntilDate">
                                 {{ 'dposvoting.stake-until' | translate }}: {{ node.stakeuntilDate }}

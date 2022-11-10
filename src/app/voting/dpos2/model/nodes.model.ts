@@ -29,6 +29,7 @@ export type DPoS2Node = {
 
 export type ProducersSearchResponse = {
   producers: DPoS2Node[],
+  totaldposv2votes: string,
   totalvotes: string,
   totalcounts: number,
 }

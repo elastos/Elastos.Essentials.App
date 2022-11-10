@@ -14,7 +14,7 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { UXService } from '../../services/ux.service';
-import { StakeService, VoteType } from '../../staking/services/stake.service';
+import { StakeService } from '../../staking/services/stake.service';
 import { DPoS2Node } from '../model/nodes.model';
 import { Block, Mainchain, Price, Voters } from '../model/stats.model';
 
@@ -231,10 +231,10 @@ export class DPoS2Service {
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
             const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            Logger.log(App.DPOS2, "result:", result);
 
             if (result && !Util.isEmptyObject(result.producers)) {
-                Logger.log(App.DPOS2, "dposlist:", result.producers);
-                this.totalVotes = result.totalvotes;
+                this.totalVotes = result.totaldposv2votes;
                 this._nodes = result.producers;
 
                 for (const node of result.producers) {
@@ -271,18 +271,21 @@ export class DPoS2Service {
                             this.myStakeExpired30 = await this.voteService.getRemainingTimeString(until);
                         }
 
-                        //get votes precentage
-                        node.myVotesPrecentage = 0;
-                        if (this.stakeService.votesRight.totalVotesRight > 0) {
-                            let list = this.stakeService.votesRight.voteInfos[VoteType.DPoSV2].list;
-                            let votes = 0;
-                            for (let i in list) {
-                                if (node.ownerpublickey == list[i].candidate) {
-                                    votes += parseFloat(list[i].votes);
-                                }
-                            }
-                            node.myVotesPrecentage = this.uxService.getPercentage(votes, this.stakeService.votesRight.totalVotesRight);
-                        }
+                        // //get votes precentage
+                        // node.myVotesPrecentage = 0;
+                        // if (this.stakeService.votesRight.totalVotesRight > 0) {
+                        //     let list = this.stakeService.votesRight.voteInfos[VoteType.DPoSV2].list;
+                        //     let votes = 0;
+                        //     for (let i in list) {
+                        //         if (node.ownerpublickey == list[i].candidate) {
+                        //             votes += parseFloat(list[i].votes);
+                        //         }
+                        //     }
+                        //     node.myVotesPrecentage = this.uxService.getPercentage(votes, this.stakeService.votesRight.totalVotesRight);
+                        // }
+
+                        //get node precentage
+                        node.votesPrecentage = this.uxService.getPercentage(node.dposv2votes, this.totalVotes);
 
                         this.dposList.push(node);
                     }
