@@ -110,6 +110,7 @@ export const en = {
         'expired-in': 'Expired in {{ time }}',
         'my-votes': 'My votes',
         'votes': 'Votes',
+        'candidate': 'Candidate',
         'node-exprie-message': 'Node is about to expire in {{ time }}. Please click to update the node.',
         'vote-exprie-message': 'Your votes for DPoS 2.0 are about to expire in {{ time }}. Please click to update your votes.',
 

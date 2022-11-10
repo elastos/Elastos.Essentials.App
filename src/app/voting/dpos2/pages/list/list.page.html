@@ -3,7 +3,7 @@
 
     <ion-grid class="container ion-no-padding" *ngIf="dataFetched; else loadingList">
 
-        <div  *ngIf="!showNode" class="message-container">
+        <div *ngIf="!showNode" class="message-container">
             <p *ngIf="dpos2Service.myStakeExpired30" class="message" (click)="goTo('/dpos2/update')">
                 {{ 'dposvoting.node-exprie-message' | translate : {time: dpos2Service.myStakeExpired30} }}
             </p>
@@ -32,24 +32,30 @@
                         <ion-col size="7.5" (click)="_showNode(dpos2Service.dposList.indexOf(node), node)"
                             class="label-col">
                             <h4>{{ node.nickname }}</h4>
-                            <p>
-                                <!-- <span [class.inactive]="node.state !== 'Active'">
+                            <ion-row class="row-no-padding">
+                                <ion-col size="9">
+                                    <p>
+                                        <!-- <span [class.inactive]="node.state !== 'Active'">
                                     <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                                 </span>
                                 &#8226;  -->
-                                {{ node.votesPrecentage }}% {{ 'voting.of-votes' | translate }}
-                            </p>
-                            <p  *ngIf="node.stakeuntilDate">
+                                        {{ node.votesPrecentage }}% {{ 'voting.of-votes' | translate }}
+                                    </p>
+                                </ion-col>
+                                <ion-col size="3">
+                                    <p class="candidate" *ngIf="node.onduty=='Candidate'" >{{ 'dposvoting.candidate' | translate }}</p>
+                                </ion-col>
+                            </ion-row>
+                            <p *ngIf="node.stakeuntilDate">
                                 {{ 'dposvoting.stake-until' | translate }}: {{ node.stakeuntilDate }}
                             </p>
-                            <p  *ngIf="node.stakeuntilExpired" class="expired-in">
+                            <p *ngIf="node.stakeuntilExpired" class="expired-in">
                                 {{ 'dposvoting.expired-in' | translate : { time: node.stakeuntilExpired } }}
                             </p>
                         </ion-col>
                         <ion-col size="1.5" class="checkbox-container" *ngIf="voteService.canVote()">
                             <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"
-                                (click)="clickCheckBox(node)"
-                                [disabled]="node.state === 'Inactive'">
+                                (click)="clickCheckBox(node)" [disabled]="node.state === 'Inactive'">
                             </ion-checkbox>
                         </ion-col>
                     </ion-row>

@@ -110,6 +110,7 @@ export const zh = {
         'expired-in': '将在{{ time }}后过期',
         'my-votes': '我的投票',
         'votes': '票数',
+        'candidate': '候选',
         'node-exprie-message': '节点将在{{ time }}后过期。请点击更新节点。',
         'vote-exprie-message': '您的 DPoS 2.0 投票将于{{ time }}后过期。请点击更新投票。',
 
