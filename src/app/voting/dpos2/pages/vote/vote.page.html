@@ -24,14 +24,14 @@
                         <p>
                             <!-- <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
                             node.location | translate }} •  -->
-                            <span class="votes">{{
-                                getVotesPercentage(node) }}%</span> {{ 'voting.of-votes' | translate }}
+                            <span class="votes">{{ getVotesPercentage(node) }}%</span> {{ 'voting.of-votes' | translate }}
                         </p>
                         <p class="stake-until">{{ 'dposvoting.stake' | translate }}</p>
                         <ion-row>
                             <ion-col size="5.75" class="left-col input-col">
                                 <ion-row class="input-container">
-                                    <ion-input type="number" [(ngModel)]="node.userStakeDays">
+                                    <ion-input type="number" [(ngModel)]="node.userStakeDays"
+                                        (ionBlur)="onInputDaysBlur(node)" (ionFocus)="onInputDaysFocus(node)">
                                     </ion-input>
                                     <p>{{ 'dposvoting.input-days' | translate }}</p>
                                 </ion-row>
@@ -39,7 +39,8 @@
                             <ion-col size="0.5"> </ion-col>
                             <ion-col size="5.75" class="right-col align-right input-col">
                                 <ion-row class="input-container">
-                                    <ion-input type="number" [(ngModel)]="node.userVotes" (ionBlur)="onInputBlur($event, node)">
+                                    <ion-input type="number" [(ngModel)]="node.userVotes" (ionChange)="onInputVotesChange(node)"
+                                        (ionBlur)="onInputVotesBlur(node)" (ionFocus)="onInputVotesFocus(node)">
                                     </ion-input>
                                     <p>{{ 'dposvoting.input-votes' | translate }}</p>
                                 </ion-row>
@@ -65,7 +66,7 @@
                             [title]="'dposvoting.stake-more' | translate"> </ebutton>
                     </ion-col>
                     <ion-col class="right-col">
-                        <ebutton class="btn-container" (clicked)="cast()"
+                        <ebutton class="btn-container" (clicked)="cast()" [attr.disabled]="overflow || less_than_10_days"
                             [title]="'crcouncilvoting.cast-votes' | translate"> </ebutton>
                     </ion-col>
                 </ion-row>

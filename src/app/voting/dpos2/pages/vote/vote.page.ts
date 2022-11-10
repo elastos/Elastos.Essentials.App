@@ -56,6 +56,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     public testValue = 0;
     public overflow = false;
+    public less_than_10_days = false;
 
     private selectedNodes = [];
 
@@ -130,8 +131,13 @@ export class VotePage implements OnInit, OnDestroy {
     async cast() {
         let currentHeight = await this.voteService.getCurrentHeight();
         let votedCandidates = [];
-        this.selectedNodes.map((node) => {
-            if (node.userVotes > 0 && node.userStakeDays >= 10) {
+        for (const node of this.selectedNodes) {
+            if (node.userVotes > 0) {
+                if (node.userStakeDays < 10) {
+                    let msg = "["+ node.nickname + "]" + this.translate.instant('dposvoting.stake-days-less-than-10');
+                    void this.globalNative.genericToast(msg);
+                    return;
+                }
                 // let userVotes = node.userVotes * 100000000;
                 let userVotes = Util.accMul(node.userVotes, Config.SELA);
                 let _vote = {
@@ -143,10 +149,10 @@ export class VotePage implements OnInit, OnDestroy {
             else {
                 node.userVotes = 0;
             }
-        });
+        };
 
         if (Object.keys(votedCandidates).length === 0) {
-            void this.globalNative.genericToast('crcouncilvoting.pledge-some-ELA-to-candidates');
+            void this.globalNative.genericToast('dposvoting.pledge-some-votes-to-nodes');
         }
         else if (this.votedEla > this.totalEla) {
             void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
@@ -182,12 +188,50 @@ export class VotePage implements OnInit, OnDestroy {
         return this.uxService.getPercentage(node.userVotes, this.totalEla);
     }
 
-    // Event triggered when the text input loses the focus. At this time we can recompute the
-    // distribution.
-    public onInputBlur(event, node: DPoS2Node) {
-        //console.log("onInputBlur", node)
+    // Event triggered when the text input loses the focus. At this time we can recompute the value.
+    public onInputVotesFocus(node: DPoS2Node) {
+        node.userVotes = null;
+    }
+
+    public onInputVotesBlur(node: DPoS2Node) {
+        if (node.userVotes == null) {
+            node.userVotes = 0;
+        }
         this.getVotedCount();
     }
+
+    public onInputVotesChange(node: DPoS2Node) {
+        if (node.userVotes != null) {
+            this.getVotedCount();
+        }
+    }
+
+    public onInputDaysFocus(node: DPoS2Node) {
+        node.userStakeDays = null;
+    }
+
+    public onInputDaysBlur(node: DPoS2Node) {
+        if (node.userStakeDays == null) {
+            node.userStakeDays = 10;
+        }
+        // this.checkInputDays();
+    }
+
+    // public onInputDaysChange(node: DPoS2Node) {
+    //     if (node.userStakeDays != null) {
+    //         this.checkInputDays();
+    //     }
+    // }
+
+    // private checkInputDays() {
+    //     this.less_than_10_days = false;
+
+    //     this.selectedNodes.forEach((node) => {
+    //         if (node.userStakeDays < 10) {
+    //             this.less_than_10_days = true;
+    //         }
+    //     });
+    // }
 
     async createVoteCRTransaction(votes: any) {
 

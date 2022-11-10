@@ -125,6 +125,8 @@ export const it = {
         'stake-more': 'Stake more',
         'input-days': 'Days',
         'input-votes': 'Votes',
+        'pledge-some-votes-to-nodes': 'Please pledge some votes to your candidate nodes',
+        'stake-days-less-than-10': "'s stake days do not less than 10.",
 
         'update-vote': 'Update vote',
         'stakedays-placeholder': 'no less than {{ days }} days',

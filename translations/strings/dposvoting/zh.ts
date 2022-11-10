@@ -125,6 +125,8 @@ export const zh = {
         'stake-more': '质押更多',
         'input-days': '天',
         'input-votes': '票',
+        'pledge-some-votes-to-nodes': '请分配一些选票给您的候选节点',
+        'stake-days-less-than-10': '的质押天数不能少于10',
 
         'update-vote': '更新投票',
         'stakedays-placeholder': '不小于{{ days }}天',
