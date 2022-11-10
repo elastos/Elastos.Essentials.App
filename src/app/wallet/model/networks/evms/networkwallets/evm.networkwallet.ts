@@ -51,8 +51,8 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
      * for example when sending coins, users use ioXX formats, but internal implementations require EVM native
      * address formats with 0x.
      */
-    public convertAddressForUsage(address: string, usage: AddressUsage): string {
-        return address.startsWith('0x') ? address : '0x' + address;
+    public async convertAddressForUsage(address: string, usage: AddressUsage): Promise<string> {
+        return await (address.startsWith('0x') ? address : '0x' + address);
     }
 
     public getMainEvmSubWallet(): MainCoinEVMSubWallet<WalletNetworkOptionsType> {

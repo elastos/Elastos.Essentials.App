@@ -1,3 +1,4 @@
+import { lazyKavaImport } from "src/app/helpers/import.helper";
 import { CoinID } from "../../../coin";
 import { WalletUtil } from "../../../wallet.util";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
@@ -17,7 +18,7 @@ export class KavaERC20Subwallet extends ERC20SubWallet {
         }
         let addressTemp;
         if (isKavaAddress) {
-            let utils = (await import("@kava-labs/javascript-sdk")).utils;
+            const { utils } = await lazyKavaImport();
             addressTemp = utils.kavaToEthAddress(address)
         } else {
             addressTemp = address;

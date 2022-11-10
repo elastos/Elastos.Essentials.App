@@ -1,5 +1,4 @@
 import type { json } from "@elastosfoundation/wallet-js-sdk";
-import { lazyEthersImport, lazyEthersLibUtilImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -8,6 +7,7 @@ import { WalletService } from "src/app/wallet/services/wallet.service";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
+import { WalletUtil } from "../../../wallet.util";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { EVMSafe } from "./evm.safe";
@@ -52,7 +52,7 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     let privateKey = null;
     let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
     if (seed) {
-      let jsWallet = await this.getWalletFromSeed(seed);
+      let jsWallet = await WalletUtil.getWalletFromSeed(seed);
       privateKey = jsWallet.privateKey;
     }
     else {
@@ -99,11 +99,5 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
       signedTx = signdTransaction.rawTransaction;
     }
     return { signedTransaction: signedTx };
-  }
-
-  private async getWalletFromSeed(seed: string) {
-    const { Wallet } = await lazyEthersImport();
-    const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
-    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }

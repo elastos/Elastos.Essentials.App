@@ -218,3 +218,10 @@ export const lazyFeedsSDKImport = async (): Promise<{
     RuntimeContext: importsCache["@feedsnetwork/feeds-js-sdk"].RuntimeContext,
   };
 }
+
+export const lazyKavaImport = async (): Promise<any> => {
+    if (!importsCache["@kava-labs/javascript-sdk"])
+      importsCache["@kava-labs/javascript-sdk"] = await import("@kava-labs/javascript-sdk");
+
+    return importsCache["@kava-labs/javascript-sdk"];
+}

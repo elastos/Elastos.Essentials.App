@@ -1,3 +1,4 @@
+import { lazyKavaImport } from 'src/app/helpers/import.helper';
 import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from "src/app/wallet/model/safes/addressusage";
@@ -58,9 +59,8 @@ export class KavaNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOpt
     }
 
     // Override - Can convert kavaXXX to 0x
-    public convertAddressForUsage(address: string, usage: AddressUsage): string {
-        return address;
-        /*let addressTemp;
+    public async convertAddressForUsage(address: string, usage: AddressUsage): Promise<string> {
+        let addressTemp;
         if (!address.startsWith('kava') && !address.startsWith('0x')) {
             addressTemp = '0x' + address;
         } else {
@@ -74,6 +74,7 @@ export class KavaNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOpt
 
         if (usage === AddressUsage.EVM_CALL) {
             if (isKavaAddress) {
+                const { utils } = await lazyKavaImport();
                 return utils.kavaToEthAddress(addressTemp);
             } else {
                 return addressTemp
@@ -82,6 +83,7 @@ export class KavaNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOpt
         else if (usage === AddressUsage.DISPLAY_TRANSACTIONS) {
             // The block explorer use evm address.
             if (isKavaAddress) {
+                const { utils } = await lazyKavaImport();
                 return utils.kavaToEthAddress(addressTemp);
             } else {
                 return addressTemp
@@ -90,6 +92,5 @@ export class KavaNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOpt
         }
         else
             return addressTemp;
-        */
     }
 }

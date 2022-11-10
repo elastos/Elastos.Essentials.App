@@ -1,5 +1,4 @@
-import { utils } from '@kava-labs/javascript-sdk';
-import { lazyEthersImport, lazyEthersLibUtilImport } from "src/app/helpers/import.helper";
+import { lazyKavaImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -8,6 +7,7 @@ import { MasterWallet, StandardMasterWallet } from "../../../masterwallets/maste
 import { AddressUsage } from "../../../safes/addressusage";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { StandardSafe } from "../../../safes/standard.safe";
+import { WalletUtil } from "../../../wallet.util";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { AnyNetwork } from "../../network";
@@ -32,7 +32,7 @@ export class KavaStandardSafe extends StandardSafe {
 
       let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
       if (seed) {
-        let jsWallet = await this.getWalletFromSeed(seed);
+        let jsWallet = await WalletUtil.getWalletFromSeed(seed);
         this.evmAddress = jsWallet.address;
       }
       else {
@@ -48,6 +48,7 @@ export class KavaStandardSafe extends StandardSafe {
         await networkWallet.saveContextInfo("evmAddress", this.evmAddress);
     }
 
+    const { utils } = await lazyKavaImport();
     this.kavaAddress = utils.ethToKavaAddress(this.evmAddress)
   }
 
@@ -82,7 +83,7 @@ export class KavaStandardSafe extends StandardSafe {
     let privateKey = null;
     let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
     if (seed) {
-      let jsWallet = await this.getWalletFromSeed(seed)
+      let jsWallet = await WalletUtil.getWalletFromSeed(seed)
       privateKey = jsWallet.privateKey;
     } else {
       // No mnemonic - check if we have a private key instead
@@ -97,11 +98,5 @@ export class KavaStandardSafe extends StandardSafe {
 
     signTransactionResult.signedTransaction = signResult.rawTransaction;
     return signTransactionResult;
-  }
-
-  private async getWalletFromSeed(seed: string) {
-    const { Wallet } = await lazyEthersImport();
-    const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
-    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }

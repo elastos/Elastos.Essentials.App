@@ -452,7 +452,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<string> {
-    toAddress = this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
+    toAddress = await this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
 
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {

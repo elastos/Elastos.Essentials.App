@@ -1,3 +1,4 @@
+import { lazyKavaImport } from "src/app/helpers/import.helper";
 import { WalletNetworkOptions } from "../../../masterwallets/wallet.types";
 import { WalletUtil } from "../../../wallet.util";
 import { MainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
@@ -11,7 +12,7 @@ export class KavaMainCoinSubwallet<WalletNetworkOptionsType extends WalletNetwor
         }
         let addressTemp;
         if (isKavaAddress) {
-            let utils = (await import("@kava-labs/javascript-sdk")).utils;
+            const { utils } = await lazyKavaImport();
             addressTemp = utils.kavaToEthAddress(address)
         } else {
             addressTemp = address;

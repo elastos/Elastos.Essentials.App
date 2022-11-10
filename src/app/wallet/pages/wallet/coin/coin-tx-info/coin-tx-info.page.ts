@@ -297,7 +297,7 @@ export class CoinTxInfoPage implements OnInit {
                         {
                             type: 'contractAddress',
                             title: 'wallet.tx-info-token-address',
-                            value: this.networkWallet.convertAddressForUsage(this.transactionInfo.erc20TokenContractAddress, AddressUsage.DISPLAY_TRANSACTIONS),
+                            value: await this.networkWallet.convertAddressForUsage(this.transactionInfo.erc20TokenContractAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                             show: true,
                         },
                     );
@@ -319,7 +319,7 @@ export class CoinTxInfoPage implements OnInit {
                 {
                     type: 'address',
                     title: 'wallet.tx-info-receiver-address',
-                    value: this.transactionInfo.isCrossChain ? this.targetAddress : this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
+                    value: this.transactionInfo.isCrossChain ? this.targetAddress : await this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                     show: true,
                 }
             );
@@ -333,7 +333,7 @@ export class CoinTxInfoPage implements OnInit {
                     {
                         type: 'address',
                         title: 'wallet.tx-info-sender-address',
-                        value: this.networkWallet.convertAddressForUsage(this.fromAddress, AddressUsage.DISPLAY_TRANSACTIONS),
+                        value: await this.networkWallet.convertAddressForUsage(this.fromAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                         show: true,
                     })
             }

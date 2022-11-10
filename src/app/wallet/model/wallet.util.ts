@@ -24,7 +24,7 @@ import { Network, validate } from 'bitcoin-address-validation';
 
 import moment from 'moment';
 import { ELAAddressPrefix } from 'src/app/helpers/ela/ela.address';
-import { lazyElastosWalletSDKImport, lazyEthersImport } from 'src/app/helpers/import.helper';
+import { lazyElastosWalletSDKImport, lazyEthersImport, lazyEthersLibUtilImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../services/currency.service';
@@ -204,5 +204,11 @@ export class WalletUtil {
     let estimateSize = inputCount * 148 + outputCount * 34 + 10;
     let estimateFee = estimateSize * feePerKB / 1000;
     return estimateFee;
+  }
+
+  public static async getWalletFromSeed(seed: string) {
+    const { Wallet } = await lazyEthersImport();
+    const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
+    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
   }
 }

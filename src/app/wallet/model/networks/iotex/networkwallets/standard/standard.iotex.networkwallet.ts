@@ -58,7 +58,7 @@ export class StandardIoTeXNetworkWallet<WalletNetworkOptionsType extends WalletN
     }
 
     // Override - Can convert ioXXX to 0x
-    public convertAddressForUsage(address: string, usage: AddressUsage): string {
+    public async convertAddressForUsage(address: string, usage: AddressUsage): Promise<string> {
         let addressTemp;
         if (!address.startsWith('io') && !address.startsWith('0x')) {
             addressTemp = '0x' + address;
@@ -68,13 +68,13 @@ export class StandardIoTeXNetworkWallet<WalletNetworkOptionsType extends WalletN
 
         if (usage === AddressUsage.EVM_CALL) {
             const addr = from(addressTemp);
-            return addr.stringEth();
+            return await addr.stringEth();
         }
         else if (usage === AddressUsage.DISPLAY_TRANSACTIONS) {
             const addr = from(addressTemp);
-            return addr.string();
+            return await addr.string();
         }
         else
-            return addressTemp;
+            return await addressTemp;
     }
 }

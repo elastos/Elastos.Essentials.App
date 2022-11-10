@@ -474,7 +474,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
-        toAddress = this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
+        toAddress = await this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
 
         const tokenAccountAddress = this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
