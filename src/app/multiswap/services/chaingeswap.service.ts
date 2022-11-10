@@ -80,7 +80,7 @@ export class ChaingeSwapService {
       case "arbitrum": return "ARB";
       case "cronos": return "CRO";
       case "fantom": return "FTM";
-      case "elastossmartchain": return "ELA";
+      // TOO HIGH SLIPPAGE - NO LIQUIDITY - RESTORE WHEN LIQUIDITY PROBLEM SOLVED - case "elastossmartchain": return "ELA";
       default: return null;
     }
   }
@@ -96,7 +96,7 @@ export class ChaingeSwapService {
       case "ARB": return "arbitrum";
       case "CRO": return "cronos";
       case "FTM": return "fantom";
-      case "ELA": return "elastossmartchain";
+      // TOO HIGH SLIPPAGE - NO LIQUIDITY - RESTORE WHEN LIQUIDITY PROBLEM SOLVED - case "ELA": return "elastossmartchain";
       default: return null;
     }
   }
