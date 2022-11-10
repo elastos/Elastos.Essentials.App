@@ -19,18 +19,18 @@ export class VoteResultComponent implements OnInit {
     ngOnInit() { }
 
     public avatarList = {
-        "Sunnyfenghan": "https://elanodes.com/wp-content/uploads/custom/images/SunnyFengHan.png",
-        "Donald Bullers": "https://elanodes.com/wp-content/uploads/custom/images/DonaldBullers.png",
-        "Elation Studios": "https://elanodes.com/wp-content/uploads/custom/images/ElationStudios2.png",
-        "Mark Xing": "https://elanodes.com/wp-content/uploads/custom/images/MarkXing.png",
-        "Brittany Kaiser": "https://elanodes.com/wp-content/uploads/custom/images/BrittanyKaiser.png",
-        "Ryan | Starfish Labs": "https://elanodes.com/logos/Starfish.png",
-        "SJun Song": "https://elanodes.com/wp-content/uploads/custom/images/SjunSong.png",
-        "Rebecca Zhu": "https://elanodes.com/wp-content/uploads/custom/images/RebeccaZhu.png",
-        "The Strawberry Council": "https://elanodes.com/wp-content/uploads/custom/images/TheStrawberryCouncil_1.png",
-        "Zhang Feng": "https://elanodes.com/wp-content/uploads/custom/images/ZhangFeng_2.png",
-        "Jingyu Niu": "https://elanodes.com/wp-content/uploads/custom/images/NiuJingyu.png",
-        "Orchard Trinity": "https://elanodes.com/wp-content/uploads/custom/images/Orchard1.png",
+        "Sunnyfenghan": "https://api.elastos.io/images/SunnyFengHan.png",
+        "Donald Bullers": "https://api.elastos.io/images/DonaldBullers.png",
+        "Elation Studios": "https://api.elastos.io/images/ElationStudios.png",
+        "Mark Xing": "https://api.elastos.io/images/MarkXing.png",
+        "Brittany Kaiser": "https://api.elastos.io/images/BrittanyKaiser.png",
+        "Ryan | Starfish Labs": "https://api.elastos.io/images/Starfish.png",
+        "SJun Song": "https://api.elastos.io/images/SjunSong.png",
+        "Rebecca Zhu": "https://api.elastos.io/images/RebeccaZhu.png",
+        "The Strawberry Council": "https://api.elastos.io/images/TheStrawberryCouncil.png",
+        "Zhang Feng": "https://api.elastos.io/images/ZhangFeng.png",
+        "Jingyu Niu": "https://api.elastos.io/images/NiuJingyu.png",
+        "Orchard Trinity": "https://api.elastos.io/images/Orchard.png",
     }
 
     public didList = {

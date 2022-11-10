@@ -96,18 +96,18 @@ export class CRCouncilService {
     };
 
     public avatarList = {
-        "ioNZHmG9CpDvjEfpRNWU1vd8i1rSHzVGB2": "https://elanodes.com/wp-content/uploads/custom/images/SunnyFengHan.png",
-        "iqHaEoHQNdsRBFHNXEoiwF8hMRAikgMuxS": "https://elanodes.com/wp-content/uploads/custom/images/DonaldBullers.png",
-        "if4ApisvFmMQTsBBeibYj8RYY8T6zKU5v5": "https://elanodes.com/wp-content/uploads/custom/images/ElationStudios2.png",
-        "idzud676zaw6hbSbvkfzKnZgWdK9Pj3w8T": "https://elanodes.com/wp-content/uploads/custom/images/MarkXing.png",
-        "ipLeeiAP46JHN12sXAAr22oowHJ23x9FRM": "https://elanodes.com/wp-content/uploads/custom/images/BrittanyKaiser.png",
-        "iaBNozEmoTkzeEAjrUJyZDtuX8HJHBhYtx": "https://elanodes.com/logos/Starfish.png",
-        "ifFGHBuoAbT4Hk6uHn8vsQn5et7KExyMUZ": "https://elanodes.com/wp-content/uploads/custom/images/SjunSong.png",
-        "icaVPz8nY7Y7LKjpJxmzWxCG5F3CEV6hnt": "https://elanodes.com/wp-content/uploads/custom/images/RebeccaZhu.png",
-        "ioe6q6iXHvMEmdBEB4wpd1WGyrgEuttw93": "https://elanodes.com/wp-content/uploads/custom/images/TheStrawberryCouncil_1.png",
-        "ianpxAxfvEwX2VrScpHgtBiUsSu2wcxj4B": "https://elanodes.com/wp-content/uploads/custom/images/ZhangFeng_2.png",
-        "iXMsb6ippqkCHN3EeWc4QCA9ySnrSgLc4u": "https://elanodes.com/wp-content/uploads/custom/images/NiuJingyu.png",
-        "iTN9V9kaBewdNE9aw7DfqHgRn6NcDj8HCf": "https://elanodes.com/wp-content/uploads/custom/images/Orchard1.png",
+        "ioNZHmG9CpDvjEfpRNWU1vd8i1rSHzVGB2": "https://api.elastos.io/images/SunnyFengHan.png",
+        "iqHaEoHQNdsRBFHNXEoiwF8hMRAikgMuxS": "https://api.elastos.io/images/DonaldBullers.png",
+        "if4ApisvFmMQTsBBeibYj8RYY8T6zKU5v5": "https://api.elastos.io/images/ElationStudios.png",
+        "idzud676zaw6hbSbvkfzKnZgWdK9Pj3w8T": "https://api.elastos.io/images/MarkXing.png",
+        "ipLeeiAP46JHN12sXAAr22oowHJ23x9FRM": "https://api.elastos.io/images/BrittanyKaiser.png",
+        "iaBNozEmoTkzeEAjrUJyZDtuX8HJHBhYtx": "https://api.elastos.io/images/Starfish.png",
+        "ifFGHBuoAbT4Hk6uHn8vsQn5et7KExyMUZ": "https://api.elastos.io/images/SjunSong.png",
+        "icaVPz8nY7Y7LKjpJxmzWxCG5F3CEV6hnt": "https://api.elastos.io/images/RebeccaZhu.png",
+        "ioe6q6iXHvMEmdBEB4wpd1WGyrgEuttw93": "https://api.elastos.io/images/TheStrawberryCouncil.png",
+        "ianpxAxfvEwX2VrScpHgtBiUsSu2wcxj4B": "https://api.elastos.io/images/ZhangFeng.png",
+        "iXMsb6ippqkCHN3EeWc4QCA9ySnrSgLc4u": "https://api.elastos.io/images/NiuJingyu.png",
+        "iTN9V9kaBewdNE9aw7DfqHgRn6NcDj8HCf": "https://api.elastos.io/images/Orchard.png",
     }
 
     init() {
