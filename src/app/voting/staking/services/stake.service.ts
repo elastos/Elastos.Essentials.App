@@ -192,6 +192,11 @@ export class StakeService {
                     this.votesRight.voteInfos.push({ index: 2, title: "staking.cr-proposal", list: result[0].usedvotesinfo.usedcrcproposalvotes });
                     this.votesRight.voteInfos.push({ index: 3, title: "staking.cr-impeachment", list: result[0].usedvotesinfo.usdedcrimpeachmentvotes });
                     this.votesRight.voteInfos.push({ index: 4, title: "DPoS 2.0", list: dpos2List });
+                    for (let i in this.votesRight.voteInfos) {
+                        if (this.votesRight.voteInfos[i].list.length == 0) {
+                            this.votesRight.votes[i] = 0;
+                        }
+                    }
                 }
             }
         }
