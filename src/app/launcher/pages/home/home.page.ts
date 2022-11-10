@@ -47,7 +47,7 @@ export class HomePage implements OnInit {
   public widgetsSlidesOpts = {
     autoHeight: true,
     spaceBetween: 10,
-    initialSlide: 1 // Doesn't work well, shows slide 0 during a short time first...
+    //initialSlide: 1 // Doesn't work well, shows slide 0 during a short time first...
   };
   public slidesShown = false;
   public activeScreenIndex = 1;
@@ -173,7 +173,9 @@ export class HomePage implements OnInit {
     // Manually slide to the middle container first, then let the slides appear.
     // We have to do this otherzise the "initialSlide" option doesn't work well and shows the first slide during
     // a short time.
-    void this.widgetsSlides.slideTo(1, 0).then(() => this.slidesShown = true);
+    void this.widgetsSlides.slideTo(1, 0, false).then(() => {
+      this.slidesShown = true;
+    });
   }
 
   ionViewDidEnter() {
