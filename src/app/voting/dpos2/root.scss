@@ -222,20 +222,18 @@
                 }
             }
 
-            ion-label {
-                h4,
-                p {
-                    font-weight: 600;
-                }
+            h4,
+            p {
+                font-weight: 600;
+            }
 
-                h4 {
-                    font-size: 14px;
-                }
+            h4 {
+                font-size: 14px;
+            }
 
-                p {
-                    font-size: 10px;
-                    opacity: 0.7;
-                }
+            p {
+                font-size: 10px;
+                opacity: 0.7;
             }
         }
     }
@@ -270,5 +268,5 @@
     justify-content: center;
 
     color: white;
-    background-color: #007BFF;
+    background-color: #007bff;
 }

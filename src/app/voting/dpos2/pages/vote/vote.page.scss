@@ -4,7 +4,7 @@ ion-content {
     --padding-bottom: 80px;
 
     .footer {
-        background: #FFF;
+        background: var(--ion-background-color);
         z-index: 10;
         transition: transform 0.3s ease-in-out; // Transition on hide/show.
     }
@@ -53,7 +53,7 @@ h5 {
         .vote {
             display: flex;
             align-items: flex-start;
-            padding-top:20px;
+            padding-top: 20px;
             padding-bottom: 16px;
 
             // &:first-child {
@@ -66,11 +66,11 @@ h5 {
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                font-weight:600;
+                font-weight: 600;
             }
 
             .icon-col {
-                height:50px;
+                height: 50px;
 
                 img {
                     width: 50px;
@@ -94,9 +94,8 @@ h5 {
                     font-weight: 500;
                 }
 
-
                 .navigate {
-                    color: #732CCE;
+                    color: #732cce;
                 }
 
                 .stake-until {
@@ -111,8 +110,8 @@ h5 {
                     height: 100%;
                     border-radius: 9px;
                     padding: 0 6px;
-                    background: #FFF;
-                    border: solid 1px #C9BFD6;
+                    background: var(--essentials-box-color);
+                    border: solid 1px var(--essentials-border-separator-color);
 
                     ion-input {
                         height: 100%;
@@ -120,7 +119,7 @@ h5 {
 
                         font-size: 13px;
                         font-weight: 400;
-                        background: #FFF;
+                        background: var(--essentials-box-color);
                     }
 
                     p {
@@ -134,15 +133,14 @@ h5 {
                 }
 
                 .expiration-date {
-                    color: #6D7175;
+                    opacity: 0.7;
+                    margin-top: 10px;
 
                     .less-than {
                         color: red;
                     }
                 }
             }
-
-
         }
     }
 
@@ -153,49 +151,5 @@ h5 {
 
     .footer {
         flex-direction: row;
-    }
-}
-
-.dark-container {
-    .footer {
-        background: #000;
-    }
-
-    .votes-header {
-    }
-
-    .vote-list {
-        .vote {
-            background: #212021;
-            border-bottom: solid 3px #000;
-
-            &:first-child {
-                border-top: solid 3px transparent;
-            }
-
-            .vote-col {
-                ion-input {
-                    background: #3B3B3B;
-                    border: solid 1px #626262;
-                    color: #ffffff;
-                }
-
-                ion-range {
-                    --knob-background:#C4C4C4;
-                }
-            }
-        }
-    }
-
-    .cancel {
-        box-shadow: 0 3px 6px 0 #151626;
-        background-color: #202039;
-
-        ion-label {
-        }
-    }
-
-    .confirm {
-        box-shadow: 0 3px 15px 0 #151626;
     }
 }

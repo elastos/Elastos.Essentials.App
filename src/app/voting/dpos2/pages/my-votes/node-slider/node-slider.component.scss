@@ -1,4 +1,4 @@
-@import '../../../root.scss';
+@import "../../../root.scss";
 
 ion-grid {
     margin: 24px;
@@ -19,13 +19,12 @@ p {
     margin-top: 2px;
     font-size: 14px;
     text-align: left;
-    color: #111213;
 }
 
 ion-input {
-    background: #ffffff;
+    background: var(--essentials-box-color);
     height: 45px;
-    border:1px solid #C9BFD6;;
+    border: 1px solid var(--essentials-border-separator-color);
     border-radius: 7px;
     font-size: 13px;
     text-align: left;
@@ -33,6 +32,9 @@ ion-input {
 }
 
 .expiration-date {
+    font-size: 13px;
+    margin-top: 10px;
+
     .less-than {
         color: red;
     }

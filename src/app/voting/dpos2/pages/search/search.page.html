@@ -27,16 +27,14 @@
                 <img [src]="node.imageUrl ? node.imageUrl : '/assets/crcouncilvoting/icon/avatar.png'">
               </ion-col>
               <ion-col size="7.5" class="label-col" (click)="_showNode(filteredNodes.indexOf(node), node)">
-                <ion-label>
-                  <h4>{{ node.nickname }}</h4>
-                  <p>
-                    <!-- <span [class.inactive]="node.state !== 'Active'">
+                <h4>{{ node.nickname }}</h4>
+                <p>
+                  <!-- <span [class.inactive]="node.state !== 'Active'">
                       <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                     </span>
                     &#8226;  -->
-                    {{ getVotePercent(node.votes) }}% of Votes
-                  </p>
-                </ion-label>
+                  {{ getVotePercent(node.votes) }}% of Votes
+                </p>
               </ion-col>
               <!-- <ion-col size="1.5" class="checkbox-container" *ngIf="node.state === 'Active'">
                 <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"></ion-checkbox>
@@ -63,14 +61,12 @@
                 </ion-avatar>
               </ion-col>
               <ion-col size="7.5">
-                <ion-label>
-                  <h4>
-                    <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
-                  </h4>
-                  <p>
-                    <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
-                  <p>
-                </ion-label>
+                <h4>
+                  <ion-skeleton-text animated style="width: 80%"></ion-skeleton-text>
+                </h4>
+                <p>
+                  <ion-skeleton-text animated style="width: 60%"></ion-skeleton-text>
+                <p>
               </ion-col>
               <ion-col size="1.5" class="checkbox-container">
                 <ion-skeleton-text animated style="width: 40%"></ion-skeleton-text>
