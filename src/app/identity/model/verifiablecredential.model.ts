@@ -11,7 +11,7 @@ import { BasicCredentialsService } from '../services/basiccredentials.service';
 export class VerifiableCredential {
     private title: string = null;
     private description: string = null;
-    private iconSrc: string = null;
+    private iconSrc: string = this.getFallbackIcon();
     private onIconReadyCallback: (iconSrc: string) => void = null;
 
     constructor(public pluginVerifiableCredential: DIDPlugin.VerifiableCredential) {
@@ -137,7 +137,7 @@ export class VerifiableCredential {
      */
     private loadIconWithFallback() {
         if (this.iconSrc == null) {
-            this.iconSrc = "assets/identity/smallIcons/dark/finger-print.svg";
+            this.iconSrc = this.getFallbackIcon();
         }
 
         let image = new Image();
@@ -148,12 +148,22 @@ export class VerifiableCredential {
             this.onIconReadyCallback?.(this.iconSrc);
         };
         image.onerror = () => {
-            this.iconSrc = "assets/identity/smallIcons/dark/finger-print.svg";
+            this.iconSrc = this.getFallbackIcon();
             this.onIconReadyCallback?.(this.iconSrc);
         };
 
         // Try to load the picture
         image.src = this.iconSrc;
+    }
+
+    /**
+     * Fallback icon used either when the real icon is not loaded yet, or failed to load
+     */
+    public getFallbackIcon(): string {
+        if (!this.isUserAvatar())
+            return "assets/identity/smallIcons/dark/finger-print.svg";
+        else
+            return "assets/identity/smallIcons/dark/name.svg";
     }
 
     // TODO - rework - basic way of checking if the credential is an avatar.
@@ -165,6 +175,14 @@ export class VerifiableCredential {
         } else {
             return false;
         }
+    }
+
+    /**
+    * Similar to hasRemotePictureToFetch() but more narrow (only for pictures representing faces)
+    */
+    private isUserAvatar(): boolean {
+        let fragment = this.pluginVerifiableCredential.getFragment();
+        return (fragment === "avatar");
     }
 
     /**

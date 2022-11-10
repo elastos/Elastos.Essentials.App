@@ -117,7 +117,7 @@ export class CredentialComponent {
 
     private prepareCredential() {
         this._credential.onIconReady(iconSrc => {
-            this.applyIconAfterFetch(iconSrc);
+            this.applyIconAfterFetch(this._credential, iconSrc);
         });
         this._credential.prepareForDisplay();
         this.description = this._credential.getDisplayableDescription();
@@ -126,7 +126,7 @@ export class CredentialComponent {
     /**
      * Applies an asynchronously fetched icon data to the UI icon
      */
-    private applyIconAfterFetch(iconSrc: string) {
+    private applyIconAfterFetch(credential: VerifiableCredential, iconSrc: string) {
         // Load the image manually to be able to extract the main color
         let image = new Image();
         image.crossOrigin = 'anonymous';
@@ -148,7 +148,7 @@ export class CredentialComponent {
             }
         };
         image.onerror = () => {
-            image.src = "assets/identity/smallIcons/dark/finger-print.svg";
+            image.src = credential.getFallbackIcon();
             this.iconElement.nativeElement.style.backgroundColor = "#00000080";
         };
 
