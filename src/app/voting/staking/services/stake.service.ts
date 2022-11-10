@@ -80,7 +80,7 @@ export class StakeService {
         this.ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
         this.ownerAddress = this.voteService.sourceSubwallet.getOwnerAddress();
 
-        await this.checkOwnerDpos2();
+        this.ownerDpos2 = await this.isOwnerDpos2();
         this.votesRight = await this.getVoteRights();
         this.rewardInfo = await this.getRewardInfo(this.firstAddress);
         if (this.ownerDpos2 && this.firstAddress != this.ownerAddress) {
@@ -257,18 +257,18 @@ export class StakeService {
         }
     }
 
-    async checkOwnerDpos2() {
+    async isOwnerDpos2(): Promise<boolean> {
 
+        if (this.voteService.isMuiltWallet()) {
+            return false;
+        }
 
-        //Get ower dpos info
         const param = {
             method: 'listproducers',
             params: {
                 state: "all"
             },
         };
-
-        this.ownerDpos2 = false;
 
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
@@ -279,14 +279,15 @@ export class StakeService {
 
                 for (const node of result.producers) {
                     if (node.ownerpublickey == this.ownerPublicKey) {
-                        this.ownerDpos2 = true;
-                        return;
+                        return true;
                     }
                 }
             }
         } catch (err) {
-            Logger.error(App.STAKING, 'checkOwnerDpos2 error:', err);
+            Logger.error(App.STAKING, 'isOwnerDpos2 error:', err);
             await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
         }
+
+        return false;
     }
 }
