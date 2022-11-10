@@ -238,12 +238,12 @@ export class DPoS2Service {
                 this._nodes = result.producers;
 
                 for (const node of result.producers) {
-                    if (node.ownerpublickey == ownerPublicKey) {
-                        this.dposInfo = node;
+                    if (!node.identity || node.identity && node.identity == "DPoSV1") {
+                        continue;
                     }
 
-                    if (node.identity && node.identity == "DPoSV1") {
-                        continue;
+                    if (node.ownerpublickey == ownerPublicKey) {
+                        this.dposInfo = node;
                     }
 
                     node.index += 1;
