@@ -48,7 +48,6 @@ export class VotePage implements OnInit, OnDestroy {
         public zone: NgZone,
     ) { }
 
-    public castingVote = false;
     public votesCasted = false;
     public totalEla = 0;
     private votedEla = 0;
@@ -119,7 +118,6 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     ionViewWillLeave() {
-        this.castingVote = false;
         this.votesCasted = false;
 
         if (this.toast) {
@@ -160,7 +158,6 @@ export class VotePage implements OnInit, OnDestroy {
         else {
             Logger.log(App.DPOS2, votedCandidates);
             await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.selectedNodes);
-            this.castingVote = true;
             this.votesCasted = false;
             await this.createVoteCRTransaction(votedCandidates);
         }
@@ -242,7 +239,6 @@ export class VotePage implements OnInit, OnDestroy {
         this.signingAndTransacting = true;
         Logger.log('wallet', 'Creating vote transaction with votes', votes);
 
-
         let voteContentInfo: VotesContentInfo = {
             VoteType: VoteContentType.DposV2,
             VotesInfo: votes
@@ -251,7 +247,7 @@ export class VotePage implements OnInit, OnDestroy {
         const payload: VotingInfo = {
             Version: 0,
             Contents: [voteContentInfo]
-          };
+        };
 
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
@@ -272,7 +268,6 @@ export class VotePage implements OnInit, OnDestroy {
             await this.voteService.popupErrorMessage(e);
         }
 
-        this.castingVote = false;
         this.signingAndTransacting = false;
     }
 
