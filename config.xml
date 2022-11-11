@@ -160,12 +160,13 @@
         </config-file>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <allow-intent href="market:*" />
-        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
-        <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />
-        <icon density="hdpi" src="resources/android/icon/drawable-hdpi-icon.png" />
-        <icon density="xhdpi" src="resources/android/icon/drawable-xhdpi-icon.png" />
-        <icon density="xxhdpi" src="resources/android/icon/drawable-xxhdpi-icon.png" />
-        <icon density="xxxhdpi" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="mdpi" foreground="resources/android/mipmap-mdpi/ic_launcher_foreground.png" src="resources/android/mipmap-mdpi/ic_launcher_round.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="hdpi" foreground="resources/android/mipmap-hdpi/ic_launcher_foreground.png" src="resources/android/mipmap-hdpi/ic_launcher_round.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="xhdpi" foreground="resources/android/mipmap-xhdpi/ic_launcher_foreground.png" src="resources/android/mipmap-xhdpi/ic_launcher_round.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="xxhdpi" foreground="resources/android/mipmap-xxhdpi/ic_launcher_foreground.png" src="resources/android/mipmap-xxhdpi/ic_launcher_round.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="xxxhdpi" foreground="resources/android/mipmap-xxxhdpi/ic_launcher_foreground.png" src="resources/android/mipmap-xxxhdpi/ic_launcher_round.png" />
+        <resource-file src="resources/android/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml" />
+        <resource-file src="resources/android/mipmap-anydpi-v26/ic_launcher.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" />
         <resource-file src="resources/android/notifications/drawable-mdpi/notification_icon.png" target="app/src/main/res/drawable-mdpi/notification_icon.png" />
         <resource-file src="resources/android/notifications/drawable-hdpi/notification_icon.png" target="app/src/main/res/drawable-hdpi/notification_icon.png" />
         <resource-file src="resources/android/notifications/drawable-xhdpi/notification_icon.png" target="app/src/main/res/drawable-xhdpi/notification_icon.png" />
