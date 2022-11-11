@@ -208,16 +208,44 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async getTransactionInfoForOfflineTransaction(transaction: AnyOfflineTransaction): Promise<TransactionInfo> {
         let receiverAddress: string = null;
         let amount: BigNumber = null;
+        let txType = TransactionType.SENT;
+        let direction = TransactionDirection.SENT;
+        let payStatusIcon = "./assets/wallet/tx/send.svg";
+        let transactionName = "wallet.coin-op-sent-token";
+        let transferAmount = null;
 
         try {
             let safe = <MultiSigSafe><any>this.networkWallet.safe;
             let offlineTransactionDecoded = await safe.getOfflineTransaction(transaction);
 
             if (offlineTransactionDecoded) {
-                let outputs = offlineTransactionDecoded.getOutputs();
-                if (outputs && outputs.length > 0) {
-                    receiverAddress = outputs[0].getAddress().string();
-                    amount = new BigNumber(outputs[0].amount()).dividedBy(Config.SELA);
+                let type: RawTransactionType = offlineTransactionDecoded.getTransactionType();
+                switch (type) {
+                    case RawTransactionType.Unstake:
+                    case RawTransactionType.Voting:
+                    case RawTransactionType.DposV2ClaimReward:
+                        txType = TransactionType.TRANSFER;
+                        direction = TransactionDirection.MOVED;
+                        payStatusIcon = "./assets/wallet/tx/transfer.svg";
+
+                        transactionName = this.getTransactionNameForOfflineTransaction(type);
+
+                        let payload = offlineTransactionDecoded.getPayloadPtr();
+                        let payloadversion = offlineTransactionDecoded.getPayloadVersion();
+                        if (payload) {
+                            let payloadJson: any = payload.toJson(payloadversion);
+                            receiverAddress = payloadJson.ToAddress;
+                            amount = new BigNumber(0);
+                            transferAmount = payloadJson.Value ? new BigNumber(payloadJson.Value).dividedBy(Config.SELA) : null;
+                        }
+                        break;
+                    default:
+                        let outputs = offlineTransactionDecoded.getOutputs();
+                        if (outputs && outputs.length > 0) {
+                            receiverAddress = outputs[0].getAddress().string();
+                            amount = new BigNumber(outputs[0].amount()).dividedBy(Config.SELA);
+                        }
+                        break;
                 }
             }
         }
@@ -229,24 +257,41 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             amount: amount,
             confirmStatus: 0,
             datetime: moment.unix(transaction.updated),
-            direction: TransactionDirection.SENT,
+            direction: direction,
             fee: null, // unknown, not published yet
             height: 1, // unknown, not published yet
             memo: null, // TODO: extract from raw tx
-            name: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
-            payStatusIcon: "./assets/wallet/tx/send.svg",
+            name: transactionName,
+            payStatusIcon: payStatusIcon,
             status: TransactionStatus.PENDING,
-            statusName: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.PENDING),
+            statusName: ElastosTransactionsHelper.getTransactionStatusName(TransactionStatus.NOT_PUBLISHED),
             symbol: "", //this.networkWallet.displayToken,
             to: receiverAddress,
             from: null,
             timestamp: 0,
             txid: null,
-            type: TransactionType.SENT,
+            type: txType,
             isCrossChain: false, // TODO: that's elastos specific
-            subOperations: []
+            subOperations: [],
+            transferAmount: transferAmount
         }
         return txInfo;
+    }
+
+    private getTransactionNameForOfflineTransaction(type: RawTransactionType): string {
+        let transactionName = null;
+        switch (type) {
+            case RawTransactionType.Unstake:
+                transactionName = "wallet.coin-op-unstake";
+                break;
+            case RawTransactionType.Voting:
+                transactionName = "wallet.coin-op-dpos2-voting";
+                break;
+            case RawTransactionType.DposV2ClaimReward:
+                transactionName = "wallet.coin-op-dpos2-claim-reward";
+                break;
+        }
+        return transactionName;
     }
 
     private getSenderAddress(transaction: ElastosTransaction): string[] {

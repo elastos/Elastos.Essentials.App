@@ -72,6 +72,8 @@ export class CoinTxInfoPage implements OnInit {
     public statusName = '';
     public memo = '';
     public height = 0;
+    // Show the transfer transacton amount, eg. amount for unstake and DPoS voting.
+    public transferAmount: string;
 
     // Other Values
     public payFee: number = null;
@@ -168,6 +170,7 @@ export class CoinTxInfoPage implements OnInit {
             this.payFee = this.transactionInfo.fee !== null ? new BigNumber(this.transactionInfo.fee).toNumber() : null;
             this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals) || "0";
             this.isRedPacket = this.transactionInfo.isRedPacket;
+            this.transferAmount = this.transactionInfo.transferAmount ? WalletUtil.getAmountWithoutScientificNotation(this.transactionInfo.transferAmount, this.subWallet.tokenDecimals) || "0" : null;
 
             void this.getTransactionDetails();
             void this.networkWallet.getExtendedTxInfo(this.transactionInfo.txid).then(extTxInfo => {
@@ -352,10 +355,20 @@ export class CoinTxInfoPage implements OnInit {
                 }
             }
         }
+
+        if (this.transferAmount) {
+            this.txDetails.unshift(
+                {
+                    type: 'amount',
+                    title: this.getTransactionTitle(),
+                    value: this.transferAmount,
+                    show: true,
+                })
+        }
     }
 
     /**
-     * Get the real targeAddress by rpc
+     * Get the real targetAddress by rpc
      */
     async getETHSCTransactionTargetAddres(transaction: EthTransaction) {
         let targetAddress = transaction.to;

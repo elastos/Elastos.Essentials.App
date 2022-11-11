@@ -92,7 +92,9 @@ export type TransactionInfo = {
   // Displayable strings describing one or multiple sub operations for a transaction.
   // For example one EVM contract calls can do several operations such as transfer e ERC20 token and something else.
   // So this array contains the list of all sub operations that we can decode (usually we can NOT decode everything, only part of)
-  subOperations: string[]
+  subOperations: string[],
+  // Show transfer transaction amount, eg. DPoS voting, Unstake
+  transferAmount?: BigNumber
 };
 
 /**
