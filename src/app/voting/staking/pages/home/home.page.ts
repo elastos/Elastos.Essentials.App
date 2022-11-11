@@ -198,7 +198,7 @@ export class StakingHomePage implements OnInit {
 
     clickDetails(event: Event, type: VoteType) {
         if (type == VoteType.DPoSV2) {
-            void this.voteService.selectWalletAndNavTo(App.DPOS_VOTING, '/dpos2/menu/my-votes');
+            void this.voteService.selectWalletAndNavTo(App.DPOS2, '/dpos2/menu/my-votes');
         }
         else {
             this.voteType = type;
