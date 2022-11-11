@@ -275,10 +275,9 @@ export class StakeService {
             const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
 
             if (result && !Util.isEmptyObject(result.producers)) {
-                Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
-
                 for (const node of result.producers) {
-                    if (node.ownerpublickey == this.ownerPublicKey) {
+                    if (node.ownerpublickey == this.ownerPublicKey && node.identity && node.identity != "DPoSV1") {
+                        Logger.log(App.STAKING, "ownerNode:", node);
                         return true;
                     }
                 }

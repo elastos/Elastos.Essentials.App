@@ -94,7 +94,7 @@ export class VoteSliderComponent implements OnInit {
                     Logger.log(App.STAKING, "dposlist:", result.producers);
                     for (const node of result.producers) {
                         for (const item of this.voteInfos[VoteType.DPoSV1].list) {
-                            if (item.candidate == node.ownerpublickey) {
+                            if (item.candidate == node.ownerpublickey && (!node.identity || node.identity != "DPoSV2")) {
                                 item.name = node.nickname;
                                 item.id = item.candidate;
                             }
