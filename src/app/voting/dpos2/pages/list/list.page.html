@@ -33,7 +33,7 @@
                             class="label-col">
                             <h4>{{ node.nickname }}</h4>
                             <ion-row class="row-no-padding">
-                                <ion-col size="9">
+                                <ion-col size="8.5">
                                     <p>
                                         <!-- <span [class.inactive]="node.state !== 'Active'">
                                     <ion-icon name="navigate"></ion-icon> {{ node.Location }}
@@ -42,7 +42,7 @@
                                         {{ node.votesPrecentage }}% {{ 'voting.of-votes' | translate }}
                                     </p>
                                 </ion-col>
-                                <ion-col size="3">
+                                <ion-col size="3.5">
                                     <p class="candidate" *ngIf="node.onduty=='Candidate'" >{{ 'dposvoting.candidate' | translate }}</p>
                                 </ion-col>
                             </ion-row>
