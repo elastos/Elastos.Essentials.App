@@ -113,8 +113,9 @@ class DappBrowserPlugin : CDVPlugin {
 
    @objc func close(_ command: CDVInvokedUrlCommand) {
        if (self.webViewHandler != nil) {
-           let mode = command.arguments[0] as? String;
-           self.webViewHandler.close();
+           let mode = command.arguments[0] as? String
+           self.webViewHandler.close(mode)
+           self.webViewHandler = nil
        }
 
        // Things are cleaned up in browserExit.

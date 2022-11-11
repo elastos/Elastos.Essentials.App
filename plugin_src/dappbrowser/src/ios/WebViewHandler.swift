@@ -494,6 +494,13 @@ extension WebViewHandler: WKNavigationDelegate {
             self.brwoserPlugin.sendEventCallback(["type":WebViewHandler.LOAD_ERROR_EVENT, "url":url?.absoluteString as Any, "code": "-1", "message": errorMessage as Any]);
         }
 
+        // Some dapps trigger about:blank kind of urls. We don't want to stop loading in such case,
+        // we just cancel the operation.
+        if (url!.scheme == "about") {
+            decisionHandler(WKNavigationActionPolicy.cancel)
+            return
+        }
+
         //if is an app store, tel, sms, mailto or geo link, let the system handle it, otherwise it fails to load it
     //        let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
         let allowedSchemes = ["https", "http"];

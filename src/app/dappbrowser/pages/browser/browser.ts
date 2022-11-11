@@ -47,7 +47,7 @@ export class BrowserPage implements DappBrowserClient {
         private globalIntentService: GlobalIntentService,
     ) {
         this.dAppBrowserService.activeBrowsedAppInfo.subscribe(appInfo => {
-            if (appInfo) {
+            if (appInfo && this.titleBar) {
                 this.titleBar.setTitle(appInfo.title ?? null);
                 this.titleBar.setUrl(appInfo.url ?? null);
             }
@@ -152,6 +152,7 @@ export class BrowserPage implements DappBrowserClient {
                 }
                 else {
                     void dappBrowser.show();
+                    //void this.dAppBrowserService.open(url, null, null, false);
                 }
             });
         }
@@ -162,9 +163,9 @@ export class BrowserPage implements DappBrowserClient {
         this.urlInputAssistantFilter = urlOrKeywords;
     }
 
-    public onUrlInput(url: string) {
+    /* public onUrlInput(url: string) {
         void dappBrowser.loadUrl(url);
-    }
+    } */
 
     public onRecentAppPicked(url: string) {
         // Reload a url, but don't navigate because we are already in the browser screen
