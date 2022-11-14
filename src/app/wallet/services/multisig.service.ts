@@ -76,7 +76,7 @@ export class MultiSigService {
      * Uploads a cosigner's signed transaction to the remote service so that other cosigners
      * can get it and continue to sign.
      */
-    public async uploadSignedTransaction(transactionKey: string, signedTx: any): Promise<void> {
+    public async uploadSignedTransaction(transactionKey: string, signedTx: any): Promise<Boolean> {
         Logger.log("wallet", `Uploading multisig transaction ${transactionKey}`, signedTx);
 
         let requestUrl = `${environment.EssentialsAPI.serviceUrl}/multisig/transaction?key=${transactionKey}`;
@@ -85,10 +85,12 @@ export class MultiSigService {
                 tx: signedTx,
                 network: this.networksService.activeNetwork.value.key
             });
+            return true;
         }
         catch (err) {
             Logger.error('wallet', 'Multisig: uploadSignedTransaction() error:', err)
         }
+        return false;
     }
 
     /**

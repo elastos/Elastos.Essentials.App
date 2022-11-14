@@ -96,16 +96,19 @@ export class TxDetailsMultiSigComponent implements OnInit {
     if (signResult.signedTransaction) {
       //console.log("signResult", signResult);
 
-      // Update local model with our signature
-      this.offlineTransaction.rawTx = JSON.parse(signResult.signedTransaction);
-      await this.offlineTransactionsService.storeTransaction(this.subWallet, this.offlineTransaction);
-
-      await this.updateIsSelfSigned();
-
       // Upload the signed tx to essentials multisig API.
-      await this.multiSigService.uploadSignedTransaction(this.offlineTransaction.transactionKey, this.offlineTransaction.rawTx)
+      let uploaded  = await this.multiSigService.uploadSignedTransaction(this.offlineTransaction.transactionKey, this.offlineTransaction.rawTx);
+      if (uploaded) {
+          // Update local model with our signature
+          this.offlineTransaction.rawTx = JSON.parse(signResult.signedTransaction);
+          await this.offlineTransactionsService.storeTransaction(this.subWallet, this.offlineTransaction);
 
-      await this.updateCanPublishState();
+          await this.updateIsSelfSigned();
+
+          await this.updateCanPublishState();
+      } else {
+        void this.native.toast_trans('common.network-or-server-error');
+      }
     }
 
     this.isSelfSigning = false;
