@@ -532,4 +532,9 @@ export class DPoS2Service {
         }
     }
 
+    getVotes(votes: string): string {
+        const fixedVotes: number = parseFloat(votes);
+        return fixedVotes.toLocaleString().split(/\s/).join(',');
+    }
+
 }

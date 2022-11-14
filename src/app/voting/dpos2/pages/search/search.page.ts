@@ -58,12 +58,6 @@ export class SearchPage implements OnInit {
         Logger.log('dposvoting', 'Search results', this.filteredNodes);
     }
 
-    //// Define Values ////
-    getVotes(votes): string {
-        const fixedVotes: number = parseInt(votes);
-        return fixedVotes.toLocaleString().split(/\s/).join(',');
-    }
-
     getVotePercent(votes): string {
         const votePercent: number = parseFloat(votes) / this.dpos2Service.totalVotes * 100;
         return votePercent.toFixed(2);

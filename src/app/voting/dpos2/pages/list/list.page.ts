@@ -124,12 +124,6 @@ export class ListPage implements OnInit {
         }
     }
 
-    //// Define Values ////
-    getVotes(votes: string): string {
-        const fixedVotes: number = parseInt(votes);
-        return fixedVotes.toLocaleString().split(/\s/).join(',');
-    }
-
     getSelectedNodes(): number {
         var selectedNodes = 0;
         this.dpos2Service.dposList.forEach(node => {

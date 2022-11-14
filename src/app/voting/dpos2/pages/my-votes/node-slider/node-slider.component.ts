@@ -68,12 +68,6 @@ export class NodeSliderComponent implements OnInit {
         Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
     }
 
-    //// Define Values ////
-    getVotes(votes: string): string {
-        const fixedVotes = parseInt(votes);
-        return fixedVotes.toLocaleString().split(/\s/).join(',');
-    }
-
     cancel() {
         this.buttonClick.emit(-1);
     }
@@ -99,7 +93,7 @@ export class NodeSliderComponent implements OnInit {
         try {
             let currentHeight = await this.voteService.getCurrentHeight();
             let stakeUntil = currentHeight + node.inputStakeDays * 720;
-            let votes = Util.accMul(parseInt(node.votes), Config.SELA).toString();
+            let votes = Util.accMul(parseFloat(node.votes), Config.SELA).toString();
 
             let voteContentInfo: RenewalVotesContentInfo = {
                 ReferKey: node.referkey,
