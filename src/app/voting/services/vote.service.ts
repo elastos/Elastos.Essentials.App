@@ -125,9 +125,17 @@ export class VoteService {
         this.networkWallet = networkWallet;
         this.masterWalletId = networkWallet.id;
 
-        var supportMulti = false;
-        if (context == App.DPOS2 || context == App.STAKING) {
-            supportMulti = true;
+        var supportMultiSign = false;
+        switch (context) {
+            case App.DPOS2:
+            case App.STAKING:
+            case App.CRCOUNCIL_VOTING:
+            case App.CRPROPOSAL_VOTING:
+            case App.CRSUGGESTION:
+                supportMultiSign = true;
+                break;
+            default:
+                break;
         }
 
         switch (networkWallet.masterWallet.type) {
@@ -138,7 +146,7 @@ export class VoteService {
                 return;
             case WalletType.MULTI_SIG_STANDARD:
             case WalletType.MULTI_SIG_EVM_GNOSIS:
-                if (!supportMulti) {
+                if (!supportMultiSign) {
                     await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
                     return;
                 }

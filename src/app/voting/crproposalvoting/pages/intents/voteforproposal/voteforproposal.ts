@@ -116,11 +116,11 @@ export class VoteForProposalPage {
     async goTransaction(): Promise<boolean> {
         switch (this.voteService.sourceSubwallet.masterWallet.type) {
             case WalletType.STANDARD:
+            case WalletType.MULTI_SIG_STANDARD:
                 break;
             case WalletType.LEDGER:
                 await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
                 return;
-            case WalletType.MULTI_SIG_STANDARD:
             case WalletType.MULTI_SIG_EVM_GNOSIS:
                 await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
                 return;
