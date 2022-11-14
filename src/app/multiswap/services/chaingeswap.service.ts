@@ -105,7 +105,7 @@ export class ChaingeSwapService {
    * Returns the total transfer cost, in source network
    */
   public async getSwapQuote(mainCoinSubWallet: AnyMainCoinEVMSubWallet, from: Coin, amountIn: BigNumber, to: Coin): Promise<{ fees: number, slippage: number, amountOut: number }> {
-    let chainge = new ChaingeSwap(mainCoinSubWallet);
+    let chainge = await ChaingeSwap.create(mainCoinSubWallet);
 
     let chaingeFromChain = this.essentialsToChaingeChainName(from.network);
     if (!chaingeFromChain)
@@ -153,8 +153,8 @@ export class ChaingeSwapService {
    * This method returns when the order ID is received, so that this ID can be saved and checked later, even after coming back to the screen.
    * The callback sends intermediate and additional events such as when the swap is completed (fully completed, or failure somewhere) - TODO.
    */
-  public executeSwap(mainCoinSubWallet: AnyMainCoinEVMSubWallet, from: Coin, amountIn: BigNumber, to: Coin): Promise<string> {
-    let chainge = new ChaingeSwap(mainCoinSubWallet);
+  public async executeSwap(mainCoinSubWallet: AnyMainCoinEVMSubWallet, from: Coin, amountIn: BigNumber, to: Coin): Promise<string> {
+    let chainge = await ChaingeSwap.create(mainCoinSubWallet);
 
     // await chainge.setFeeToInfo(1, '0x01a14bC0018fc97e2fdB14ace069F50b1C44eE86')
     // await chainge.getFeeToInfo();
@@ -215,8 +215,8 @@ export class ChaingeSwapService {
     });
   }
 
-  public getOrderDetails(mainCoinSubWallet: AnyMainCoinEVMSubWallet, sn: string): Promise<Order> {
-    let chainge = new ChaingeSwap(mainCoinSubWallet);
+  public async getOrderDetails(mainCoinSubWallet: AnyMainCoinEVMSubWallet, sn: string): Promise<Order> {
+    let chainge = await ChaingeSwap.create(mainCoinSubWallet);
     return chainge.getOrderDetails(sn);
   }
 }

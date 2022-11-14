@@ -220,8 +220,15 @@ export const lazyFeedsSDKImport = async (): Promise<{
 }
 
 export const lazyKavaImport = async (): Promise<any> => {
-    if (!importsCache["@kava-labs/javascript-sdk"])
-      importsCache["@kava-labs/javascript-sdk"] = await import("@kava-labs/javascript-sdk");
+  if (!importsCache["@kava-labs/javascript-sdk"])
+    importsCache["@kava-labs/javascript-sdk"] = await import("@kava-labs/javascript-sdk");
 
-    return importsCache["@kava-labs/javascript-sdk"];
+  return importsCache["@kava-labs/javascript-sdk"];
+}
+
+export const lazyChaingeImport = async (): Promise<typeof Web3> => {
+  if (!importsCache["@chainge/sdk"])
+    importsCache["@chainge/sdk"] = await import("@chainge/sdk");
+
+  return importsCache["@chainge/sdk"].default;
 }

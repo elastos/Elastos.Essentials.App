@@ -22,6 +22,7 @@
 
 let exec = cordova.exec;
 
+
 class DappBrowserImpl implements DappBrowserPlugin.DappBrowser {
     constructor() {
     }

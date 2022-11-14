@@ -1,22 +1,32 @@
-import Chainge from '@chainge/sdk';
+import type Chainge from "@chainge/sdk";
+import { lazyChaingeImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { ActionType, AggregateQuote, AmountTooLowException, ChaingeException, CrossChainQuote, ErrorCode, FeeToInfo, NoRouteException, Order, Response, SubmitOrderCallback, SubmitOrderCallbackResult, SupportedChain, SupportedToken, TrackOrderCallback, UnspecifiedException, UnsupportedTokenOrChainException } from 'src/app/multiswap/model/chainge.types';
 import { ChaingeWeb3Provider } from 'src/app/multiswap/model/chaingeweb3provider';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 
 export class ChaingeSwap {
-    private config = {
+    private static config = {
         signUrl: 'https://essentials-api.trinity-tech.io/api/v1/swaps/chainge/signpayload',
         expireTime: 5000, // option. The default value is 5000 ms, range 1000 ~ 20000
         appKey: '2zF3XRCyWJxbZxgdYGzZqVqf7LKFCr2bBHgcRVU9y3kio4CRpxFKpq4KbpDvfckE'
     }
+
     private chainge: Chainge = null;
     private evmAddress = null;
 
-    constructor(mainCoinSubwallet: AnyMainCoinEVMSubWallet) {
-        let provider = new ChaingeWeb3Provider(mainCoinSubwallet)
-        this.chainge = new Chainge(provider, this.config);
-        this.evmAddress = mainCoinSubwallet.getCurrentReceiverAddress();
+    private constructor() { }
+
+    public static async create(mainCoinSubwallet: AnyMainCoinEVMSubWallet): Promise<ChaingeSwap> {
+        let swap = new ChaingeSwap();
+
+        const Chainge = await lazyChaingeImport();
+
+        let provider = new ChaingeWeb3Provider(mainCoinSubwallet);
+        swap.chainge = new Chainge(provider, ChaingeSwap.config);
+        swap.evmAddress = mainCoinSubwallet.getCurrentReceiverAddress();
+
+        return swap;
     }
 
     public async getSupportChains(): Promise<SupportedChain[]> {
