@@ -95,12 +95,12 @@ export class TxDetailsMultiSigComponent implements OnInit {
     let signResult = await multisigSafe.signTransactionReal(this.subWallet, this.offlineTransaction.rawTx);
     if (signResult.signedTransaction) {
       //console.log("signResult", signResult);
+      this.offlineTransaction.rawTx = JSON.parse(signResult.signedTransaction);
 
       // Upload the signed tx to essentials multisig API.
       let uploaded  = await this.multiSigService.uploadSignedTransaction(this.offlineTransaction.transactionKey, this.offlineTransaction.rawTx);
       if (uploaded) {
           // Update local model with our signature
-          this.offlineTransaction.rawTx = JSON.parse(signResult.signedTransaction);
           await this.offlineTransactionsService.storeTransaction(this.subWallet, this.offlineTransaction);
 
           await this.updateIsSelfSigned();
