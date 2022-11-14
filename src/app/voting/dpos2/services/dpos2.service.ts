@@ -82,6 +82,8 @@ export class DPoS2Service {
     //Votes
     public myVotes = [];
 
+    public onlyUpdateStakeUntil = false;
+
     constructor(
         public stakeService: StakeService,
         public uxService: UXService,
@@ -238,12 +240,12 @@ export class DPoS2Service {
                 this._nodes = result.producers;
 
                 for (const node of result.producers) {
-                    if (!node.identity || node.identity && node.identity == "DPoSV1") {
-                        continue;
-                    }
-
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
+                    }
+
+                    if (!node.identity || node.identity && node.identity == "DPoSV1") {
+                        continue;
                     }
 
                     node.index += 1;

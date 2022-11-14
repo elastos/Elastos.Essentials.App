@@ -47,6 +47,7 @@ export class DPoS2RegistrationPage implements OnInit {
     info = '';
 
     needConfirm = false;
+    onlyEditStakeUntil = false;
 
     constructor(
         public uxService: UXService,
@@ -81,62 +82,69 @@ export class DPoS2RegistrationPage implements OnInit {
                 this.originInfo = null;
                 this.dposInfo.stakeDays = 300;
                 this.titleBar.setTitle(this.translate.instant('dposvoting.registration'));
+                this.onlyEditStakeUntil = this.dposInfo.identity == "DPoSV1";
+                Logger.log(App.DPOS2, 'Register node: ', this.dposInfo);
                 break;
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
                 this.originInfo = Util.clone(this.dposInfo);
+                this.onlyEditStakeUntil = this.dpos2Service.onlyUpdateStakeUntil;
                 this.titleBar.setTitle(this.translate.instant('dposvoting.dpos-node-info'));
+                Logger.log(App.DPOS2, 'Update node: ', this.dposInfo);
                 break;
         }
         this.dposInfo.inputStakeDays = this.dposInfo.stakeDays;
     }
 
     checkValues() {
-        Logger.log("DPosRegistrationPage", "Dpos Info", this.dposInfo);
+        Logger.log(App.DPOS2, "Dpos Info", this.dposInfo);
 
         var blankMsg = this.translate.instant('common.text-input-is-blank');
         var formatWrong = this.translate.instant('common.text-input-format-wrong');
-        if (!this.dposInfo.nickname || this.dposInfo.nickname == "") {
-            blankMsg = this.translate.instant('dposvoting.node-name') + blankMsg;
-            this.globalNative.genericToast(blankMsg);
-            return;
-        }
 
-        if (!this.dposInfo.nodepublickey || this.dposInfo.nodepublickey == "") {
-            blankMsg = this.translate.instant('dposvoting.node-publickey') + blankMsg;
-            this.globalNative.genericToast(blankMsg);
-            return;
-        }
+        if (!this.onlyEditStakeUntil) {
+            if (!this.dposInfo.nickname || this.dposInfo.nickname == "") {
+                blankMsg = this.translate.instant('dposvoting.node-name') + blankMsg;
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
 
-        if (!this.dposInfo.nodepublickey.match("^[A-Fa-f0-9]+$") || this.dposInfo.nodepublickey.length != 66
-            || !(this.dposInfo.nodepublickey.startsWith("02") || this.dposInfo.nodepublickey.startsWith("03"))) {
-            formatWrong = this.translate.instant('dposvoting.node-publickey') + formatWrong;
-            this.globalNative.genericToast(formatWrong);
-            return;
-        }
+            if (!this.dposInfo.nodepublickey || this.dposInfo.nodepublickey == "") {
+                blankMsg = this.translate.instant('dposvoting.node-publickey') + blankMsg;
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
 
-        if (!this.dposInfo.url || this.dposInfo.url == "") {
-            blankMsg = this.translate.instant('dposvoting.node-url') + blankMsg;
-            this.globalNative.genericToast(blankMsg);
-            return;
-        }
+            if (!this.dposInfo.nodepublickey.match("^[A-Fa-f0-9]+$") || this.dposInfo.nodepublickey.length != 66
+                || !(this.dposInfo.nodepublickey.startsWith("02") || this.dposInfo.nodepublickey.startsWith("03"))) {
+                formatWrong = this.translate.instant('dposvoting.node-publickey') + formatWrong;
+                this.globalNative.genericToast(formatWrong);
+                return;
+            }
 
-        if (!this.dposInfo.url.match("((http|https)://)(([a-zA-Z0-9\._-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\&%_\./-~-]*)?")) {
-            formatWrong = this.translate.instant('dposvoting.node-url') + formatWrong;
-            this.globalNative.genericToast(formatWrong);
-            return;
+            if (!this.dposInfo.url || this.dposInfo.url == "") {
+                blankMsg = this.translate.instant('dposvoting.node-url') + blankMsg;
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
+
+            if (!this.dposInfo.url.match("((http|https)://)(([a-zA-Z0-9\._-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,4})*(/[a-zA-Z0-9\&%_\./-~-]*)?")) {
+                formatWrong = this.translate.instant('dposvoting.node-url') + formatWrong;
+                this.globalNative.genericToast(formatWrong);
+                return;
+            }
+
+            if (!this.dposInfo.location) {
+                blankMsg = this.translate.instant('dposvoting.node-location') + blankMsg;
+                this.globalNative.genericToast(blankMsg);
+                return;
+            }
         }
 
         if (this.dposInfo.inputStakeDays < this.dposInfo.stakeDays) {
             formatWrong = this.translate.instant('dposvoting.stakedays-input-err', {days: this.dposInfo.stakeDays});
             this.globalNative.genericToast(formatWrong);
-            return;
-        }
-
-        if (!this.dposInfo.location) {
-            blankMsg = this.translate.instant('dposvoting.node-location') + blankMsg;
-            this.globalNative.genericToast(blankMsg);
             return;
         }
 
@@ -173,10 +181,10 @@ export class DPoS2RegistrationPage implements OnInit {
     }
 
     async confirm() {
-        if (this.dposInfo.state == 'Unregistered') {
+        if (this.dposInfo.state == 'Unregistered' && this.dposInfo.identity != "DPoSV1") {
             await this.register();
         }
-        else if (this.dposInfo.state == 'Active') {
+        else {
             await this.update();
         }
     }

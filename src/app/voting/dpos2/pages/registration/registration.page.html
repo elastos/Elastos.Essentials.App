@@ -14,7 +14,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-name' | translate }}</h5>
-                    <ion-input type="text" name="name" [attr.disabled]="needConfirm" ngDefaultControl
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || onlyEditStakeUntil" ngDefaultControl
                         placeholder="{{'dposvoting.required-placeholder' | translate}}"
                         [(ngModel)]="dposInfo.nickname" clearInput>
                     </ion-input>
@@ -24,7 +24,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-publickey' | translate }}</h5>
-                    <ion-input type="text" name="publickey" [attr.disabled]="needConfirm" ngDefaultControl
+                    <ion-input type="text" name="publickey" [attr.disabled]="needConfirm || onlyEditStakeUntil" ngDefaultControl
                         placeholder="{{'dposvoting.required-placeholder' | translate}}"
                         [(ngModel)]="dposInfo.nodepublickey" clearInput>
                     </ion-input>
@@ -34,7 +34,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-url' | translate }}</h5>
-                    <ion-input type="text" name="url" [attr.disabled]="needConfirm" ngDefaultControl
+                    <ion-input type="text" name="url" [attr.disabled]="needConfirm || onlyEditStakeUntil" ngDefaultControl
                         placeholder="e.g. https…" [(ngModel)]="dposInfo.url" clearInput>
                     </ion-input>
                 </ion-col>
@@ -54,7 +54,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-location' | translate }}</h5>
-                    <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm"
+                    <ion-select [(ngModel)]="dposInfo.location" [attr.disabled]="needConfirm || onlyEditStakeUntil"
                         placeholder="{{'dposvoting.node-location-placeholder' | translate}}"
                         [attr.ok-text]="'common.confirm' | translate" [attr.cancel-text]="'common.cancel' | translate">
                         <ion-select-option *ngFor="let code of areaList" [value]="code">
