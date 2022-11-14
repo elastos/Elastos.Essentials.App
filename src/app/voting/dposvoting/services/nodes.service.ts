@@ -220,7 +220,7 @@ export class NodesService {
 
     async fetchStats() {
         try {
-            let result = await this.globalJsonRPCService.httpGet('https://elanodes.com/api/widgets');
+            let result = await this.globalJsonRPCService.httpGet('https://api-testnet.elastos.io/widgets');
             if (result) {
                 this.statsFetched = true;
                 this.mainchain = result.mainchain;
