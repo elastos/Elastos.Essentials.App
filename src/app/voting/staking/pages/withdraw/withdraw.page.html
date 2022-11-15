@@ -52,9 +52,8 @@
                     <h5>{{ 'staking.send-to' | translate }}</h5>
                 </ion-row>
                 <ion-row>
-                    <ion-input id="max-votes" type="text" name="address" [attr.disabled]="isMultiWallet"
-                        ngDefaultControl placeholder="{{'staking.reciever-address' | translate}}" [(ngModel)]="address"
-                        clearInput>
+                    <ion-input id="max-votes" type="text" name="address" [attr.disabled]="true"
+                        ngDefaultControl placeholder="{{'staking.reciever-address' | translate}}" [(ngModel)]="address">
                     </ion-input>
                 </ion-row>
             </ion-col>
