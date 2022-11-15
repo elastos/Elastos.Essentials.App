@@ -1,42 +1,23 @@
 @import "src/app/voting/dposregistration/root.scss";
 
-
 ion-list-header {
     margin: 10px 0 0 0;
     padding: 0 24px;
     height: 50px;
     font-size: 16px;
-    background-color: #f2ebfd;
 }
 
 .status_mark {
     padding: 10px 15px;
     border-radius: 7px;
-    background-color: #F2F2F2;
 }
 
 #Active {
     background-color: rgba(65, 232, 168, 0.18);
 }
 
-.darkContainer {
-    ion-list-header {
-        color: #ffffff;
-        background-color: #212021;
+.btn-container {
+    ebutton {
+        width: 90%;
     }
-
-    ion-list {
-        .profile-data {
-            border-bottom: 1px solid #464646;
-        }
-    }
-
-    .status_mark {
-        background-color: #3B3B3B;
-    }
-
-    #Active {
-        background-color: #194834;
-    }
-
 }
