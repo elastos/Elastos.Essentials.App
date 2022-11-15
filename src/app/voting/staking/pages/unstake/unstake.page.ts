@@ -112,10 +112,6 @@ export class UnstakePage {
         this.signingAndTransacting = false;
     }
 
-    click0() {
-        this.amount = 0;
-    }
-
     clickMax() {
         this.amount = this.maxStake;
     }

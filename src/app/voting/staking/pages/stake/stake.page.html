@@ -19,10 +19,7 @@
                     <p id="available">{{ 'staking.available' | translate }}: {{ uxService.toThousands(maxStake) }} </p>
                 </ion-col>
                 <ion-col size="3" class="right-col">
-                    <div id="reset-buttons">
-                        <div (click)="click0()">0</div>
-                        <div id="max-button" (click)="clickMax()">{{ 'common.max' | translate}}</div>
-                    </div>
+                    <div id="max-button" (click)="clickMax()">{{ 'common.max' | translate}}</div>
                 </ion-col>
             </ion-row>
             <p class="memo">{{ 'staking.available-memo' | translate }}</p>

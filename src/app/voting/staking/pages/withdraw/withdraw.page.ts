@@ -134,10 +134,6 @@ export class WithdrawPage {
         this.signingAndTransacting = false;
     }
 
-    click0() {
-        this.amount = 0;
-    }
-
     clickMax() {
         this.amount = this.available;
     }

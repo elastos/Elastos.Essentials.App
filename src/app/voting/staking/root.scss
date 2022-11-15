@@ -22,26 +22,15 @@ h5 {
     color: #6D7175;
 }
 
-#reset-buttons {
+#max-button {
     margin-top: 5px;
     padding: 0;
     width: 100%;
-    display: flex;
-    justify-content: space-between;
 
-    div {
-        margin: 0;
-        padding: 0;
-        width: 50%;
-
-        color: #8052FF;
-        font-size: 13px;
-        font-style: Bold;
-    }
-
-    #max-button {
-        text-align: right;
-    }
+    color: #8052FF;
+    font-size: 13px;
+    font-style: Bold;
+    text-align: right;
 }
 
 .darkContainer {
