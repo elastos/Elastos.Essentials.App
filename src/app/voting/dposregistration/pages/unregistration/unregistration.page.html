@@ -96,11 +96,9 @@
             <ebutton *ngIf="dposInfo.state == 'Active'" (clicked)="unregister()"
                 [title]="'dposregistration.unregister' | translate">
             </ebutton>
-            <ng-container *ngIf="dposInfo.state == 'Canceled'">
-                <ebutton [attr.disabled]="available == 0" (clicked)="retrieve()"
-                    [title]="'dposregistration.retrieve' | translate">
-                </ebutton>
-            </ng-container>
+            <ebutton *ngIf="dposInfo.state == 'Canceled' && available > 0" (clicked)="retrieve()"
+                [title]="'dposregistration.retrieve' | translate">
+            </ebutton>
         </ion-row>
     </ion-grid>
 </ion-content>

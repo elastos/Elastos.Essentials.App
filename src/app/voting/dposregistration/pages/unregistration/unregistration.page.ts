@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
@@ -100,7 +100,7 @@ export class DPosUnRegistrationPage implements OnInit {
 
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);
         this.masterWalletId = this.voteService.masterWalletId;
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
+        // this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.dposInfo = this.nodesService.dposInfo;
         if (this.nodesService.dposInfo.state == 'Pending') {
