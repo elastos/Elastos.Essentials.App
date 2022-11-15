@@ -95,7 +95,8 @@ export class VotePage implements OnInit {
             case 'Canceled':
             case 'Illegal':
             case 'Returned':
-                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
+                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
+                //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: 'assets/dposregistration/icon/my-node.png' });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
                     void this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/unregistration');
                 });
