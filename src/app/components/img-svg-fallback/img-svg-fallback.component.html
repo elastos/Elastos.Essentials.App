@@ -1,0 +1,2 @@
+<img [class.hidden]="!initialLoadCompleted || loadFailed" [src]="srcPath" (load)="onLoad()" (error)="onError()"/>
+<div *ngIf="!initialLoadCompleted || loadFailed" [inlineSVG]="defaultPath"></div>

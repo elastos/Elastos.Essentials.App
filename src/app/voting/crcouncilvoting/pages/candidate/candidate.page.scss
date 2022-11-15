@@ -1,11 +1,11 @@
 @import "src/app/voting/root.scss";
 
 ion-row {
-    background-color: #ffffff;
+    background-color: var(--essentials-box-color);
 }
 
 ion-list {
-    background-color: #ffffff;
+    background-color: var(--essentials-box-color);
 }
 
 ion-col {
@@ -27,7 +27,7 @@ ion-col {
     }
 
     .location {
-        color: #acacac;
+        opacity: 0.7;
     }
 
     #status {
@@ -51,7 +51,7 @@ ion-col {
     // flex-direction: column;
     justify-content: center;
     align-items: center;
-    background-color: #f5f7fe;
+    background-color: var(--essentials-box-color);
 
     .progress-container {
         padding-left: 10px !important;
@@ -79,7 +79,7 @@ ion-col {
     }
 
     ion-row {
-        background-color: #f5f7fe;
+        background-color: var(--essentials-box-color);
     }
 
     #candidate-title {
@@ -102,8 +102,8 @@ ion-col {
     padding: 7px 5px;
     width: 100%;
     height: 47px;
-    color: #909090;
-    background-color: #f5f7fe;
+    opacity: 0.7;
+    background-color: var(--essentials-box-color);
     border-radius: 8px;
 
     font-weight: 500;
@@ -130,27 +130,5 @@ ion-col {
         img {
             min-height: 18px;
         }
-    }
-}
-
-.darkContainer {
-    ion-row {
-        background-color: #121212;
-    }
-
-    ion-list {
-        background-color: #121212;
-    }
-
-    .candidate-row {
-        background-color: #212021;
-        ion-row {
-            background-color: #212021;
-        }
-    }
-
-    .about {
-        color: #9d9d9d;
-        background-color: #252525;
     }
 }

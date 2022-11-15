@@ -173,9 +173,11 @@ export class HomePage implements OnInit {
     // Manually slide to the middle container first, then let the slides appear.
     // We have to do this otherzise the "initialSlide" option doesn't work well and shows the first slide during
     // a short time.
-    void this.widgetsSlides.slideTo(1, 0, false).then(() => {
-      this.slidesShown = true;
-    });
+    if (!this.slidesShown) { // First entrance only to not come back to middle slide when coming back from other screens
+      void this.widgetsSlides.slideTo(1, 0, false).then(() => {
+        this.slidesShown = true;
+      });
+    }
   }
 
   ionViewDidEnter() {

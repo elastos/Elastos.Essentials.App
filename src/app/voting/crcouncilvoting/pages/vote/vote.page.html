@@ -18,8 +18,7 @@
                 lines="none">
                 <div class="index-col">{{ i+1 }}</div>
                 <div class="icon-col">
-                    <img [src]="candidate.avatar ? candidate.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
-                        src-fallback="/assets/crcouncilvoting/icon/avatar.png">
+                    <img-svg-fallback class="img" [src]="candidate.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                 </div>
                 <div class="candidate-col">
                     <div class="name">{{ candidate.nickname }}</div>

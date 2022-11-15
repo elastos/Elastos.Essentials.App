@@ -17,8 +17,7 @@
                         </ion-col>
                         <ion-col size="2" class="img-container"
                             (click)="_showNode(nodesService.dposList.indexOf(node), node)">
-                            <img [src]="node.imageUrl ? node.imageUrl : '/assets/dposvoting/icon/avatar.png'"
-                                src-fallback="assets/shared/essentials-black-circle.svg">
+                            <img-svg-fallback class="img" [src]="node.imageUrl" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                         </ion-col>
                         <ion-col size="7.5" (click)="_showNode(nodesService.dposList.indexOf(node), node)"
                             class="label-col">

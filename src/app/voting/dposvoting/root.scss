@@ -69,11 +69,13 @@
                     justify-content: center;
                     align-items: center;
 
-                    img {
+                    img,
+                    .img {
                         border-radius: 50%;
                         width: 45px;
                         height: 45px;
                         object-fit: cover;
+                        overflow: hidden;
                     }
                 }
 
@@ -178,11 +180,13 @@
                 justify-content: center;
                 align-items: center;
 
-                img {
+                img,
+                .img {
                     border-radius: 50%;
                     width: 40px;
                     height: 40px;
                     object-fit: cover;
+                    overflow: hidden;
                 }
 
                 ion-avatar {

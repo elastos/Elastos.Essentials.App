@@ -18,9 +18,7 @@
                                 {{ i + 1 }}
                             </ion-col>
                             <ion-col size="2" class="img-container" (click)="_showNode(_nodes.indexOf(node), node)">
-                                <img
-                                    [src]="node.imageUrl ? node.imageUrl : '/assets/dposvoting/icon/avatar.png'">
-                            </ion-col>
+                                <img-svg-fallback class="img" [src]="node.imageUrl" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>                            </ion-col>
                             <ion-col size="7.5" class="label-col" (click)="_showNode(_nodes.indexOf(node), node)">
                                 <ion-label>
                                     <h4>{{ node.nickname }}</h4>

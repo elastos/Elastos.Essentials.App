@@ -14,3 +14,18 @@
     border-bottom-left-radius: 25px;
     border-bottom-right-radius: 25px;
 }
+
+.img-col {
+    // img svg fallback
+    .img {
+        border-radius: 50%;
+        overflow: hidden;
+        width: 40px;
+        height: 40px;
+    }
+}
+
+.id-row .avatar {
+    border-radius: 50%;
+    overflow: hidden;
+}

@@ -97,9 +97,7 @@
                             <div *ngSwitchCase="'implementationTeam'" class="implementation-team item">
                                 <ion-row *ngFor="let entry of item.value">
                                     <ion-col size="1.25" id="img-col">
-                                        <img class="avatar"
-                                            [src]="entry.avatar ? entry.avatar : '/assets/crcouncilvoting/icon/avatar.png'">
-                                    </ion-col>
+                                        <img-svg-fallback class="img" [src]="entry.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>                                    </ion-col>
                                     <ion-col size="10.75">
                                         <div class="implementation">
                                             <h4 class="font-blod">{{ entry.member }} </h4>

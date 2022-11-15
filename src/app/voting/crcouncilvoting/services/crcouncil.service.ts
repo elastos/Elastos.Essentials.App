@@ -334,7 +334,7 @@ export class CRCouncilService {
             return;
         }
 
-        item.avatar = "/assets/crcouncilvoting/icon/avatar.png";
+        item.avatar = null; //"/assets/crcouncilvoting/icon/avatar.png";
         if (this.avatarList[item.did]) {
             item.avatar = this.avatarList[item.did];
         }
