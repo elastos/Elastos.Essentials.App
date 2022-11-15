@@ -12,12 +12,8 @@
           <ion-row>
             <ion-col class="cosigner-name" size="8">{{ 'wallet.multi-signature-my-signature' | translate }}</ion-col>
             <ion-col size="4" *ngIf="!isSelfSigned">
-              <!-- <ebutton class="sign" (clicked)="sign()" *ngIf="!isSelfSigning" [title]="'wallet.multi-signature-sign' |
-              translate"></ebutton> -->
-              <div *ngIf="!isSelfSigning" class="button ion-activatable ripple" (click)="sign()">
-                {{ 'wallet.multi-signature-sign' | translate }}
-                <ion-ripple-effect></ion-ripple-effect>
-              </div>
+              <ebutton class="sign" (clicked)="sign()" *ngIf="!isSelfSigning" [title]="'wallet.multi-signature-sign' |
+              translate"></ebutton>
               <ion-spinner *ngIf="isSelfSigning"></ion-spinner>
             </ion-col>
             <ion-col class="cosigner-signed" size="4" *ngIf="isSelfSigned">
