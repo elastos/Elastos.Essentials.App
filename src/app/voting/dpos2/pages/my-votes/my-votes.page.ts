@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { CRCouncilService } from 'src/app/voting/crcouncilvoting/services/crcouncil.service';
 import { DPoS2Service } from '../../services/dpos2.service';
 
 @Component({
@@ -25,7 +24,6 @@ export class MyVotesPage implements OnInit, OnDestroy {
 
     constructor(
         public dpos2Service: DPoS2Service,
-        public crCouncilService: CRCouncilService,
         public theme: GlobalThemeService,
         public translate: TranslateService,
         public popupProvider: GlobalPopupService,

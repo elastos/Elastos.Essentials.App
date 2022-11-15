@@ -16,8 +16,8 @@
                 <div *ngFor="let node of selectedNodes; index as i" class="vote row-list" lines="none">
                     <div class="index-col">{{ i+1 }}</div>
                     <div class="icon-col">
-                        <img [src]="node.avatar ? node.avatar : '/assets/crcouncilvoting/icon/avatar.png'"
-                            src-fallback="/assets/crcouncilvoting/icon/avatar.png">
+                        <img [src]="node.avatar ? node.avatar : '/assets/dposvoting/icon/avatar.png'"
+                            src-fallback="assets/shared/essentials-black-circle.svg">
                     </div>
                     <div class="vote-col">
                         <div class="name">{{ node.nickname }}</div>
