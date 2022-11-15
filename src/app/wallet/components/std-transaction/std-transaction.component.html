@@ -18,13 +18,13 @@
       </ion-col>
     </ion-row>
 
-    <ion-row class="item-row ripple ion-activatable" *ngIf="publicationFailed">
+    <ion-row class="publish-error item-row ripple ion-activatable" *ngIf="publicationFailed">
       <ion-col size="12">
-        <h1 *ngIf="publicationStatus == 'error'">{{ 'wallet.eth-transaction-fail' | translate }}</h1>
+        <h1>{{ 'wallet.eth-transaction-fail' | translate }}</h1>
       </ion-col>
     </ion-row>
 
-    <ion-row *ngIf="publicationFailed">
+    <ion-row class="publish-error item-row ripple ion-activatable" *ngIf="publicationFailed">
       <ion-col class="btn cancel ion-activatable ripple" size="12">
         <ebutton (clicked)="cancel()" [title]="'common.close' | translate"> </ebutton>
       </ion-col>

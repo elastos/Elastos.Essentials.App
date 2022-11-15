@@ -216,6 +216,7 @@ export class CoinHomePage implements OnInit {
             if (value === null)
                 return; // null is the initial value.
 
+            this.updateTransactionsTimesamp = 0;
             void this.zone.run(async () => {
                 await this.updateTransactions();
             });
