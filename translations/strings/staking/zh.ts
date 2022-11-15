@@ -7,7 +7,7 @@ export const zh = {
         'available-reward': '可取回收益',
         'staked-for-votes': '投票占比', //投票使用了多少质押的ELA
         'cr-impeachment': "CR弹劾",
-        'cr-council': 'CR委员',
+        'cr-council': 'CR选举',
         'cr-proposal': 'CR提案',
         'details': '详情',
         'locked-ela': '锁定的ELA',

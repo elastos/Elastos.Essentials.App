@@ -7,7 +7,7 @@ export const en = {
         'available-reward': 'Available Reward',
         'staked-for-votes': 'ELA staked for votes',
         'cr-impeachment': "CR Impeachment",
-        'cr-council': 'CR Council',
+        'cr-council': 'CR Election',
         'cr-proposal': 'CR Proposal',
         'details': 'Details',
         'locked-ela': 'Locked ELA',
