@@ -170,6 +170,18 @@ export class ElastosTransactionsHelper {
           transactionName = this.getVoteName(transaction.votecategory);
         } else {
           switch (transaction.txtype) {
+            case RawTransactionType.UpdateProducer:
+                transactionName = "wallet.coin-op-producer-update";
+            break;
+            case RawTransactionType.CancelProducer:
+                transactionName = "wallet.coin-op-producer-cancel";
+            break;
+            case RawTransactionType.UpdateCR:
+                transactionName = "wallet.coin-op-cr-update";
+            break;
+            case RawTransactionType.UnregisterCR:
+                transactionName = "wallet.coin-op-cr-cancel";
+            break;
             case RawTransactionType.Voting:
                 transactionName = "wallet.coin-op-dpos2-voting";
             break;
