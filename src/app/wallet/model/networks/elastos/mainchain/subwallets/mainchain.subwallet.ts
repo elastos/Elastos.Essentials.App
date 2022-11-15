@@ -3,6 +3,7 @@ import type {
     CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
     EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
     ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnregisterCRPayload, UnstakeInfo, UTXOInput, VoteContentInfo,
+    VotesContentInfo,
     VotingInfo
 } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
@@ -213,13 +214,16 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let payStatusIcon = "./assets/wallet/tx/send.svg";
         let transactionName = "wallet.coin-op-sent-token";
         let transferAmount = null;
+        let votesContents: VotesContentInfo[] = null;
 
         try {
             let safe = <MultiSigSafe><any>this.networkWallet.safe;
             let offlineTransactionDecoded = await safe.getOfflineTransaction(transaction);
-
+            Logger.log('wallet', 'Decoded offlineTransaction', offlineTransactionDecoded)
             if (offlineTransactionDecoded) {
                 let type: RawTransactionType = offlineTransactionDecoded.getTransactionType();
+                transactionName = this.getTransactionNameForOfflineTransaction(type);
+
                 switch (type) {
                     case RawTransactionType.Unstake:
                     case RawTransactionType.Voting:
@@ -228,15 +232,16 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                         direction = TransactionDirection.MOVED;
                         payStatusIcon = "./assets/wallet/tx/transfer.svg";
 
-                        transactionName = this.getTransactionNameForOfflineTransaction(type);
-
                         let payload = offlineTransactionDecoded.getPayloadPtr();
                         let payloadversion = offlineTransactionDecoded.getPayloadVersion();
                         if (payload) {
                             let payloadJson: any = payload.toJson(payloadversion);
+                            Logger.log('wallet', ' payload:', payloadJson)
                             receiverAddress = payloadJson.ToAddress;
                             amount = new BigNumber(0);
                             transferAmount = payloadJson.Value ? new BigNumber(payloadJson.Value).dividedBy(Config.SELA) : null;
+
+                            votesContents = payloadJson.Contents;
                         }
                         break;
                     default:
@@ -273,7 +278,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             type: txType,
             isCrossChain: false, // TODO: that's elastos specific
             subOperations: [],
-            transferAmount: transferAmount
+            transferAmount: transferAmount,
+            votesContents: votesContents
         }
         return txInfo;
     }
@@ -289,6 +295,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 break;
             case RawTransactionType.DposV2ClaimReward:
                 transactionName = "wallet.coin-op-dpos2-claim-reward";
+                break;
+            case RawTransactionType.Stake:
+                transactionName = "wallet.coin-op-stake";
+                break;
+            default:
+                transactionName = "wallet.coin-op-sent-token";
                 break;
         }
         return transactionName;

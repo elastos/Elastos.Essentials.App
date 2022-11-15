@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import type { VotesContentInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
+import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
@@ -11,6 +13,8 @@ import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.serv
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { VoteType } from 'src/app/voting/staking/services/stake.service';
+import { Config } from 'src/app/wallet/config/Config';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { NetworkAPIURLType } from 'src/app/wallet/model/networks/base/networkapiurltype';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -74,6 +78,7 @@ export class CoinTxInfoPage implements OnInit {
     public height = 0;
     // Show the transfer transacton amount, eg. amount for unstake and DPoS voting.
     public transferAmount: string;
+    public dpos2Votes = null;
 
     // Other Values
     public payFee: number = null;
@@ -171,6 +176,9 @@ export class CoinTxInfoPage implements OnInit {
             this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals) || "0";
             this.isRedPacket = this.transactionInfo.isRedPacket;
             this.transferAmount = this.transactionInfo.transferAmount ? WalletUtil.getAmountWithoutScientificNotation(this.transactionInfo.transferAmount, this.subWallet.tokenDecimals) || "0" : null;
+            if (this.transactionInfo.votesContents) {
+                this.dpos2Votes = await this.getDPoS2VoteInfo(this.transactionInfo.votesContents[0]);
+            }
 
             void this.getTransactionDetails();
             void this.networkWallet.getExtendedTxInfo(this.transactionInfo.txid).then(extTxInfo => {
@@ -365,6 +373,16 @@ export class CoinTxInfoPage implements OnInit {
                     show: true,
                 })
         }
+
+        if (this.dpos2Votes) {
+            this.txDetails.unshift(
+                {
+                    type: 'votes',
+                    title: 'DPoS 2.0',
+                    value: this.dpos2Votes,
+                    show: false,
+                })
+        }
     }
 
     /**
@@ -454,5 +472,37 @@ export class CoinTxInfoPage implements OnInit {
     private async deleteOfflineTransaction() {
         await this.offlineTransactionsService.removeTransaction(this.subWallet, this.offlineTransaction);
         void this.nav.navigateBack();
+    }
+
+    public valueIsArray(value) {
+        return value instanceof Array;
+    }
+
+    // Multi-signature wallet owners need to know these voting information before signing.
+    private async getDPoS2VoteInfo(voteContentInfo: VotesContentInfo) {
+        if (voteContentInfo.VoteType !== VoteType.DPoSV2) return;
+        let dpos2List = [];
+
+        let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight()
+        let currentBlock = await GlobalElastosAPIService.instance.getBlockByHeight(currentHeight)
+
+        const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', 'v2');
+        if (result) {
+            let dpos2Nodes = result.producers.filter( node => node.identity && node.identity !== 'DPoSV1')
+            for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
+                let dpos2Node = dpos2Nodes.find(node => node.ownerpublickey === voteContentInfo.VotesInfo[i].Candidate);
+                let lockDate = this.getStakeDate(voteContentInfo.VotesInfo[i].Locktime, currentHeight, currentBlock.time);
+                let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
+                dpos2List.push({Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: lockDate, Votes: votes, Nickname: dpos2Node?.nickname});
+            }
+        }
+        return dpos2List;
+    }
+
+    // Convert block to date
+    private getStakeDate(locktime: number, currentHeight: number, currentBlockTimestamp: number) {
+        var until = locktime - currentHeight;
+        var stakeTimestamp = until * 120 + currentBlockTimestamp
+        return moment(stakeTimestamp * 1000).format('MMMM Do YYYY');
     }
 }

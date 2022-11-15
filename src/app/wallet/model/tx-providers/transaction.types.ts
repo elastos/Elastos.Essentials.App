@@ -1,3 +1,4 @@
+import { VotesContentInfo } from '@elastosfoundation/wallet-js-sdk';
 import BigNumber from 'bignumber.js';
 
 export enum TransactionStatus {
@@ -93,8 +94,9 @@ export type TransactionInfo = {
   // For example one EVM contract calls can do several operations such as transfer e ERC20 token and something else.
   // So this array contains the list of all sub operations that we can decode (usually we can NOT decode everything, only part of)
   subOperations: string[],
-  // Show transfer transaction amount, eg. DPoS voting, Unstake
-  transferAmount?: BigNumber
+  // Show transfer transaction amount, eg. Unstake
+  transferAmount?: BigNumber,
+  votesContents?: VotesContentInfo[]
 };
 
 /**

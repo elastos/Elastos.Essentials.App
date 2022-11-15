@@ -53,5 +53,26 @@
                 word-break: break-all;
             }
         }
+
+        .array-row {
+            align-items: center;
+            margin: 0px 15px 0px 5px;
+
+            .subcontent-row {
+                border-radius: 10px;
+                padding: 7px;
+                background-color: var(--ion-background-color, #fff);
+                margin-bottom: 5px;
+
+                ion-col {
+                    h2 {
+                        margin: 5px 0 0;
+                        font-weight: 300;
+                        font-size: 13px;
+                        word-break: break-all;
+                    }
+                }
+            }
+        }
     }
 }

@@ -714,6 +714,26 @@ export class GlobalElastosAPIService extends GlobalService {
         return blockHeight;
     }
 
+    public async getCurrentHeight() {
+        const param = {
+            method: 'getcurrentheight',
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        if (rpcApiUrl === null) {
+            return 0;
+        }
+
+        let blockHeight = 0;
+        try {
+            const blockHeightStr = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            blockHeight = parseInt(blockHeightStr, 10);
+        } catch (e) {
+            Logger.warn("elastosapi", "getCurrentHeight exception", e);
+        }
+        return blockHeight;
+    }
+
     public async getELABlockHash(blockHeight: number) {
         const param = {
             method: 'getblockhash',
@@ -735,13 +755,41 @@ export class GlobalElastosAPIService extends GlobalService {
         return '';
     }
 
-    // dpos
-    public async fetchDposNodes(state): Promise<ProducersSearchResponse> {
+    async getBlockByHeight(currentHeight: number): Promise<any> {
+        const param = {
+            method: 'getblockbyheight',
+            params: {
+                height: currentHeight
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        if (rpcApiUrl === null) {
+            return null;
+        }
+
+        try {
+            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return result;
+        }
+        catch (e) {
+            Logger.warn("elastosapi", "getBlockByHeight exception", e);
+        }
+
+        return null;
+    }
+
+    // identity:
+    // v1: identity == DPoSV1V2 or identity == DPoSV1
+    // v2: identity == DPoSV1V2 or identity == DPoSV2
+    // all: return all nodes.
+    public async fetchDposNodes(state, identity = 'all'): Promise<ProducersSearchResponse> {
         Logger.log('elastosapi', 'Fetching Dpos Nodes..');
         const param = {
             method: 'listproducers',
             params: {
-                state: state
+                state: state,
+                identity: identity
             },
         };
 

@@ -33,8 +33,17 @@
                         [class.rotate]="item.show" />
                 </ion-col>
                 <div *ngIf="item.show" class="details-container" (click)="item.show = ! item.show">
-                    <div class="details-row" (click)="openForBrowseMode(item)">
+                    <div *ngIf="!valueIsArray(item.value)" class="details-row" (click)="openForBrowseMode(item)">
                         <h2>{{ item.value }}</h2>
+                    </div>
+                    <div *ngIf="valueIsArray(item.value)" class="array-row">
+                        <ion-row class="subcontent-row" *ngFor="let value of item.value">
+                            <ion-col size="12">
+                                <h2>{{ value.Nickname }}</h2>
+                                <h2>{{ value.Votes }} {{ 'dposvoting.votes' | translate }}</h2>
+                                <h2>{{ 'dposvoting.stake-until' | translate }}: {{ value.LockDate }}</h2>
+                            </ion-col>
+                        </ion-row>
                     </div>
                 </div>
             </ion-row>

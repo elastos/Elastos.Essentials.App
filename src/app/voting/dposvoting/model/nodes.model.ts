@@ -2,6 +2,8 @@
 export type DPosNode = {
     active: boolean;
     cancelheight: number;
+    dposv2votes: string;
+    identity: string;
     inactiveheight: number;
     illegalheight: number;
     index: number;
