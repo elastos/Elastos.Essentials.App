@@ -152,8 +152,12 @@ export class Util {
         return buf.reverse().toString("hex");
     }
 
-    public static isNumber(val: number) {
-        return typeof val === 'number';
+    public static isString(str) {
+        return (typeof str == 'string') && str.constructor == String;
+    }
+
+    public static isNumber(num) {
+        return typeof num === 'number' && !isNaN(num);
     }
 
     public static accMul(arg1: number, arg2: number): number {

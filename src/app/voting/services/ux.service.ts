@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 
@@ -92,5 +93,32 @@ export class UXService {
         }
         return ret;
     }
+
+    toThousands(val): string {
+        if (Util.isString(val)) {
+            val = parseFloat(val);
+        }
+
+        if (!Util.isNumber(val)) {
+            return "NaN";
+        }
+
+        var fixedNumber = val.toFixed(8);
+        while (fixedNumber.indexOf('.') > -1) {
+            let length = fixedNumber.length - 1;
+            let char = fixedNumber[length];
+            if (char == '.' || char == '0') {
+                fixedNumber = fixedNumber.substr(0, length);
+            }
+            else {
+                break;
+            }
+        }
+
+        var reg = fixedNumber.indexOf(".") > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
+        return fixedNumber.replace(reg, "$1,");
+    }
+
+
 
 }

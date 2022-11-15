@@ -6,9 +6,9 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
+import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
@@ -30,13 +30,13 @@ export class UnstakePage {
     public amount = 0;
 
     constructor(
+        public uxService: UXService,
         public stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
-        private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,
         public zone: NgZone,
     ) {

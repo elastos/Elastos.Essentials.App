@@ -16,7 +16,7 @@
             </ion-row>
             <ion-row size="9" class="profile-data">
                 <ion-col class="left-col">
-                    <p id="available">{{ 'staking.available' | translate }}: {{ maxStake }} </p>
+                    <p id="available">{{ 'staking.available' | translate }}: {{ uxService.toThousands(maxStake) }} </p>
                 </ion-col>
                 <ion-col size="3" class="right-col">
                     <div id="reset-buttons">

@@ -73,11 +73,11 @@ export class StakingHomePage implements OnInit {
             // },
             {
                 title: this.translate.instant('staking.your-rewards'),
-                value: this.stakeService.totalRewardInfo.total,
+                value: this.uxService.toThousands(this.stakeService.totalRewardInfo.total),
             },
             {
                 title: this.translate.instant('staking.available-reward'),
-                value: this.stakeService.totalRewardInfo.claimable,
+                value: this.uxService.toThousands(this.stakeService.totalRewardInfo.claimable),
             },
         );
     }
@@ -115,7 +115,7 @@ export class StakingHomePage implements OnInit {
             this.voteItems.push({
                 title: "DPoS 2.0",
                 type: VoteType.DPoSV2,
-                votes: this.stakeService.votesRight.votes[VoteType.DPoSV2],
+                votes: this.uxService.toThousands(this.stakeService.votesRight.votes[VoteType.DPoSV2]),
                 ratio: this.uxService.getPercentage(this.stakeService.votesRight.votes[VoteType.DPoSV2], this.stakeService.votesRight.totalVotesRight),
                 stakeuntilDate: this.stakeService.votesRight.dpos2LockTimeDate,
                 stakeuntilExpired: this.stakeService.votesRight.dpos2LockTimeExpired,
@@ -124,7 +124,7 @@ export class StakingHomePage implements OnInit {
                 var item = {
                     title: this.translate.instant(this.stakeService.votesRight.voteInfos[i].title),
                     type: i,
-                    votes: this.stakeService.votesRight.votes[i],
+                    votes: this.uxService.toThousands(this.stakeService.votesRight.votes[i]),
                     ratio: this.uxService.getPercentage(this.stakeService.votesRight.votes[i], this.stakeService.votesRight.totalVotesRight),
                 } as any;
                 this.voteItems.push(item);

@@ -535,12 +535,6 @@ export class DPoS2Service {
     }
 
     getVotes(votes: string): string {
-        const fixedVotes: number = parseFloat(votes);
-        var str = fixedVotes.toString();
-        var reg = str.indexOf(".") > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
-        return str.replace(reg, "$1,");
-        // return fixedVotes.toLocaleString().split(/\s/).join(',');
-        // return fixedVotes.toLocaleString('en-US');
+        return this.uxService.toThousands(votes);
     }
-
 }

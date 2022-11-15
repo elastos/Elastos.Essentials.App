@@ -22,7 +22,7 @@
                         {{ 'staking.staked-amount' | translate }}
                     </ion-row>
                     <ion-row class="card-label-row">
-                        {{ stakeService.votesRight.totalVotesRight }} ELA
+                        {{ uxService.toThousands(stakeService.votesRight.totalVotesRight) }} ELA
                     </ion-row>
                 </ion-row>
 
