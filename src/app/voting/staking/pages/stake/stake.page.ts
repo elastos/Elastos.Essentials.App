@@ -85,13 +85,14 @@ export class StakePage {
         }
 
         this.signingAndTransacting = true;
-        Logger.log(App.STAKING, 'Creating stake transaction with amount', stakeAmount);
 
         const stakeAddr = this.voteService.sourceSubwallet.getOwnerStakeAddress();
         const payload: PayloadStakeInfo = {
             Version: 0,
             StakeAddress: stakeAddr
         };
+
+        Logger.log(App.STAKING, 'Creating stake transaction with payload', payload);
 
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));

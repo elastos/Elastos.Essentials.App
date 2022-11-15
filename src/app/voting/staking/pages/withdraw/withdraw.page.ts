@@ -30,6 +30,7 @@ export class WithdrawPage {
     public advanced = false;
     public address = "";
     public isNodeReward = false;
+    public isMuiltWallet = false;
 
     constructor(
         public uxService: UXService,
@@ -51,7 +52,7 @@ export class WithdrawPage {
 
         this.available = this.stakeService.rewardInfo.claimable;
         this.address = this.stakeService.firstAddress;
-
+        this.isMuiltWallet = this.voteService.isMuiltWallet();
 
         this.keyboard.onKeyboardWillShow().subscribe(() => {
             this.zone.run(() => {
@@ -104,12 +105,12 @@ export class WithdrawPage {
         }
 
         this.signingAndTransacting = true;
-        Logger.log(App.STAKING, 'Creating withdraw transaction with amount', stakeAmount);
-
         let payload = {
             Value: stakeAmount,
-            ToAddress: this.stakeService.firstAddress
+            ToAddress: this.address
         };
+
+        Logger.log(App.STAKING, 'Creating withdraw transaction with payload', payload);
 
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));

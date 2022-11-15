@@ -40,7 +40,7 @@
                 {{ stakeService.votesRight.maxStakedRatio }}%
             </ion-col>
 
-            <ion-col size="0.5" class="right-col" (click)="advanced = !advanced">
+            <ion-col size="0.5" class="right-col" *ngIf="!isMuiltWallet" (click)="advanced = !advanced">
                 <img *ngIf="advanced"
                     [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
                 <img *ngIf="!advanced"
