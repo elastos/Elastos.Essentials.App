@@ -70,12 +70,6 @@ export class VoteSliderComponent implements OnInit {
         Logger.log('dposvoting', 'next node', this.voteInfos[nextNodeIndex]);
     }
 
-    //// Define Values ////
-    getVotes(votes: string): string {
-        const fixedVotes = parseInt(votes);
-        return fixedVotes.toLocaleString().split(/\s/).join(',');
-    }
-
     async getDPoSV1Data() {
         if (this.voteInfos[VoteType.DPoSV1].list.length > 0) {
             const param = {

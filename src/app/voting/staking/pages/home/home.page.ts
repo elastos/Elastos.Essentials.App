@@ -221,4 +221,13 @@ export class StakingHomePage implements OnInit {
     goTo(url: string) {
         void this.globalNav.navigateTo(App.STAKING, url);
     }
+
+    async doRefresh(event) {
+        this.voteService.needFetchData[App.STAKING] = true;
+        await this.stakeService.initData();
+
+        setTimeout(() => {
+            event.target.complete();
+        }, 500);
+    }
 }

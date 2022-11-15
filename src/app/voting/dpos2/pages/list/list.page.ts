@@ -34,6 +34,8 @@ export class ListPage implements OnInit {
 
     public dataFetched = false;
 
+    private registering = false;
+
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -66,13 +68,16 @@ export class ListPage implements OnInit {
 
         if (!this.voteService.isMuiltWallet()) {
             if (this.dpos2Service.dposInfo.state == 'Unregistered'
-                || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
+                    || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
+                if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
+                    this.dpos2Service.dposInfo.state = 'Unregistered';
+                }
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
                     void this.goToRegistration();
                 });
             }
-            else if (this.dpos2Service.dposInfo.state != 'Returned') {
+            else if (this.dpos2Service.dposInfo.state != 'Returned' && this.dpos2Service.dposInfo.identity != "DPoSV1") {
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
                 this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
                     void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
@@ -99,15 +104,20 @@ export class ListPage implements OnInit {
             return;
         }
 
+        if (this.registering) return;
+        this.registering = true;
         if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
+            this.registering = false;
             return;
         }
 
         if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+            this.registering = false;
             return;
         }
 
         await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
+        this.registering = false;
     }
 
     async castVote() {
@@ -165,6 +175,20 @@ export class ListPage implements OnInit {
         void this.globalNav.navigateTo(App.DPOS2, url);
     }
 
+    goToUpdateNode() {
+        this.dpos2Service.onlyUpdateStakeUntil = true;
+        void this.globalNav.navigateTo(App.DPOS2, '/dpos2/update');
+    }
+
+    async doRefresh(event) {
+        this.voteService.needFetchData[App.DPOS2] = true;
+        await this.dpos2Service.init();
+        await this.getSelectedNodes();
+
+        setTimeout(() => {
+            event.target.complete();
+        }, 500);
+    }
 }
 
 

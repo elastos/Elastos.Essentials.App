@@ -5,7 +5,12 @@
         <ion-spinner></ion-spinner>
     </div>
 
-    <div *ngIf="dataFetched">
+    <ion-content *ngIf="dataFetched">
+        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+            <ion-refresher-content refreshingSpinner="crescent">
+            </ion-refresher-content>
+        </ion-refresher>
+
         <app-vote-slider-details *ngIf="showVotesDetails" [index]="voteType">
         </app-vote-slider-details>
 
@@ -57,11 +62,13 @@
                                         <p>{{ item.votes}} ELA, {{ item.ratio }}%</p>
                                         <p *ngIf="item.stakeuntilDate">{{ 'staking.stake-until' | translate }}: {{
                                             item.stakeuntilDate }}</p>
-                                        <p *ngIf="item.stakeuntilExpired" class="expired-in">{{ 'staking.stake-until' |
+                                        <p *ngIf="item.stakeuntilExpired" class="expired-in">{{
+                                            'staking.stake-until' |
                                             translate }}: {{ item.stakeuntilExpired }}</p>
                                     </ion-col>
                                     <ion-col size="2" class="right-col" (click)="clickDetails($event, item.type)">
-                                        <div class="details-btn align-right"> {{ 'staking.details' | translate }}</div>
+                                        <div class="details-btn align-right"> {{ 'staking.details' | translate }}
+                                        </div>
                                     </ion-col>
                                 </ion-row>
                             </div>
@@ -78,14 +85,16 @@
                     </ion-col>
                 </ion-row>
             </ion-grid>
-
-            <div class="footer-space"></div>
-            <ion-footer>
-                <div id="button-list">
-                    <ebutton *ngFor="let button of buttonList" [topicon]="button.icon" [title]="button.label"
-                        (clicked)="clickButton(button.url)"></ebutton>
-                </div>
-            </ion-footer>
         </div>
+    </ion-content>
+
+    <div *ngIf="dataFetched">
+        <div class="footer-space"></div>
+        <ion-footer>
+            <div id="button-list">
+                <ebutton *ngFor="let button of buttonList" [topicon]="button.icon" [title]="button.label"
+                    (clicked)="clickButton(button.url)"></ebutton>
+            </div>
+        </ion-footer>
     </div>
 </ion-content>
