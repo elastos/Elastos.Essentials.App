@@ -108,7 +108,7 @@ export class DPoS2Service {
     }
 
     async init() {
-        Logger.log("dposvoting", "Initializing the nodes service");
+        Logger.log(App.DPOS2, "Initializing the nodes service");
 
         if (!this.voteService.needFetchData[App.DPOS2]) return;
 
@@ -150,7 +150,7 @@ export class DPoS2Service {
     }
 
     async checkBalanceForRegDposNode(): Promise<boolean> {
-        if (!await this.voteService.checkBalanceForRegistration()) {
+        if (!await this.voteService.checkBalanceForRegistration(this.voteService.deposit2K)) {
             await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'dposvoting.reg-dpos-balance-not-enough');
             return false;
         }
@@ -536,7 +536,11 @@ export class DPoS2Service {
 
     getVotes(votes: string): string {
         const fixedVotes: number = parseFloat(votes);
-        return fixedVotes.toLocaleString().split(/\s/).join(',');
+        var str = fixedVotes.toString();
+        var reg = str.indexOf(".") > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
+        return str.replace(reg, "$1,");
+        // return fixedVotes.toLocaleString().split(/\s/).join(',');
+        // return fixedVotes.toLocaleString('en-US');
     }
 
 }

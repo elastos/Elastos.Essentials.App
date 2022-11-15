@@ -96,7 +96,7 @@ export class CandidatesPage implements OnInit {
             return;
         }
 
-        if (!await this.voteService.checkBalanceForRegistration()) {
+        if (!await this.voteService.checkBalanceForRegistration(this.voteService.deposit5K)) {
             await this.globalPopupService.ionicAlert('wallet.insufficient-balance', 'crcouncilvoting.reg-candidate-balance-not-enough');
             return;
         }

@@ -42,7 +42,8 @@ export class VoteService {
     public secretaryGeneralDid: string = null;
     public secretaryGeneralPublicKey: string = null;
 
-    public depositAmount = 200000000000; // 2000 ELA
+    public deposit2K = 200000000000; // 2000 ELA
+    public deposit5K = 500000000000; // 5000 ELA
 
     public needFetchData = {};
 
@@ -451,8 +452,8 @@ export class VoteService {
         }
     }
 
-    async checkBalanceForRegistration(): Promise<boolean> {
-        let amount = this.depositAmount + this.votingFees();
+    async checkBalanceForRegistration(depositAmount: number): Promise<boolean> {
+        let amount = depositAmount + this.votingFees();
         await this.sourceSubwallet.updateBalanceSpendable();
         if (this.getRawBalanceSpendable().lt(amount)) {
             return false;

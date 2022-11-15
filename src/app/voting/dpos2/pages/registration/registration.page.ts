@@ -217,7 +217,7 @@ export class DPoS2RegistrationPage implements OnInit {
 
             Logger.log(App.DPOS2, 'register payload:', payload);
 
-            const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
+            const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.deposit2K, "");
             await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);

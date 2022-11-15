@@ -191,7 +191,7 @@ export class DPosRegistrationPage implements OnInit {
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword);
 
-            const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.depositAmount, "");
+            const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.deposit5K, "");
             await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
@@ -200,6 +200,7 @@ export class DPosRegistrationPage implements OnInit {
             }
         } catch (e) {
             await this.globalNative.hideLoading();
+            await this.voteService.popupErrorMessage(e);
         }
     }
 

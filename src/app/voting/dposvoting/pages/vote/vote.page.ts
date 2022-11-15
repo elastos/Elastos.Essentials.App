@@ -45,6 +45,7 @@ export class VotePage implements OnInit {
     private toast: any = null;
 
     private inited = false;
+    private registering = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -121,15 +122,20 @@ export class VotePage implements OnInit {
             return;
         }
 
+        if (this.registering) return;
+        this.registering = true;
         if (!await this.nodesService.checkBalanceForRegDposNode()) {
+            this.registering = false;
             return;
         }
 
         if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposregistration.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+            this.registering = false;
             return;
         }
 
         await this.globalNav.navigateTo(App.DPOS_REGISTRATION, '/dposregistration/registration');
+        this.registering = false;
     }
 
     //// Vote intent ////
