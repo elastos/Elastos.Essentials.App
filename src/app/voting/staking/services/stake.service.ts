@@ -106,7 +106,7 @@ export class StakeService {
             Logger.log(App.STAKING, 'getBalanceByAddress balance:', balanceList.value);
             let balance = balanceList.value;
             if (!balance.isNegative()) {
-                return Math.floor(balance.dividedBy(Config.SELAAsBigNumber).toNumber());
+                return balance.dividedBy(Config.SELAAsBigNumber).toNumber();
             }
         } catch (e) {
             Logger.error(App.STAKING, 'jsonRPCService.getBalanceByAddress exception:', e);
@@ -136,7 +136,7 @@ export class StakeService {
         const result = await this.globalElastosAPIService.getVoteRights(stakeAddress);
         Logger.log(App.DPOS_VOTING, 'getvoterights', result);
         if (result && result[0] && result[0].totalvotesright) {
-            this.votesRight.totalVotesRight = Number.parseInt(result[0].totalvotesright);
+            this.votesRight.totalVotesRight = Number.parseFloat(result[0].totalvotesright);
 
             if (this.votesRight.totalVotesRight > 0) {
                 if (result[0].remainvoteright) {
@@ -151,7 +151,7 @@ export class StakeService {
                             min = Math.min(...(arr.slice(1, 5)));
                         }
                         this.votesRight.maxStaked = this.votesRight.totalVotesRight - min;
-                        this.votesRight.maxStakedRatio = Math.floor(this.votesRight.maxStaked / this.votesRight.totalVotesRight * 10000) / 100;
+                        this.votesRight.maxStakedRatio = this.uxService.getPercentage(this.votesRight.maxStaked, this.votesRight.totalVotesRight);
                         this.votesRight.minRemainVoteRight = min;
                         this.votesRight.remainVotes = arr;
                         for (let i in arr) {
@@ -225,15 +225,15 @@ export class StakeService {
         Logger.log(App.DPOS_VOTING, 'dposv2rewardinfo', result);
         if (result) {
             if (result.claimable) {
-                rewardInfo.claimable = Number.parseInt(result.claimable);
+                rewardInfo.claimable = Number.parseFloat(result.claimable);
             }
 
             if (result.claiming) {
-                rewardInfo.claiming = Number.parseInt(result.claiming);
+                rewardInfo.claiming = Number.parseFloat(result.claiming);
             }
 
             if (result.claimed) {
-                rewardInfo.claimed = Number.parseInt(result.claimed);
+                rewardInfo.claimed = Number.parseFloat(result.claimed);
             }
 
             rewardInfo.total = rewardInfo.claimable + rewardInfo.claiming + rewardInfo.claimed;

@@ -9,6 +9,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService, VoteType } from '../../services/stake.service';
 
@@ -36,6 +37,7 @@ export class StakingHomePage implements OnInit {
     public signingAndTransacting = false;
 
     constructor(
+        public uxService: UXService,
         public translate: TranslateService,
         public stakeService: StakeService,
         public theme: GlobalThemeService,
@@ -114,7 +116,7 @@ export class StakingHomePage implements OnInit {
                 title: "DPoS 2.0",
                 type: VoteType.DPoSV2,
                 votes: this.stakeService.votesRight.votes[VoteType.DPoSV2],
-                ratio: Math.floor((this.stakeService.votesRight.votes[VoteType.DPoSV2] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
+                ratio: this.uxService.getPercentage(this.stakeService.votesRight.votes[VoteType.DPoSV2], this.stakeService.votesRight.totalVotesRight),
                 stakeuntilDate: this.stakeService.votesRight.dpos2LockTimeDate,
                 stakeuntilExpired: this.stakeService.votesRight.dpos2LockTimeExpired,
             });
@@ -123,7 +125,7 @@ export class StakingHomePage implements OnInit {
                     title: this.translate.instant(this.stakeService.votesRight.voteInfos[i].title),
                     type: i,
                     votes: this.stakeService.votesRight.votes[i],
-                    ratio: Math.floor((this.stakeService.votesRight.votes[i] / this.stakeService.votesRight.totalVotesRight) * 10000) / 100,
+                    ratio: this.uxService.getPercentage(this.stakeService.votesRight.votes[i], this.stakeService.votesRight.totalVotesRight),
                 } as any;
                 this.voteItems.push(item);
             }
