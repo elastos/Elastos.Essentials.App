@@ -121,4 +121,16 @@ export class StakePage {
         this.amount = this.maxStake;
     }
 
+    public onInputFocus() {
+        if( this.amount == 0) {
+            this.amount = null;
+        }
+    }
+
+    public onInputBlur() {
+        if (this.amount  == null) {
+            this.amount  = 0;
+        }
+    }
+
 }

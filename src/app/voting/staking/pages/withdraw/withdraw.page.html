@@ -7,7 +7,7 @@
         </ion-row>
         <ion-row>
             <ion-input id="max-votes" type="number" min="0" max="available" name="amount" ngDefaultControl
-                [(ngModel)]="amount" clearInput>
+                [(ngModel)]="amount" (ionBlur)="onInputBlur()" (ionFocus)="onInputFocus()" clearInput>
             </ion-input>
         </ion-row>
         <ion-row size="9" class="profile-data">

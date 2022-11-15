@@ -116,4 +116,16 @@ export class UnstakePage {
         this.amount = this.maxStake;
     }
 
+    onInputFocus() {
+        if( this.amount == 0) {
+            this.amount = null;
+        }
+    }
+
+    onInputBlur() {
+        if (this.amount  == null) {
+            this.amount  = 0;
+        }
+    }
+
 }

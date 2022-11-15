@@ -134,10 +134,6 @@ export class WithdrawPage {
         this.signingAndTransacting = false;
     }
 
-    clickMax() {
-        this.amount = this.available;
-    }
-
     onRewardChange(event) {
         if (this.isNodeReward) {
             this.available = this.stakeService.nodeRewardInfo.claimable;
@@ -146,6 +142,22 @@ export class WithdrawPage {
         else {
             this.available = this.stakeService.rewardInfo.claimable;
             this.address = this.stakeService.firstAddress;
+        }
+    }
+
+    clickMax() {
+        this.amount = this.available;
+    }
+
+    onInputFocus() {
+        if( this.amount == 0) {
+            this.amount = null;
+        }
+    }
+
+    onInputBlur() {
+        if (this.amount  == null) {
+            this.amount  = 0;
         }
     }
 
