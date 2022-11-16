@@ -106,14 +106,22 @@ export class ListPage implements OnInit {
 
         if (this.registering) return;
         this.registering = true;
-        if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
-            this.registering = false;
-            return;
+        if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
+            if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
+                this.registering = false;
+                return;
+            }
         }
+        else {
+            if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
+                this.registering = false;
+                return;
+            }
 
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
-            this.registering = false;
-            return;
+            if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+                this.registering = false;
+                return;
+            }
         }
 
         await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
