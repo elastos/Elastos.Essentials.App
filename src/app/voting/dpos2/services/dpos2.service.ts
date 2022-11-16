@@ -124,7 +124,9 @@ export class DPoS2Service {
             await this.geMyVoteds();
         }
         catch (err) {
-            Logger.warn('dposvoting', 'Initialize node error:', err)
+            Logger.warn('dposvoting', 'Initialize node error:', err);
+            await this.voteService.popupErrorMessage(err, App.STAKING);
+
         }
         this.initOngoning = false;
 

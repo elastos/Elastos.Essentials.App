@@ -133,18 +133,22 @@ export class StakingHomePage implements OnInit {
     }
 
     async unvote() {
-        if (!this.stakeService.votesRight.voteInfos) {
+        if (!this.stakeService.votesRight.voteInfos || this.stakeService.votesRight.voteInfos.length < 1) {
+            this.globalNative.genericToast('dposvoting.no-voting');
             return
         }
 
         var voteContents: VotesContentInfo[] = [];
         for (let i = 0; i < 4; i++) {
-            let list = this.stakeService.votesRight.voteInfos[i].list;
-            if (list.length > 0) {
-                voteContents.push({
-                    VoteType: i,
-                    VotesInfo: []
-                })
+            let voteInfo = this.stakeService.votesRight.voteInfos[i];
+            if (voteInfo) {
+                let list = voteInfo.list;
+                if (list && list.length > 0) {
+                    voteContents.push({
+                        VoteType: i,
+                        VotesInfo: []
+                    })
+                }
             }
         }
 
@@ -158,17 +162,6 @@ export class StakingHomePage implements OnInit {
         }
 
         this.signingAndTransacting = true;
-
-        var voteContents: VotesContentInfo[] = [];
-        for (let i = 0; i < 4; i++) {
-            let list = this.stakeService.votesRight.voteInfos[i].list;
-            if (list.length > 0) {
-                voteContents.push({
-                    VoteType: i,
-                    VotesInfo: []
-                })
-            }
-        }
 
         const payload: VotingInfo = {
             Version: 0,

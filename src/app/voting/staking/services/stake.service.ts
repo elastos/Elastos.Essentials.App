@@ -60,6 +60,8 @@ export class StakeService {
     public ownerDpos2 = false;
     public ownerPublicKey = '';
 
+    private initOngoning = false;
+
     constructor(
         public uxService: UXService,
         private globalJsonRPCService: GlobalJsonRPCService,
@@ -76,26 +78,36 @@ export class StakeService {
 
         if (!this.voteService.needFetchData[App.STAKING]) return;
 
-        this.firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
-        this.ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
-        this.ownerAddress = this.voteService.sourceSubwallet.getOwnerAddress();
+        if (this.initOngoning) return;
 
-        this.ownerDpos2 = await this.isOwnerDpos2();
-        this.votesRight = await this.getVoteRights();
-        this.rewardInfo = await this.getRewardInfo(this.firstAddress);
-        if (this.ownerDpos2 && this.firstAddress != this.ownerAddress) {
-            this.totalRewardInfo = Util.clone(this.rewardInfo);
-            let rewardInfo = await this.getRewardInfo(this.ownerAddress);
-            this.totalRewardInfo.claimable += rewardInfo.claimable;
-            this.totalRewardInfo.claiming += rewardInfo.claiming;
-            this.totalRewardInfo.claimed += rewardInfo.claimed;
-            this.totalRewardInfo.total += rewardInfo.total;
-            this.nodeRewardInfo = rewardInfo;
+        this.initOngoning = true;
+        try {
+            this.firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
+            this.ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
+            this.ownerAddress = this.voteService.sourceSubwallet.getOwnerAddress();
+
+            this.ownerDpos2 = await this.isOwnerDpos2();
+            this.votesRight = await this.getVoteRights();
+            this.rewardInfo = await this.getRewardInfo(this.firstAddress);
+            if (this.ownerDpos2 && this.firstAddress != this.ownerAddress) {
+                this.totalRewardInfo = Util.clone(this.rewardInfo);
+                let rewardInfo = await this.getRewardInfo(this.ownerAddress);
+                this.totalRewardInfo.claimable += rewardInfo.claimable;
+                this.totalRewardInfo.claiming += rewardInfo.claiming;
+                this.totalRewardInfo.claimed += rewardInfo.claimed;
+                this.totalRewardInfo.total += rewardInfo.total;
+                this.nodeRewardInfo = rewardInfo;
+            }
+            else {
+                this.totalRewardInfo = this.rewardInfo;
+            }
         }
-        else {
-            this.totalRewardInfo = this.rewardInfo;
+        catch (err) {
+            Logger.error(App.STAKING, 'initData error:', err);
+            await this.voteService.popupErrorMessage(err, App.STAKING);
         }
 
+        this.initOngoning = false;
         this.voteService.needFetchData[App.STAKING] = false;
     }
 
@@ -108,9 +120,9 @@ export class StakeService {
             if (!balance.isNegative()) {
                 return balance.dividedBy(Config.SELAAsBigNumber).toNumber();
             }
-        } catch (e) {
-            Logger.error(App.STAKING, 'jsonRPCService.getBalanceByAddress exception:', e);
-            throw e;
+        } catch (err) {
+            Logger.error(App.STAKING, 'jsonRPCService.getBalanceByAddress exception:', err);
+            await this.voteService.popupErrorMessage(err, App.STAKING);
         }
         return -1;
     }
