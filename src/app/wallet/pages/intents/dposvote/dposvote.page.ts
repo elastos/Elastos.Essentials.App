@@ -222,7 +222,7 @@ export class DPoSVotePage implements OnInit {
         for (let i = 0, len = this.coinTransferService.publickeys.length; i < len; i++) {
             votesInfo.push({
                 Candidate: this.coinTransferService.publickeys[i],
-                Votes: this.voteAmount,
+                Votes: this.voteAmountELA,
                 Locktime: 0
             })
         }
