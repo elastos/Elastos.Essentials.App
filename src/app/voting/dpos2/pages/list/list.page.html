@@ -61,7 +61,7 @@
                             </ion-col>
                             <ion-col size="1.5" class="checkbox-container" *ngIf="voteService.canVote()">
                                 <ion-checkbox value="node" [(ngModel)]="node.isChecked" mode="ios"
-                                    (click)="clickCheckBox(node)" [disabled]="node.state === 'Inactive'">
+                                    (click)="clickCheckBox(node)" [disabled]="node.checkDisabled">
                                 </ion-checkbox>
                             </ion-col>
                         </ion-row>

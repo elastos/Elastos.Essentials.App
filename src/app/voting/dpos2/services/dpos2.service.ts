@@ -68,9 +68,6 @@ export class DPoS2Service {
     public price: Price;
     public block: Block;
 
-    // Empty List - Used to loop dummy items while data is being fetched
-    public emptyList = [];
-
     private initOngoning = false;
 
     // Storage
@@ -80,6 +77,7 @@ export class DPoS2Service {
     private logoUrl = 'https://api.elastos.io/images/';
 
     //Votes
+    public minStakeDays = 10;
     public myVotes = [];
 
     public onlyUpdateStakeUntil = false;
@@ -113,13 +111,17 @@ export class DPoS2Service {
         if (!this.voteService.needFetchData[App.DPOS2]) return;
 
         if (this.initOngoning) return;
-
         this.initOngoning = true;
-        for (let i = 0; i < 20; i++) {
-            this.emptyList.push('');
+
+        if (this.voteService.isMuiltWallet()) {
+            this.minStakeDays = 11;
+        }
+        else {
+            this.minStakeDays = 10;
         }
 
         try {
+            await this.getStoredVotes();
             await this.fetchNodes();
             await this.geMyVoteds();
         }
@@ -253,12 +255,6 @@ export class DPoS2Service {
                     node.index += 1;
 
                     if (node.state === 'Active' || (node.state === 'Inactive')) {
-                        if (node.state === 'Active') {
-                            this.activeNodes.push(node);
-                            if (this.lastVotes.indexOf(node.ownerpublickey) != -1) {
-                                node.isChecked = true;
-                            }
-                        }
 
                         //Check stake Until
                         var until = node.stakeuntil - currentHeight;
@@ -290,6 +286,15 @@ export class DPoS2Service {
 
                         //get node precentage
                         node.votesPrecentage = this.uxService.getPercentage(node.dposv2votes, this.totalVotes);
+
+                        node.checkDisabled = node.state === 'Inactive' || Math.floor(until / 720) < this.minStakeDays;
+
+                        if (node.state === 'Active') {
+                            this.activeNodes.push(node);
+                            if (!node.checkDisabled && this.lastVotes.indexOf(node.ownerpublickey) != -1) {
+                                node.isChecked = true;
+                            }
+                        }
 
                         this.dposList.push(node);
                     }
