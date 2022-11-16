@@ -138,10 +138,14 @@ export class VotePage implements OnInit, OnDestroy {
                 }
                 // let userVotes = node.userVotes * 100000000;
                 let userVotes = Util.accMul(node.userVotes, Config.SELA);
+                var userStakeDays = node.userStakeDays;
+                if (this.voteService.isMuiltWallet()) {
+                    userStakeDays++;
+                }
                 let _vote = {
                     Candidate: node.ownerpublickey,
                     Votes: userVotes,
-                    Locktime: currentHeight + node.userStakeDays * 720 + 5 }; // Add 10 minutes for time buffer
+                    Locktime: currentHeight + userStakeDays * 720 + 5 }; // Add 10 minutes for time buffer
                 votedCandidates.push(_vote);
             }
             else {
