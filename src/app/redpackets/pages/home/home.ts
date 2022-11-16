@@ -51,7 +51,7 @@ export class HomePage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.red-packets"));
-    this.titleBar.setBackgroundColor("#701919");
+    this.titleBar.setBackgroundColor("#270707");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.walletAddress = this.getActiveWalletAddress();

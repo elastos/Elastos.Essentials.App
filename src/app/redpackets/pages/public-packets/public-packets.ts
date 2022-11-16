@@ -29,7 +29,7 @@ export class PublicPacketsPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.public-packets"));
-    this.titleBar.setBackgroundColor("#701919");
+    this.titleBar.setBackgroundColor("#270707");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.packets = this.packetService.publicPackets.value;

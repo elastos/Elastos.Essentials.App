@@ -145,7 +145,7 @@ export class PacketDetailsPage implements OnInit {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.red-packet"));
-    this.titleBar.setBackgroundColor("#701919");
+    this.titleBar.setBackgroundColor("#270707");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
 

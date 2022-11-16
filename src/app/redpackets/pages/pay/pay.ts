@@ -68,7 +68,7 @@ export class PayPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.payment-title"));
-    this.titleBar.setBackgroundColor("#701919");
+    this.titleBar.setBackgroundColor("#270707");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
   }
 

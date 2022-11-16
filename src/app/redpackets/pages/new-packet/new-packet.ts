@@ -101,7 +101,7 @@ export class NewPacketPage {
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.new-red-packet-title"));
-    this.titleBar.setBackgroundColor("#701919");
+    this.titleBar.setBackgroundColor("#270707");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.name = this.didSessions.getSignedInIdentity().name;
