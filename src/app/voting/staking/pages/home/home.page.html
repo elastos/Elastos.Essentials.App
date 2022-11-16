@@ -5,12 +5,7 @@
         <ion-spinner></ion-spinner>
     </div>
 
-    <ion-content *ngIf="dataFetched">
-        <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-            <ion-refresher-content refreshingSpinner="crescent">
-            </ion-refresher-content>
-        </ion-refresher>
-
+    <div *ngIf="dataFetched">
         <app-vote-slider-details *ngIf="showVotesDetails" [index]="voteType">
         </app-vote-slider-details>
 
@@ -86,7 +81,7 @@
                 </ion-row>
             </ion-grid>
         </div>
-    </ion-content>
+    </div>
 
     <div *ngIf="dataFetched">
         <div class="footer-space"></div>

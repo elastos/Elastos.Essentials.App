@@ -1,11 +1,11 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <ion-content>
+    <!-- <ion-content>
         <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
             <ion-refresher-content refreshingSpinner="crescent">
             </ion-refresher-content>
-        </ion-refresher>
+        </ion-refresher> -->
 
         <ion-grid class="container ion-no-padding" *ngIf="dataFetched; else loadingList">
 
@@ -104,7 +104,7 @@
                 </ion-list>
             </ion-grid>
         </ng-template>
-    </ion-content>
+    <!-- </ion-content> -->
 </ion-content>
 
 <div *ngIf="dataFetched && dpos2Service.dposList.length > 0 && voteService.canVote()"
