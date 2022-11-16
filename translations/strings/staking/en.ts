@@ -27,6 +27,7 @@ export const en = {
         'send-to': 'Send to',
         'reciever-address': 'Reciever address',
         'withdraw-node-reward': "Withdraw the node’s reward",
+        'no-reward': 'No reward',
 
         'unvote-message': 'Are you sure to cancel the four votes of DPoS 1.0, CR election, CR member impeachment, and CR proposal opposition vote?',
     }

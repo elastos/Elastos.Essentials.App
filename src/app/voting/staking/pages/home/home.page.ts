@@ -214,6 +214,9 @@ export class StakingHomePage implements OnInit {
         if (url == "/staking/unvote") {
             await this.unvote();
         }
+        else if (url == "/staking/withdraw" && this.stakeService.totalRewardInfo.claimable == 0) {
+            this.globalNative.genericToast('staking.no-reward');
+        }
         else {
             this.goTo(url);
         }

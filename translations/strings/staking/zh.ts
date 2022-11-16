@@ -27,6 +27,7 @@ export const zh = {
         'send-to': '发送到',
         'reciever-address': '接收地址',
         'withdraw-node-reward': '领取节点收益',
+        'no-reward': '暂无收益',
 
         'unvote-message': '确定取消DPoS 1.0、CR选举、CR委员弹劾、CR提案反对票这四种投票吗?',
     }
