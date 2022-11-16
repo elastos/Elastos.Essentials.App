@@ -183,7 +183,8 @@ export class ElastosTransactionsHelper {
                 transactionName = "wallet.coin-op-cr-cancel";
             break;
             case RawTransactionType.Voting:
-                transactionName = "wallet.coin-op-dpos2-voting";
+                // TODO: Get the vote type: DPoSV2, CRProposal, CRImpeachment, CRCouncil
+                transactionName = "wallet.coin-op-vote";
             break;
             case RawTransactionType.Unstake:
                 transactionName = "wallet.coin-op-unstake";

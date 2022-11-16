@@ -7,6 +7,8 @@ import { IdentityEntry } from '../model/didsessions/identityentry';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
+import { CRMemberInfo } from '../voting/crcouncilvoting/services/crcouncil.service';
+import { ProposalDetails } from '../voting/crproposalvoting/model/proposal-details';
 import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
 import { StakeInfo } from '../wallet/model/elastos.types';
@@ -857,6 +859,20 @@ export class GlobalElastosAPIService extends GlobalService {
         return null;
     }
 
+    async getCRMemberInfo(did: string): Promise<CRMemberInfo> {
+        try {
+            const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
+            const councilUrl = rpcApiUrl + '/api/v2/council/information/' + did;
+            let result = await this.globalJsonRPCService.httpGet(councilUrl);
+            return  result?.data;
+        }
+        catch (err) {
+            Logger.error('elastosapi', 'getCRMemberInfo error:', err);
+        }
+
+        return null;
+    }
+
     public async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
         const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
         const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
@@ -865,6 +881,18 @@ export class GlobalElastosAPIService extends GlobalService {
             return result;
         } catch (e) {
             Logger.error('elastosapi', 'fetchProposals error:', e)
+        }
+        return null;
+    }
+
+    public async fetchProposalDetails(proposalHash: string): Promise<ProposalDetails> {
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
+        const crfetchproposalsurl = rpcApiUrl + '/api/v2/proposal/get_proposal/' + proposalHash;
+        try {
+            let result = await this.globalJsonRPCService.httpGet(crfetchproposalsurl);
+            return result?.data;
+        } catch (e) {
+            Logger.error('elastosapi', 'fetchProposalDetails error:', e)
         }
         return null;
     }

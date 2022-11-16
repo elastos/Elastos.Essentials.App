@@ -12,7 +12,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
+import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { CRCouncilService } from '../../services/crcouncil.service';
 
@@ -119,7 +119,7 @@ export class ImpeachCRMemberPage {
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
-            Type: VoteType.CRCImpeachment,
+            Type: VoteTypeString.CRCImpeachment,
             Candidates: votes
         }
 

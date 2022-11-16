@@ -13,7 +13,7 @@ import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
+import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -167,7 +167,7 @@ export class VoteForProposalPage {
         Logger.log('wallet', "Vote:", votes);
 
         let crVoteContent: VoteContent = {
-            Type: VoteType.CRCProposal,
+            Type: VoteTypeString.CRCProposal,
             Candidates: votes
         }
 

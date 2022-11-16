@@ -3,7 +3,7 @@ import type { VoteContentInfo } from '@elastosfoundation/wallet-js-sdk';
 import { Logger } from 'src/app/logger';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { CRProposalStatus } from '../../../../../model/voting/cyber-republic/CRProposalStatus';
-import { Candidates, VoteType } from '../../../elastos.types';
+import { Candidates, VoteTypeString } from '../../../elastos.types';
 
 type InvalidCRCCandidate = string;
 type InvalidDelegateCandidate = string;
@@ -26,7 +26,7 @@ type InvalidCRCProposalCandidate = string;
     }
  */
 export type InvalidCandidateForVote = {
-  Type: VoteType,
+  Type: VoteTypeString,
   Candidates: InvalidCRCCandidate[] | InvalidDelegateCandidate[] | InvalidCRCImpeachmentCandidate[] | InvalidCRCProposalCandidate[]
 }
 
@@ -54,13 +54,13 @@ export class InvalidVoteCandidatesHelper {
 
       if (validContent) {
         switch (oldVotedContent[i].Type) {
-          case VoteType.CRC:
+          case VoteTypeString.CRC:
             // Remove crc vote content if we are outside of the council voting period.
             if (!crcinvoting) {
               validContent = false;
             }
             break;
-          case VoteType.CRCImpeachment:
+          case VoteTypeString.CRCImpeachment:
             // Check if a previously voted CR member has been impeached and is not a CR member any more
             let validImpeachment = await this.computeValidCRCImpeachment(oldVotedContent[i].Candidates);
             if (validImpeachment && Object.keys(validImpeachment).length > 0) {
@@ -69,7 +69,7 @@ export class InvalidVoteCandidatesHelper {
               validContent = false;
             }
             break;
-          case VoteType.CRCProposal:
+          case VoteTypeString.CRCProposal:
             // Check if some previously voted proposals are not in NOTIFICATION state any more
             let validProposals = await this.computeValidProposals(oldVotedContent[i].Candidates);
             if (validProposals && Object.keys(validProposals).length > 0) {
@@ -78,7 +78,7 @@ export class InvalidVoteCandidatesHelper {
               validContent = false;
             }
             break;
-          case VoteType.Delegate:
+          case VoteTypeString.Delegate:
             // Check if some previously voted dpos nodes are now inactive.
             let validDposNodes = await this.computeValidDposnodes(oldVotedContent[i].Candidates);
             if (validDposNodes && Object.keys(validDposNodes).length > 0) {

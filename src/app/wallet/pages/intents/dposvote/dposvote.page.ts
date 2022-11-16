@@ -31,7 +31,7 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
-import { Candidates, VoteType } from 'src/app/wallet/model/elastos.types';
+import { Candidates, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { Config } from '../../../config/Config';
 import { MainChainSubWallet } from '../../../model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
@@ -201,7 +201,7 @@ export class DPoSVotePage implements OnInit {
         }
 
         let dposVoteContent: VoteContentInfo = {
-            Type: VoteType.Delegate,
+            Type: VoteTypeString.Delegate,
             Candidates: candidates
         }
 

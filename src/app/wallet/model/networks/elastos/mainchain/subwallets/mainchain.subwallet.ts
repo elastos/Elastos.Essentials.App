@@ -15,7 +15,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { Candidates, VoteType } from 'src/app/wallet/model/elastos.types';
+import { Candidates, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { MultiSigSafe } from 'src/app/wallet/model/safes/multisig.safe';
@@ -35,7 +35,7 @@ import { InvalidVoteCandidatesHelper } from '../invalidvotecandidates.helper';
 import { ElastosMainChainSafe } from '../safes/mainchain.safe';
 
 
-const voteTypeMap = [VoteType.Delegate, VoteType.CRC, VoteType.CRCProposal, VoteType.CRCImpeachment]
+const voteTypeMap = [VoteTypeString.Delegate, VoteTypeString.CRC, VoteTypeString.CRCProposal, VoteTypeString.CRCImpeachment]
 
 export type AvalaibleUtxos = {
     value: number;
@@ -222,7 +222,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             Logger.log('wallet', 'Decoded offlineTransaction', offlineTransactionDecoded)
             if (offlineTransactionDecoded) {
                 let type: RawTransactionType = offlineTransactionDecoded.getTransactionType();
-                transactionName = this.getTransactionNameForOfflineTransaction(type);
+                transactionName = this.getTransactionNameByType(type);
 
                 switch (type) {
                     case RawTransactionType.Unstake:
@@ -284,14 +284,14 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return txInfo;
     }
 
-    private getTransactionNameForOfflineTransaction(type: RawTransactionType): string {
+    private getTransactionNameByType(type: RawTransactionType): string {
         let transactionName = null;
         switch (type) {
             case RawTransactionType.Unstake:
                 transactionName = "wallet.coin-op-unstake";
                 break;
             case RawTransactionType.Voting:
-                transactionName = "wallet.coin-op-dpos2-voting";
+                transactionName = "wallet.coin-op-vote";
                 break;
             case RawTransactionType.DposV2ClaimReward:
                 transactionName = "wallet.coin-op-dpos2-claim-reward";
@@ -823,7 +823,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let votedContents: VoteContentInfo[] = [];
 
         for (let i = 0, len = voteContent.length; i < len; i++) {
-            let voteType: VoteType = voteTypeMap[voteContent[i].votetype];
+            let voteType: VoteTypeString = voteTypeMap[voteContent[i].votetype];
 
             let candidates: Candidates = {};
 

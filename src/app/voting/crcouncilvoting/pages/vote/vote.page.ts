@@ -16,7 +16,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { VoteContent, VoteType } from 'src/app/wallet/model/elastos.types';
+import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { SelectedCandidate } from "../../model/selected.model";
 import { CRCouncilService } from '../../services/crcouncil.service';
 
@@ -307,7 +307,7 @@ export class VotePage implements OnInit, OnDestroy {
         Logger.log('wallet', 'Creating vote transaction with votes', votes);
 
         let crVoteContent: VoteContent = {
-            Type: VoteType.CRC,
+            Type: VoteTypeString.CRC,
             Candidates: votes
         }
 

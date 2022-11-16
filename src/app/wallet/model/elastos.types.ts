@@ -1,5 +1,5 @@
 
-export enum VoteType {
+export enum VoteTypeString {
     CRC = "CRC",
     Delegate = "Delegate",
     CRCImpeachment = "CRCImpeachment",
@@ -37,7 +37,7 @@ export type PubKeyInfo = {
 *  {*/
 
 export type VoteInfo = {
-    Type: VoteType,
+    Type: VoteTypeString,
     Amount: string, // Amount in sELA
     Timestamp: number, // Unix timestamp (secs)
     Expiry: number, // Unix timestamp (secs). Can be null.
@@ -54,7 +54,7 @@ export type Candidates = {
 };
 
 export type VoteContent = {
-    Type: VoteType,
+    Type: VoteTypeString,
     Candidates: Candidates,
 };
 

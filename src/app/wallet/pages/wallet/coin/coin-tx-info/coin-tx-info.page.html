@@ -39,9 +39,9 @@
                     <div *ngIf="valueIsArray(item.value)" class="array-row">
                         <ion-row class="subcontent-row" *ngFor="let value of item.value">
                             <ion-col size="12">
-                                <h2>{{ value.Nickname }}</h2>
+                                <h2>{{ value.Title }}</h2>
                                 <h2>{{ value.Votes }} {{ 'dposvoting.votes' | translate }}</h2>
-                                <h2>{{ 'dposvoting.stake-until' | translate }}: {{ value.LockDate }}</h2>
+                                <h2 *ngIf="value.LockDate">{{ 'dposvoting.stake-until' | translate }}: {{ value.LockDate }}</h2>
                             </ion-col>
                         </ion-row>
                     </div>
