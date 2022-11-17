@@ -34,7 +34,8 @@
                     <ion-col size="9.5" class="left-col">
                         {{ 'staking.staked-for-votes' | translate }}
                     </ion-col>
-                    <ion-col size="2" class="middle-col">
+                    <ion-col class="middle-col" [size]="stakeService.votesRight.totalVotesRight > 0 ? 2 : 2.5"
+                            [class.align-right]="stakeService.votesRight.totalVotesRight == 0" >
                         {{ stakeService.votesRight.maxStakedRatio }}%
                     </ion-col>
 

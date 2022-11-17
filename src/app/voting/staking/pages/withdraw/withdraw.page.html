@@ -33,7 +33,7 @@
             <ion-col size="9.5" class="left-col">
                 {{ 'staking.staked-for-votes' | translate }}
             </ion-col>
-            <ion-col size="2" class="middle-col">
+            <ion-col class="middle-col" [size]="!isMuiltWallet ? 2 : 2.5" [class.align-right]="isMuiltWallet">
                 {{ stakeService.votesRight.maxStakedRatio }}%
             </ion-col>
 
