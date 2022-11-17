@@ -10,6 +10,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService } from '../../services/stake.service';
@@ -105,14 +106,24 @@ export class WithdrawPage {
         }
 
         this.signingAndTransacting = true;
-        let payload = {
-            Value: stakeAmount,
-            ToAddress: this.address
-        };
-
-        Logger.log(App.STAKING, 'Creating withdraw transaction with payload', payload);
 
         try {
+
+            var payload = {
+                Value: stakeAmount,
+                ToAddress:  this.address
+            } as any;
+
+            if (this.isNodeReward) {
+                payload.Code = this.voteService.sourceSubwallet.getOwnerPublicKey();
+
+                const digest = this.voteService.sourceSubwallet.getDPoSV2ClaimRewardDigest(payload);
+                const password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
+                payload.Signature = await this.voteService.sourceSubwallet.signDigest( this.address, digest, password);
+            }
+
+            Logger.log(App.STAKING, 'Creating withdraw transaction with payload', payload);
+
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2ClaimRewardTransaction(
                 payload,
