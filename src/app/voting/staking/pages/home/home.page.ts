@@ -35,6 +35,7 @@ export class StakingHomePage implements OnInit {
 
     public dataFetched = false;
     public signingAndTransacting = false;
+    public showArrow = true;
 
     constructor(
         public uxService: UXService,
@@ -57,6 +58,7 @@ export class StakingHomePage implements OnInit {
         this.addShowItems();
         this.addButtonList();
         this.addVoteItems();
+        this.showArrow = this.stakeService.votesRight.totalVotesRight > 0;
         this.dataFetched = true;
     }
 

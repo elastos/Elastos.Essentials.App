@@ -32,6 +32,7 @@ export class WithdrawPage {
     public address = "";
     public isNodeReward = false;
     public isMuiltWallet = false;
+    public showArrow = true;
 
     constructor(
         public uxService: UXService,
@@ -54,6 +55,7 @@ export class WithdrawPage {
         this.available = this.stakeService.rewardInfo.claimable;
         this.address = this.stakeService.firstAddress;
         this.isMuiltWallet = this.voteService.isMuiltWallet();
+        this.showArrow = !this.isMuiltWallet;
 
         this.keyboard.onKeyboardWillShow().subscribe(() => {
             this.zone.run(() => {
