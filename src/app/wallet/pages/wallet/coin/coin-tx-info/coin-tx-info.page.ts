@@ -544,6 +544,7 @@ export class CoinTxInfoPage implements OnInit {
                     this.crProposalVotes = [...this.crProposalVotes, ...votes];
                 break;
                 case VoteType.CRCouncil:
+                    // TODO
                 break;
             }
         }
@@ -601,13 +602,10 @@ export class CoinTxInfoPage implements OnInit {
         if (voteContentInfo.VoteType !== VoteType.CRImpeachment) return [];
         let voteList = [];
 
-        const result = await GlobalElastosAPIService.instance.fetchCRcouncil();
-        if (!result || !result.data || !result.data.council) return [];
-
         for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
-            let councilInfo = result.data.council.find(node => node.cid === voteContentInfo.VotesInfo[i].Candidate);
+            let crcouncil = await GlobalElastosAPIService.instance.getCRMember( voteContentInfo.VotesInfo[i].Candidate);
             let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
-            voteList.push({Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: councilInfo.didName});
+            voteList.push({Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: crcouncil.nickname});
         }
 
         Logger.log('wallet', 'getCRCouncilVoteInfo ', voteList);

@@ -52,7 +52,12 @@ export class ImpeachCRMemberPage {
                 this.maxVotes = this.stakeService.votesRight.totalVotesRight;
             }
             else {
-                this.maxVotes = await this.voteService.getMaxVotes();
+                if (this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD) {
+                    // Multi-signature wallets can only vote with staked ELA.
+                    this.maxVotes = 0;
+                } else {
+                    this.maxVotes = await this.voteService.getMaxVotes();
+                }
             }
             this.updatedBalance = true;
         }

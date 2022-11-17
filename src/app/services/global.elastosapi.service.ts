@@ -873,6 +873,26 @@ export class GlobalElastosAPIService extends GlobalService {
         return null;
     }
 
+    // id: cid or did
+    public async getCRMember(id: string) {
+        const param = {
+            method: 'getcrmember',
+            params: {
+                id: id,
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+        let result = null;
+        try {
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+            Logger.warn("elastosapi", "getCRMember exception", e);
+        }
+        return result;
+    }
+
     public async fetchProposals(status: CRProposalStatus): Promise<CRProposalsSearchResponse> {
         const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.CR_RPC);
         const crfetchproposalsurl = rpcApiUrl + '/api/cvote/all_search?status=' + status + '&page=1&results=-1';
