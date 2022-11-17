@@ -177,7 +177,7 @@ export class CreateProposalPage {
             Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
 
             //Get digest
-            let digest = await this.getDigest(JSON.stringify(payload));
+            let digest = await this.getDigest(payload);
 
             //Get did sign digest
             let ret = await this.signDigest(digest);
