@@ -140,7 +140,8 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     async init() {
         this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletManager.activeMasterWalletId);
-        if (!this.networkWallet) return;
+        if (!this.networkWallet)
+            return;
 
         this.masterWallet = this.networkWallet.masterWallet;
         this.network = (<EVMNetwork>this.networkWallet.network);

@@ -46,4 +46,16 @@ export class DevTestsPage {
 
     this.native.genericToast("Notification sent");
   }
+
+  public sendWalletNewCoinsNotification() {
+    const network = 'heco';
+    const notification = {
+      app: App.WALLET,
+      key: 'newtokens-' + network,
+      title: 'New tokens test',
+      message: 'There are new tokens. Or maybe not for real...',
+      url: '/wallet/coin-list' + '?network=' + network,
+    };
+    void this.globalNotificationsService.sendNotification(notification);
+  }
 }

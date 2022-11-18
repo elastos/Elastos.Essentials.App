@@ -243,10 +243,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
     // Clean up NFTs that have been sent
     let nfts = tokens.filter((token) => {
-        return (token.type === TokenType.ERC_721) || (token.type === TokenType.ERC_1155);
+      return (token.type === TokenType.ERC_721) || (token.type === TokenType.ERC_1155);
     });
     if (nfts.length > 0) {
-        this.networkWallet.cleanUpNFT(nfts);
+      this.networkWallet.cleanUpNFT(nfts);
     }
 
     // For each ERC token discovered by the wallet SDK, we check its type and handle it.
