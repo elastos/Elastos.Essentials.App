@@ -839,8 +839,8 @@ export class DappBrowserService implements GlobalService {
         }
         else {
             this.sendWeb3IABError(message.data.id, {
-                code: -1,
-                message: "Network not added"
+                code: 4001,
+                message: "User rejected the request."
             });
         }
     }

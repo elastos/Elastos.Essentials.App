@@ -660,8 +660,8 @@ export class GlobalWalletConnectService extends GlobalService {
       connector.rejectRequest({
         id: request.id,
         error: {
-          code: -1,
-          message: "Network not added"
+          code: 4001,
+          message: "User rejected the request."
         }
       });
     }
