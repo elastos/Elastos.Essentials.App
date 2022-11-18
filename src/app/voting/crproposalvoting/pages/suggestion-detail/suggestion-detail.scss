@@ -193,6 +193,7 @@ ion-grid {
         border-radius: 50%;
         position: absolute;
         left: -20px;
+        background-color: var(--essentials-box-color);
         z-index: 10;
     }
 
@@ -203,6 +204,7 @@ ion-grid {
         height: 100%;
         position: absolute;
         left: -20px;
+        background-color: var(--essentials-box-color);
         z-index: 5;
     }
 
