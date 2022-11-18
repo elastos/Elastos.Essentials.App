@@ -44,10 +44,13 @@ export class GlobalStorageService {
 
   /**
    * Deletes all settings for a specific DID.
-   *
-   * NOTE: only works for ionic storage.
    */
   public async deleteDIDSettings(did: string, networkTemplate: string): Promise<void> {
+    await this.deleteDIDSettingsIonic(did, networkTemplate);
+    this.deleteDIDSettingsLocalStorage(did, networkTemplate);
+  }
+
+  private async deleteDIDSettingsIonic(did: string, networkTemplate: string): Promise<void> {
     // Delete all settings that start with the DID string
     let existingKeys: string[] = await this.storage.keys();
     let deletedEntries = 0;
@@ -60,7 +63,25 @@ export class GlobalStorageService {
       }
     }
 
-    Logger.log("StorageService", "Deleted " + deletedEntries + " settings entries for DID " + did);
+    Logger.log("StorageService", "Deleted " + deletedEntries + " ionic settings entries for DID " + did + " for network template " + networkTemplate);
+  }
+
+  private deleteDIDSettingsLocalStorage(did: string, networkTemplate: string) {
+    const networkKey = networkTemplate === 'MainNet' ? '' : ':' + networkTemplate;
+    const fullKey = did + networkKey + "_";
+
+    // Delete backward as we are changing the storage length while deleting
+    let deletedEntries = 0;
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      let key = localStorage.key(i);
+      let item = localStorage.getItem(key);
+      if (item.startsWith(fullKey)) {
+        localStorage.removeItem(key);
+        deletedEntries++;
+      }
+    }
+
+    Logger.log("StorageService", "Deleted " + deletedEntries + " local storage settings entries for DID " + did + " for network template " + networkTemplate);
   }
 
   public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T, location: StorageLocation = "ionic"): Promise<void> {
