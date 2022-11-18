@@ -52,7 +52,8 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
   }
 
   public getOwnerAddress(): string {
-    return this.elaSubWallet.getOwnerAddress()
+    // No ownerAddress for multi-sign wallet.
+    return null;
   }
 
   public getOwnerDepositAddress(): string {
@@ -68,7 +69,8 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
   }
 
   public getCodeofOwnerAddress(): string {
-    return this.elaSubWallet.getCodeofOwnerAddress();
+    // No ownerAddress for multi-sign wallet.
+    return null;
   }
 
   public getOwnerPublicKey(): string {
