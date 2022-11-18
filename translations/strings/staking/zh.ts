@@ -23,7 +23,7 @@ export const zh = {
 
         'enter-amount': '输入数量',
         'available': '有效数量',
-        'available-memo': "备注: 钱包第一个接收地址的余额",
+        'available-memo': "备注: 有效数量为钱包第一个接收地址的余额",
         'advanced-options': '高级选项',
         'send-to': '发送到',
         'reciever-address': '接收地址',

@@ -23,7 +23,7 @@ export const en = {
 
         'enter-amount': 'Enter amount',
         'available': 'Available',
-        'available-memo': "Memo: The balance of the wallet's first receiving address",
+        'available-memo': "Memo: Available is the balance of the first receiving address of the wallet",
         'advanced-options': 'Advanced options',
         'send-to': 'Send to',
         'reciever-address': 'Reciever address',
