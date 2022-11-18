@@ -6,6 +6,7 @@ export type ClientMeta = {
 }
 
 export type WalletConnectSession = {
+    // Default wallet connect information
     connected: boolean;
     accounts: string[];
     chainId: number;
@@ -18,6 +19,11 @@ export type WalletConnectSession = {
     handshakeId: number;
     handshakeTopic: string;
 };
+
+export type WalletConnectSessionExtension = {
+    // Information added by Essentials
+    timestamp?: number; // Date at which the session was created
+}
 
 export type SessionRequestParams = {
     chainId: number | null;

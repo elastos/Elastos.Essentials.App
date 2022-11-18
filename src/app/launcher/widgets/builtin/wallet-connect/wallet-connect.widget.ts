@@ -38,7 +38,7 @@ export class WalletConnectWidget extends WidgetBase implements OnInit, OnDestroy
 
     this.walletConnectSub = this.globalWalletConnectService.walletConnectSessionsStatus.subscribe(connectors => {
       this.zone.run(() => {
-        this.walletConnectConnectors = Array.from(connectors.values()).slice(0, 3); // Keep only 3 items
+        this.walletConnectConnectors = Array.from(connectors.values()).slice(0, 3).map(c => c.wc); // Keep only 3 items
         Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
 
         this.notifyReadyToDisplay();

@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import type WalletConnect from '@walletconnect/client';
+import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
+import { ConnectorWithExtension, GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DeveloperService } from '../../../services/developer.service';
 import { SettingsService } from '../../../services/settings.service';
@@ -15,7 +15,7 @@ import { SettingsService } from '../../../services/settings.service';
 export class WalletConnectSessionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public activeSessions: WalletConnect[] = [];
+  public activeConnectors: ConnectorWithExtension[] = [];
 
   constructor(
     public settings: SettingsService,
@@ -28,41 +28,49 @@ export class WalletConnectSessionsPage implements OnInit {
   ngOnInit() {
     this.walletConnect.walletConnectSessionsStatus.subscribe(status => {
       // Refresh sessions list after disconnection for example
-      this.activeSessions = this.walletConnect.getActiveSessions();
+      this.activeConnectors = this.walletConnect.getActiveConnectors();
     });
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-sessions'));
 
-    this.activeSessions = this.walletConnect.getActiveSessions();
+    this.activeConnectors = this.walletConnect.getActiveConnectors();
+    console.log("walletconnect sessions", this.activeConnectors)
   }
 
   ionViewWillLeave() {
   }
 
-  getSessionName(session: WalletConnect): string {
-    if (session.peerMeta)
-      return session.peerMeta.name;
+  getSessionName(connector: ConnectorWithExtension): string {
+    if (connector.wc.peerMeta)
+      return connector.wc.peerMeta.name;
     else
       return "Unknown session";
   }
 
-  getSessionID(session: WalletConnect): string {
+  getSessionID(connector: ConnectorWithExtension): string {
     //return session.key.substr(0, 25)+"...";
-    return session.key;
+    return connector.wc.key;
   }
 
-  getSessionLogo(session: WalletConnect): string {
-    if (!session || !session.peerMeta || !session.peerMeta.icons || session.peerMeta.icons.length == 0)
+  getSessionLogo(connector: ConnectorWithExtension): string {
+    if (!connector || !connector.wc || !connector.wc.peerMeta || !connector.wc.peerMeta.icons || connector.wc.peerMeta.icons.length == 0)
       return 'assets/settings/icon/walletconnect.svg';
 
-    return session.peerMeta.icons[0];
+    return connector.wc.peerMeta.icons[0];
   }
 
-  async killSession(session: WalletConnect) {
+  getSessionCreationDate(connector: ConnectorWithExtension): string {
+    if (!connector.sessionExtension.timestamp)
+      return null;
+
+    return moment.unix(connector.sessionExtension.timestamp).startOf('minutes').fromNow();
+  }
+
+  async killSession(connector: ConnectorWithExtension) {
     try {
-      await this.walletConnect.killSession(session);
+      await this.walletConnect.killSession(connector.wc);
     }
     catch (e) {
       console.warn("Kill session exception: ", e)

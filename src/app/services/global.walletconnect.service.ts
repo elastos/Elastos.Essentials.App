@@ -1,13 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
 import type WalletConnect from "@walletconnect/client";
 import isUtf8 from "isutf8";
+import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { lazyWalletConnectImport } from '../helpers/import.helper';
 import { runDelayed } from '../helpers/sleep.helper';
 import { Logger } from '../logger';
 import { IdentityEntry } from "../model/didsessions/identityentry";
 import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
-import { JsonRpcRequest, SessionRequestParams, WalletConnectSession } from '../model/walletconnect/types';
+import { JsonRpcRequest, SessionRequestParams, WalletConnectSession, WalletConnectSessionExtension } from '../model/walletconnect/types';
 import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from '../wallet/model/networks/evms/evm.network';
 import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/intentresult';
@@ -37,11 +38,16 @@ export enum WalletConnectSessionRequestSource {
   EXTERNAL_INTENT // Probably a request from the connectivity SDK (mobile app, web app) that opens Essentials directly
 }
 
+export type ConnectorWithExtension = {
+  wc: WalletConnect;
+  sessionExtension: WalletConnectSessionExtension;
+}
+
 @Injectable({
   providedIn: 'root'
 })
 export class GlobalWalletConnectService extends GlobalService {
-  private connectors: Map<string, WalletConnect> = new Map(); // List of initialized WalletConnect instances.
+  private connectors: Map<string, ConnectorWithExtension> = new Map(); // List of initialized WalletConnect instances.
   private initiatingConnector: WalletConnect = null;
 
   private activeWalletSubscription: Subscription = null;
@@ -49,7 +55,7 @@ export class GlobalWalletConnectService extends GlobalService {
   private onGoingRequestSource: WalletConnectSessionRequestSource = null;
 
   // Subject updated with the whole list of active sessions every time there is a change.
-  public walletConnectSessionsStatus = new BehaviorSubject<Map<string, WalletConnect>>(new Map());
+  public walletConnectSessionsStatus = new BehaviorSubject<Map<string, ConnectorWithExtension>>(new Map());
 
   constructor(
     private zone: NgZone,
@@ -134,17 +140,17 @@ export class GlobalWalletConnectService extends GlobalService {
 
     // NOTE: called when the network changes as well, as a new "network wallet" is created.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async activeWallet => {
+    this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(activeWallet => {
       if (activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
         Logger.log("walletconnect", "Updating active connectors with new active wallet information", activeWallet);
         for (let c of Array.from(this.connectors.values())) {
-          if (c.connected) {
+          if (c.wc.connected) {
             try {
               let chainId = activeWallet.network instanceof EVMNetwork ? activeWallet.network.getMainChainID() : 0;
               let account = activeWallet.network instanceof EVMNetwork ? this.getAccountFromNetworkWallet(activeWallet) : null;
               Logger.log("walletconnect", `Updating connected session`, c, chainId, account);
 
-              c.updateSession({
+              c.wc.updateSession({
                 chainId: chainId,
                 accounts: account ? [account] : []
               });
@@ -281,12 +287,13 @@ export class GlobalWalletConnectService extends GlobalService {
 
     Logger.log("walletconnect", "CONNECTOR", connector);
 
-    this.prepareConnectorForEvents(connector);
+    await this.prepareConnectorForEvents(connector);
     //this.startConnectionFailureWatchdog(uri, connector);
   }
 
-  private prepareConnectorForEvents(connector: WalletConnect) {
-    this.connectors.set(connector.key, connector);
+  private async prepareConnectorForEvents(connector: WalletConnect) {
+    let sessionExtension = await this.loadSessionExtension(connector.key);
+    this.connectors.set(connector.key, { wc: connector, sessionExtension });
     this.walletConnectSessionsStatus.next(this.connectors);
 
     // TMP DEBUG - TRY TO UNDERSTAND IF WS ARE DISCONNECTED AFTER SOME TIME IN BACKGROUND
@@ -823,12 +830,18 @@ export class GlobalWalletConnectService extends GlobalService {
     let connector = this.findConnectorFromKey(connectorKey);
 
     // Approve Session
-    await connector.approveSession({
+    await connector.wc.approveSession({
       accounts: ethAccountAddresses,
       chainId: chainId
     });
 
-    await this.saveSession(connector.session);
+    // Append current time as session creation time.
+    if (!connector.sessionExtension.timestamp) {
+      connector.sessionExtension.timestamp = moment().unix();
+      await this.saveSessionExtension(connector.wc.key, connector.sessionExtension);
+    }
+
+    await this.saveSession(connector.wc.session);
   }
 
   public async rejectSession(connectorKey: string, reason: string) {
@@ -839,7 +852,10 @@ export class GlobalWalletConnectService extends GlobalService {
       // We are rejecting a from a "session request" screen. The connector is already in our
       // connectors list and it's not a "initiatingconnector" any more.
       // We delete this connector from our list.
-      connector = this.findConnectorFromKey(connectorKey);
+      let connectorWithInfo = this.findConnectorFromKey(connectorKey);
+      if (connectorWithInfo)
+        connector = connectorWithInfo.wc;
+
       Logger.log("walletconnect", "Rejecting session with connector key", connectorKey, connector);
     }
     else {
@@ -882,7 +898,7 @@ export class GlobalWalletConnectService extends GlobalService {
     await connector.killSession();
   }
 
-  public getActiveSessions(): WalletConnect[] {
+  public getActiveConnectors(): ConnectorWithExtension[] {
     return Array.from(this.connectors.values());
   }
 
@@ -896,14 +912,14 @@ export class GlobalWalletConnectService extends GlobalService {
       let connector = new WalletConnect({
         session: session
       });
-      this.prepareConnectorForEvents(connector);
+      await this.prepareConnectorForEvents(connector);
     }
     Logger.log("walletconnect", "Restored connectors:", this.connectors);
 
     // We are directly ready to receive requests after that, without any user intervention.
   }
 
-  private findConnectorFromKey(connectorKey: string): WalletConnect {
+  private findConnectorFromKey(connectorKey: string): ConnectorWithExtension {
     return this.connectors.get(connectorKey);
   }
 
@@ -935,6 +951,25 @@ export class GlobalWalletConnectService extends GlobalService {
 
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", sessions);
   }
+
+  private async loadSessionExtension(sessionKey: string): Promise<WalletConnectSessionExtension> {
+    let storageKey = "session_extension_" + sessionKey;
+    let extension = await this.storage.getSetting<WalletConnectSessionExtension>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", storageKey, {});
+    return extension;
+  }
+
+  private async saveSessionExtension(sessionKey: string, extension: WalletConnectSessionExtension) {
+    let storageKey = "session_extension_" + sessionKey;
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", storageKey, extension);
+  }
+
+  /**
+   * From a wallet connect instance, returns the full session model including
+   * essentials additional fields.
+   */
+  /* public getSessionWithExtendedInfo(wcSession: WalletConnect): WalletConnectSession {
+
+  } */
 
   // message: Bytes | string
   private messageToBuffer(message: string | any): Buffer {
