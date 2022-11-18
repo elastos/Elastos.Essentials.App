@@ -68,6 +68,8 @@ export class DPoS2Service {
     public price: Price;
     public block: Block;
 
+    // Empty List - Used to loop dummy items while data is being fetched
+    public emptyList = new Array(20).fill('');
     private initOngoning = false;
 
     // Storage
