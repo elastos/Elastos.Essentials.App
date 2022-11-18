@@ -3,6 +3,7 @@ import { GlobalTranslationService } from "src/app/services/global.translation.se
 import { Config } from "src/app/wallet/config/Config";
 import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo, TransactionStatus } from "../../tx-providers/transaction.types";
 import { WalletUtil } from "../../wallet.util";
+import { MainChainSubWallet } from "./mainchain/subwallets/mainchain.subwallet";
 
 export class ElastosTransactionsHelper {
   public static getMemoString(memo: string) {
@@ -45,7 +46,7 @@ export class ElastosTransactionsHelper {
     return null;
   }
 
-  public static getTransactionInfo(transaction: ElastosTransaction): TransactionInfo {
+  public static getTransactionInfo(transaction: ElastosTransaction, subwallet: MainChainSubWallet): TransactionInfo {
     const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
     const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
     const transactionInfo: TransactionInfo = {
@@ -56,7 +57,7 @@ export class ElastosTransactionsHelper {
       fee: transaction.fee,
       height: transaction.height,
       memo: ElastosTransactionsHelper.getMemoString(transaction.memo),
-      name: ElastosTransactionsHelper.getTransactionName(transaction),
+      name: ElastosTransactionsHelper.getTransactionName(transaction, subwallet),
       payStatusIcon: ElastosTransactionsHelper.getTransactionIconPath(transaction),
       status: transaction.Status,
       statusName: ElastosTransactionsHelper.getTransactionStatusName(transaction.Status),
@@ -95,7 +96,7 @@ export class ElastosTransactionsHelper {
     return statusName;
   }
 
-  public static getTransactionName(transaction: ElastosTransaction): string {
+  public static getTransactionName(transaction: ElastosTransaction, subwallet: MainChainSubWallet): string {
     let transactionName = '';
     // Logger.log("wallet", "getTransactionName std subwallet", transaction);
 
@@ -133,7 +134,11 @@ export class ElastosTransactionsHelper {
             transactionName = "wallet.coin-op-unstake-withdraw";
             break;
           case RawTransactionType.DposV2ClaimRewardRealWithdraw:
-            transactionName = "wallet.coin-op-dpos2-reward-withdraw";
+            if (transaction.address === subwallet.getOwnerAddress()) {
+                transactionName = "wallet.coin-op-dpos2-node-reward-withdraw";
+            } else {
+                transactionName = "wallet.coin-op-dpos2-reward-withdraw";
+            }
             break;
         }
         break;
@@ -178,6 +183,15 @@ export class ElastosTransactionsHelper {
             break;
             case RawTransactionType.UpdateCR:
                 transactionName = "wallet.coin-op-cr-update";
+            break;
+            case RawTransactionType.CrcProposal:
+                transactionName = "wallet.coin-op-proposal";
+            break;
+            case RawTransactionType.CrcProposalReview:
+                transactionName = "wallet.coin-op-proposal-review";
+            break;
+            case RawTransactionType.CrcProposalTracking:
+                transactionName = "wallet.coin-op-proposal-tracking";
             break;
             case RawTransactionType.UnregisterCR:
                 transactionName = "wallet.coin-op-cr-cancel";

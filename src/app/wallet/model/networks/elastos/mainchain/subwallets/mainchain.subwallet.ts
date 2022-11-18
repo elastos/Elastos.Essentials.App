@@ -135,7 +135,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     // To delete?
     protected async getTransactionName(transaction: ElastosTransaction, translate: TranslateService): Promise<string> {
-        return ElastosTransactionsHelper.getTransactionName(transaction);
+        return ElastosTransactionsHelper.getTransactionName(transaction, this);
     }
 
     protected isSingleAddress(): boolean {
@@ -168,7 +168,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async getTransactionInfo(transaction: ElastosTransaction): Promise<TransactionInfo> {
-        let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction);
+        let transactionInfo = ElastosTransactionsHelper.getTransactionInfo(transaction, this);
         transactionInfo.amount = new BigNumber(transaction.value, 10);
         transactionInfo.symbol = '';
         transactionInfo.isCrossChain = false;

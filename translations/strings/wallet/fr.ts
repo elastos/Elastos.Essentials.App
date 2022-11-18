@@ -161,6 +161,8 @@ export const fr = {
         "coin-op-unstake-withdraw": "Unstake withdraw",
         "coin-op-dpos2-claim-reward": "DPoS 2 Claim reward",
         "coin-op-dpos2-reward-withdraw": "DPoS 2 reward withdraw",
+        "coin-op-dpos2-node-claim-reward": "DPoS Node Claim reward",
+        "coin-op-dpos2-node-reward-withdraw": "DPoS Node reward withdraw",
         "coin-dir-from-mainchain": "Depuis ELA mainchain",
         "coin-dir-from-idchain": "Depuis la chaîne Identité",
         "coin-dir-from-ethsc": "Depuis la chaîne ESC",
