@@ -117,11 +117,11 @@ export class WithdrawPage {
             } as any;
 
             if (this.isNodeReward) {
-                payload.Code = this.voteService.sourceSubwallet.getOwnerPublicKey();
+                payload.Code = this.voteService.sourceSubwallet.getCodeofOwnerAddress();
 
                 const digest = this.voteService.sourceSubwallet.getDPoSV2ClaimRewardDigest(payload);
                 const password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
-                payload.Signature = await this.voteService.sourceSubwallet.signDigest( this.address, digest, password);
+                payload.Signature = await this.voteService.sourceSubwallet.signDigestWithOwnerKey(digest, password);
             }
 
             Logger.log(App.STAKING, 'Creating withdraw transaction with payload', payload);

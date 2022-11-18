@@ -78,6 +78,11 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
+  public getCodeofOwnerAddress(): string {
+    // TODO: Do not support.
+    return null;
+  }
+
   public getOwnerPublicKey(): string {
     // TODO: Do not support.
     return null;
@@ -89,6 +94,11 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
   }
 
   public signDigest(address: string, digest: string, passwd: string): Promise<string> {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public signDigestWithOwnerKey(digest: string, passwd: string): Promise<string> {
     // TODO: Do not support.
     return null;
   }

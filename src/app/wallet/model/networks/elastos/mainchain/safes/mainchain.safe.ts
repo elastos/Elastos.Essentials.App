@@ -11,10 +11,12 @@ export interface ElastosMainChainSafe {
   getOwnerDepositAddress(): string;
   getOwnerStakeAddress(): string;
   getCodeofOwnerStakeAddress(): string;
+  getCodeofOwnerAddress(): string;
   getOwnerPublicKey(): string;
   getPublicKeys(start: number, count: number, internal: boolean): string[] | PublickeysInfo;
 
   signDigest(address: string, digest: string, passwd: string): Promise<string>;
+  signDigestWithOwnerKey(digest: string, passwd: string): Promise<string>;
   verifyDigest(publicKey: string, digest: string, signature: string): boolean;
 
   createPaymentTransaction(inputs: UTXOInput[], outputs: Outputs[], fee: string, memo: string): Promise<any>;

@@ -585,8 +585,7 @@ export class CoinTxInfoPage implements OnInit {
         let voteList = [];
 
         for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
-            let prososalHash = Util.reversetxid(voteContentInfo.VotesInfo[i].Candidate)
-            const proposalDetail = await GlobalElastosAPIService.instance.fetchProposalDetails(prososalHash);
+            const proposalDetail = await GlobalElastosAPIService.instance.fetchProposalDetails(voteContentInfo.VotesInfo[i].Candidate);
 
             let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
             let title = "#" + proposalDetail.id + ' ' + proposalDetail.title;

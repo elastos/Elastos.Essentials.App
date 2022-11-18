@@ -67,6 +67,10 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return this.elaSubWallet.getCodeofOwnerStakeAddress();
   }
 
+  public getCodeofOwnerAddress(): string {
+    return this.elaSubWallet.getCodeofOwnerAddress();
+  }
+
   public getOwnerPublicKey(): string {
     return this.elaSubWallet.getOwnerPublicKey();
   }
@@ -76,6 +80,11 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
   }
 
   public signDigest(address: string, digest: string, passwd: string): Promise<string> {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public signDigestWithOwnerKey(digest: string, passwd: string): Promise<string> {
     // TODO: Do not support.
     return null;
   }

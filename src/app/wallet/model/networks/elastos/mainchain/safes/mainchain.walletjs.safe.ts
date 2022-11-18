@@ -455,6 +455,10 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     return (<MainchainSubWallet>this.sdkSubWallet).getCodeofOwnerStakeAddress();
   }
 
+  public getCodeofOwnerAddress(): string {
+    return (<MainchainSubWallet>this.sdkSubWallet).getCodeofOwnerAddress();
+  }
+
   public getOwnerPublicKey(): string {
     return (<MainchainSubWallet>this.sdkSubWallet).getOwnerPublicKey();
   }
@@ -465,6 +469,10 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
 
   public signDigest(address: string, digest: string, passwd: string): Promise<string> {
     return (<MainchainSubWallet>this.sdkSubWallet).signDigest(address, digest, passwd);
+  }
+
+  public signDigestWithOwnerKey(digest: string, passwd: string): Promise<string> {
+    return (<MainchainSubWallet>this.sdkSubWallet).signDigestWithOwnerKey(digest, passwd);
   }
 
   public verifyDigest(publicKey: string, digest: string, signature: string): boolean {
