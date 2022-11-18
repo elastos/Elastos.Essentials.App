@@ -233,4 +233,13 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     walletConnectSupported: true,
     networks: ["kava"]
   },
+  {
+    icon: '/assets/browser/dapps/chainlist.svg',
+    title: 'ChainList',
+    description: "Chainlist is a list of most EVM networks. Easily browse and add custom networks from there",
+    url: 'https://chainlist.org/',
+    useExternalBrowser: false,
+    walletConnectSupported: false,
+    networks: [] // All networks
+  },
 ];
