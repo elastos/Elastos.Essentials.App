@@ -477,13 +477,13 @@ export class VoteService {
         }
         else if (remainingTime > 30) {
             ret = Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours') + " "
-                + Math.floor(remainingTime % 30) + " " + this.translate.instant('voting.minutes');
+                + Math.floor(remainingTime % 30) * 2  + " " + this.translate.instant('voting.minutes');
         }
         else if (remainingTime == 30) {
             ret = "1 " + this.translate.instant('voting.hours');
         }
         else {
-            ret = remainingTime + " " + this.translate.instant('voting.minutes');
+            ret = remainingTime * 2 + " " + this.translate.instant('voting.minutes');
         }
         return ret;
     }
