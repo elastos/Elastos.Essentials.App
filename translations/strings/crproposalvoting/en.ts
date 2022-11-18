@@ -138,8 +138,8 @@ export const en = {
         'vote-number': 'Enter Number of Votes',
         'max-votes-pre': 'Max ',
         'max-votes-suf': ' Votes',
-        'greater-than-max-votes': 'Greater than avalible votes.',
-        'less-than-equal-zero-votes': 'Less than or equal to 0 votes.',
+        'greater-than-max-votes': 'The amount entered can not greater than avalible votes.',
+        'less-than-equal-zero-votes': 'The amount entered needs to be greater than 0.',
         'voteforproposal-successfully': 'Vote successfully, please wait for transaction confirmation.',
         'voteforproposal-failed': 'Failed to vote, please vote again.',
 

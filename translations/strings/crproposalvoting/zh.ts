@@ -138,8 +138,8 @@ export const zh = {
         'vote-number': '请输入票数',
         'max-votes-pre': '最多',
         'max-votes-suf': '票',
-        'greater-than-max-votes': '超过有效的票数。',
-        'less-than-equal-zero-votes': '小于或等于0票。',
+        'greater-than-max-votes': '输入数量不能超过有效的票数。',
+        'less-than-equal-zero-votes': '输入数量需要大于0。',
         'voteforproposal-successfully': '投票成功，请等待交易确认。',
         'voteforproposal-failed': '投票失败，请重新投票。',
 
