@@ -24,10 +24,12 @@ export const zh = {
         'enter-amount': '输入数量',
         'available': '有效数量',
         'available-memo': "备注: 钱包第一个接收地址的余额",
+        'advanced-options': '高级选项',
         'send-to': '发送到',
         'reciever-address': '接收地址',
         'withdraw-node-reward': '领取节点收益',
         'no-reward': '暂无收益',
+        'no-stake': '暂无质押',
 
         'unvote-message': '确定取消DPoS 1.0、CR选举、CR委员弹劾、CR提案反对票这四种投票吗?',
     }
