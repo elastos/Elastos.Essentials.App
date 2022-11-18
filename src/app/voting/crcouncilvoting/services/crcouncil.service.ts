@@ -449,9 +449,9 @@ export class CRCouncilService {
     }
 
     async getSignature(digest: string): Promise<string> {
-        let reDigest = Util.reverseHexToBE(digest)
-        let ret = await this.globalIntentService.sendIntent("https://did.web3essentials.io/signdigest", { data: reDigest });
-        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", reDigest, ret);
+        // let reDigest = Util.reverseHexToBE(digest)
+        let ret = await this.globalIntentService.sendIntent("https://did.web3essentials.io/signdigest", { data: digest });
+        Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", digest, ret);
         if (ret && ret.result && ret.result.signature) {
             return ret.result.signature;
         }

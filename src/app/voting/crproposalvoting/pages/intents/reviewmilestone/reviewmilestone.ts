@@ -4,7 +4,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -140,7 +139,7 @@ export class ReviewMilestonePage {
 
             //Get digest
             var digest = await this.voteService.sourceSubwallet.proposalTrackingSecretaryDigest(payload);
-            digest = Util.reverseHexToBE(digest);
+            // digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone digest.", digest);
 
             //Get did sign digest

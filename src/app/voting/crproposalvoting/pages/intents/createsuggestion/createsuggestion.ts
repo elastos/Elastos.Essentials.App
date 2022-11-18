@@ -194,7 +194,8 @@ export class CreateSuggestionPage {
             default:
                 throw new Error("Don't support this type: " + this.proposaltype);
         }
-        return Util.reverseHexToBE(digest);
+        return digest;
+        // return Util.reverseHexToBE(digest);
     }
 
     private async exitIntentWithSuccess() {

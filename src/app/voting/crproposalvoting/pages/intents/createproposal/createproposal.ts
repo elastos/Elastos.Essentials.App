@@ -138,7 +138,8 @@ export class CreateProposalPage {
             default:
                 throw new Error("Don't support this type: " + this.suggestionDetail.type);
         }
-        return Util.reverseHexToBE(digest);
+        return digest;
+        // return Util.reverseHexToBE(digest);
     }
 
     private async creatTransactionFunction(payload: CRCProposalInfo, memo: string): Promise<EncodedTx> {

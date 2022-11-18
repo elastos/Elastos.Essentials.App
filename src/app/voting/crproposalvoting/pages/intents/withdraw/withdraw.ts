@@ -94,7 +94,7 @@ export class WithdrawPage {
 
             //Get digest
             var digest = await this.voteService.sourceSubwallet.proposalWithdrawDigest(payload);
-            digest = Util.reverseHexToBE(digest);
+            // digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got proposal digest.", digest);
 
             //Get did sign digest

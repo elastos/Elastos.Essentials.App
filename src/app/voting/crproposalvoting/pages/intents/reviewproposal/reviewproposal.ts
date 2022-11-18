@@ -128,7 +128,7 @@ export class ReviewProposalPage {
 
             // Get digest
             var digest = await this.voteService.sourceSubwallet.proposalReviewDigest(payload);
-            digest = Util.reverseHexToBE(digest);
+            // digest = Util.reverseHexToBE(digest);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal digest.", digest);
 
             //Get did sign digest
