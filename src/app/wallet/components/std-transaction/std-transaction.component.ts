@@ -17,6 +17,7 @@ export class StdTransactionComponent implements OnInit {
   public publishing = false;
   public publicationSuccessful = false;
   public publicationFailed = false;
+  public errorMessage = '';
 
   private outgoingTxStateSub: Subscription = null;
 
@@ -38,6 +39,7 @@ export class StdTransactionComponent implements OnInit {
       if (txState.state === OutgoingTransactionState.ERRORED) {
         this.publicationFailed = true;
         this.publishing = false;
+        this.errorMessage = txState.message;
       }
       else if (txState.state === OutgoingTransactionState.PUBLISHED) {
         // Show the success animation and exit the component

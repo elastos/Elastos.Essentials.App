@@ -13,6 +13,7 @@ export enum OutgoingTransactionState {
 
 export type OutgoingTransactionStatus = {
   state: OutgoingTransactionState;
+  message?: string;
 }
 
 const idleStatus = (): OutgoingTransactionStatus => {
@@ -70,10 +71,11 @@ export class TransactionService {
     void modal.present();
   }
 
-  public setOnGoingPublishedTransactionState(state: OutgoingTransactionState) {
+  public setOnGoingPublishedTransactionState(state: OutgoingTransactionState, message: string = null) {
     Logger.log("wallet", "New outgoing transaction state:", state);
     this.onGoingPublicationState.next({
-      state: state
+      state: state,
+      message: message
     });
   }
 }

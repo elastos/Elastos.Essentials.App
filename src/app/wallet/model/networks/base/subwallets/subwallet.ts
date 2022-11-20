@@ -2,8 +2,8 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { Native } from 'src/app/wallet/services/native.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { OutgoingTransactionState, TransactionService } from 'src/app/wallet/services/transaction.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { Transfer } from '../../../../services/cointransfer.service';
@@ -395,11 +395,11 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
    * (Optionally) Internally called by implementations of publishTransaction() to hide a generic publication
    * dialog.
    */
-  protected markGenericOutgoingTransactionEnd(txid: string) {
+  protected markGenericOutgoingTransactionEnd(txid: string, message: string = '') {
     if (txid)
       TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.PUBLISHED);
     else
-      TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.ERRORED);
+      TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.ERRORED, message);
   }
 
   /**
@@ -441,8 +441,6 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   public async sendSignedTransaction(signedTransaction: string, transfer: Transfer, navigateHomeAfterCompletion = true, visualFeedback = true): Promise<RawTransactionPublishResult> {
     try {
-      //await Native.instance.showLoading(WalletService.instance.translate.instant('common.please-wait'));
-
       Logger.log("wallet", "Publishing transaction.", signedTransaction);
 
       await this.markGenericOutgoingTransactionStart();
@@ -453,8 +451,6 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       await this.markGenericOutgoingTransactionEnd(txid);
 
       Logger.log("wallet", "publishTransaction txid:", txid);
-
-      //await Native.instance.hideLoading();
 
       if (navigateHomeAfterCompletion) {
         await Native.instance.setRootRouter('/wallet/wallet-home');
@@ -474,28 +470,31 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
       };
     }
     catch (err) {
-      await this.markGenericOutgoingTransactionEnd(null);
-      //await Native.instance.hideLoading();
       Logger.error("wallet", "Publish error:", err);
 
       // ETHTransactionManager handle this error if the subwallet is StandardEVMSubWallet.
       // Maybe need to speed up.
       //if (!(this instanceof MainCoinEVMSubWallet)) { // BPI: Removed because of circular dependency - should move to safe, maybe. To be checked
       let message = ''
-      if (err.message && err.message.includes('slot TxInputsReferKeys verify tx error')) { // For ELA main chain.
-        message = 'wallet.transaction-pending';
-      } else {
-        message = err.message ? err.message : '';
+      if (err.message) {
+        if (err.message.includes('slot TxInputsReferKeys verify tx error')) { // For ELA main chain.
+            message = GlobalTranslationService.instance.translateInstant('wallet.transaction-pending');
+        } else if (err.message.startsWith('transaction validate error')) {
+            let errorInfo = err.message.substring(26)
+            message = GlobalTranslationService.instance.translateInstant('wallet.transaction-invalid') + errorInfo;
+        } else {
+            message = err.message;
+        }
       }
-      await PopupProvider.instance.ionicAlert('wallet.transaction-fail', message);
-      //}
+
+      await this.markGenericOutgoingTransactionEnd(null, message);
 
       return {
         published: false,
         txid: null,
         status: 'error',
         code: err.code,
-        message: err.message,
+        message: message,
       };
     }
   }
