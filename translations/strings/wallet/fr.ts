@@ -40,6 +40,7 @@ export const fr = {
         "sync-completed": "Synchr. terminée",
         "not-a-valid-address": "Adresse invalide",
         "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
+        "transaction-invalid": "Invalid transaction, please try again",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
         "privatekey": "Clé privée EVM",
 
@@ -150,6 +151,7 @@ export const fr = {
         "coin-op-cr-cancel": "CRC Cancellation",
         "coin-op-cr-update": "CRC Update",
         "coin-op-cr-return": "CRC Deposit Retrieve",
+        "coin-op-cr-claim-node": "Demander le noeud DPoS",
         "coin-op-proposal": "New Proposal",
         "coin-op-proposal-review": "Review Proposal",
         "coin-op-proposal-tracking": "Proposal Tracking",

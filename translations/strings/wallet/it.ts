@@ -40,6 +40,7 @@ export const it = {
         "sync-completed": "Sincronizzazione completata",
         "not-a-valid-address": "Non è un indirizzo valido",
         "transaction-pending": "C'è già una transazione in corso. Attendi la conferma della transazione.",
+        "transaction-invalid": "Invalid transaction, please try again",
         "share-erc20-token": "Dai un'occhiata a questo token ERC20",
         "privatekey": "Chiave Privata EVM",
 
@@ -150,6 +151,7 @@ export const it = {
         "coin-op-cr-cancel": "Cancellazione CRC",
         "coin-op-cr-update": "Aggiornamento CRC",
         "coin-op-cr-return": "CRC Deposit Retrieve",
+        "coin-op-cr-claim-node": "Richiedi Nodo DPoS",
         "coin-op-proposal": "Nuova proposta",
         "coin-op-proposal-review": "Revisione della proposta",
         "coin-op-proposal-tracking": "Monitoraggio della proposta",

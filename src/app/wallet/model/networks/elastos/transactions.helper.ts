@@ -181,6 +181,9 @@ export class ElastosTransactionsHelper {
             case RawTransactionType.CancelProducer:
                 transactionName = "wallet.coin-op-producer-cancel";
             break;
+            case RawTransactionType.UnregisterCR:
+                transactionName = "wallet.coin-op-cr-cancel";
+            break;
             case RawTransactionType.UpdateCR:
                 transactionName = "wallet.coin-op-cr-update";
             break;
@@ -193,8 +196,11 @@ export class ElastosTransactionsHelper {
             case RawTransactionType.CrcProposalTracking:
                 transactionName = "wallet.coin-op-proposal-tracking";
             break;
-            case RawTransactionType.UnregisterCR:
-                transactionName = "wallet.coin-op-cr-cancel";
+            case RawTransactionType.CrCouncilMemberClaimNode:
+                transactionName = "wallet.coin-op-cr-claim-node";
+            break;
+            case RawTransactionType.CrcProposalWithdraw:
+                transactionName = "wallet.coin-op-proposal-withdraw";
             break;
             case RawTransactionType.Voting:
                 // TODO: Get the vote type: DPoSV2, CRProposal, CRImpeachment, CRCouncil
@@ -207,7 +213,7 @@ export class ElastosTransactionsHelper {
                 transactionName = "wallet.coin-op-dpos2-claim-reward";
             break;
             default:
-              transactionName = "wallet.coin-op-transfered-token";
+                transactionName = "wallet.coin-op-transfered-token";
             break;
           }
         }
@@ -242,6 +248,12 @@ export class ElastosTransactionsHelper {
       voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-impeachment')
       voteTypeCount++;
     }
+
+    if ((votecategory & 16) == 16) {
+        if (voteTypeCount) voteName += " + ";
+        voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos2-voting')
+        voteTypeCount++;
+      }
 
     if (voteTypeCount > 2) {
       voteName = "wallet.coin-op-vote";

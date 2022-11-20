@@ -40,6 +40,7 @@ export const zh = {
         "sync-completed": "已完成同步",
         "not-a-valid-address": "地址无效",
         "transaction-pending": "前一个交易正在确认中，请等待此交易确认后再执行",
+        "transaction-invalid": "交易无效，请重试",
         "share-erc20-token": "查看这个ERC20币种",
         "privatekey": "EVM 私钥",
 
@@ -150,6 +151,7 @@ export const zh = {
         "coin-op-cr-cancel": "取消CR委员",
         "coin-op-cr-update": "CR委员更新",
         "coin-op-cr-return": "提取CR委员质押金",
+        "coin-op-cr-claim-node": "绑定DPoS节点",
         "coin-op-proposal": "发起提案",
         "coin-op-proposal-review": "评审提案",
         "coin-op-proposal-tracking": "提案反馈",
