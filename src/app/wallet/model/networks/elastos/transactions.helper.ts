@@ -253,9 +253,15 @@ export class ElastosTransactionsHelper {
         if (voteTypeCount) voteName += " + ";
         voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos2-voting')
         voteTypeCount++;
-      }
+    }
 
-    if (voteTypeCount > 2) {
+    if ((votecategory & 128) == 128) {
+        if (voteTypeCount) voteName += " + ";
+        voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-voting-cancel')
+        voteTypeCount++;
+    }
+
+    if ((voteTypeCount > 2) || (voteTypeCount == 0)) {
       voteName = "wallet.coin-op-vote";
     }
 

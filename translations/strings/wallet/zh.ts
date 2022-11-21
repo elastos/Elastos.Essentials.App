@@ -165,6 +165,7 @@ export const zh = {
         "coin-op-dpos2-reward-withdraw": "DPoS 2 奖励提现",
         "coin-op-dpos2-node-claim-reward": "领取DPoS节点奖励",
         "coin-op-dpos2-node-reward-withdraw": "DPoS节点奖励提现",
+        "coin-op-voting-cancel": "取消投票",
         "coin-dir-from-mainchain": "ELA 主链充值",
         "coin-dir-from-idchain": "EID 侧链提现",
         "coin-dir-from-ethsc": "ESC 侧链提现",
