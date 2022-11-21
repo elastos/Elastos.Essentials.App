@@ -24,5 +24,9 @@
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-item>
         </div>
+        <div *ngIf="news.length === 0" class="empty-container">
+            <h1>{{ 'launcher.no-empty' | translate }}</h1>
+            <p>{{ 'launcher.no-news' | translate }}</p>
+        </div>
     </ion-grid>
 </ion-content>
