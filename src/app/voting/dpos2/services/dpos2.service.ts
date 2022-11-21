@@ -233,6 +233,7 @@ export class DPoS2Service {
         this.activeNodes = [];
         this.dposList = [];
         this.voteStakeExpired30 = null;
+        this.voteStakeAboutExpire = null;
         this.myNodeStakeExpired30 = null;
         this.myNodeStakeAboutExpire = null;
         if (!this.lastVotes) {
