@@ -108,7 +108,7 @@ export const it = {
         'stake': 'Stake',
         'stake-until': 'Stake until',
         'expired-in': 'Expired in {{ time }}',
-        'about-to-expire': 'Aout to expire',
+        'about-to-expire': 'About to expire',
         'my-votes': 'My votes',
         'votes': 'Votes',
         'candidate': 'Candidate',
@@ -116,7 +116,7 @@ export const it = {
         'node-exprie-message': 'Node is about to expire in {{ time }}. Please click to update the node.',
         'node-about-exprie': 'Node is about to expire. Please click to update the node.',
         'vote-exprie-message': 'Your votes for DPoS 2.0 are about to expire in {{ time }}. Please click to update your votes.',
-        'vote-about-exprie': 'Your votes for DPoS 2.0 are about to. Please click to update your votes.',
+        'vote-about-exprie': 'Your votes for DPoS 2.0 are about to expire. Please click to update your votes.',
         'dpos1-update-warning': 'Do you want to upgrade to a DPoS 2.0 node? A minor transaction fee is paid for the DPoS node upgrade.',
 
         'dpos2-node-info': 'DPoS 2.0 Node Info',
