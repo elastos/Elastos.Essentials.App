@@ -130,10 +130,12 @@ export class DPosUnRegistrationPage implements OnInit {
             // 6 blocks.
             case 'Active':
                 this.titleBar.setTitle(this.translate.instant('dposregistration.dpos-node-info'));
-                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT }); // Replace ela logo with close icon
-                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                    void this.goToUpdate();
-                });
+                if (!this.dposInfo.identity || this.dposInfo.identity == "DPoSV1") {
+                    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.EDIT }); // Replace ela logo with close icon
+                    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                        void this.goToUpdate();
+                    });
+                }
                 break;
 
             // Inactive indicates the producer has been inactivated for a period which shall

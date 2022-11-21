@@ -34,6 +34,8 @@ export type DPoSRegistrationInfo = {
     url?: string;
     votes?: string;
     txConfirm?: boolean; // For after register and update info, the transaction don't confirm
+
+    identity?: string;
 }
 
 @Injectable({
