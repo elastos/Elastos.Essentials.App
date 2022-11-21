@@ -22,7 +22,8 @@ export type DPoS2Node = {
     stakeDays: number;
     stakeuntil: number;
     stakeuntilDate: string;
-    stakeuntilExpired: string;
+    stakeuntilExpiredIn: string;
+    stakeuntilAboutExpire: string;
     userVotes: number;
     userStakeDays: number;
 }

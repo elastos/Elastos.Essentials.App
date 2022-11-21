@@ -33,8 +33,11 @@
                                 <p  *ngIf="node.stakeuntilDate">
                                     {{ 'dposvoting.stake-until' | translate }}: {{node.stakeuntilDate}}
                                 </p>
-                                <p  *ngIf="node.stakeuntilExpired" class="expired-in">
-                                    {{ 'dposvoting.expired-in' | translate : {time: node.stakeuntilExpired} }}
+                                <p  *ngIf="node.stakeuntilExpiredIn" class="expired-in">
+                                    {{ 'dposvoting.expired-in' | translate : {time: node.stakeuntilExpiredIn} }}
+                                </p>
+                                <p  *ngIf="node.stakeuntilAboutExpire" class="expired-in">
+                                    {{ node.stakeuntilAboutExpire }}
                                 </p>
                             </ion-col>
                             <ion-col size="2" (click)="showUpdateNode(i, node)">

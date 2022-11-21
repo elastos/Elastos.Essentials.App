@@ -1,10 +1,10 @@
 import { Injectable, NgZone } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
-import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -55,8 +55,10 @@ export class DPoS2Service {
     public totalVotes = 0;
     public dposList: DPoS2Node[] = [];
 
-    public stakeExpired30: string = null;
-    public myStakeExpired30: string = null;
+    public voteStakeExpired30: string = null;
+    public voteStakeAboutExpire: string = null;
+    public myNodeStakeExpired30: string = null;
+    public myNodeStakeAboutExpire: string = null;
 
     public updateInfo: any;
 
@@ -88,7 +90,7 @@ export class DPoS2Service {
         public stakeService: StakeService,
         public uxService: UXService,
         private storage: GlobalStorageService,
-        private globalIntentService: GlobalIntentService,
+        public translate: TranslateService,
         private globalJsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService,
         public voteService: VoteService,
@@ -230,8 +232,9 @@ export class DPoS2Service {
 
         this.activeNodes = [];
         this.dposList = [];
-        this.stakeExpired30 = null;
-        this.myStakeExpired30 = null;
+        this.voteStakeExpired30 = null;
+        this.myNodeStakeExpired30 = null;
+        this.myNodeStakeAboutExpire = null;
         if (!this.lastVotes) {
             this.lastVotes = [];
         }
@@ -257,20 +260,27 @@ export class DPoS2Service {
                     node.index += 1;
 
                     if (node.state === 'Active' || (node.state === 'Inactive')) {
-
                         //Check stake Until
-                        var until = node.stakeuntil - currentHeight;
+                        let until = node.stakeuntil - currentHeight;
                         node.stakeDays = Math.ceil(until / 720);
                         if (until > 720 * 7) { //more than 7 days
                             var stakeTimestamp = until * 120 + currentBlockTimestamp
                             node.stakeuntilDate = this.uxService.formatDate(stakeTimestamp);
                         }
+                        else if (until <= 15) {
+                            node.stakeuntilAboutExpire = this.translate.instant('dposvoting.about-to-expire');
+                        }
                         else {
-                            node.stakeuntilExpired = await this.voteService.getRemainingTimeString(until);
+                            node.stakeuntilExpiredIn = await this.voteService.getRemainingTimeString(until);
                         }
 
                         if ((until < 720 * 30) && (node == this.dposInfo)) { //less than 30 days
-                            this.myStakeExpired30 = await this.voteService.getRemainingTimeString(until);
+                            if (until <= 15) {
+                                this.myNodeStakeAboutExpire = this.translate.instant('dposvoting.node-about-exprie');
+                            }
+                            else {
+                                this.myNodeStakeExpired30 = await this.voteService.getRemainingTimeString(until);
+                            }
                         }
 
                         // //get votes precentage
@@ -376,8 +386,11 @@ export class DPoS2Service {
                             var stakeTimestamp = locktime * 120 + currentBlockTimestamp
                             item.stakeuntilDate = this.uxService.formatDate(stakeTimestamp);
                         }
+                        else if (locktime <= 15) {
+                            item.stakeuntilAboutExpire = this.translate.instant('dposvoting.about-to-expire');
+                        }
                         else {
-                            item.stakeuntilExpired = await this.voteService.getRemainingTimeString(locktime);
+                            item.stakeuntilExpiredIn = await this.voteService.getRemainingTimeString(locktime);
                         }
 
                         if (locktime < expired30) { //less than 30 days
@@ -390,7 +403,12 @@ export class DPoS2Service {
             }
 
             if (expired30 < 720 * 30) {
-                this.stakeExpired30 = await this.voteService.getRemainingTimeString(expired30);
+                if (expired30 <= 15) {
+                    this.voteStakeAboutExpire = this.translate.instant('dposvoting.vote-about-exprie');
+                }
+                else {
+                    this.voteStakeExpired30 = await this.voteService.getRemainingTimeString(expired30);
+                }
             }
         }
 

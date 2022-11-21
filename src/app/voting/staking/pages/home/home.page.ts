@@ -120,7 +120,7 @@ export class StakingHomePage implements OnInit {
                 votes: this.uxService.toThousands(this.stakeService.votesRight.votes[VoteType.DPoSV2]),
                 ratio: this.uxService.getPercentage(this.stakeService.votesRight.votes[VoteType.DPoSV2], this.stakeService.votesRight.totalVotesRight),
                 stakeuntilDate: this.stakeService.votesRight.dpos2LockTimeDate,
-                stakeuntilExpired: this.stakeService.votesRight.dpos2LockTimeExpired,
+                stakeuntilExpiredIn: this.stakeService.votesRight.dpos2LockTimeExpired,
             });
             for (let i = 0; i < 4; i++) {
                 var item = {

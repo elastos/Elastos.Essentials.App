@@ -175,10 +175,6 @@ export class ListPage implements OnInit {
         });
     }
 
-    getMyStakeExpired(): string {
-        return this.translate.instant('dposvoting.node-exprie-message', { time: this.dpos2Service.myStakeExpired30 });
-    }
-
     goTo(url: string) {
         void this.globalNav.navigateTo(App.DPOS2, url);
     }
