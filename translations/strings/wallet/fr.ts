@@ -40,7 +40,7 @@ export const fr = {
         "sync-completed": "Synchr. terminée",
         "not-a-valid-address": "Adresse invalide",
         "transaction-pending": "Une transaction est déjà en cours. Veuillez attendre la confirmation de la première transaction.",
-        "transaction-invalid": "Invalid transaction, please try again",
+        "transaction-invalid": "Transaction invalide, veuillez réessayer",
         "share-erc20-token": "Adresse de jeton ERC20 partagée",
         "privatekey": "Clé privée EVM",
 
