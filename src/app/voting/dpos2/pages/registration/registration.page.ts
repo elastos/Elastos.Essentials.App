@@ -43,8 +43,9 @@ export class DPoS2RegistrationPage implements OnInit {
     public available = 0;
 
     transFunction: any;
-    title = '';
     info = '';
+    header = '';
+    buttonLabel = '';
 
     needConfirm = false;
     onlyEditStakeUntil = false;
@@ -81,8 +82,19 @@ export class DPoS2RegistrationPage implements OnInit {
             case 'Unregistered':
                 this.originInfo = null;
                 this.dposInfo.stakeDays = 300;
-                this.titleBar.setTitle(this.translate.instant('dposvoting.registration'));
+
                 this.onlyEditStakeUntil = this.dposInfo.identity == "DPoSV1";
+                if (this.dposInfo.identity == "DPoSV1") {
+                    this.titleBar.setTitle(this.translate.instant('dposvoting.upgrade-to-2.0'));
+                    this.header = this.translate.instant('dposvoting.upgrade-header');
+                    this.buttonLabel = this.translate.instant('dposvoting.upgrade');
+                }
+                else {
+                    this.titleBar.setTitle(this.translate.instant('dposvoting.registration'));
+                    this.header = this.translate.instant('dposvoting.register-header');
+                    this.buttonLabel = this.translate.instant('dposvoting.register');
+                }
+
                 Logger.log(App.DPOS2, 'Register node: ', this.dposInfo);
                 break;
             // Active indicates the producer is registered and confirmed by more than
@@ -91,6 +103,8 @@ export class DPoS2RegistrationPage implements OnInit {
                 this.originInfo = Util.clone(this.dposInfo);
                 this.onlyEditStakeUntil = this.dpos2Service.onlyUpdateStakeUntil;
                 this.titleBar.setTitle(this.translate.instant('dposvoting.dpos-node-info'));
+                this.header = this.translate.instant('dposvoting.update-header');
+                this.buttonLabel =  this.translate.instant('dposvoting.update');
                 Logger.log(App.DPOS2, 'Update node: ', this.dposInfo);
                 break;
         }

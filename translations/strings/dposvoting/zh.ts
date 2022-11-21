@@ -126,6 +126,9 @@ export const zh = {
         'illegal-message': '节点状态异常，请补充质押金。',
         'height': '高度',
         'about': '大约',
+        'upgrade': '升级',
+        'upgrade-to-2.0': '升级为DPoS 2.0',
+        'upgrade-header': '升级DPoS节点',
 
         'dpos2-voting': 'DPoS 2.0 节点投票',
         'stake-more': '质押更多',

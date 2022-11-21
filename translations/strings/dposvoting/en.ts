@@ -126,6 +126,9 @@ export const en = {
         'illegal-message': 'The node is illegal, please add the deposit.',
         'height': 'Height',
         'about': 'About',
+        'upgrade': 'Upgrade',
+        'upgrade-to-2.0': 'Upgrade to DPoS 2.0',
+        'upgrade-header': 'Upgrade your DPoS Node',
 
         'dpos2-voting': 'DPoS 2.0 Node Voting',
         'stake-more': 'Stake more',

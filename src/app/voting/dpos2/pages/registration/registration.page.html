@@ -4,8 +4,7 @@
     </div>
 
     <div class="align-center title">
-        <h3 *ngIf="dposInfo.state == 'Unregistered'">{{ 'dposvoting.register-header' | translate }}</h3>
-        <h3 *ngIf="dposInfo.state == 'Active'">{{ 'dposvoting.update-header' | translate }}</h3>
+        <h3>{{ header }}</h3>
     </div>
 
     <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
@@ -14,8 +13,8 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-name' | translate }}</h5>
-                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || onlyEditStakeUntil" ngDefaultControl
-                        placeholder="{{'dposvoting.required-placeholder' | translate}}"
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || onlyEditStakeUntil || dposInfo.state == 'Active'"
+                        ngDefaultControl placeholder="{{'dposvoting.required-placeholder' | translate}}"
                         [(ngModel)]="dposInfo.nickname" clearInput>
                     </ion-input>
                 </ion-col>
@@ -68,11 +67,7 @@
         <ion-row class="btn-container">
             <ion-row *ngIf="!needConfirm">
                 <ion-col>
-                <ebutton *ngIf="dposInfo.state == 'Unregistered'" (clicked)="checkValues()"
-                    [title]="'dposvoting.register' | translate"> </ebutton>
-
-                <ebutton *ngIf="dposInfo.state == 'Active'" (clicked)="checkValues()"
-                    [title]="'dposvoting.update' | translate"> </ebutton>
+                <ebutton (clicked)="checkValues()" [title]="buttonLabel"> </ebutton>
                 </ion-col>
             </ion-row>
 

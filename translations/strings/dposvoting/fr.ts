@@ -112,7 +112,6 @@ export const fr = {
         'my-votes': 'My votes',
         'votes': 'Votes',
         'candidate': 'Candidate',
-        'update-to-2.0': 'Update to DPoS 2.0',
         'node-exprie-message': 'Node is about to expire in {{ time }}. Please click to update the node.',
         'node-about-exprie': 'Node is about to expire. Please click to update the node.',
         'vote-exprie-message': 'Your votes for DPoS 2.0 are about to expire in {{ time }}. Please click to update your votes.',
@@ -126,6 +125,9 @@ export const fr = {
         'illegal-message': 'The node is illegal, please add the deposit.',
         'height': 'Height',
         'about': 'About',
+        'upgrade': 'Upgrade',
+        'upgrade-to-2.0': 'Upgrade to DPoS 2.0',
+        'upgrade-header': 'Upgrade your DPoS Node',
 
         'dpos2-voting': 'DPoS 2.0 Node Voting',
         'stake-more': 'Stake more',
