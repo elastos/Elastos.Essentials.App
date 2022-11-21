@@ -43,6 +43,8 @@ export enum VoteCategory {
   CRC_Vote = 2,
   CRProposal_Against = 4,
   CRC_Impeachment = 8,
+  DPoS2_Voting = 16,
+  Vote_Cancel = 128,
 }
 
 // Returned by getrawtransaction

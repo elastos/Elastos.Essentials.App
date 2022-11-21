@@ -166,6 +166,7 @@ export const fr = {
         "coin-op-dpos2-node-claim-reward": "DPoS Node Claim reward",
         "coin-op-dpos2-node-reward-withdraw": "DPoS Node reward withdraw",
         "coin-op-voting-cancel": "Vote Cancellation",
+        "coin-op-coin-base": "Coinbase Transaction",
         "coin-dir-from-mainchain": "Depuis ELA mainchain",
         "coin-dir-from-idchain": "Depuis la chaîne Identité",
         "coin-dir-from-ethsc": "Depuis la chaîne ESC",

@@ -105,6 +105,9 @@ export class ElastosTransactionsHelper {
         transactionName = 'wallet.coin-op-received-token';
         // TODO: Show right info for others txtype.
         switch (transaction.txtype) {
+          case RawTransactionType.CoinBase:
+            transactionName = "wallet.coin-op-coin-base";
+            break;
           case RawTransactionType.RechargeToSideChain:
             transactionName = "wallet.coin-dir-from-mainchain";
             break;

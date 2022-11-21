@@ -61,8 +61,11 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
         }
       }
 
-      // Get the addresses that need to load more transactions.
+      // Reset
       this.needtoLoadMoreAddresses = []
+      this.transactionsUnmerged = []
+
+      // Get the addresses that need to load more transactions.
       for (let i = 0, len = txList.length; i < len; i++) {
         if (txList[i].total > this.TRANSACTION_LIMIT) {
           let len = txList[i].transactions.length;
