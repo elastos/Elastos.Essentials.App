@@ -8,7 +8,6 @@ import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { Config } from 'src/app/wallet/config/Config';
 import { SuggestionDetail, SuggestionSearchResult, SuggestionStatus } from '../model/suggestion-model';
 
 @Injectable({
@@ -297,7 +296,7 @@ export class SuggestionService {
             SideChainName: suggestionDetail.sideChainName,
             MagicNumber: suggestionDetail.magicNumber,
             GenesisHash: suggestionDetail.genesisHash,
-            ExchangeRate: Util.accMul(suggestionDetail.exchangeRate, Config.SELA),
+            ExchangeRate: suggestionDetail.exchangeRate,
             EffectiveHeight: suggestionDetail.effectiveHeight,
             ResourcePath: suggestionDetail.resourcePath,
         }
