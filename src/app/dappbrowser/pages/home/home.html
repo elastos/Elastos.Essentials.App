@@ -6,6 +6,7 @@
         <url-input-assistant *ngIf="shouldShowAssistant" (urlPicked)="onRecentAppPicked($event)"
             [filter]="urlInputAssistantFilter"></url-input-assistant>
 
+        <!-- Intro -->
         <ion-row class="header-row">
             <ion-col size="12">
                 <h1>{{ 'dappbrowser.home-header' | translate }}</h1>
@@ -13,6 +14,7 @@
             </ion-col>
         </ion-row>
 
+        <!-- iOS no browser by default notice -->
         <ion-row class="no-in-app-notice-row" *ngIf="!canBrowseInApp && !noInAppNoticeDismissed && isIOS">
             <ion-col size="2" class="icon">
                 <img src="/assets/settings/icon/walletconnect.svg">
@@ -31,12 +33,14 @@
             </ion-col>
         </ion-row>
 
+        <!-- Recent apps header -->
         <ion-row class="header-row fav-header" *ngIf="recentApps.length > 0">
             <ion-col size="12">
                 <h2>{{ 'dappbrowser.recent-apps' | translate}}</h2>
             </ion-col>
         </ion-row>
 
+        <!-- Recent apps list -->
         <div *ngIf="recentApps.length > 0">
             <ion-row *ngFor="let recentApp of getRecentApps()" class="dapp-row ripple ion-activatable"
                 (click)="openRecent(recentApp)">
@@ -48,7 +52,7 @@
                 <ion-col class="middle-col" size="8">
                     <ion-label>
                         <div class="title">{{recentApp.title}}</div>
-                        <div class="description">{{recentApp.description}}</div>
+                        <div class="description">{{ getRecentAppOrFavoriteDescription(recentApp) }}</div>
                     </ion-label>
                 </ion-col>
 
@@ -67,6 +71,7 @@
             </ion-row>
         </div>
 
+        <!-- Favorites header -->
         <ion-row class="header-row fav-header">
             <ion-col size="6">
                 <h2>{{ 'dappbrowser.favorites' | translate }}</h2>
@@ -79,6 +84,7 @@
             </ion-col>
         </ion-row>
 
+        <!-- Favorites list -->
         <p *ngIf="favorites.length == 0" class="no-favorite">
             {{ 'dappbrowser.no-favorite' | translate:{networkName: getActiveNetworkName()} }}
         </p>
@@ -93,7 +99,7 @@
                 <ion-col class="middle-col" size="8">
                     <ion-label>
                         <div class="title">{{favorite.name}}</div>
-                        <div class="description">{{getShortFavoriteDescription(favorite)}}</div>
+                        <div class="description">{{ getRecentAppOrFavoriteDescription(favorite)}} </div>
                     </ion-label>
                 </ion-col>
                 <ion-col class="right-col" size="2">
@@ -107,6 +113,7 @@
             </ion-row>
         </div>
 
+        <!-- Suggested apps header -->
         <ion-row class="header-row other-apps-header">
             <ion-col size="6">
                 <h2>{{ 'dappbrowser.home-other-dapps' | translate }}</h2>
@@ -119,6 +126,7 @@
             </ion-col>
         </ion-row>
 
+        <!-- Suggested apps list -->
         <ion-row *ngFor="let app of dApps" class="dapp-row ripple ion-activatable" (click)="onDAppClicked(app)">
             <ion-col class="left-col" size="2">
                 <div class="icon-container">

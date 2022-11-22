@@ -38,7 +38,6 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
   private previewContainer: WidgetContainerComponent;
   @ViewChild("previewContainer", { static: false }) set previewContainerContent(content: WidgetContainerComponent) {
-    console.log("previewContainer", content)
     if (content) {
       this.previewContainer = content;
     }

@@ -102,7 +102,7 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises
         this.recentAppsSubscription = this.dAppBrowserService.recentApps.subscribe(async recentApps => {
             this.recentApps = await this.dAppBrowserService.getRecentAppsWithInfo();
-            console.log("recent apps", this.recentApps);
+            //console.log("recent apps", this.recentApps);
         });
 
         this.inputStatusSub = this.titleBar.inputStatus.subscribe(editing => {
@@ -333,15 +333,15 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         void this.dAppBrowserService.openRecentApp(recentApp);
     }
 
-    public getShortFavoriteDescription(favorite: BrowserFavorite): string {
-        if (!favorite.description)
+    public getRecentAppOrFavoriteDescription(recentAppOrFavorite: BrowsedAppInfo | BrowserFavorite): string {
+        if (!recentAppOrFavorite.description)
             return "";
 
         const limit = 50;
-        if (favorite.description.length < limit)
-            return favorite.description;
+        if (recentAppOrFavorite.description.length < limit)
+            return recentAppOrFavorite.description;
         else
-            return favorite.description.substring(0, limit) + "...";
+            return recentAppOrFavorite.description.substring(0, limit) + "...";
     }
 
     public pickNetwork() {

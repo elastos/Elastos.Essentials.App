@@ -92,8 +92,6 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
   }
 
   ngOnDestroy(): Promise<void> {
-    console.log("ACTIVE WALLET TODO DISMISS POPOVER ON EXIT");
-
     if (this.walletServiceSub) {
       this.walletServiceSub.unsubscribe();
       this.walletServiceSub = null;
