@@ -78,6 +78,8 @@ export class BrowserPage implements DappBrowserClient {
                     break;
             }
         });
+
+        this.shot = null;
     }
 
     ionViewDidEnter() {
@@ -121,6 +123,9 @@ export class BrowserPage implements DappBrowserClient {
     }
 
     onLoadStart() {
+        // Reset title bar colors to default to override possibly previous colors set by a previous
+        // html page theme.
+        this.titleBar.resetColors();
     }
 
     onHtmlHead?: (head: Document) => void;
@@ -143,7 +148,7 @@ export class BrowserPage implements DappBrowserClient {
         let domain = this.dAppBrowserService.getDomain(url);
         if (await this.dAppBrowserService.checkScamDomain(domain)) {
             void this.zone.run(async () => {
-                this.shot = await dappBrowser.getWebViewShot();
+                //this.shot = await dappBrowser.getWebViewShot();
                 await dappBrowser.hide();
 
                 let ret = await this.dAppBrowserService.showScamWarning(domain);
@@ -169,6 +174,8 @@ export class BrowserPage implements DappBrowserClient {
 
     public onRecentAppPicked(url: string) {
         // Reload a url, but don't navigate because we are already in the browser screen
+        this.shot = null;
+        this.shouldShowAssistant = false;
         void this.dAppBrowserService.open(url, null, null, false);
     }
 

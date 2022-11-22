@@ -171,7 +171,7 @@ export class MenuPage {
 
         Logger.log("dappbrowser", "Clearing browser data for url", this.browsedAppInfo.url);
         await dappBrowser.clearData(this.browsedAppInfo.url);
-        this.reloadPage();
+        await this.reloadPage();
 
         this.globalNative.genericToast('dappbrowser.browser-data-cleared', 2000);
     }

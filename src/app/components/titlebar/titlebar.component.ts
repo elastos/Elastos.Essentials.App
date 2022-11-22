@@ -57,12 +57,8 @@ export class TitleBarComponent {
         private cdr: ChangeDetectorRef,
         public globalNotifications: GlobalNotificationsService,
     ) {
-        themeService.activeTheme.subscribe((activeTheme) => {
-            if (!this.backgroundColorWasExternallySet)
-                this.setBackgroundColor(activeTheme.config.variants[activeTheme.variant].color, false);
-
-            if (!this.foregroundModeWasExternallySet)
-                this.setForegroundMode(activeTheme.config.usesDarkMode ? TitleBarForegroundMode.LIGHT : TitleBarForegroundMode.DARK, false);
+        themeService.activeTheme.subscribe(activeTheme => {
+            this.resetColors(false);
         });
 
         // Set home navigation for all apps
@@ -74,6 +70,15 @@ export class TitleBarComponent {
         this.globalNotifications.notifications.subscribe(notifications => {
             this.notifications = notifications;
         })
+    }
+
+    public resetColors(force = true) {
+        const activeTheme = this.themeService.activeTheme.value;
+        if (force || !this.backgroundColorWasExternallySet)
+            this.setBackgroundColor(activeTheme.config.variants[activeTheme.variant].color, false);
+
+        if (force || !this.foregroundModeWasExternallySet)
+            this.setForegroundMode(activeTheme.config.usesDarkMode ? TitleBarForegroundMode.LIGHT : TitleBarForegroundMode.DARK, false);
     }
 
     private static makeDefaultIcon(): TitleBarSlotItem {
