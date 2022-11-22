@@ -114,11 +114,14 @@ export const en = {
         'news-title': 'News',
         'all-news': 'All news',
         'news-receive-updates-from': 'Receive updates from:',
+        'feeds-subscriptions': 'Feeds subscriptions',
         'n-news-sources-selected': '{{ selected }} selected',
         'no-news': 'No news for now. Add more news widgets from your favorite dApps or use the Feeds mobile app to subscribe to people and projects you like.',
+        'try-feeds': 'Try Feeds',
         'change-background-color': 'Change background color',
         'selected-theme': 'Selected:',
         'restore-all-widgets': 'Restore all widgets to defaults',
+        'invalid-widget': 'Invalid widget content returned, not JSON format?',
 
         /******** Theming *********/
         'theme-name-black': 'Black',

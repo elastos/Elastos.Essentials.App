@@ -7,6 +7,7 @@ import { unsafeRandomHex } from 'src/app/helpers/random.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import type { PluginConfig } from '../base/pluginconfig';
@@ -343,7 +344,8 @@ export class WidgetsService {
         }
         catch (e) {
             if (!silentError) {
-                this.globalNative.errToast("Invalid widget content returned, not JSON format? " + e);
+                let message = GlobalTranslationService.instance.translateInstant('launcher.invalid-widget') + e;
+                this.globalNative.errToast(message);
             }
             return null;
         }

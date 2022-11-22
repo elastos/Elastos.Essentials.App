@@ -114,12 +114,14 @@ export const zh = {
         'news-title': '消息',
         'all-news': '所有消息',
         'news-receive-updates-from': '接收的更新来自：',
+        'feeds-subscriptions': '来自Feeds的订阅',
         'n-news-sources-selected': '{{ selected }} 已选择',
-        'no-news': '暂无消息。可以从您收藏的 dApps 中添加更多新闻小部件，或使用 Feeds 应用程序订阅您关注的人和项目。',
+        'no-news': '暂无消息。可以从您收藏的 dApps 中添加更多新闻小组件，或使用 Feeds 应用程序订阅您关注的人和项目。',
         'try-feeds': '启动 Feeds',
         'change-background-color': '更改背景颜色',
         'selected-theme': '选定：',
         'restore-all-widgets': '将所有小组件恢复为默认值',
+        'invalid-widget': '返回的小组件内容无效，不是 JSON 格式？',
 
         /******** Theming *********/
         'theme-name-black': '黑色',

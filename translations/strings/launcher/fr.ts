@@ -114,11 +114,14 @@ export const fr = {
         'news-title': 'Actualités',
         'all-news': 'Toutes les actus',
         'news-receive-updates-from': 'Recevoir actus de:',
+        'feeds-subscriptions': 'Feeds subscriptions',
         'n-news-sources-selected': '{{ selected }} sélectionnés',
         'no-news': 'No news for now. Add more news widgets from your favorite dApps or use the Feeds mobile app to subscribe to people and projects you like.',
+        'try-feeds': 'Try Feeds',
         'change-background-color': 'Changement de couleur',
         'selected-theme': 'Sélectionné:',
         'restore-all-widgets': 'Restaurer tous les widgets aux valeurs par défaut',
+        'invalid-widget': 'Invalid widget content returned, not JSON format?',
 
         /******** Theming *********/
         'theme-name-black': 'Noir',

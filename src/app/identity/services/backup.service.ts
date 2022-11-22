@@ -107,14 +107,14 @@ export class BackupService extends GlobalService {
     if (this.didActivatedSub)
       this.didActivatedSub.unsubscribe();
 
-    if (this.backupRestoreHelper) {
-      this.backupRestoreHelper.stop();
-      this.backupRestoreHelper = null;
-    }
-
     if (this.useHiveSyncSub) {
       this.useHiveSyncSub.unsubscribe();
       this.useHiveSyncSub = null;
+    }
+
+    if (this.backupRestoreHelper) {
+        this.backupRestoreHelper.stop();
+        this.backupRestoreHelper = null;
     }
 
     this.preparingOrPrepared = false;
@@ -190,13 +190,15 @@ export class BackupService extends GlobalService {
         this.useHiveSyncSub = this.prefs.useHiveSync.subscribe(async useHiveSync => {
           Logger.log("identitybackup", "Use hive sync status changed:", useHiveSync);
 
-          this.backupRestoreHelper.setSynchronizationEnabled(useHiveSync);
-          if (useHiveSync) {
-            Logger.log("identitybackup", "Starting backup restore sync");
-            await this.backupRestoreHelper.sync();
-          }
-          else {
-            this.backupRestoreHelper.stop();
+          if (this.backupRestoreHelper) {
+              this.backupRestoreHelper.setSynchronizationEnabled(useHiveSync);
+              if (useHiveSync) {
+                Logger.log("identitybackup", "Starting backup restore sync");
+                await this.backupRestoreHelper.sync();
+              }
+              else {
+                this.backupRestoreHelper.stop();
+              }
           }
         });
       } catch (e) {

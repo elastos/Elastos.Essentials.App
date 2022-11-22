@@ -84,13 +84,15 @@ export class BackupService {
       this.useHiveSyncSub = this.prefs.useHiveSync.subscribe(async useHiveSync => {
         Logger.log("contacts", "Use hive sync status changed:", useHiveSync);
 
-        this.backupRestoreHelper.setSynchronizationEnabled(useHiveSync);
-        if (useHiveSync) {
-          Logger.log("contacts", "Starting backup restore sync");
-          await this.backupRestoreHelper.sync();
-        }
-        else {
-          this.backupRestoreHelper.stop();
+        if (this.backupRestoreHelper) {
+            this.backupRestoreHelper.setSynchronizationEnabled(useHiveSync);
+            if (useHiveSync) {
+              Logger.log("contacts", "Starting backup restore sync");
+              await this.backupRestoreHelper.sync();
+            }
+            else {
+              this.backupRestoreHelper.stop();
+            }
         }
       });
 
