@@ -128,7 +128,8 @@ export class StakeService {
     }
 
     public getBalanceByFirstAddress(spendable = false): Promise<number> {
-        return this.getBalanceByAddress(this.firstAddress);
+        let firstAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
+        return this.getBalanceByAddress(firstAddress);
     }
 
     async getVoteRights(): Promise<VotesRight> {
