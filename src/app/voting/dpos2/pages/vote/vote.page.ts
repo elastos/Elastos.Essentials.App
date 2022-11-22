@@ -58,6 +58,7 @@ export class VotePage implements OnInit, OnDestroy {
     public less_than_10_days = false;
 
     private selectedNodes = [];
+    public currentHeight = 0;
 
     async ngOnInit() {
     }
@@ -65,7 +66,7 @@ export class VotePage implements OnInit, OnDestroy {
     ngOnDestroy() {
     }
 
-    ionViewWillEnter() {
+    async ionViewWillEnter() {
         this.dataFetched = false;
 
         //this.titleBar.setBackgroundColor("#732CCE");
@@ -91,6 +92,7 @@ export class VotePage implements OnInit, OnDestroy {
         Logger.log(App.DPOS2, 'My votes', this.selectedNodes);
 
         this.getVotedCount();
+        this.currentHeight = await this.voteService.getCurrentHeight();
 
         //console.log("this.nodeVotes", this.nodeVotes)
 
@@ -127,15 +129,25 @@ export class VotePage implements OnInit, OnDestroy {
 
     /****************** Cast Votes *******************/
     async cast() {
-        let currentHeight = await this.voteService.getCurrentHeight();
+        this.currentHeight = await this.voteService.getCurrentHeight();
         let votedCandidates = [];
         for (const node of this.selectedNodes) {
             if (node.userVotes > 0) {
                 if (node.userStakeDays < 10) {
-                    let msg = "["+ node.nickname + "]" + this.translate.instant('dposvoting.stake-days-less-than-10');
-                    void this.globalNative.genericToast(msg);
+                    this.globalNative.genericToast('dposvoting.stake-days-less-than-10');
                     return;
                 }
+
+                var userStakeDays = node.userStakeDays;
+                if (this.voteService.isMuiltWallet()) {
+                    userStakeDays++;
+                }
+                let locktime = this.currentHeight + userStakeDays * 720 + 5; // Add 10 minutes for time buffer
+                if (locktime > node.stakeuntil) {
+                    this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
+                    return;
+                }
+
                 // let userVotes = node.userVotes * 100000000;
                 let userVotes = Util.accMul(node.userVotes, Config.SELA);
                 var userStakeDays = node.userStakeDays;
@@ -145,7 +157,7 @@ export class VotePage implements OnInit, OnDestroy {
                 let _vote = {
                     Candidate: node.ownerpublickey,
                     Votes: userVotes,
-                    Locktime: currentHeight + userStakeDays * 720 + 5 }; // Add 10 minutes for time buffer
+                    Locktime: locktime };
                 votedCandidates.push(_vote);
             }
             else {
@@ -233,6 +245,20 @@ export class VotePage implements OnInit, OnDestroy {
     //         }
     //     });
     // }
+
+    public checkInputDays(node: DPoS2Node): boolean {
+        var userStakeDays = node.userStakeDays || 0;
+        if (userStakeDays < 10) {
+            return true;
+        }
+
+        if (this.voteService.isMuiltWallet()) {
+            userStakeDays++;
+        }
+        let locktime = this.currentHeight + userStakeDays * 720 + 5;
+
+        return (locktime > node.stakeuntil);
+    }
 
     async createVoteCRTransaction(votes: any) {
 

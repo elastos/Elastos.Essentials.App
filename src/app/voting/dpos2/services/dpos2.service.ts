@@ -300,7 +300,7 @@ export class DPoS2Service {
                         //get node precentage
                         node.votesPrecentage = this.uxService.getPercentage(node.dposv2votes, this.totalVotes);
 
-                        node.checkDisabled = node.state === 'Inactive' || Math.floor(until / 720) < this.minStakeDays;
+                        node.checkDisabled = node.state === 'Inactive' || until < this.minStakeDays * 720;
 
                         if (node.state === 'Active') {
                             this.activeNodes.push(node);
@@ -375,6 +375,7 @@ export class DPoS2Service {
                             imageUrl: node.imageUrl,
                             nickname: node.nickname,
                             Location: node.Location,
+                            stakeuntil: node.stakeuntil,
                             referkey: vote.referkey,
                             candidate: vote.info.candidate,
                             votes: vote.info.votes,

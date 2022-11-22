@@ -31,7 +31,7 @@
                             [(ngModel)]="node.inputStakeDays" clearInput>
                         </ion-input>
                         <p class="expiration-date">{{ 'dposvoting.expiration-date' | translate }}: <span
-                                [class.less-than]="node.inputStakeDays < node.lockDays">{{
+                                [class.error-input]="checkInputDays(node)">{{
                                 uxService.getStakeDate(node.inputStakeDays) }}</span></p>
                     </ion-col>
                 </ion-row>

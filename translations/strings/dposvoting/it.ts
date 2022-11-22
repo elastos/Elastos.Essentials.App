@@ -134,7 +134,8 @@ export const it = {
         'input-days': 'Days',
         'input-votes': 'Votes',
         'pledge-some-votes-to-nodes': 'Please pledge some votes to your candidate nodes',
-        'stake-days-less-than-10': "'s stake days do not less than 10.",
+        'stake-days-less-than-10': "The stake days of the vote should not be less than 10.",
+        'stake-days-more-than-stakeuntil': "The stake days of the vote should not be greater than the node's stake days.",
 
         'update-vote': 'Update vote',
         'stakedays-placeholder': 'no less than {{ days }} days',

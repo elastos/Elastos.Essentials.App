@@ -32,6 +32,7 @@ export class NodeSliderComponent implements OnInit {
     public displayedNodes: DPoS2Node[] = [];
     public stakeDays = 0;
     public signingAndTransacting = false;
+    public currentHeight = 0;
 
     slideOpts = {
         initialSlide: 1,
@@ -50,9 +51,10 @@ export class NodeSliderComponent implements OnInit {
     ) {
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.displayedNodes = this._nodes.slice(0, this.nodeIndex + 2);
         this.slideOpts.initialSlide = this.displayedNodes.indexOf(this.node);
+        this.currentHeight = await this.voteService.getCurrentHeight();
     }
 
     //// Increment nodes array when sliding forward ////
@@ -74,35 +76,34 @@ export class NodeSliderComponent implements OnInit {
 
     async update(node: any) {
         if (node.inputStakeDays < node.lockDays) {
-            let formatWrong = this.translate.instant('dposvoting.stakedays-input-err', {days: node.lockDays});
-            this.globalNative.genericToast(formatWrong);
+            let msg = this.translate.instant('dposvoting.stakedays-input-err', {days: node.lockDays});
+            this.globalNative.genericToast(msg);
+            return;
         }
-        else {
-            if (!await this.voteService.checkWalletAvailableForVote()) {
-                return;
-            }
 
-            await this.createTransaction(node);
+        this.currentHeight = await this.voteService.getCurrentHeight();
+        let locktime = this.currentHeight + node.inputStakeDays * 720;
+        if (locktime > node.stakeuntil) {
+            this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
+            return;
         }
-    }
 
-    async createTransaction(node: any) {
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
         this.signingAndTransacting = true;
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
         try {
-            let currentHeight = await this.voteService.getCurrentHeight();
-            let stakeUntil = currentHeight + node.inputStakeDays * 720;
             let votes = Util.accMul(parseFloat(node.votes), Config.SELA).toString();
-
             let voteContentInfo: RenewalVotesContentInfo = {
                 ReferKey: node.referkey,
-                VoteInfo:
-                    {
-                        Candidate: node.candidate,
-                        Votes: votes,
-                        Locktime: stakeUntil
-                    }
+                VoteInfo: {
+                    Candidate: node.candidate,
+                    Votes: votes,
+                    Locktime: locktime
+                }
             };
 
             const payload: VotingInfo = {
@@ -134,6 +135,16 @@ export class NodeSliderComponent implements OnInit {
         }
         this.signingAndTransacting = false;
 
+    }
+
+    public checkInputDays(node: any): boolean {
+        var inputStakeDays = node.inputStakeDays || 0;
+        if (inputStakeDays < node.lockDays) {
+            return true;
+        }
+
+        let locktime = this.currentHeight + inputStakeDays * 720;
+        return (locktime > node.stakeuntil);
     }
 
 }
