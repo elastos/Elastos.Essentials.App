@@ -130,7 +130,7 @@ export class VoteService {
         switch (context) {
             case App.DPOS2:
             case App.STAKING:
-            case App.CRCOUNCIL_VOTING:
+            case App.VOTING:
             case App.CRPROPOSAL_VOTING:
             case App.CRSUGGESTION:
                 supportMultiSign = true;
@@ -375,14 +375,14 @@ export class VoteService {
             }
         }
         catch (err) {
-            Logger.error(App.CRCOUNCIL_VOTING, 'getCurrentHeight error', err);
+            Logger.error(App.VOTING, 'getCurrentHeight error', err);
         }
 
         return 0;
     }
 
     async getBlockByHeight(currentHeight: number): Promise<number> {
-        Logger.log(App.CRPROPOSAL_VOTING, 'Get Block By Heightt...');
+        Logger.log(App.VOTING, 'Get Block By Heightt...');
 
         const param = {
             method: 'getblockbyheight',
@@ -399,7 +399,7 @@ export class VoteService {
             }
         }
         catch (err) {
-            Logger.error(App.CRCOUNCIL_VOTING, 'getBlockByHeight error', err);
+            Logger.error(App.VOTING, 'getBlockByHeight error', err);
         }
 
         return 0;
@@ -521,5 +521,34 @@ export class VoteService {
             return true;
         }
         return false
+    }
+
+    async getDPoSStatus(): Promise<string> {
+        Logger.log(App.VOTING, 'getDPoSStatus...');
+
+        const param = {
+            method: 'getdposv2info',
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            Logger.log(App.VOTING, 'getDPoSStatus', result);
+            if (result && result.height) {
+                if (result.height < result.dposv2transitstartheight) {
+                    return 'DPoSV1';
+                }
+                else if (result.height >= result.dposv2transitstartheight && result.height <  result.dposv2activeheight) {
+                    return 'DPoSV1V2';
+                }
+                else if (result.height >= result.dposv2activeheight) {
+                    return 'DPoSV2';
+                }
+            }
+        }
+        catch (err) {
+            Logger.error(App.VOTING, 'getDPoSStatus error', err);
+        }
+
+        return 'DPoSV1';
     }
 }

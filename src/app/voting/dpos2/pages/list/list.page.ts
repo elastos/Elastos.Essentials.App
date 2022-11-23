@@ -35,6 +35,7 @@ export class ListPage implements OnInit {
     public dataFetched = false;
 
     private registering = false;
+    public available = 0;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -83,6 +84,18 @@ export class ListPage implements OnInit {
                     void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
                 });
             }
+            else if (this.dpos2Service.dposInfo.state == 'Canceled' && this.dpos2Service.dposInfo.identity == "DPoSV1") {
+                let status = await this.voteService.getDPoSStatus();
+                if (status == "DPoSV2") {
+                    this.available = await this.dpos2Service.getDepositcoin();
+                    if (this.available > 0) {
+                        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? '/assets/voting/icons/darkmode/withdraw.svg' : '/assets/voting/icons/withdraw.svg' });
+                        this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                            void this.goToWithdraw();
+                        });
+                    }
+                }
+            }
         }
 
         this.dataFetched = true;
@@ -126,6 +139,14 @@ export class ListPage implements OnInit {
 
         await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
         this.registering = false;
+    }
+
+    async goToWithdraw() {
+        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-withdraw-warning', 'common.ok', 'common.cancel')) {
+            return;
+        }
+
+        void this.dpos2Service.retrieve(this.available);
     }
 
     async castVote() {

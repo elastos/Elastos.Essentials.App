@@ -118,6 +118,7 @@ export const zh = {
         'vote-exprie-message': '您的 DPoS 2.0 投票将于{{ time }}后过期。请点击更新投票。',
         'vote-about-exprie': '您的 DPoS 2.0 投票即将过期。请点击更新投票。',
         'dpos1-update-warning': '您是否想升级为DPoS 2.0节点？升级交易需要花费少量的交易费。',
+        'dpos1-withdraw-warning': '您要取回DPoS 1.0节点的押金吗?',
 
         'dpos2-node-info': 'DPoS 2.0 节点信息',
         'node2-details': 'DPoS 2.0 节点详情',

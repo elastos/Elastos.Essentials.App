@@ -7,14 +7,13 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -166,52 +165,6 @@ export class NodeDetailPage implements OnInit {
         void this.globalNav.navigateTo(App.DPOS2, '/dposregistration/registration');
     }
 
-    async getDepositcoin() {
-        this.available = 0;
-        const param = {
-            method: 'getdepositcoin',
-            params: {
-                ownerpublickey: this.dposInfo.ownerpublickey,
-            },
-        };
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
-        Logger.log(App.DPOS2, "getdepositcoin:", result);
-        if (!Util.isEmptyObject(result.available)) {
-            this.available = result.available;
-            Logger.log(App.DPOS2, "available:", this.available);
-        }
-    }
-
-
-    async retrieve() {
-        Logger.log('wallet', 'Calling retrieve()', this.dposInfo);
-
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
-
-        try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-
-            let depositAddress = await this.voteService.sourceSubwallet.getOwnerDepositAddress();
-            let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
-            Logger.log(App.DPOS2, "utxoArray:", utxoArray);
-
-            let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
-
-            const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, this.available, "");
-            await this.globalNative.hideLoading();
-
-            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
-            if (ret) {
-                this.voteService.toastSuccessfully('dposvoting.retrieve');
-            }
-        } catch (e) {
-            await this.globalNative.hideLoading();
-        }
-    }
-
     async addCandidateOperationIcon(darkMode: boolean) {
         let state = this.dpos2Service.dposInfo.state;
         var menuItems =  [] as TitleBarMenuItem[];
@@ -226,7 +179,7 @@ export class NodeDetailPage implements OnInit {
 
         let identity = this.dpos2Service.dposInfo.identity;
         if ((identity == "DPoSV1V2" && (state == 'Active' || state == 'Inactive')) || state == 'Canceled') {
-            await this.getDepositcoin();
+            this.available = await this.dpos2Service.getDepositcoin();
             if (this.available > 0) {
                 menuItems.push({
                     key: "withdraw",
@@ -247,7 +200,7 @@ export class NodeDetailPage implements OnInit {
                         break;
 
                     case "withdraw":
-                        void this.retrieve();
+                        void this.dpos2Service.retrieve(this.available);
                         break;
                 }
             });

@@ -117,6 +117,7 @@ export const fr = {
         'vote-exprie-message': 'Your votes for DPoS 2.0 are about to expire in {{ time }}. Please click to update your votes.',
         'vote-about-exprie': 'Your votes for DPoS 2.0 are about to expire. Please click to update your votes.',
         'dpos1-update-warning': 'Do you want to upgrade to a DPoS 2.0 node? A minor transaction fee is paid for the DPoS node upgrade.',
+        'dpos1-withdraw-warning': 'Do you want to dithdraw DPoS 1.0 node deposit?',
 
         'dpos2-node-info': 'DPoS 2.0 Node Info',
         'node2-details': 'DPoS 2.0 Node Details',

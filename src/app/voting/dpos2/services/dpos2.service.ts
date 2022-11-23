@@ -6,13 +6,14 @@ import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { RawTransactionType, TransactionStatus } from 'src/app/wallet/model/tx-providers/transaction.types';
+import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { UXService } from '../../services/ux.service';
 import { StakeService } from '../../staking/services/stake.service';
 import { DPoS2Node } from '../model/nodes.model';
@@ -95,6 +96,7 @@ export class DPoS2Service {
         private globalElastosAPIService: GlobalElastosAPIService,
         public voteService: VoteService,
         public popupProvider: GlobalPopupService,
+        private globalNative: GlobalNativeService,
         public events: GlobalEvents,
         public zone: NgZone,
     ) {
@@ -131,7 +133,7 @@ export class DPoS2Service {
         }
         catch (err) {
             Logger.warn('dposvoting', 'Initialize node error:', err);
-            await this.voteService.popupErrorMessage(err, App.STAKING);
+            await this.voteService.popupErrorMessage(err, App.DPOS2);
 
         }
         this.initOngoning = false;
@@ -415,6 +417,55 @@ export class DPoS2Service {
         }
 
         return this.myVotes;
+    }
+
+    async getDepositcoin(): Promise<number> {
+        var  available = 0;
+        const param = {
+            method: 'getdepositcoin',
+            params: {
+                ownerpublickey: this.dposInfo.ownerpublickey,
+            },
+        };
+        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        Logger.log(App.DPOS2, "getdepositcoin:", result);
+        if (!Util.isEmptyObject(result.available)) {
+            available = result.available;
+            Logger.log(App.DPOS2, "available:", available);
+        }
+        return available;
+    }
+
+
+    async retrieve(available: number) {
+        Logger.log(App.DPOS2, 'Calling retrieve()', this.dposInfo);
+
+        if (!await this.voteService.checkWalletAvailableForVote()) {
+            return;
+        }
+
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
+            let depositAddress = await this.voteService.sourceSubwallet.getOwnerDepositAddress();
+            let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
+            Logger.log(App.DPOS2, "utxoArray:", utxoArray);
+
+            let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
+
+            const rawTx = await this.voteService.sourceSubwallet.createRetrieveDepositTransaction(utxo, available, "");
+            await this.globalNative.hideLoading();
+
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
+            if (ret) {
+                this.voteService.toastSuccessfully('dposvoting.retrieve');
+            }
+        }
+        catch (err) {
+            await this.globalNative.hideLoading();
+            // await this.voteService.popupErrorMessage(err, App.DPOS2);
+        }
     }
 
     getNodeIcon(node: DPoS2Node) {
