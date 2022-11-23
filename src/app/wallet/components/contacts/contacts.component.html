@@ -1,8 +1,11 @@
 <ion-content>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-row class="main-title-row">
-            <ion-col size="12">
+            <ion-col size="10.5">
                 <p>{{ 'wallet.cryptonames' | translate }}</p>
+            </ion-col>
+            <ion-col class="refresh-icon" size="1.5" (click)="updateContact()">
+                <ion-icon name="refresh-outline"></ion-icon>
             </ion-col>
         </ion-row>
         <ion-item-sliding *ngFor="let contact of supportedCryptoAddresses">

@@ -18,6 +18,13 @@
             color: #000000;
             opacity: 0.7;
         }
+
+        .refresh-icon {
+            ion-icon {
+                width: 18px;
+                height: 18px;
+            }
+        }
     }
 
     .subwallet-row {

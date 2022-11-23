@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
 import { ContactsService } from '../../services/contacts.service';
+import { Native } from '../../services/native.service';
 import { WarningComponent } from '../warning/warning.component';
 
 type CryptoAddressInfo = {
@@ -45,6 +47,7 @@ export class ContactsComponent implements OnInit {
   }
 
   async getContacts(subWallet: AnySubWallet) {
+    this.supportedCryptoAddresses = [];
     for (let index = 0; index < this.contactsService.contacts.length; index++) {
       let addresses = this.contactsService.contacts[index].addresses;
       for (let i = 0; i < addresses.length; i++) {
@@ -139,4 +142,15 @@ export class ContactsComponent implements OnInit {
     // save
     this.contactsService.setContacts()
   }
+
+    async updateContact() {
+        await Native.instance.showLoading();
+        try {
+            await this.contactsService.getContacts();
+            void this.getContacts(this.subWallet)
+        } catch (e) {
+            Logger.warn('wallet', 'updateContact exception:', e)
+        }
+        await Native.instance.hideLoading();
+    }
 }
