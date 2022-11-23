@@ -27,6 +27,7 @@
                     <ion-col>
                         <h5>{{ 'dposvoting.stake' | translate }}({{ 'dposvoting.input-days' | translate }})</h5>
                         <ion-input type="number" name="stake-until" ngDefaultControl
+                            (ionBlur)="onInputDaysBlur(node)" (ionFocus)="onInputDaysFocus(node)"
                             placeholder="{{'dposvoting.stakedays-placeholder' | translate : {days: node.lockDays} }}"
                             [(ngModel)]="node.inputStakeDays" clearInput>
                         </ion-input>

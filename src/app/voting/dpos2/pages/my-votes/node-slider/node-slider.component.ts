@@ -147,5 +147,16 @@ export class NodeSliderComponent implements OnInit {
         return (locktime > node.stakeuntil);
     }
 
+    public onInputDaysFocus(node: any) {
+        node.inputStakeDays = null;
+    }
+
+    public onInputDaysBlur(node: any) {
+        if (node.inputStakeDays == null) {
+            node.inputStakeDays = node.lockDays;
+        }
+        node.inputStakeDays = Math.floor(node.inputStakeDays);
+    }
+
 }
 

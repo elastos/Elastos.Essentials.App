@@ -227,12 +227,12 @@ export class VotePage implements OnInit, OnDestroy {
         if (node.userStakeDays == null) {
             node.userStakeDays = 10;
         }
-        // this.checkInputDays();
+        node.userStakeDays = Math.floor(node.userStakeDays);
     }
 
     // public onInputDaysChange(node: DPoS2Node) {
     //     if (node.userStakeDays != null) {
-    //         this.checkInputDays();
+    //         node.userStakeDays = Math.floor(node.userStakeDays);
     //     }
     // }
 
