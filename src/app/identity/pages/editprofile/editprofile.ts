@@ -11,6 +11,7 @@ import { DIDHelper } from "src/app/helpers/did.helper";
 import { rawImageToBase64DataUrl } from "src/app/helpers/picture.helpers";
 import { Logger } from "src/app/logger";
 import { HiveInsufficientSpaceException } from "src/app/model/exceptions/hiveinsufficientspaceexception";
+import { NetworkException } from "src/app/model/exceptions/network.exception";
 import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalFirebaseService } from "src/app/services/global.firebase.service";
 import { GlobalHiveService } from "src/app/services/global.hive.service";
@@ -289,18 +290,23 @@ export class EditProfilePage {
           }
 
           Logger.log('identity', "New or updated avatar entry:", entry.value);
+          await this.native.hideLoading();
         }
         catch (e) {
           Logger.error("identity", "Error while saving the avatar", e);
+          let message = '';
           let reworkedEx = DIDHelper.reworkedPluginException(e);
           if (reworkedEx instanceof HiveInsufficientSpaceException) {
-            await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", "identity.save-avatar-error-insufficient-space");
+            message = "identity.save-avatar-error-insufficient-space";
+          } else if (reworkedEx instanceof NetworkException) {
+            message = "common.network-or-server-error";
           } else {
-            await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", e.message);
+            message = e.message;
           }
-        }
 
-        await this.native.hideLoading();
+          await this.native.hideLoading();
+          await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", message);
+        }
       }
     });
     await modal.present();

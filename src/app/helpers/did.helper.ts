@@ -66,7 +66,7 @@ export class DIDHelper {
             return new HiveInsufficientSpaceException();
         }
 
-        if (e.message.includes("Network error")) {
+        if (e.message.includes("Network error") || e.message.includes("Network Error")) {
             return new NetworkException();
         }
       }
