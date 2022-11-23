@@ -13,7 +13,7 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-name' | translate }}</h5>
-                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || onlyEditStakeUntil || dposInfo.state == 'Active'"
+                    <ion-input type="text" name="name" [attr.disabled]="needConfirm || onlyEditStakeUntil || dposInfo.state != 'Unregistered'"
                         ngDefaultControl placeholder="{{'dposvoting.required-placeholder' | translate}}"
                         [(ngModel)]="dposInfo.nickname" clearInput>
                     </ion-input>
