@@ -100,6 +100,7 @@ export class DPoS2RegistrationPage implements OnInit {
             // Active indicates the producer is registered and confirmed by more than
             // 6 blocks.
             case 'Active':
+            case 'Inactive':
                 this.originInfo = Util.clone(this.dposInfo);
                 this.onlyEditStakeUntil = this.dpos2Service.onlyUpdateStakeUntil;
                 this.titleBar.setTitle(this.translate.instant('dposvoting.dpos-node-info'));
