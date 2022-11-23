@@ -82,6 +82,7 @@ export class CoinTxInfoPage implements OnInit {
     public dpos2Votes = [];
     public crProposalVotes = [];
     public crcImpeachmentVotes = [];
+    public crCouncilVotes = [];
 
     // Other Values
     public payFee: number = null;
@@ -406,6 +407,16 @@ export class CoinTxInfoPage implements OnInit {
                     show: false,
                 })
         }
+
+        if (this.crCouncilVotes.length > 0) {
+            this.txDetails.unshift(
+                {
+                    type: 'votes',
+                    title: 'wallet.coin-op-crc-vote',
+                    value: this.crCouncilVotes,
+                    show: false,
+                })
+        }
     }
 
     /**
@@ -426,30 +437,36 @@ export class CoinTxInfoPage implements OnInit {
         let voteTypeCount = 0;
 
         if (this.dpos2Votes.length > 0) {
-          voteTypeCount++;
-          voteName = GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos2-voting');
+            voteTypeCount++;
+            voteName = GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos2-voting');
         }
 
         if (this.crProposalVotes.length > 0) {
-          if (voteTypeCount) voteName += " + ";
-          voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-cr-proposal-against')
-          voteTypeCount++;
+            if (voteTypeCount) voteName += " + ";
+            voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-cr-proposal-against')
+            voteTypeCount++;
         }
 
         if (this.crcImpeachmentVotes.length > 0) {
-          if (voteTypeCount) voteName += " + ";
-          voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-impeachment')
-          voteTypeCount++;
+            if (voteTypeCount) voteName += " + ";
+            voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-impeachment')
+            voteTypeCount++;
+        }
+
+        if (this.crCouncilVotes.length > 0) {
+            if (voteTypeCount) voteName += " + ";
+            voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-vote')
+            voteTypeCount++;
         }
 
         if (voteTypeCount > 2) {
-          voteName = "wallet.coin-op-vote";
+            voteName = "wallet.coin-op-vote";
         } else if (voteTypeCount == 0) {
             voteName = this.translate.instant(this.transactionInfo.name);
         }
 
         return voteName;
-      }
+    }
 
     getTransferClass() {
         switch (this.type) {
@@ -536,7 +553,7 @@ export class CoinTxInfoPage implements OnInit {
                     this.dpos2Votes = [...this.dpos2Votes, ...votes];
                 break;
                 case VoteType.CRImpeachment:
-                    votes = await this.getCRCouncilVoteInfo(this.transactionInfo.votesContents[i]);
+                    votes = await this.getCRImpeachmentVoteInfo(this.transactionInfo.votesContents[i]);
                     this.crcImpeachmentVotes = [...this.crcImpeachmentVotes, ...votes];
                 break;
                 case VoteType.CRProposal:
@@ -544,7 +561,8 @@ export class CoinTxInfoPage implements OnInit {
                     this.crProposalVotes = [...this.crProposalVotes, ...votes];
                 break;
                 case VoteType.CRCouncil:
-                    // TODO
+                    votes = await this.getCRCouncilVoteInfo(this.transactionInfo.votesContents[i]);
+                    this.crCouncilVotes = [...this.crCouncilVotes, ...votes];
                 break;
             }
         }
@@ -597,7 +615,7 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     // Multi-signature wallet owners need to know these voting information before signing.
-    private async getCRCouncilVoteInfo(voteContentInfo: VotesContentInfo) {
+    private async getCRImpeachmentVoteInfo(voteContentInfo: VotesContentInfo) {
         if (voteContentInfo.VoteType !== VoteType.CRImpeachment) return [];
         let voteList = [];
 
@@ -605,6 +623,24 @@ export class CoinTxInfoPage implements OnInit {
             let crcouncil = await GlobalElastosAPIService.instance.getCRMember( voteContentInfo.VotesInfo[i].Candidate);
             let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
             voteList.push({Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: crcouncil.nickname});
+        }
+
+        Logger.log('wallet', 'getCRImpeachmentVoteInfo ', voteList);
+        return voteList;
+    }
+
+    // Multi-signature wallet owners need to know these voting information before signing.
+    private async getCRCouncilVoteInfo(voteContentInfo: VotesContentInfo) {
+        if (voteContentInfo.VoteType !== VoteType.CRCouncil) return [];
+        let voteList = [];
+
+        const candidateList = await GlobalElastosAPIService.instance.getCRCandidates();
+        if (candidateList) {
+            for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
+                let candidate = candidateList.find(c => c.cid == voteContentInfo.VotesInfo[i].Candidate)
+                let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
+                voteList.push({Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: candidate.nickname});
+            }
         }
 
         Logger.log('wallet', 'getCRCouncilVoteInfo ', voteList);

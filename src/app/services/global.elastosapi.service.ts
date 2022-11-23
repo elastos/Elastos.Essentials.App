@@ -7,6 +7,7 @@ import { IdentityEntry } from '../model/didsessions/identityentry';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
+import { Candidate } from '../voting/crcouncilvoting/model/candidates.model';
 import { CRMemberInfo } from '../voting/crcouncilvoting/services/crcouncil.service';
 import { ProposalDetails } from '../voting/crproposalvoting/model/proposal-details';
 import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
@@ -889,6 +890,26 @@ export class GlobalElastosAPIService extends GlobalService {
             result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         } catch (e) {
             Logger.warn("elastosapi", "getCRMember exception", e);
+        }
+        return result;
+    }
+
+    public async getCRCandidates(): Promise<Candidate[]> {
+        const param = {
+            method: 'listcrcandidates',
+            params: {
+                state: "all"
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+        let result = null;
+        try {
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return result?.crcandidatesinfo;
+        } catch (e) {
+            Logger.warn("elastosapi", "getCRCandidates exception", e);
         }
         return result;
     }
