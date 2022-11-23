@@ -468,7 +468,9 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     // Get the ELA amount staked on ELA mian chain.
     public async getStakedELA() {
-        if (WalletNetworkService.instance.isActiveNetworkElastosMainchain() && this.networkWallet) {
+        // Can't use WalletNetworkService.instance.isActiveNetworkElastosMainchain()
+        // We got the activeNetworkWallet event first, but the WalletNetworkService.instance.isActiveNetworkElastosMainchain still return true.
+        if (this.networkWallet && (this.networkWallet.network.key === 'elastos')) {
             let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
             this.stakedELA = await subwallet.getStakedBalance();
         }

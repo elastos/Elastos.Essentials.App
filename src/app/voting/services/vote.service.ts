@@ -131,6 +131,7 @@ export class VoteService {
             case App.DPOS2:
             case App.STAKING:
             case App.VOTING:
+            case App.CRCOUNCIL_VOTING:
             case App.CRPROPOSAL_VOTING:
             case App.CRSUGGESTION:
                 supportMultiSign = true;
