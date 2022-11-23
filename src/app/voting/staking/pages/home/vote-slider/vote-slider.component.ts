@@ -158,7 +158,7 @@ export class VoteSliderComponent implements OnInit {
 
                 if (result && !Util.isEmptyObject(result.crcandidatesinfo)) {
                     Logger.log(App.STAKING, "crcandidates:", result.crcandidatesinfo);
-                    for (const candidate of result.crmembersinfo) {
+                    for (const candidate of result.crcandidatesinfo) {
                         for (const item of this.voteInfos[VoteType.CRCouncil].list) {
                             if (item.candidate == candidate.cid) {
                                 item.name = candidate.nickname;
