@@ -85,7 +85,11 @@ export class VoteForProposalPage {
                 this.maxVotes = this.stakeService.votesRight.totalVotesRight;
             }
             else {
-                if (this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD) {
+                let status = await this.voteService.getDPoSStatus();
+                if (status == "DPoSV2") {
+                    this.maxVotes = 0;
+                }
+                else if (this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD) {
                     // Multi-signature wallets can only vote with staked ELA.
                     this.maxVotes = 0;
                 } else {

@@ -72,7 +72,13 @@ export class VotePage implements OnInit, OnDestroy {
             this.totalEla = this.stakeService.votesRight.totalVotesRight;
         }
         else {
-            this.totalEla = await this.voteService.getMaxVotes();
+            let status = await this.voteService.getDPoSStatus();
+            if (status == "DPoSV2") {
+                this.totalEla = 0;
+            }
+            else {
+                this.totalEla = await this.voteService.getMaxVotes();
+            }
         }
 
         Logger.log('crcouncil', 'My Candidates', this.crCouncilService.selectedCandidates);
