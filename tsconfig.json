@@ -1,7 +1,7 @@
 {
   "compileOnSave": false,
   "include": [
-    "src/**/*.ts",
+    "src/**/*.ts", "src/app/services/walletconnect/.walletconnect.v1.service.ts",
     //"environment/set_env.ts",
     //"scripts/*.ts"
   ],

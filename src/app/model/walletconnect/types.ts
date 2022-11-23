@@ -1,3 +1,5 @@
+import { ProposalTypes, SignClientTypes } from "@walletconnect/types";
+
 export type ClientMeta = {
     description: string;
     url: string;
@@ -25,6 +27,7 @@ export type WalletConnectSessionExtension = {
     timestamp?: number; // Date at which the session was created
 }
 
+// V1
 export type SessionRequestParams = {
     chainId: number | null;
     peerId: string | null;
@@ -37,3 +40,8 @@ export type JsonRpcRequest = {
     method: string;
     params: any[];
 }
+
+/******* WALLET CONNECT V2 TYPES */
+
+export type SessionProposalEvent = Omit<SignClientTypes.BaseEventArgs<ProposalTypes.Struct>, "topic">;
+export type SessionRequestEvent = SignClientTypes.BaseEventArgs<{ request: { method: string; params: any; }; chainId: string; }>;

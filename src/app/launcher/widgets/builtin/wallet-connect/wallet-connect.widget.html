@@ -7,17 +7,15 @@
   <!-- List of connections -->
   <div class="connections-row">
     <ion-row class="connections">
-      <ion-col *ngFor="let connector of walletConnectConnectors" class="connector-col" size="4">
-        <div class="connector"
-          *ngIf="connector.connected && connector.peerMeta && connector.peerMeta.icons && connector.peerMeta.icons.length > 0">
-          <img class="connector-logo" [src]="connector.peerMeta.icons[0]"
-            (error)="connector.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
-          <p>{{ connector.peerMeta.name }}</p>
+      <ion-col *ngFor="let instance of walletConnectInstances" class="connector-col" size="4">
+        <div class="connector" *ngIf="instance.getLogo()">
+          <img class="connector-logo" [src]="instance.getLogo()" src-fallback="assets/settings/icon/walletconnect.svg"/>
+          <p>{{ instance.getName() }}</p>
         </div>
       </ion-col>
     </ion-row>
     <div class="grid">
-      <img src="/assets/launcher/icons/dark_mode/grid.svg" (click)="pickNetwork()" />
+      <img src="/assets/launcher/icons/dark_mode/grid.svg" (click)="showWalletConnectSessions()" />
     </div>
   </div>
 

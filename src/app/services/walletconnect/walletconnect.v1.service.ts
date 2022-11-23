@@ -2,33 +2,34 @@ import { Injectable, NgZone } from '@angular/core';
 import type WalletConnect from "@walletconnect/client";
 import isUtf8 from "isutf8";
 import moment from 'moment';
-import { BehaviorSubject, Subscription } from 'rxjs';
-import { lazyWalletConnectImport } from '../helpers/import.helper';
-import { runDelayed } from '../helpers/sleep.helper';
-import { Logger } from '../logger';
-import { IdentityEntry } from "../model/didsessions/identityentry";
-import { AddEthereumChainParameter, SwitchEthereumChainParameter } from '../model/ethereum/requestparams';
-import { JsonRpcRequest, SessionRequestParams, WalletConnectSession, WalletConnectSessionExtension } from '../model/walletconnect/types';
-import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
-import { EVMNetwork } from '../wallet/model/networks/evms/evm.network';
-import { EthSignIntentResult } from '../wallet/pages/intents/ethsign/intentresult';
-import { PersonalSignIntentResult } from '../wallet/pages/intents/personalsign/intentresult';
-import { SignTypedDataIntentResult } from '../wallet/pages/intents/signtypeddata/intentresult';
-import { EditCustomNetworkIntentResult } from '../wallet/pages/settings/edit-custom-network/intentresult';
-import { WalletNetworkService } from '../wallet/services/network.service';
-import { WalletService } from '../wallet/services/wallet.service';
-import { GlobalFirebaseService } from './global.firebase.service';
-import { GlobalIntentService } from './global.intent.service';
-import { GlobalNativeService } from './global.native.service';
-import { GlobalNavService } from './global.nav.service';
-import { GlobalNetworksService } from './global.networks.service';
-import { GlobalPreferencesService } from './global.preferences.service';
-import { GlobalService, GlobalServiceManager } from './global.service.manager';
-import { GlobalStorageService } from './global.storage.service';
-import { GlobalSwitchNetworkService } from './global.switchnetwork.service';
-import { GlobalTranslationService } from './global.translation.service';
-import { DIDSessionsStore } from './stores/didsessions.store';
-import { NetworkTemplateStore } from './stores/networktemplate.store';
+import { Subscription } from 'rxjs';
+import { lazyWalletConnectImport } from '../../helpers/import.helper';
+import { runDelayed } from '../../helpers/sleep.helper';
+import { Logger } from '../../logger';
+import { IdentityEntry } from "../../model/didsessions/identityentry";
+import { AddEthereumChainParameter } from '../../model/ethereum/requestparams';
+import { JsonRpcRequest, SessionRequestParams, WalletConnectSession, WalletConnectSessionExtension } from '../../model/walletconnect/types';
+import { AnyNetworkWallet } from '../../wallet/model/networks/base/networkwallets/networkwallet';
+import { EVMNetwork } from '../../wallet/model/networks/evms/evm.network';
+import { EthSignIntentResult } from '../../wallet/pages/intents/ethsign/intentresult';
+import { PersonalSignIntentResult } from '../../wallet/pages/intents/personalsign/intentresult';
+import { SignTypedDataIntentResult } from '../../wallet/pages/intents/signtypeddata/intentresult';
+import { EditCustomNetworkIntentResult } from '../../wallet/pages/settings/edit-custom-network/intentresult';
+import { WalletNetworkService } from '../../wallet/services/network.service';
+import { WalletService } from '../../wallet/services/wallet.service';
+import { GlobalFirebaseService } from '../global.firebase.service';
+import { GlobalIntentService } from '../global.intent.service';
+import { GlobalNativeService } from '../global.native.service';
+import { GlobalNavService } from '../global.nav.service';
+import { GlobalPreferencesService } from '../global.preferences.service';
+import { GlobalService, GlobalServiceManager } from '../global.service.manager';
+import { GlobalStorageService } from '../global.storage.service';
+import { GlobalSwitchNetworkService } from '../global.switchnetwork.service';
+import { DIDSessionsStore } from '../stores/didsessions.store';
+import { NetworkTemplateStore } from '../stores/networktemplate.store';
+import { WalletConnectV1Instance } from './instances';
+import { EIP155RequestHandler, EIP155ResultOrError } from './requesthandlers/eip155';
+import { walletConnectStore } from './store';
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -38,24 +39,15 @@ export enum WalletConnectSessionRequestSource {
   EXTERNAL_INTENT // Probably a request from the connectivity SDK (mobile app, web app) that opens Essentials directly
 }
 
-export type ConnectorWithExtension = {
-  wc: WalletConnect;
-  sessionExtension: WalletConnectSessionExtension;
-}
-
 @Injectable({
   providedIn: 'root'
 })
-export class GlobalWalletConnectService extends GlobalService {
-  private connectors: Map<string, ConnectorWithExtension> = new Map(); // List of initialized WalletConnect instances.
+export class WalletConnectV1Service extends GlobalService {
+  public static instance: WalletConnectV1Service;
+
   private initiatingConnector: WalletConnect = null;
-
   private activeWalletSubscription: Subscription = null;
-
   private onGoingRequestSource: WalletConnectSessionRequestSource = null;
-
-  // Subject updated with the whole list of active sessions every time there is a change.
-  public walletConnectSessionsStatus = new BehaviorSubject<Map<string, ConnectorWithExtension>>(new Map());
 
   constructor(
     private zone: NgZone,
@@ -63,7 +55,6 @@ export class GlobalWalletConnectService extends GlobalService {
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
     private globalIntentService: GlobalIntentService,
-    private globalNetworksService: GlobalNetworksService,
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private walletNetworkService: WalletNetworkService,
     private walletManager: WalletService,
@@ -71,64 +62,11 @@ export class GlobalWalletConnectService extends GlobalService {
     private native: GlobalNativeService
   ) {
     super();
+    WalletConnectV1Service.instance = this;
   }
 
   init() {
     GlobalServiceManager.getInstance().registerService(this);
-
-    Logger.log("walletconnect", "Registering to intent events");
-    this.globalIntentService.intentListener.subscribe((receivedIntent) => {
-      Logger.log("walletconnect", "Received intent event", receivedIntent);
-      if (!receivedIntent)
-        return;
-
-      // Android receives the raw url.
-      if (receivedIntent.action === "rawurl") {
-        if (receivedIntent.params && receivedIntent.params.url) { // NOTE: urL
-          // Make sure this raw url coming from outside is for us
-          let rawUrl: string = receivedIntent.params.url;
-          if (this.canHandleUri(rawUrl)) {
-            if (!this.shouldIgnoreUri(rawUrl)) {
-              this.zone.run(() => {
-                void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT, receivedIntent);
-              });
-            }
-            else {
-              // Send empty intent response to unlock the intent service
-              void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
-            }
-          }
-        }
-        else {
-          // Send empty intent response to unlock the intent service
-          void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
-        }
-      }
-      // iOS receives:
-      // - https://essentials.elastos.net/wc?uri=wc:xxxx for real connections
-      // - optionally, https://essentials.elastos.net/wc to just "reappear", like on android - should not be handled
-      else if (receivedIntent.action === "https://essentials.elastos.net/wc" || receivedIntent.action === "https://essentials.web3essentials.io/wc") {
-        if (receivedIntent.params && receivedIntent.params.uri) { // NOTE: urI
-          // Make sure this raw url coming from outside is for us
-          let rawUrl: string = receivedIntent.params.uri;
-          if (this.canHandleUri(rawUrl)) {
-            if (!this.shouldIgnoreUri(rawUrl)) {
-              this.zone.run(() => {
-                void this.handleWCURIRequest(rawUrl, WalletConnectSessionRequestSource.EXTERNAL_INTENT, receivedIntent);
-              });
-            }
-            else {
-              // Send empty intent response to unlock the intent service
-              void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
-            }
-          }
-        }
-        else {
-          // Send empty intent response to unlock the intent service
-          void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
-        }
-      }
-    });
   }
 
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
@@ -142,13 +80,14 @@ export class GlobalWalletConnectService extends GlobalService {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(activeWallet => {
       if (activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
-        Logger.log("walletconnect", "Updating active connectors with new active wallet information", activeWallet);
-        for (let c of Array.from(this.connectors.values())) {
+        Logger.log("walletconnectv1", "Updating active connectors with new active wallet information", activeWallet);
+        let instances = walletConnectStore.getV1Instances();
+        for (let c of instances) {
           if (c.wc.connected) {
             try {
               let chainId = activeWallet.network instanceof EVMNetwork ? activeWallet.network.getMainChainID() : 0;
               let account = activeWallet.network instanceof EVMNetwork ? this.getAccountFromNetworkWallet(activeWallet) : null;
-              Logger.log("walletconnect", `Updating connected session`, c, chainId, account);
+              Logger.log("walletconnectv1", `Updating connected session`, c, chainId, account);
 
               c.wc.updateSession({
                 chainId: chainId,
@@ -156,7 +95,7 @@ export class GlobalWalletConnectService extends GlobalService {
               });
             }
             catch (e) {
-              Logger.warn("walletconnect", "Non critical updateSession() error:", e);
+              Logger.warn("walletconnectv1", "Non critical updateSession() error:", e);
             }
           }
         }
@@ -185,52 +124,12 @@ export class GlobalWalletConnectService extends GlobalService {
     return this.onGoingRequestSource;
   }
 
-  /* public async init(): Promise<void> {
-    Logger.log("Intents", "Global intent service is initializing");
-  } */
-
-  public canHandleUri(uri: string): boolean {
-    if (!uri || !uri.startsWith("wc:")) {
-      //Logger.log("walletconnect", "DEBUG CANNOT HANDLE URI", uri);
-      return false;
-    }
-
-    return true;
-  }
-
-  public shouldIgnoreUri(uri: string): boolean {
-    // We should ignore urls even if starting with "wc:", if they don't contain params, according to wallet connect documentation
-    // https://docs.walletconnect.org/mobile-linking
-    if (uri.startsWith("wc:") && uri.indexOf("?") < 0)
-      return true;
-
-    return false;
-  }
-
   /**
    * Handles a scanned or received wc:// url in order to initiate a session with a wallet connect proxy
    * server and client.
    */
   public async handleWCURIRequest(uri: string, source: WalletConnectSessionRequestSource, receivedIntent?: EssentialsIntentPlugin.ReceivedIntent) {
-    // No one may be awaiting this response but we need to send the intent response to release the
-    // global intent manager queue.
-    if (receivedIntent)
-      await this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
-
-    if (!this.canHandleUri(uri))
-      throw new Error("Invalid WalletConnect URL: " + uri);
-
-    Logger.log("walletconnect", "Handling uri request", uri, source);
-
-    this.onGoingRequestSource = source;
-
-    // While we are waiting to receive the "session_request" command, which could possibly take
-    // between a few ms and a few seconds depending on the network, we want to show a temporary screen
-    // to let the user wait.
-    // TODO: PROBABLY REPLACE THIS WITH A CANCELLABLE DIALOG, FULL SCREEN IS UGLY
-    this.zone.run(() => {
-      void this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/preparetoconnect", {});
-    });
+    Logger.log("walletconnectv1", "Handling uri request", uri, source);
 
     // Create connector
     let pushServerOptions = undefined;
@@ -274,48 +173,37 @@ export class GlobalWalletConnectService extends GlobalService {
     // Remember this connector for a while, for example to be able to reject the session request
     this.initiatingConnector = connector;
 
-    // TODO: wallet connect automatically reuses the persisted session from storage, if one waas
+    // TODO: wallet connect automatically reuses the persisted session from storage, if one was
     // established earlier. for debug purpose, we just always disconnect before reconnecting.
     /* if (this.connector.connected) {
-      Logger.log("walletconnect", "DEBUG - Already connected, KILLING the session");
+      Logger.log("walletconnectv1", "DEBUG - Already connected, KILLING the session");
       await this.connector.killSession();
-      Logger.log("walletconnect", "DEBUG - KILLED");
-      Logger.log("walletconnect", "DEBUG - Reconnecting");
+      Logger.log("walletconnectv1", "DEBUG - KILLED");
+      Logger.log("walletconnectv1", "DEBUG - Reconnecting");
       await this.connector.connect();
-      Logger.log("walletconnect", "DEBUG - Reconnected");
+      Logger.log("walletconnectv1", "DEBUG - Reconnected");
     } */
 
-    Logger.log("walletconnect", "CONNECTOR", connector);
+    Logger.log("walletconnectv1", "CONNECTOR", connector);
 
-    await this.prepareConnectorForEvents(connector);
-    //this.startConnectionFailureWatchdog(uri, connector);
+    this.prepareConnectorForEvents(connector);
   }
 
-  private async prepareConnectorForEvents(connector: WalletConnect) {
-    let sessionExtension = await this.loadSessionExtension(connector.key);
-    this.connectors.set(connector.key, { wc: connector, sessionExtension });
-    this.walletConnectSessionsStatus.next(this.connectors);
-
-    // TMP DEBUG - TRY TO UNDERSTAND IF WS ARE DISCONNECTED AFTER SOME TIME IN BACKGROUND
-    /* setInterval(() => {
-      Logger.log("walletconnect", "Connector status", connector.key, "connected?", connector.connected);
-    }, 3000); */
-
+  private prepareConnectorForEvents(connector: WalletConnect) {
     // Subscribe to session requests events, when a client app wants to link with our wallet.
     connector.on("session_request", (error, payload) => {
-      Logger.log("walletconnect", "Receiving session request", error, payload);
+      Logger.log("walletconnectv1", "Receiving session request", error, payload);
 
       if (error) {
         throw error;
       }
 
-      this.initiatingConnector = null;
       void this.handleSessionRequest(connector, payload.params[0]);
     });
 
     // Subscribe to call requests
     connector.on("call_request", (error, payload) => {
-      Logger.log("walletconnect", "Receiving call request", error, payload);
+      Logger.log("walletconnectv1", "Receiving call request", error, payload);
 
       if (error) {
         throw error;
@@ -325,7 +213,7 @@ export class GlobalWalletConnectService extends GlobalService {
     });
 
     connector.on("disconnect", (error, payload) => {
-      Logger.log("walletconnect", "Receiving disconnection request", error, payload);
+      Logger.log("walletconnectv1", "Receiving disconnection request", error, payload);
 
       if (error) {
         throw error;
@@ -335,25 +223,13 @@ export class GlobalWalletConnectService extends GlobalService {
         this.native.genericToast("settings.wallet-connect-session-disconnected");
 
       this.initiatingConnector = null;
-      this.connectors.delete(connector.key);
-      this.walletConnectSessionsStatus.next(this.connectors);
+
+      let instance = walletConnectStore.findById(connector.key);
+      walletConnectStore.delete(instance);
+
       void this.deleteSession(connector.session);
     });
   }
-
-  /**
-   * Starts a timer that checks if a connection cannot be established.
-   * In such case, we try to automatically kill and delete all existing sessions, and we restart
-   * a connection attempt.
-   */
-  /* private startConnectionFailureWatchdog(uri: string, connector: WalletConnect) {
-    let connectionWatchdogTimer = setTimeout(async () => {
-      if (!connector.connected) {
-        Logger.log("walletconnect", "Watchdog - killing all stored sessions to see if this cleanup can help...");
-        await this.killAllSessions();
-      }
-    }, 5000);
-  } */
 
   /**
    * Method that filters some disconnection events to not show a "sessions disconnected" popup in some cases.
@@ -380,7 +256,7 @@ export class GlobalWalletConnectService extends GlobalService {
 
     const WalletConnect = await lazyWalletConnectImport();
 
-    Logger.log("walletconnect", "Killing " + sessions.length + " sessions from persistent storage", sessions);
+    Logger.log("walletconnectv1", "Killing " + sessions.length + " sessions from persistent storage", sessions);
     // Kill stored connections
     for (let session of sessions) {
       let connector = new WalletConnect({
@@ -388,16 +264,18 @@ export class GlobalWalletConnectService extends GlobalService {
       });
       try {
         await connector.killSession();
+
+        let instance = walletConnectStore.findById(connector.key);
+        if (instance)
+          await walletConnectStore.delete(instance);
       }
       catch (e) {
-        Logger.warn("walletconnect", "Error while killing WC session", connector, e);
+        Logger.warn("walletconnectv1", "Error while killing WC session", connector, e);
       }
       await this.deleteSession(session);
     }
 
-    this.connectors.clear();
-
-    Logger.log("walletconnect", "Killed all sessions");
+    Logger.log("walletconnectv1", "Killed all sessions");
   }
 
   /* payload sample:
@@ -437,6 +315,32 @@ export class GlobalWalletConnectService extends GlobalService {
     return;
   }
 
+  private approveRequestWithResult(connector: WalletConnect, requestId: number, result: any) {
+    connector.approveRequest({
+      id: requestId,
+      result
+    });
+  }
+
+  private rejectRequestWithError(connector: WalletConnect, requestId: number, errorCode: number, errorMessage: string) {
+    connector.rejectRequest({
+      id: requestId,
+      error: {
+        code: errorCode,
+        message: errorMessage
+      }
+    });
+  }
+
+  private approveOrReject(connector: WalletConnect, requestId: number, resultOrError: EIP155ResultOrError<any>) {
+    if (resultOrError.error) {
+      this.rejectRequestWithError(connector, requestId, resultOrError.error.code, resultOrError.error.message);
+
+    } else {
+      this.approveRequestWithResult(connector, requestId, resultOrError.result);
+    }
+  }
+
   /* payload:
   {
     id: 1,
@@ -458,7 +362,8 @@ export class GlobalWalletConnectService extends GlobalService {
       await this.handleAddERCTokenRequest(connector, request);
     }
     else if (request.method === "wallet_switchEthereumChain") {
-      await this.handleSwitchNetworkRequest(connector, request);
+      let resultOrError = await EIP155RequestHandler.handleSwitchNetworkRequest(request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
     else if (request.method === "wallet_addEthereumChain") {
       await this.handleAddNetworkRequest(connector, request);
@@ -474,7 +379,7 @@ export class GlobalWalletConnectService extends GlobalService {
     }
     else {
       try {
-        Logger.log("walletconnect", "Sending esctransaction intent", request);
+        Logger.log("walletconnectv1", "Sending esctransaction intent", request);
         let response: {
           action: string,
           result: {
@@ -484,7 +389,7 @@ export class GlobalWalletConnectService extends GlobalService {
         } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/esctransaction", {
           payload: request
         });
-        Logger.log("walletconnect", "Got esctransaction intent response", response);
+        Logger.log("walletconnectv1", "Got esctransaction intent response", response);
 
         if (response && response.result.status === "published") {
           // Approve Call Request
@@ -505,7 +410,7 @@ export class GlobalWalletConnectService extends GlobalService {
         }
       }
       catch (e) {
-        Logger.error("walletconnect", "Send intent error", e);
+        Logger.error("walletconnectv1", "Send intent error", e);
         // Reject Call Request
         connector.rejectRequest({
           id: request.id,
@@ -553,65 +458,6 @@ export class GlobalWalletConnectService extends GlobalService {
   }
 
   /**
-   * Asks user to switch to another network as the client app needs it.
-   *
-   * EIP-3326
-   *
-   * If the error code (error.code) is 4902, then the requested chain has not been added
-   * and you have to request to add it via wallet_addEthereumChain.
-   */
-  private async handleSwitchNetworkRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    let switchParams: SwitchEthereumChainParameter = request.params[0];
-
-    let chainId = parseInt(switchParams.chainId);
-
-    let targetNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
-    if (!targetNetwork) {
-      // We don't support this network
-      this.native.errToast(GlobalTranslationService.instance.translateInstant("common.wc-not-supported-chainId", { chainId: switchParams.chainId }));
-      connector.rejectRequest({
-        id: request.id,
-        error: {
-          code: 4902,
-          message: "Unsupported network"
-        }
-      });
-      return;
-    }
-    else {
-      // Do nothing if already on the right network
-      let activeNetwork = this.walletNetworkService.activeNetwork.value;
-      if ((activeNetwork instanceof EVMNetwork) && activeNetwork.getMainChainID() === chainId) {
-        Logger.log("walletconnect", "Already on the right network");
-        connector.approveRequest({
-          id: request.id,
-          result: {} // Successfully switched
-        });
-        return;
-      }
-
-      let networkSwitched = await this.globalSwitchNetworkService.promptSwitchToNetwork(targetNetwork);
-      if (networkSwitched) {
-        Logger.log("walletconnect", "Successfully switched to the new network");
-        connector.approveRequest({
-          id: request.id,
-          result: {} // Successfully switched
-        });
-      }
-      else {
-        Logger.log("walletconnect", "Network switch cancelled");
-        connector.rejectRequest({
-          id: request.id,
-          error: {
-            code: -1,
-            message: "Cancelled operation"
-          }
-        });
-      }
-    }
-  }
-
-  /**
    * Asks user to add a custom network.
    *
    * EIP-3085
@@ -649,14 +495,14 @@ export class GlobalWalletConnectService extends GlobalService {
 
     if (networkWasAdded || existingNetwork) {
       // Network added, or network already existed => success, no matter if user chosed to switch or not
-      Logger.log("walletconnect", "Approving add network request");
+      Logger.log("walletconnectv1", "Approving add network request");
       connector.approveRequest({
         id: request.id,
         result: {} // Successfully added or existing
       });
     }
     else {
-      Logger.log("walletconnect", "Rejecting add network request");
+      Logger.log("walletconnectv1", "Rejecting add network request");
       connector.rejectRequest({
         id: request.id,
         error: {
@@ -781,9 +627,9 @@ export class GlobalWalletConnectService extends GlobalService {
   private async handleEssentialsCustomRequest(connector: WalletConnect, request: JsonRpcRequest): Promise<boolean> {
     let intentUrl = request.params[0]["url"] as string;
     try {
-      Logger.log("walletconnect", "Sending custom essentials intent request", intentUrl);
+      Logger.log("walletconnectv1", "Sending custom essentials intent request", intentUrl);
       let response = await this.globalIntentService.sendUrlIntent(intentUrl);
-      Logger.log("walletconnect", "Got custom request intent response. Approving WC request", response);
+      Logger.log("walletconnectv1", "Got custom request intent response. Approving WC request", response);
 
       // Approve Call Request
       connector.approveRequest({
@@ -799,7 +645,7 @@ export class GlobalWalletConnectService extends GlobalService {
         return true;
     }
     catch (e) {
-      Logger.error("walletconnect", "Send intent error", e);
+      Logger.error("walletconnectv1", "Send intent error", e);
       // Reject Call Request
       connector.rejectRequest({
         id: request.id,
@@ -825,38 +671,41 @@ export class GlobalWalletConnectService extends GlobalService {
 
     chainId = activeNetwork instanceof EVMNetwork ? activeNetwork.getMainChainID() : 0;
 
-    Logger.log("walletconnect", "Accepting session request with params:", connectorKey, ethAccountAddresses, chainId);
-
-    let connector = this.findConnectorFromKey(connectorKey);
+    Logger.log("walletconnectv1", "Accepting session request with params:", connectorKey, ethAccountAddresses, chainId);
 
     // Approve Session
-    await connector.wc.approveSession({
+    let connector = this.initiatingConnector;
+    await connector.approveSession({
       accounts: ethAccountAddresses,
       chainId: chainId
     });
 
-    // Append current time as session creation time.
-    if (!connector.sessionExtension.timestamp) {
-      connector.sessionExtension.timestamp = moment().unix();
-      await this.saveSessionExtension(connector.wc.key, connector.sessionExtension);
+    let sessionExtension: WalletConnectSessionExtension = {
+      timestamp: moment().unix()
     }
 
-    await this.saveSession(connector.wc.session);
+    const instance = new WalletConnectV1Instance(connector, sessionExtension);
+    walletConnectStore.add(instance);
+
+    await this.saveSession(connector.session);
+    await walletConnectStore.saveSessionExtension(instance.id, sessionExtension);
+
+    this.initiatingConnector = null;
   }
 
   public async rejectSession(connectorKey: string, reason: string) {
-    Logger.log("walletconnect", "Rejecting session request", this.initiatingConnector);
+    Logger.log("walletconnectv1", "Rejecting session request", this.initiatingConnector);
 
     let connector: WalletConnect = null;
     if (connectorKey) {
       // We are rejecting a from a "session request" screen. The connector is already in our
       // connectors list and it's not a "initiatingconnector" any more.
       // We delete this connector from our list.
-      let connectorWithInfo = this.findConnectorFromKey(connectorKey);
+      let connectorWithInfo = this.findInstanceFromKey(connectorKey);
       if (connectorWithInfo)
         connector = connectorWithInfo.wc;
 
-      Logger.log("walletconnect", "Rejecting session with connector key", connectorKey, connector);
+      Logger.log("walletconnectv1", "Rejecting session with connector key", connectorKey, connector);
     }
     else {
       connector = this.initiatingConnector;
@@ -869,22 +718,22 @@ export class GlobalWalletConnectService extends GlobalService {
       // In this case we kill the session and restart.
       if (connector.connected) {
         try {
-          Logger.log("walletconnect", "Killing session");
+          Logger.log("walletconnectv1", "Killing session");
           await connector.killSession();
         }
         catch (e) {
-          Logger.warn("walletconnect", "Reject session exception (disconnect):", e);
+          Logger.warn("walletconnectv1", "Reject session exception (disconnect):", e);
         }
       }
       else {
         try {
-          Logger.log("walletconnect", "Rejecting session");
+          Logger.log("walletconnectv1", "Rejecting session");
           connector.rejectSession({
             message: reason   // optional
           });
         }
         catch (e) {
-          Logger.warn("walletconnect", "Reject session exception (reject):", e);
+          Logger.warn("walletconnectv1", "Reject session exception (reject):", e);
         }
       }
 
@@ -894,12 +743,8 @@ export class GlobalWalletConnectService extends GlobalService {
     }
   }
 
-  public async killSession(connector: WalletConnect) {
-    await connector.killSession();
-  }
-
-  public getActiveConnectors(): ConnectorWithExtension[] {
-    return Array.from(this.connectors.values());
+  public async killSession(instance: WalletConnectV1Instance) {
+    await instance.wc.killSession();
   }
 
   private async restoreSessions() {
@@ -907,24 +752,28 @@ export class GlobalWalletConnectService extends GlobalService {
 
     const WalletConnect = await lazyWalletConnectImport();
 
-    Logger.log("walletconnect", "Restoring " + sessions.length + " sessions from persistent storage", sessions);
+    Logger.log("walletconnectv1", "Restoring " + sessions.length + " sessions from persistent storage", sessions);
     for (let session of sessions) {
       let connector = new WalletConnect({
         session: session
       });
       await this.prepareConnectorForEvents(connector);
+
+      const sessionExtension = await walletConnectStore.loadSessionExtension(connector.key);
+      const instance = new WalletConnectV1Instance(connector, sessionExtension);
+      walletConnectStore.add(instance);
     }
-    Logger.log("walletconnect", "Restored connectors:", this.connectors);
+    // TODO Logger.log("walletconnectv1", "Restored connectors:", this.connectors);
 
     // We are directly ready to receive requests after that, without any user intervention.
   }
 
-  private findConnectorFromKey(connectorKey: string): ConnectorWithExtension {
-    return this.connectors.get(connectorKey);
+  private findInstanceFromKey(connectorKey: string): WalletConnectV1Instance {
+    return walletConnectStore.getV1Instances().find(i => i.id === connectorKey);
   }
 
   private async loadSessions(): Promise<WalletConnectSession[]> {
-    Logger.log("walletconnect", "Loading storage sessions for user ", DIDSessionsStore.signedInDIDString);
+    Logger.log("walletconnectv1", "Loading storage sessions for user ", DIDSessionsStore.signedInDIDString);
     let sessions = await this.storage.getSetting<WalletConnectSession[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", []);
     return sessions;
   }
@@ -950,17 +799,6 @@ export class GlobalWalletConnectService extends GlobalService {
       sessions.splice(existingSessionIndex, 1);
 
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", sessions);
-  }
-
-  private async loadSessionExtension(sessionKey: string): Promise<WalletConnectSessionExtension> {
-    let storageKey = "session_extension_" + sessionKey;
-    let extension = await this.storage.getSetting<WalletConnectSessionExtension>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", storageKey, {});
-    return extension;
-  }
-
-  private async saveSessionExtension(sessionKey: string, extension: WalletConnectSessionExtension) {
-    let storageKey = "session_extension_" + sessionKey;
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", storageKey, extension);
   }
 
   /**

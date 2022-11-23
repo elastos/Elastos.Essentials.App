@@ -2,8 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { ConnectorWithExtension, GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { GlobalWalletConnectService } from 'src/app/services/walletconnect/global.walletconnect.service';
+import { WalletConnectInstance } from 'src/app/services/walletconnect/instances';
+import { walletConnectStore } from 'src/app/services/walletconnect/store';
 import { DeveloperService } from '../../../services/developer.service';
 import { SettingsService } from '../../../services/settings.service';
 
@@ -15,7 +17,7 @@ import { SettingsService } from '../../../services/settings.service';
 export class WalletConnectSessionsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-  public activeConnectors: ConnectorWithExtension[] = [];
+  public activeInstances: WalletConnectInstance[] = [];
 
   constructor(
     public settings: SettingsService,
@@ -26,51 +28,53 @@ export class WalletConnectSessionsPage implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.walletConnect.walletConnectSessionsStatus.subscribe(status => {
+    walletConnectStore.wcInstances.subscribe(status => {
       // Refresh sessions list after disconnection for example
-      this.activeConnectors = this.walletConnect.getActiveConnectors();
+      this.activeInstances = this.walletConnect.getActiveInstances();
+      console.log("walletconnect sessions 2", this.activeInstances)
     });
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.wallet-connect-sessions'));
 
-    this.activeConnectors = this.walletConnect.getActiveConnectors();
-    console.log("walletconnect sessions", this.activeConnectors)
+    this.activeInstances = this.walletConnect.getActiveInstances();
+    console.log("walletconnect sessions", this.activeInstances)
   }
 
   ionViewWillLeave() {
   }
 
-  getSessionName(connector: ConnectorWithExtension): string {
-    if (connector.wc.peerMeta)
-      return connector.wc.peerMeta.name;
-    else
-      return "Unknown session";
+  getSessionName(instance: WalletConnectInstance): string {
+    return instance.getName();
   }
 
-  getSessionID(connector: ConnectorWithExtension): string {
-    //return session.key.substr(0, 25)+"...";
-    return connector.wc.key;
+  getSessionID(instance: WalletConnectInstance): string {
+    return instance.id;
   }
 
-  getSessionLogo(connector: ConnectorWithExtension): string {
-    if (!connector || !connector.wc || !connector.wc.peerMeta || !connector.wc.peerMeta.icons || connector.wc.peerMeta.icons.length == 0)
-      return 'assets/settings/icon/walletconnect.svg';
-
-    return connector.wc.peerMeta.icons[0];
+  getSessionLogo(instance: WalletConnectInstance): string {
+    return instance.getLogo();
   }
 
-  getSessionCreationDate(connector: ConnectorWithExtension): string {
-    if (!connector.sessionExtension.timestamp)
+  getSessionDescription(instance: WalletConnectInstance): string {
+    return instance.getDescription();
+  }
+
+  getSessionUrl(instance: WalletConnectInstance): string {
+    return instance.getUrl();
+  }
+
+  getSessionCreationDate(instance: WalletConnectInstance): string {
+    if (!instance.sessionExtension.timestamp)
       return null;
 
-    return moment.unix(connector.sessionExtension.timestamp).startOf('minutes').fromNow();
+    return moment.unix(instance.sessionExtension.timestamp).startOf('minutes').fromNow();
   }
 
-  async killSession(connector: ConnectorWithExtension) {
+  async killSession(connector: WalletConnectInstance) {
     try {
-      await this.walletConnect.killSession(connector.wc);
+      await this.walletConnect.killSession(connector);
     }
     catch (e) {
       console.warn("Kill session exception: ", e)

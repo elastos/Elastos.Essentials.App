@@ -4,7 +4,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 /**
  * This component loads any picture, including a remote PNG or SVG, into an img tag.
  * But before loading, and in case there is a load error an inline SVG (that supports currentColor
- * to be applied) is displated.
+ * to be applied) is displayed.
  */
 @Component({
   selector: 'img-svg-fallback',

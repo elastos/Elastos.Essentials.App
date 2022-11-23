@@ -1,11 +1,12 @@
 import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import WalletConnect from '@walletconnect/client';
 import { Subscription } from 'rxjs';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { Logger } from 'src/app/logger';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalWalletConnectService } from 'src/app/services/global.walletconnect.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { GlobalWalletConnectService } from 'src/app/services/walletconnect/global.walletconnect.service';
+import { WalletConnectInstance } from 'src/app/services/walletconnect/instances';
+import { walletConnectStore } from 'src/app/services/walletconnect/store';
 import { WidgetBase } from '../../base/widgetbase';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 
@@ -18,7 +19,7 @@ export class WalletConnectWidget extends WidgetBase implements OnInit, OnDestroy
   public editing: boolean; // Widgets container is being edited
 
   private walletConnectSub: Subscription = null; // Subscription to wallet connect active sessions
-  public walletConnectConnectors: WalletConnect[] = [];
+  public walletConnectInstances: WalletConnectInstance[] = [];
 
   constructor(
     private zone: NgZone,
@@ -36,10 +37,10 @@ export class WalletConnectWidget extends WidgetBase implements OnInit, OnDestroy
       this.editing = editing;
     });
 
-    this.walletConnectSub = this.globalWalletConnectService.walletConnectSessionsStatus.subscribe(connectors => {
+    this.walletConnectSub = walletConnectStore.wcInstances.subscribe(instances => {
       this.zone.run(() => {
-        this.walletConnectConnectors = Array.from(connectors.values()).slice(0, 3).map(c => c.wc); // Keep only 3 items
-        Logger.log("launcher", "Wallet connect connectors:", this.walletConnectConnectors, this.walletConnectConnectors.length);
+        this.walletConnectInstances = Array.from(instances.values()).slice(0, 3); // Keep only 3 items
+        Logger.log("launcher", "Displayed wallet connect instances:", this.walletConnectInstances, this.walletConnectInstances.length);
 
         this.notifyReadyToDisplay();
       });
@@ -61,13 +62,9 @@ export class WalletConnectWidget extends WidgetBase implements OnInit, OnDestroy
   }
 
   public someWalletConnectSessionsCanBeDisplayed(): boolean {
-    if (!this.walletConnectConnectors || this.walletConnectConnectors.length == 0)
+    if (!this.walletConnectInstances || this.walletConnectInstances.length == 0)
       return false;
-
-    // Make sure the connectors are displayable, i.e. they have some peer metadata set
-    return this.walletConnectConnectors.filter(c => {
-      return c.peerMeta && c.peerMeta.icons && c.peerMeta.icons.length > 0;
-    }).length > 0;
+    else
+      return true;
   }
-
 }
