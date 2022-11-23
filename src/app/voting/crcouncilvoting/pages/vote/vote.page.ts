@@ -153,7 +153,7 @@ export class VotePage implements OnInit, OnDestroy {
             }
         });
 
-        if (Object.keys(votedCandidates).length === 0) {
+        if (votedCandidatesV2.length === 0 && Object.keys(votedCandidates).length === 0 ) {
             void this.globalNative.genericToast('crcouncilvoting.pledge-some-ELA-to-candidates');
         }
         else if (this.votedEla > this.totalEla) {
