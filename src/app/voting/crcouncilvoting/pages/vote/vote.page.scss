@@ -14,6 +14,10 @@ ion-content {
     color: red;
 }
 
+.council-header {
+    background: var(--ion-background-color);
+}
+
 .container {
     padding-top: 10px;
     margin-top: 55px;
@@ -62,9 +66,10 @@ ion-content {
             .icon-col {
                 height: 50px;
 
-                img {
+                .img {
                     width: 50px;
                     height: 100%;
+                    display: flex;
                 }
             }
 
