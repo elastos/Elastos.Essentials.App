@@ -9,7 +9,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletInitService } from 'src/app/wallet/services/init.service';
@@ -35,7 +34,6 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
   private popover: HTMLIonPopoverElement = null;
   public masterWalletWithNetworkWalletList: MasterWalletWithNetworkWallet[] = []
   public networkWalletsList: AnyNetworkWallet[] = [];
-  public activeNetwork: AnyNetwork = null;
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
   public backgroundGradient: string = null;
 
@@ -125,15 +123,6 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
   }
 
   private updateWidgetMainWallet() {
-    // Deprecated
-    let activeWallet = this.walletService.activeNetworkWallet.value;
-    if (activeWallet) {
-      this.activeNetwork = this.walletNetworkService.activeNetwork.value;
-    }
-    else {
-      this.activeNetwork = null;
-    }
-
     // Widget will show all the master wallets, even some of them are unsupported on the active network.
     this.networkWalletsList = this.walletService.getNetworkWalletsList();
     let masterWallets = this.walletService.getMasterWalletsList();
@@ -155,8 +144,8 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     }
 
     // Background gradient color
-    if (this.activeNetwork) {
-      let networkColor = this.activeNetwork.getMainColor(); // RRGGBB
+    if (this.walletNetworkService.activeNetwork.value) {
+      let networkColor = this.walletNetworkService.activeNetwork.value.getMainColor(); // RRGGBB
       let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
       this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
     }
