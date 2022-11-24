@@ -53,7 +53,6 @@
             <ion-row class="btn-row" *ngIf="needConfirm">
                 <ion-col class="left-col">
                     <ebutton (clicked)="needConfirm = false;" [title]="'common.cancel' | translate"> </ebutton>
-                    x
                 </ion-col>
                 <ion-col class="right-col" color="success">
                     <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate"> </ebutton>

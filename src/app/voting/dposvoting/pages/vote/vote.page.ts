@@ -106,7 +106,6 @@ export class VotePage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         void this.setRegistrationIcon();
     }
 

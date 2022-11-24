@@ -1,14 +1,12 @@
 <ion-content [class.dark-container]="theme.darkMode">
     <app-titlebar></app-titlebar>
     <div class="council-header" *ngIf="crCouncilService.isVoting">
-        <ion-row>
+        <ion-row class="auto-width">
             <ion-col class="left-col">
                 <div id="vote-label">{{ 'voting.vote-going' | translate }}</div>
             </ion-col>
             <ion-col class="right-col">
-                <div class="btn-container align-center" id="vote-button" (click)="gotoCandidate()">
-                    {{ 'voting.vote' | translate }}
-                </div>
+                <ebutton class="btn-container align-center" id="vote-button" [title]="'voting.vote' | translate" (clicked)="gotoCandidate()"></ebutton>
             </ion-col>
         </ion-row>
     </div>

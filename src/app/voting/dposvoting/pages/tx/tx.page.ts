@@ -50,7 +50,6 @@ export class TxPage implements OnInit {
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos-voting'));
-        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
         this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
         this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, { key: null, iconPath: BuiltInIcon.BACK });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {

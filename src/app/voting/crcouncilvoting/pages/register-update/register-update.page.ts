@@ -2,7 +2,6 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import type { CRInfoJson } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
@@ -65,7 +64,6 @@ export class RegisterUpdatePage implements OnInit {
 
     ionViewWillEnter() {
         Logger.log("RegisterUpdatePage", this.voteService.masterWalletId);
-        this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
 
         this.originInfo = Util.clone(this.crCouncilService.updateInfo);
         if (!this.crCouncilService.updateInfo) {

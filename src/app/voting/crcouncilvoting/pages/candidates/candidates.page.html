@@ -21,17 +21,15 @@
                                 <img-svg-fallback class="img" [src]="candidate.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                             </ion-col>
                             <ion-col size="7.75" class="label-col" (click)="onShowCandidateInfo(candidate.did)">
-                                <ion-label>
-                                    <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
-                                    </h4>
-                                    <p>
-                                        <!-- <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
-                                        | translate }}
-                                        &nbsp; -->
-                                        <span class="votes">{{ fixVotes(candidate.votes) }}</span>
-                                        {{'crcouncilvoting.votes' | translate }}
-                                    </p>
-                                </ion-label>
+                                <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
+                                </h4>
+                                <p>
+                                    <!-- <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
+                                    | translate }}
+                                    &nbsp; -->
+                                    <span class="votes">{{ fixVotes(candidate.votes) }}</span>
+                                    {{'crcouncilvoting.votes' | translate }}
+                                </p>
                             </ion-col>
                             <ion-col size="1.5" class="checkbox-col" (click)="addCandidate(candidate)">
                                 <!--  TODO checked="candidateIsSelected(candidate)" can't work, why?-->

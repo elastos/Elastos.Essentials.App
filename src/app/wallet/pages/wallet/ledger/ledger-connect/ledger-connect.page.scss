@@ -1,6 +1,5 @@
 @import "src/app/wallet/root.scss";
 
-
 .content {
     padding: 20px;
 }
@@ -20,7 +19,6 @@
 .flex-align-items-center {
     align-items: center;
 }
-
 
 .row {
     align-self: center;
@@ -81,7 +79,8 @@
     padding: 15px 10px;
     border-radius: 13px;
 
-    ion-label, p {
+    ion-label,
+    p {
         font-weight: 500;
         font-size: 14px;
     }
@@ -104,16 +103,6 @@
     align-items: center;
     width: 100%;
     margin-top: 20px;
-
-    ion-button {
-      height: 50px;
-      width: 90%;
-      --background: linear-gradient(to bottom, #732dcf, #640fd4);
-      --border-radius: 8px;
-      font-size: 14px;
-      font-weight: 500;
-      letter-spacing: 0.1px;
-    }
 }
 
 .scanning {
@@ -128,10 +117,10 @@
 
 .dark-container {
     .account-row {
-        background: #2C2C2C;
+        background: #2c2c2c;
     }
 
     .prompt-row {
-      background: lightseagreen;
-  }
+        background: lightseagreen;
+    }
 }

@@ -1,6 +1,5 @@
 @import "src/app/voting/dposregistration/root.scss";
 
-
 .title {
     // height: 100px;
     height: 50px;
@@ -15,8 +14,7 @@ ion-content {
 }
 
 ion-input {
-    background: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    background: var(--essentials-box-color);
     height: 48px;
     border-radius: 8px;
     font-size: 13px;
@@ -24,8 +22,8 @@ ion-input {
 }
 
 ion-col {
-    ion-button {
-        padding:0 5px;
+    ebutton {
+        padding: 0 5px;
     }
 }
 
@@ -35,13 +33,12 @@ ion-list {
     }
 }
 
-p {
-    font-size: 13px;
+ion-select {
+    background: var(--essentials-box-color);
+    border-radius: 8px;
+    height: 48px;
 }
 
-.darkContainer {
-    ion-input {
-        background-color: #212021;
-        box-shadow: none;
-    }
+p {
+    font-size: 13px;
 }
