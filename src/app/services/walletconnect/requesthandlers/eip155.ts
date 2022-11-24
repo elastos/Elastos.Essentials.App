@@ -240,7 +240,7 @@ export class EIP155RequestHandler {
           status: "published" | "cancelled"
         }
       } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/esctransaction", {
-        payload: params[0]
+        payload: { params }
       });
       Logger.log("walletconnecteip155", "Got esctransaction intent response", response);
 
