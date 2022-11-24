@@ -18,7 +18,7 @@
           [src]="theme.darkMode ? '/assets/settings/icon/delete-white.svg' : '/assets/settings/icon/delete-black.svg'">
       </ion-col>
     </ion-row>
-    <div class="no-session" *ngIf="instance && instance.length == 0">
+    <div class="no-session" *ngIf="activeInstances && activeInstances.length == 0">
       <h3>{{ 'settings.wallet-connect-no-session' | translate }}</h3>
       <p>{{ 'settings.wallet-connect-no-session-info' | translate }}</p>
     </div>
