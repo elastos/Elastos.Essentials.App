@@ -12,16 +12,16 @@ import { WalletService } from "src/app/wallet/services/wallet.service";
 import { CRCouncilService } from "../../services/crcouncil.service";
 
 @Component({
-    selector: "app-crmembers",
-    templateUrl: "./crmembers.page.html",
-    styleUrls: ["./crmembers.page.scss"]
+    selector: "app-nextcrs",
+    templateUrl: "./nextcrs.page.html",
+    styleUrls: ["./nextcrs.page.scss"]
 })
-export class CRMembersPage implements OnInit {
+export class NextCRsPage implements OnInit {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     public candidateIndex: number;
     public addingCandidates = false;
-    public crMembersFetched = false;
+    public dataFetched = false;
     public secretary: any = null;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -44,21 +44,18 @@ export class CRMembersPage implements OnInit {
     async ionViewWillEnter() {
         //this.titleBar.setBackgroundColor("#732CCE");
         //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.council-members'));
+        this.titleBar.setTitle(this.translate.instant('crcouncilvoting.next-crs'));
 
-        let available = await this.crCouncilService.getCRDepositcoinAvailable();
-        if (available > 0) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' : '/assets/crcouncilvoting/icon/withdraw.svg' });
-            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                void this.crCouncilService.withdrawCandidate(available, '/crcouncilvoting/crmembers');
-            });
+        if (!this.dataFetched) {
+            await this.crCouncilService.fetchNextCRs();
+            this.dataFetched = true;
         }
 
-        await this.crCouncilService.getCRVotingStage();
-        if (!this.crMembersFetched) {
-            await this.crCouncilService.fetchCRMembers();
-            this.secretary = await this.crCouncilService.getSecretary();
-            this.crMembersFetched = true;
+        if (this.crCouncilService.isElected) {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
+            this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+                this.claimDposNode();
+            });
         }
     }
 
@@ -66,20 +63,7 @@ export class CRMembersPage implements OnInit {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
-    gotoCandidate() {
-        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/candidates');
-    }
-
-    gotoNextCRs() {
-        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/nextcrs');
-    }
-
-    async onShowMemberInfo(did: string) {
-        this.crCouncilService.selectedMemberDid = did;
-        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
-    }
-
-    async onShowSecretaryInfo() {
-        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/secretary');
+    claimDposNode() {
+        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crnode');
     }
 }

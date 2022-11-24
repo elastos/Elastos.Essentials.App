@@ -5,8 +5,7 @@
         <ion-list>
             <ion-row class="profile-data">
                 <ion-col>
-                    <h5 *ngIf="nodePublicKey==''">{{ 'crcouncilvoting.enter-node-publickey' | translate }}</h5>
-                    <h5 *ngIf="nodePublicKey!=''">{{ 'crcouncilvoting.edit-node-publickey' | translate }}</h5>
+                    <h5>{{ label }}</h5>
                     <h4>
                         <ion-input type="text" name="publickey" ngDefaultControl [(ngModel)]="nodePublicKey" clearInput>
                         </ion-input>
@@ -16,7 +15,9 @@
         </ion-list>
 
         <ion-row class="btn-container">
-            <ebutton (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
+            <ion-col>
+                <ebutton (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
+            </ion-col>
         </ion-row>
     </div>
 </ion-content>

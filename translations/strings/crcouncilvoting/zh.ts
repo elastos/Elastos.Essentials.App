@@ -95,6 +95,10 @@ export const zh = {
 
         'no-candidates': '目前没有候选人',
 
+        'vote-end': '委员选举已结束',
+        'view': '查看',
+        'next-crs': '下一届CR委员会',
+
         /********** Registration **********/
         'registration': '报名参选',
         'register-candidate': '注册CR候选人',

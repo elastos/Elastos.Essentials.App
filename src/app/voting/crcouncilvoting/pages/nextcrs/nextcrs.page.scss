@@ -1,0 +1,69 @@
+@import "../../root.scss";
+
+.container {
+    // padding-top: 15%;
+
+    .candidate-list {
+        padding: 0px 0px 1px;
+        height: 100%;
+
+        ion-item {
+            margin: 2px 0;
+            --padding-start: 0px;
+
+            ion-grid {
+                padding: 5px 0;
+            }
+
+            ion-row {
+                padding: 5px 0;
+            }
+
+            .rank-col {
+                font-size: 13px;
+                font-weight: 800;
+                padding-right: 1px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .img-col {
+                display: flex;
+                justify-content: flex-start;
+                align-items: center;
+
+                .img {
+                    width: 40px;
+                    height: 40px;
+                }
+            }
+
+            .label-col {
+                display: flex;
+                align-items: flex-start;
+                align-self: center;
+                flex-direction: column;
+
+                h4,
+                p {
+                    margin: 0;
+                }
+
+                h4 {
+                    font-size: 16px;
+                    font-weight: 600;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
+                p {
+                    font-size: 12px !important;
+                    font-weight: 300;
+                }
+            }
+
+        }
+    }
+}

@@ -1,0 +1,41 @@
+<ion-content [class.dark-container]="theme.darkMode">
+    <app-titlebar></app-titlebar>
+    <div class="content">
+        <ion-grid *ngIf="crCouncilService.nextCRs.length > 0" class="container ion-no-padding">
+            <ion-list lines="none" class="candidate-list">
+                <ion-item class="candidate" *ngFor="let member of crCouncilService.nextCRs">
+                    <ion-grid>
+                        <ion-row>
+                            <ion-col size="1.25" class="rank-col">
+                                {{ crCouncilService.nextCRs.indexOf(member) + 1 }}
+                            </ion-col>
+                            <ion-col size="1.5" class="img-col">
+                                <img-svg-fallback class="img" [src]="member.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
+                            </ion-col>
+                            <ion-col class="label-col" size="7">
+                                <h4>{{ member.nickname }} </h4>
+                                <!-- <p>
+                                    <ion-icon name="navigate"></ion-icon>
+                                    {{ 'crcouncilvoting.' + member.location | translate }}
+                                </p> -->
+                            </ion-col>
+                            <ion-col class="label-col" size="2.25">
+                            </ion-col>
+                        </ion-row>
+                    </ion-grid>
+                </ion-item>
+
+            </ion-list>
+        </ion-grid>
+
+        <div *ngIf="dataFetched && crCouncilService.nextCRs.length == 0" class="no-data">
+            {{ 'crcouncilvoting.no-members' | translate }}
+        </div>
+
+        <div *ngIf="!dataFetched" class="spinner align-center">
+            <ion-spinner name="crescent"></ion-spinner>
+        </div>
+
+    </div>
+
+</ion-content>

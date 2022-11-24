@@ -18,6 +18,7 @@ import { CRMembersPage } from './pages/crmembers/crmembers.page';
 import { CRNodePage } from './pages/crnode/crnode.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
+import { NextCRsPage } from './pages/nextcrs/nextcrs.page';
 import { RegisterUpdatePage } from './pages/register-update/register-update.page';
 import { CandidateRegistrationTermsPage } from './pages/registration-terms/registration-terms.page';
 import { CRSecretaryPage } from './pages/secretary/secretary.page';
@@ -30,6 +31,7 @@ import { CRCouncilVotingRoutingModule } from './routing';
     CRMembersPage,
     CandidatesPage,
     CandidatePage,
+    NextCRsPage,
     RegisterUpdatePage,
     CandidateRegistrationTermsPage,
     HistoryPage,

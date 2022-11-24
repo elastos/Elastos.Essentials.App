@@ -94,6 +94,10 @@ export const fr = {
 
                 'no-candidates': 'Aucun candidat pour le moment',
 
+                'vote-end': 'The election has ended',
+                'view': 'View',
+                'next-crs': 'The Next CR Committee',
+
                 /********** Registration **********/
                 'registration': 'Enregistrement',
                 'register-candidate': 'Enregistrement candidat',

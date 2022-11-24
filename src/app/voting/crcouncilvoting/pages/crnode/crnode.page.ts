@@ -23,6 +23,7 @@ export class CRNodePage implements OnInit {
     public masterWalletId: string;
     public nodePublicKey: string = null;
     public crmemberInfo: any = {};
+    public label = '';
 
     constructor(
         public translate: TranslateService,
@@ -43,9 +44,19 @@ export class CRNodePage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.claim-dpos-node'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-        this.crmemberInfo = this.crCouncilService.selectedMember;
-        if (!this.nodePublicKey) {
-            this.nodePublicKey = this.crmemberInfo.dpospublickey;
+        if (this.crCouncilService.isCRMember) {
+            this.crmemberInfo = this.crCouncilService.crmemberInfo;
+        }
+        else if (this.crCouncilService.isElected) {
+            this.crmemberInfo = this.crCouncilService.nextCRInfo;
+        }
+
+        this.nodePublicKey = this.crmemberInfo.dpospublickey;
+        if (!this.nodePublicKey || this.nodePublicKey == "") {
+            this.label = this.translate.instant('crcouncilvoting.enter-node-publickey');
+        }
+        else {
+            this.label = this.translate.instant('crcouncilvoting.edit-node-publickey');
         }
     }
 
@@ -66,7 +77,7 @@ export class CRNodePage implements OnInit {
             return false;
         }
 
-        if (this.nodePublicKey == this.crmemberInfo.dpospublickey) {
+        if (!this.crCouncilService.isElected && this.nodePublicKey == this.crmemberInfo.dpospublickey) {
             this.globalNative.genericToast('crcouncilvoting.text-public-key-dont-modify');
             return false;
         }

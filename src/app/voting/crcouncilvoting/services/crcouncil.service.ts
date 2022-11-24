@@ -53,6 +53,7 @@ export type CRMemberInfo = {
 })
 export class CRCouncilService {
     public isVoting = false;
+    public inClaiming = false;
     private getCRVotingStageTimeout: NodeJS.Timeout = null;
 
     constructor(
@@ -92,9 +93,12 @@ export class CRCouncilService {
     public currentTermIndex = -1;
     public votingTermIndex = -1;
 
-    // public council: CouncilMember[] = [];
+    public nextCRs: any[] = [];
+    public nextCRInfo: any;
+
     public isCRMember = false;
     public isCandidate = false;
+    public isElected = false;
 
     public httpOptions = {
         headers: new HttpHeaders({
@@ -424,12 +428,14 @@ export class CRCouncilService {
     async getCRVotingStage() {
         let result = await this.getCRRelatedStage();
         if (result) {
-            if (result.invoting) {
-                this.isVoting = result.invoting;
-            }
-            else {
-                this.isVoting = false;
-            }
+            this.isVoting = result.invoting || false;
+            this.inClaiming = result.inClaiming || false;
+
+            this.isVoting = false;
+            this.inClaiming = true;
+
+            // this.isVoting = false;
+            // this.inClaiming = true;
 
             // let currentHeight = await this.voteService.getCurrentHeight();
             // var block_remain = 0;
@@ -645,6 +651,41 @@ export class CRCouncilService {
         }
         else {
             return 0;
+        }
+    }
+
+    async fetchNextCRs() {
+        Logger.log(App.CRCOUNCIL_VOTING, 'Fetching next crs..');
+
+        this.nextCRs = [];
+        this.isElected = false;
+
+        const param = {
+            method: 'listnextcrs',
+            params: {
+                state: "all"
+            },
+        };
+
+        try {
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            Logger.log(App.CRCOUNCIL_VOTING, "next crs:", result);
+            if (!result || Util.isEmptyObject(result.crmembersinfo)) {
+                return;
+            }
+
+            this.nextCRs = result.crmembersinfo;
+
+            for (let cr of this.nextCRs) {
+                if (!this.isElected && Util.isSelfDid(cr.did)) {
+                    this.isElected = true;
+                    this.nextCRInfo = cr;
+                }
+                this.getAvatar(cr);
+            }
+        }
+        catch (err) {
+            Logger.error(App.CRCOUNCIL_VOTING, 'next crs error', err);
         }
     }
 }

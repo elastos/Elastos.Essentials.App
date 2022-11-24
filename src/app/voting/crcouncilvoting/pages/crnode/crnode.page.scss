@@ -1,4 +1,15 @@
 
+
+ion-input {
+    background: var(--essentials-box-color);
+    height: 45px;
+    border: 1px solid var(--essentials-border-separator-color);
+    border-radius: 7px;
+    font-size: 13px;
+    text-align: left;
+    --padding-start: 12px;
+}
+
 ion-list {
     margin: 0;
     padding: 0px 24px;
