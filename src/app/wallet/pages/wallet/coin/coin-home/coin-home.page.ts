@@ -42,6 +42,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
 import { StakingInitService } from 'src/app/voting/staking/services/init.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
@@ -137,7 +138,8 @@ export class CoinHomePage implements OnInit {
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService,
         private chaingeSwapService: ChaingeSwapService,
-        public stakingInitService: StakingInitService
+        public stakingInitService: StakingInitService,
+        private voteService: VoteService
     ) {
         void this.init();
     }
@@ -642,7 +644,12 @@ export class CoinHomePage implements OnInit {
     }
 
     public canStakeELA(): boolean {
-        return WalletNetworkService.instance.isActiveNetworkElastosMainchain();
+        let status = this.voteService.dPoSStatus.value;
+        if ((status == DposStatus.DPoSV2) || (status == DposStatus.DPoSV1V2)) {
+            return WalletNetworkService.instance.isActiveNetworkElastosMainchain();
+        } else {
+            return false;
+        }
     }
 
     // Deprecated
