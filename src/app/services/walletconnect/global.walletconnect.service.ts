@@ -189,32 +189,6 @@ export class GlobalWalletConnectService extends GlobalService {
     Logger.log("walletconnect", "Killed all sessions");
   }
 
-  /* private async handlePersonalSignRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    let data = request.params[0];
-    let account = request.params[1]; // TODO: for now we use the active account... not the requested one (could possibly be another account)
-
-    let rawData = {
-      data
-    };
-    let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/personalsign", rawData);
-
-    if (response && response.result) {
-      connector.approveRequest({
-        id: request.id,
-        result: response.result.signedData
-      });
-    }
-    else {
-      connector.rejectRequest({
-        id: request.id,
-        error: {
-          code: -1,
-          message: "Errored or cancelled"
-        }
-      });
-    }
-  } */
-
   public getActiveInstances(): WalletConnectInstance[] {
     return walletConnectStore.wcInstances.value;
   }

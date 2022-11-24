@@ -1,20 +1,14 @@
 import { Injectable, NgZone } from '@angular/core';
 import type WalletConnect from "@walletconnect/client";
-import isUtf8 from "isutf8";
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { lazyWalletConnectImport } from '../../helpers/import.helper';
 import { runDelayed } from '../../helpers/sleep.helper';
 import { Logger } from '../../logger';
 import { IdentityEntry } from "../../model/didsessions/identityentry";
-import { AddEthereumChainParameter } from '../../model/ethereum/requestparams';
 import { JsonRpcRequest, SessionRequestParams, WalletConnectSession, WalletConnectSessionExtension } from '../../model/walletconnect/types';
 import { AnyNetworkWallet } from '../../wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from '../../wallet/model/networks/evms/evm.network';
-import { EthSignIntentResult } from '../../wallet/pages/intents/ethsign/intentresult';
-import { PersonalSignIntentResult } from '../../wallet/pages/intents/personalsign/intentresult';
-import { SignTypedDataIntentResult } from '../../wallet/pages/intents/signtypeddata/intentresult';
-import { EditCustomNetworkIntentResult } from '../../wallet/pages/settings/edit-custom-network/intentresult';
 import { WalletNetworkService } from '../../wallet/services/network.service';
 import { WalletService } from '../../wallet/services/wallet.service';
 import { GlobalFirebaseService } from '../global.firebase.service';
@@ -359,261 +353,38 @@ export class WalletConnectV1Service extends GlobalService {
       showReturnMessage = await this.handleEssentialsCustomRequest(connector, request);
     }
     else if (request.method === "wallet_watchAsset") {
-      await this.handleAddERCTokenRequest(connector, request);
+      let resultOrError = await EIP155RequestHandler.handleAddERCTokenRequest(request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
     else if (request.method === "wallet_switchEthereumChain") {
       let resultOrError = await EIP155RequestHandler.handleSwitchNetworkRequest(request.params);
       this.approveOrReject(connector, request.id, resultOrError);
     }
     else if (request.method === "wallet_addEthereumChain") {
-      await this.handleAddNetworkRequest(connector, request);
+      let resultOrError = await EIP155RequestHandler.handleAddNetworkRequest(request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
     else if (request.method.startsWith("eth_signTypedData")) {
-      await this.handleSignTypedDataRequest(connector, request);
+      let resultOrError = await EIP155RequestHandler.handleSignTypedDataRequest(request.method, request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
     else if (request.method.startsWith("personal_sign")) {
-      await this.handlePersonalSignRequest(connector, request);
+      let resultOrError = await EIP155RequestHandler.handlePersonalSignRequest(request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
     else if (request.method.startsWith("eth_sign")) {
-      await this.handleEthSignRequest(connector, request);
+      let resultOrError = await EIP155RequestHandler.handleEthSignRequest(request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
-    else {
-      try {
-        Logger.log("walletconnectv1", "Sending esctransaction intent", request);
-        let response: {
-          action: string,
-          result: {
-            txid: string,
-            status: "published" | "cancelled"
-          }
-        } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/esctransaction", {
-          payload: request
-        });
-        Logger.log("walletconnectv1", "Got esctransaction intent response", response);
-
-        if (response && response.result.status === "published") {
-          // Approve Call Request
-          connector.approveRequest({
-            id: request.id,
-            result: response.result.txid
-          });
-        }
-        else {
-          // Reject Call Request
-          connector.rejectRequest({
-            id: request.id,
-            error: {
-              code: -1,
-              message: "Errored or cancelled - TODO: improve this error handler"
-            }
-          });
-        }
-      }
-      catch (e) {
-        Logger.error("walletconnectv1", "Send intent error", e);
-        // Reject Call Request
-        connector.rejectRequest({
-          id: request.id,
-          error: {
-            code: -1,
-            message: e
-          }
-        });
-      }
+    else if (request.method === "eth_sendTransaction") {
+      let resultOrError = await EIP155RequestHandler.handleSendTransactionRequest(request.params);
+      this.approveOrReject(connector, request.id, resultOrError);
     }
 
     if (showReturnMessage) {
       // Because for now we don't close Essentials after handling wallet connect requests, we simply
       // inform users to manually "alt tab" to return to the app they are coming from.
       this.native.genericToast("settings.wallet-connect-popup", 2000);
-    }
-  }
-
-  private async handleAddERCTokenRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    // Special EIP method used to add ERC20 tokens addresses to the wallet
-
-    let params = request.params[0] instanceof Array ? request.params[0] : request.params;
-    let response: {
-      action: string,
-      result: {
-        added: boolean
-      }
-    } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/adderctoken", params);
-
-    if (response && response.result) {
-      connector.approveRequest({
-        id: request.id,
-        result: response.result.added
-      });
-    }
-    else {
-      connector.rejectRequest({
-        id: request.id,
-        error: {
-          code: -1,
-          message: "Errored or cancelled"
-        }
-      });
-    }
-  }
-
-  /**
-   * Asks user to add a custom network.
-   *
-   * EIP-3085
-   *
-   * For the rpcUrls and blockExplorerUrls arrays, at least one element is required, and only the first element will be used.
-   */
-  private async handleAddNetworkRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    // Check if this network already exists or not.
-    let addParams: AddEthereumChainParameter = request.params[0];
-    let chainId = parseInt(addParams.chainId);
-
-    let networkWasAdded = false;
-    let addedNetworkKey: string;
-    let existingNetwork = this.walletNetworkService.getNetworkByChainId(chainId);
-    if (!existingNetwork) {
-      // Network doesn't exist yet. Send an intent to the wallet and wait for the response.
-      let response: EditCustomNetworkIntentResult = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/addethereumchain", addParams);
-
-      if (response && response.networkAdded) {
-        networkWasAdded = true;
-        addedNetworkKey = response.networkKey;
-      }
-    }
-
-    // Not on this network, ask user to switch
-    let activeNetwork = this.walletNetworkService.activeNetwork.value;
-    if (!(activeNetwork instanceof EVMNetwork) || activeNetwork.getMainChainID() !== chainId) {
-      let targetNetwork = existingNetwork;
-      if (!targetNetwork)
-        targetNetwork = this.walletNetworkService.getNetworkByKey(addedNetworkKey);
-
-      // Ask user to switch but we don't mind the result.
-      await this.globalSwitchNetworkService.promptSwitchToNetwork(targetNetwork);
-    }
-
-    if (networkWasAdded || existingNetwork) {
-      // Network added, or network already existed => success, no matter if user chosed to switch or not
-      Logger.log("walletconnectv1", "Approving add network request");
-      connector.approveRequest({
-        id: request.id,
-        result: {} // Successfully added or existing
-      });
-    }
-    else {
-      Logger.log("walletconnectv1", "Rejecting add network request");
-      connector.rejectRequest({
-        id: request.id,
-        error: {
-          code: 4001,
-          message: "User rejected the request."
-        }
-      });
-    }
-  }
-
-  private async handleSignTypedDataRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    let useV4: boolean;
-    switch (request.method) {
-      case "eth_signTypedData_v3":
-        useV4 = false;
-        break;
-      case "eth_signTypedData":
-      case "eth_signTypedData_v4":
-      default:
-        useV4 = true;
-        break;
-    }
-
-    let rawData: { payload: string, useV4: boolean } = {
-      payload: request.params[1],
-      useV4
-    };
-    let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signtypeddata", rawData);
-
-    if (response && response.result) {
-      connector.approveRequest({
-        id: request.id,
-        result: response.result.signedData
-      });
-    }
-    else {
-      connector.rejectRequest({
-        id: request.id,
-        error: {
-          code: -1,
-          message: "Errored or cancelled"
-        }
-      });
-    }
-  }
-
-  private async handlePersonalSignRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    let data = request.params[0];
-    let account = request.params[1]; // TODO: for now we use the active account... not the requested one (could possibly be another account)
-
-    let rawData = {
-      data
-    };
-    let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/personalsign", rawData);
-
-    if (response && response.result) {
-      connector.approveRequest({
-        id: request.id,
-        result: response.result.signedData
-      });
-    }
-    else {
-      connector.rejectRequest({
-        id: request.id,
-        error: {
-          code: -1,
-          message: "Errored or cancelled"
-        }
-      });
-    }
-  }
-
-  /**
-   * Legacy eth_sign. Can receive either a raw hex buffer (unsafe), or a prefixed utf8 string (safe)
-   */
-  private async handleEthSignRequest(connector: WalletConnect, request: JsonRpcRequest) {
-    const buffer = this.messageToBuffer(request.params[1]);
-    const hex = this.bufferToHex(buffer);
-
-    /**
-     * Historically eth_sign can either receive:
-     * - a very insecure raw message (hex) - supported by metamask
-     * - a prefixed message (utf8) - standardized implementation
-     *
-     * So we detect the format here:
-     * - if that's a utf8 prefixed string -> eth_sign = personal_sign
-     * - if that's a buffer (insecure hex that could sign any transaction) -> insecure eth_sign screen
-     */
-    if (isUtf8(buffer)) {
-      return this.handlePersonalSignRequest(connector, request);
-    } else {
-      let rawData = {
-        data: hex
-      };
-      let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/insecureethsign", rawData);
-
-      if (response && response.result) {
-        connector.approveRequest({
-          id: request.id,
-          result: response.result.signedData
-        });
-      }
-      else {
-        connector.rejectRequest({
-          id: request.id,
-          error: {
-            code: -1,
-            message: "Errored or cancelled"
-          }
-        });
-      }
     }
   }
 
@@ -799,32 +570,5 @@ export class WalletConnectV1Service extends GlobalService {
       sessions.splice(existingSessionIndex, 1);
 
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "walletconnect", "sessions", sessions);
-  }
-
-  /**
-   * From a wallet connect instance, returns the full session model including
-   * essentials additional fields.
-   */
-  /* public getSessionWithExtendedInfo(wcSession: WalletConnect): WalletConnectSession {
-
-  } */
-
-  // message: Bytes | string
-  private messageToBuffer(message: string | any): Buffer {
-    var buffer = Buffer.from([]);
-    try {
-      if ((typeof (message) === "string")) {
-        buffer = Buffer.from(message.replace("0x", ""), "hex");
-      } else {
-        buffer = Buffer.from(message);
-      }
-    } catch (err) {
-      console.log(`messageToBuffer error: ${err}`);
-    }
-    return buffer;
-  }
-
-  private bufferToHex(buf: Buffer): string {
-    return "0x" + Buffer.from(buf).toString("hex");
   }
 }
