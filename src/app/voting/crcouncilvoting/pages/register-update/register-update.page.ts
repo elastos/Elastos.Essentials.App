@@ -79,7 +79,6 @@ export class RegisterUpdatePage implements OnInit {
             this.titleBar.setTitle(this.translate.instant('crcouncilvoting.update-candidate'));
         }
 
-
         if (this.infoOpration != InfoOperation.Registration) {
             this.originInfo = Util.clone(this.crCouncilService.updateInfo);
             if (this.info.state == "Unregistered") {
@@ -87,6 +86,11 @@ export class RegisterUpdatePage implements OnInit {
             }
             this.info.nickname = this.info.nickname || this.info.didName;
             this.info.url = this.info.url || this.info.address;
+        }
+        else if (this.crCouncilService.isCRMember) {
+            this.info.nickname = this.crCouncilService.crmemberInfo.nickname;
+            this.info.url = this.crCouncilService.crmemberInfo.url;
+            this.info.location = this.crCouncilService.crmemberInfo.location;
         }
     }
 

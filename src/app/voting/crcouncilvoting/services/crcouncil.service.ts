@@ -44,6 +44,9 @@ export type CRMemberInfo = {
     status: string,
     term: any[],
     type: string,
+
+    nickname: string,
+    url: string,
 }
 @Injectable({
     providedIn: 'root'
@@ -80,6 +83,7 @@ export class CRCouncilService {
     public selectedMember: CRMemberInfo;
     public selectedMemberDid: string;
     public candidateInfo: CandidateBaseInfo;
+    public crmemberInfo: CRMemberInfo;
     public updateInfo: any;
     public secretaryGeneralInfo: any = null;
 
@@ -90,6 +94,7 @@ export class CRCouncilService {
 
     // public council: CouncilMember[] = [];
     public isCRMember = false;
+    public isCandidate = false;
 
     public httpOptions = {
         headers: new HttpHeaders({
@@ -128,6 +133,7 @@ export class CRCouncilService {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
 
         this.crmembers = [];
+        this.crmemberInfo = null;
         this.isCRMember = false;
 
         const param = {
@@ -146,8 +152,9 @@ export class CRCouncilService {
             this.crmembers = result.crmembersinfo;
 
             for (let member of this.crmembers) {
-                if (!this.isCRMember && member.did == DIDSessionsStore.signedInDIDString) {
+                if (!this.isCRMember && Util.isSelfDid(member.did)) {
                     this.isCRMember = true;
+                    this.crmemberInfo = member;
                 }
                 this.getAvatar(member);
             }
@@ -259,6 +266,7 @@ export class CRCouncilService {
                         }
                     }
                     if (Util.isSelfDid(candidate.did)) {
+                        this.isCandidate = true;
                         this.candidateInfo = candidate;
                         Logger.log('crcouncil', 'my candidate info', this.candidateInfo);
                     }
