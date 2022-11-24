@@ -2,7 +2,6 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { IonSlides, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
 import { WalletAddressChooserComponent } from 'src/app/launcher/components/wallet-address-chooser/wallet-address-chooser.component';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -149,15 +148,6 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
       })
     }
 
-    // Select the active wallet in the wallets slides
-    let activeWalletIndex = this.walletService.getActiveMasterWalletIndex();
-    if (activeWalletIndex != -1) { // Happens if no wallet
-      runDelayed(() => {
-        // Delay 100ms: Wait for the initialization of the walletsSlider to complete.
-        void this.walletsSlider.slideTo(activeWalletIndex, 0);
-      }, 100);
-    }
-
     // Save wallet addresses locally for easy copy
     this.activeWalletAddresses = {};
     for (let networkWallet of this.networkWalletsList) {
@@ -174,6 +164,13 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     this.notifyReadyToDisplay();
   }
 
+  public slideLoad() {
+    // Select the active wallet in the wallets slides
+    let activeWalletIndex = this.walletService.getActiveMasterWalletIndex();
+    if (activeWalletIndex != -1) { // Happens if no wallet
+        void this.walletsSlider.slideTo(activeWalletIndex, 0);
+    }
+  }
 
   public getWalletAddresses(wallet: AnyNetworkWallet): WalletAddressInfo[] {
     if (!this.activeWalletAddresses[wallet.id])

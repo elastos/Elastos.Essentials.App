@@ -1,5 +1,5 @@
 <!-- Wallets -->
-<div class="widget" [class.darkContainer]="theme.darkMode" *ngIf="walletNetworkService.activeNetwork.value">
+<div class="widget" [class.darkContainer]="theme.darkMode" *ngIf="onReadyToDisplay.value && walletNetworkService.activeNetwork.value">
   <!-- External header -->
   <ion-row class="header-row">
     <ion-col size="6" class="title-col" (click)="openWallet()">
@@ -20,7 +20,7 @@
 
       <!-- Wallets list - horizontal slide -->
       <ion-slides pager={true} [style]="masterWalletWithNetworkWalletList.length === 0 ? 'display:gone':''"
-        #walletsSlider [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()">
+        #walletsSlider [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()" (ionSlidesDidLoad)="slideLoad()">
         <ion-slide *ngFor="let masterWalletMap of masterWalletWithNetworkWalletList">
           <div class="wallet-widget-row ripple ion-activatable" [style.background]="backgroundGradient">
             <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">

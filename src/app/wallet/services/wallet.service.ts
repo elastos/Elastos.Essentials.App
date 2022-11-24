@@ -360,11 +360,11 @@ export class WalletService {
     }
 
     public getActiveMasterWalletIndex(): number {
-        if (!this.activeNetworkWallet.value)
+        if (!this.activeMasterWalletId)
             return -1;
 
         return this.getMasterWalletsList().findIndex(w => {
-            return w.id === this.activeNetworkWallet.value.id
+            return w.id === this.activeMasterWalletId
         });
     }
 
