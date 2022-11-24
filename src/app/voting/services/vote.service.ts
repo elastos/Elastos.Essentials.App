@@ -2,14 +2,17 @@ import { Injectable } from '@angular/core';
 import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
+import { BehaviorSubject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { Config } from 'src/app/wallet/config/Config';
@@ -20,10 +23,18 @@ import { ElastosStandardNetworkWallet } from 'src/app/wallet/model/networks/elas
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { StandardCoinName } from '../../wallet/model/coin';
 import { WalletService } from '../../wallet/services/wallet.service';
+
+export enum DposStatus {
+    UNKNOWN,
+    DPoSV1,
+    DPoSV1V2,
+    DPoSV2
+}
+
 @Injectable({
     providedIn: 'root'
 })
-export class VoteService {
+export class VoteService implements GlobalService {
     public activeWallet: ElastosStandardNetworkWallet = null;
 
     public networkWallet: AnyNetworkWallet = null;
@@ -47,6 +58,8 @@ export class VoteService {
 
     public needFetchData = {};
 
+    public dPoSStatus = new BehaviorSubject<DposStatus>(DposStatus.UNKNOWN);
+
     constructor(
         private walletManager: WalletService,
         public globalPopupService: GlobalPopupService,
@@ -62,6 +75,22 @@ export class VoteService {
     }
 
     public init() {
+        GlobalServiceManager.getInstance().registerService(this);
+    }
+
+    onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+        void this.getDPoSStatus().then(status => {
+            this.dPoSStatus.next(status);
+        });
+        return;
+    }
+
+    onUserSignOut(): Promise<void> {
+        this.dPoSStatus.next(DposStatus.UNKNOWN);
+        return;
+    }
+
+    /* public init() {
         Logger.log(App.VOTING, "VoteService init");
 
         this.needFetchData[App.DPOS_VOTING] = true;
@@ -71,7 +100,7 @@ export class VoteService {
         // if (this.crmembers.length > 0) {
         //     void this.getCRMembers();
         // }
-    }
+    } */
 
     public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
         this.clear();
@@ -478,7 +507,7 @@ export class VoteService {
         }
         else if (remainingTime > 30) {
             ret = Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours') + " "
-                + Math.floor(remainingTime % 30) * 2  + " " + this.translate.instant('voting.minutes');
+                + Math.floor(remainingTime % 30) * 2 + " " + this.translate.instant('voting.minutes');
         }
         else if (remainingTime == 30) {
             ret = "1 " + this.translate.instant('voting.hours');
@@ -518,13 +547,13 @@ export class VoteService {
 
     isMuiltWallet(): boolean {
         if (this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD
-                || this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_EVM_GNOSIS) {
+            || this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_EVM_GNOSIS) {
             return true;
         }
         return false
     }
 
-    async getDPoSStatus(): Promise<string> {
+    private async getDPoSStatus(): Promise<DposStatus> {
         Logger.log(App.VOTING, 'getDPoSStatus...');
 
         const param = {
@@ -533,16 +562,16 @@ export class VoteService {
 
         try {
             const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
-            Logger.log(App.VOTING, 'getDPoSStatus', result);
+            Logger.log(App.VOTING, 'Received DPoS status response', result);
             if (result && result.height) {
                 if (result.height < result.dposv2transitstartheight) {
-                    return 'DPoSV1';
+                    return DposStatus.DPoSV1;
                 }
-                else if (result.height >= result.dposv2transitstartheight && result.height <  result.dposv2activeheight) {
-                    return 'DPoSV1V2';
+                else if (result.height >= result.dposv2transitstartheight && result.height < result.dposv2activeheight) {
+                    return DposStatus.DPoSV1V2;
                 }
                 else if (result.height >= result.dposv2activeheight) {
-                    return 'DPoSV2';
+                    return DposStatus.DPoSV2;
                 }
             }
         }
@@ -550,6 +579,6 @@ export class VoteService {
             Logger.error(App.VOTING, 'getDPoSStatus error', err);
         }
 
-        return 'DPoSV1';
+        return DposStatus.UNKNOWN;
     }
 }

@@ -9,7 +9,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { VoteService } from 'src/app/voting/services/vote.service';
+import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
 import { DPoS2Node } from '../../model/nodes.model';
 import { DPoS2Service } from '../../services/dpos2.service';
 
@@ -69,7 +69,7 @@ export class ListPage implements OnInit {
 
         if (!this.voteService.isMuiltWallet()) {
             if (this.dpos2Service.dposInfo.state == 'Unregistered'
-                    || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
+                || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
                 if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
                     this.dpos2Service.dposInfo.state = 'Unregistered';
                 }
@@ -85,8 +85,8 @@ export class ListPage implements OnInit {
                 });
             }
             else if (this.dpos2Service.dposInfo.state == 'Canceled' && this.dpos2Service.dposInfo.identity == "DPoSV1") {
-                let status = await this.voteService.getDPoSStatus();
-                if (status == "DPoSV2") {
+                let status = await this.voteService.dPoSStatus.value;
+                if (status == DposStatus.DPoSV2) {
                     this.available = await this.dpos2Service.getDepositcoin();
                     if (this.available > 0) {
                         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? '/assets/voting/icons/darkmode/withdraw.svg' : '/assets/voting/icons/withdraw.svg' });

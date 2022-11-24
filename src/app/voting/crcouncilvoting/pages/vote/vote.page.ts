@@ -13,7 +13,7 @@ import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { VoteService } from 'src/app/voting/services/vote.service';
+import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
@@ -72,8 +72,8 @@ export class VotePage implements OnInit, OnDestroy {
             this.totalEla = this.stakeService.votesRight.totalVotesRight;
         }
         else {
-            let status = await this.voteService.getDPoSStatus();
-            if (status == "DPoSV2") {
+            let status = await this.voteService.dPoSStatus.value;
+            if (status == DposStatus.DPoSV2) {
                 this.totalEla = 0;
             }
             else {
@@ -141,8 +141,9 @@ export class VotePage implements OnInit, OnDestroy {
                     let _vote = {
                         Candidate: candidate.cid,
                         Votes: userVotes.toFixed(0),
-                        Locktime: 0 };
-                        votedCandidatesV2.push(_vote);
+                        Locktime: 0
+                    };
+                    votedCandidatesV2.push(_vote);
                 }
                 else {
                     let _candidate = { [candidate.cid]: userVotes.toFixed(0) } //SELA, can't with fractions
@@ -153,7 +154,7 @@ export class VotePage implements OnInit, OnDestroy {
             }
         });
 
-        if (votedCandidatesV2.length === 0 && Object.keys(votedCandidates).length === 0 ) {
+        if (votedCandidatesV2.length === 0 && Object.keys(votedCandidates).length === 0) {
             void this.globalNative.genericToast('crcouncilvoting.pledge-some-ELA-to-candidates');
         }
         else if (this.votedEla > this.totalEla) {

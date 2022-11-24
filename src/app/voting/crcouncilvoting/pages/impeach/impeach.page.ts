@@ -9,7 +9,7 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { VoteService } from 'src/app/voting/services/vote.service';
+import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
@@ -52,8 +52,8 @@ export class ImpeachCRMemberPage {
                 this.maxVotes = this.stakeService.votesRight.totalVotesRight;
             }
             else {
-                let status = await this.voteService.getDPoSStatus();
-                if (status == "DPoSV2") {
+                let status = await this.voteService.dPoSStatus.value;
+                if (status == DposStatus.DPoSV2) {
                     this.maxVotes = 0;
                 }
                 else if (this.voteService.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD) {

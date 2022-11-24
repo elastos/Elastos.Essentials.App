@@ -31,6 +31,7 @@ import { GlobalStartupService } from './services/global.startup.service';
 import { GlobalStorageService } from './services/global.storage.service';
 import { GlobalThemeService } from './services/theming/global.theme.service';
 import { GlobalWalletConnectService } from './services/walletconnect/global.walletconnect.service';
+import { VoteService } from './voting/services/vote.service';
 
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -68,6 +69,7 @@ export class AppComponent {
     private globalStartupService: GlobalStartupService,
     public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
+    private voteService: VoteService,
     private credentialTypesService: GlobalCredentialTypesService,
     private credentialToolboxService: GlobalCredentialToolboxService,
     private globalSecurityService: GlobalSecurityService,
@@ -126,6 +128,7 @@ export class AppComponent {
 
       // "DApps" initializations
       await this.globalAppBackgroundService.init();
+      await this.voteService.init(); // Should be after elastos api init
 
       Logger.log("Global", "All awaited init services have been initialized");
 

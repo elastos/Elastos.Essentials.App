@@ -1,5 +1,5 @@
 <ion-row class="widget widget-background elastos-voting-row category-row" [class.darkContainer]="theme.darkMode"
-  *ngIf="runnableApps">
+  *ngIf="runnableApps && (runnableApps.apps.length > 0 || editing || forSelection)">
   <ion-col size="12" class="title-col">
     <ion-label>{{ runnableApps.type | translate }}</ion-label>
   </ion-col>
