@@ -126,7 +126,7 @@ export class WalletConnectV1Service extends GlobalService {
     Logger.log("walletconnectv1", "Handling uri request", uri, source);
 
     // Create connector
-    let pushServerOptions = undefined;
+    /* let pushServerOptions = undefined;
     if (this.globalFirebaseService.token.value) {
       pushServerOptions = {
         // Optional
@@ -137,7 +137,7 @@ export class WalletConnectV1Service extends GlobalService {
         peerMeta: true,
         language: "en",
       };
-    }
+    } */
 
     const WalletConnect = await lazyWalletConnectImport();
     let connector = new WalletConnect(
@@ -161,7 +161,7 @@ export class WalletConnectV1Service extends GlobalService {
       - This push message is catched by the user's device and this shows a user notification if essentials is
       not in foreground. User clicks the notification and Essentials is opened and handles the request.
       */
-      pushServerOptions
+      // pushServerOptions // Failing to register the push server makes the whole WC connection fail, and we don't want this. Removing for now.
     );
 
     // Remember this connector for a while, for example to be able to reject the session request
@@ -243,33 +243,6 @@ export class WalletConnectV1Service extends GlobalService {
 
     // All other cases. Show the disconnection.
     return true;
-  }
-
-  public async killAllSessions(): Promise<void> {
-    let sessions = await this.loadSessions();
-
-    const WalletConnect = await lazyWalletConnectImport();
-
-    Logger.log("walletconnectv1", "Killing " + sessions.length + " sessions from persistent storage", sessions);
-    // Kill stored connections
-    for (let session of sessions) {
-      let connector = new WalletConnect({
-        session: session
-      });
-      try {
-        await connector.killSession();
-
-        let instance = walletConnectStore.findById(connector.key);
-        if (instance)
-          await walletConnectStore.delete(instance);
-      }
-      catch (e) {
-        Logger.warn("walletconnectv1", "Error while killing WC session", connector, e);
-      }
-      await this.deleteSession(session);
-    }
-
-    Logger.log("walletconnectv1", "Killed all sessions");
   }
 
   /* payload sample:
@@ -516,6 +489,33 @@ export class WalletConnectV1Service extends GlobalService {
 
   public async killSession(instance: WalletConnectV1Instance) {
     await instance.wc.killSession();
+  }
+
+  public async killAllSessions(): Promise<void> {
+    let sessions = await this.loadSessions();
+
+    const WalletConnect = await lazyWalletConnectImport();
+
+    Logger.log("walletconnectv1", "Killing " + sessions.length + " sessions from persistent storage", sessions);
+    // Kill stored connections
+    for (let session of sessions) {
+      let connector = new WalletConnect({
+        session: session
+      });
+      try {
+        await connector.killSession();
+
+        let instance = walletConnectStore.findById(connector.key);
+        if (instance)
+          await walletConnectStore.delete(instance);
+      }
+      catch (e) {
+        Logger.warn("walletconnectv1", "Error while killing WC session", connector, e);
+      }
+      await this.deleteSession(session);
+    }
+
+    Logger.log("walletconnectv1", "Killed all sessions");
   }
 
   private async restoreSessions() {
