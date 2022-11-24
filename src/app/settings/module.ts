@@ -6,6 +6,7 @@ import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
+import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { SettingsWarningComponent } from './components/warning/warning.component';
 import { AboutPage } from './pages/about/about.page';
 import { DeveloperPage } from './pages/developer/developer.page';
@@ -16,6 +17,7 @@ import { MenuPage } from './pages/menu/menu.page';
 import { PrivacyPage } from './pages/privacy/privacy.page';
 import { StartupScreenPage } from './pages/startupscreen/startupscreen.page';
 import { WalletConnectConnectPage } from './pages/walletconnect/connect/connect.page';
+import { WalletConnectConnectV2Page } from './pages/walletconnect/connectv2/connectv2.page';
 import { WalletConnectPrepareToConnectPage } from './pages/walletconnect/preparetoconnect/preparetoconnect.page';
 import { WalletConnectSessionsPage } from './pages/walletconnect/sessions/sessions.page';
 import { SettingsRoutingModule } from './routing';
@@ -31,6 +33,7 @@ import { SettingsRoutingModule } from './routing';
     DevTestsPage,
     WalletConnectPrepareToConnectPage,
     WalletConnectConnectPage,
+    WalletConnectConnectV2Page,
     WalletConnectSessionsPage,
     PrivacyPage,
     ElastosAPIProviderPage,
@@ -44,7 +47,8 @@ import { SettingsRoutingModule } from './routing';
     IonicModule,
     IonicStorageModule,
     SharedComponentsModule,
-    TranslateModule
+    TranslateModule,
+    GlobalDirectivesModule
   ],
   bootstrap: [],
   entryComponents: [

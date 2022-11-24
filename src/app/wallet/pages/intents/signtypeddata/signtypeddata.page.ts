@@ -26,6 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { signTypedData, signTypedData_v4 } from "eth-sig-util";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
@@ -108,9 +109,9 @@ export class SignTypedDataPage implements OnInit {
       case WalletType.MULTI_SIG_STANDARD:
         // TODO: reject esctransaction if multi sign (show error popup)
         void this.cancelOperation();
-      break;
+        break;
       default:
-      break;
+        break;
     }
   }
 
@@ -157,7 +158,7 @@ export class SignTypedDataPage implements OnInit {
       return;
     }
 
-    let privateKeyHexNoprefix = await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+    let privateKeyHexNoprefix = await (await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword)).replace("0x", "");
 
     let dataToSign = JSON.parse(this.payloadToBeSigned);
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
@@ -182,7 +183,7 @@ export class SignTypedDataPage implements OnInit {
     catch (e) {
       // Sign method can throw exception in case some provided content has an invalid format
       // i.e.: array value, with "address" type. In such case, we fail silently.
-
+      Logger.error("wallet", "Sign typed data - unable to sign, sending empty response:", e);
       await this.sendIntentResponse(
         { data: null },
         this.receivedIntent.intentId

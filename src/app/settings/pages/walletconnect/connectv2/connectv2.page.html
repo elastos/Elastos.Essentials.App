@@ -1,0 +1,93 @@
+<ion-content>
+  <app-titlebar></app-titlebar>
+  <ion-grid *ngIf="sessionProposal && sessionProposal.event" class="container" [class.dark-container]="theme.darkMode">
+
+    <ion-card>
+      <img src="assets/settings/icon/walletconnect.svg">
+      <ion-card-title>{{ 'settings.wallet-connect-request-title' | translate }}</ion-card-title>
+      <ion-card-subtitle>{{ 'settings.wallet-connect-request-des' | translate }}</ion-card-subtitle>
+    </ion-card>
+
+    <div class="section" *ngIf="ethAccounts && ethAccounts.length === 0">
+      <ion-row class="section-item-row wrong-network">
+        <ion-col size="12">
+          <p *ngIf="ethAccounts && ethAccounts.length === 0" class="section-no-address">
+            {{ 'settings.wallet-connect-no-address' | translate }}
+          </p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- App information -->
+    <div class="section">
+      <ion-row class="section-title-row">
+        <ion-col size="12">
+          <p>{{ 'settings.app-info' | translate }}</p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="section-item-row">
+        <ion-col size="12">
+          <h1>{{ 'settings.name' | translate }}</h1>
+          <p>{{ getProposerMeta().name }}</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="getProposerMeta().description" class="section-item-row">
+        <ion-col size="12">
+          <h1>{{ 'settings.description' | translate }}</h1>
+          <p>{{ getProposerMeta().description }}</p>
+        </ion-col>
+      </ion-row>
+      <ion-row class="section-item-row">
+        <ion-col size="12">
+          <h1>{{ 'settings.url' | translate }}</h1>
+          <p>{{ getProposerMeta().url }}</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- Unsupported chains -->
+    <div class="section" *ngIf="unsupportedChains.length > 0">
+      <ion-row class="section-title-row">
+        <ion-col size="12">
+          <p>Unsupported networks</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let chain of unsupportedChains" class="section-item-row">
+        <ion-col size="12">
+          <p>{{ chain }}</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- Unsupported methods -->
+    <div class="section" *ngIf="unsupportedEIP155Methods.length > 0">
+      <ion-row class="section-title-row">
+        <ion-col size="12">
+          <p>Unsupported methods</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let method of unsupportedEIP155Methods" class="section-item-row">
+        <ion-col size="12">
+          <p>{{ method }}</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- Shared account -->
+    <div class="section" *ngIf="ethAccounts && ethAccounts.length > 0">
+      <ion-row class="section-title-row">
+        <ion-col size="12">
+          <p>{{ 'settings.wallet-accounts' | translate }}</p>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngFor="let address of ethAccounts" class="section-item-row address-row">
+        <ion-col size="12">
+          <p>{{ address }}</p>
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <ebutton (clicked)="openSession()" [title]="'settings.connect' | translate" [disabled]="!canOpenSession()">
+    </ebutton>
+  </ion-grid>
+</ion-content>

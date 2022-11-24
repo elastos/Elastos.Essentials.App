@@ -1,26 +1,24 @@
 <ion-content>
   <app-titlebar></app-titlebar>
   <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
-    <ion-row class="section-row" *ngFor="let activeConnector of activeConnectors">
+    <ion-row class="section-row" *ngFor="let instance of activeInstances">
       <ion-col size="2" class="icon-col">
-        <img class="connector-logo" [src]="getSessionLogo(activeConnector)"
-          (error)="activeConnector.wc.peerMeta.icons[0]='assets/settings/icon/walletconnect.svg'" />
+        <img class="connector-logo" [src]="getSessionLogo(instance)" src-fallback="assets/settings/icon/walletconnect.svg"/>
       </ion-col>
       <ion-col size="8" class="left-col">
-        <div class="name">{{ getSessionName(activeConnector) }}</div>
-        <div class="description" *ngIf="activeConnector.wc.peerMeta && activeConnector.wc.peerMeta.description">{{
-          activeConnector.wc.peerMeta.description }}</div>
-        <div class="url" *ngIf="activeConnector.wc.peerMeta && activeConnector.wc.peerMeta.url">{{ activeConnector.wc.peerMeta.url }}
+        <div class="name">{{ getSessionName(instance) }}</div>
+        <div class="description" *ngIf="getSessionDescription(instance)">{{ getSessionDescription(instance) }}</div>
+        <div class="url" *ngIf="getSessionUrl(instance)">{{ getSessionUrl(instance) }}
         </div>
-        <div class="sessionid">{{ getSessionID(activeConnector) }}</div>
-        <div class="creation-date" *ngIf="getSessionCreationDate(activeConnector)">{{ getSessionCreationDate(activeConnector) }}</div>
+        <div class="sessionid">{{ getSessionID(instance) }}</div>
+        <div class="creation-date" *ngIf="getSessionCreationDate(instance)">{{ getSessionCreationDate(instance) }}</div>
       </ion-col>
-      <ion-col size="2" class="right-col" (click)="killSession(activeConnector)">
+      <ion-col size="2" class="right-col" (click)="killSession(instance)">
         <img
           [src]="theme.darkMode ? '/assets/settings/icon/delete-white.svg' : '/assets/settings/icon/delete-black.svg'">
       </ion-col>
     </ion-row>
-    <div class="no-session" *ngIf="activeConnectors && activeConnectors.length == 0">
+    <div class="no-session" *ngIf="instance && instance.length == 0">
       <h3>{{ 'settings.wallet-connect-no-session' | translate }}</h3>
       <p>{{ 'settings.wallet-connect-no-session-info' | translate }}</p>
     </div>
