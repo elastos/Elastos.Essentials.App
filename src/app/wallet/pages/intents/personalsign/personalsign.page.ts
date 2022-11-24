@@ -108,9 +108,9 @@ export class PersonalSignPage implements OnInit {
       case WalletType.MULTI_SIG_STANDARD:
         // TODO: reject esctransaction if multi sign (show error popup)
         void this.cancelOperation();
-      break;
+        break;
       default:
-      break;
+        break;
     }
   }
 
@@ -163,7 +163,7 @@ export class PersonalSignPage implements OnInit {
       return;
     }
 
-    let privateKeyHexNoprefix = await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+    let privateKeyHexNoprefix = await (await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword)).replace("0x", "");
 
     let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
     let signedData: string = null;
