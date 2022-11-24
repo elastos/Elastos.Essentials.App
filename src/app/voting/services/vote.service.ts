@@ -577,6 +577,15 @@ export class VoteService implements GlobalService {
         }
         catch (err) {
             Logger.error(App.VOTING, 'getDPoSStatus error', err);
+
+            if (typeof err === "object" && "code" in err) {
+                if (err.code === -32601) {
+                    // On mainnet at first, getdposv2info doesn't exist. In that case, consider the
+                    // status as v1, not as unknown.
+                    // JSON-RPC method getdposv2info not found
+                    return DposStatus.DPoSV1;
+                }
+            }
         }
 
         return DposStatus.UNKNOWN;
