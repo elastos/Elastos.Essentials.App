@@ -48,7 +48,7 @@ export class CRMembersPage implements OnInit {
 
         let available = await this.crCouncilService.getCRDepositcoinAvailable();
         if (available > 0) {
-            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' });
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' : '/assets/crcouncilvoting/icon/withdraw.svg' });
             this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
                 void this.crCouncilService.withdrawCandidate(available, '/crcouncilvoting/crmembers');
             });

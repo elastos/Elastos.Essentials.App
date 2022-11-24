@@ -19,6 +19,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
@@ -65,6 +66,7 @@ export class CRCouncilService {
         private globalNative: GlobalNativeService,
         private globalDidService: GlobalDIDService,
         private globalHiveCacheService: GlobalHiveCacheService,
+        private theme: GlobalThemeService
     ) {
 
     }
@@ -511,7 +513,7 @@ export class CRCouncilService {
         else if (this.candidateInfo.state == 'Canceled') {
             let available = await this.getCRDepositcoinAvailable();
             if (available > 0) {
-                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' });
+                titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: this.theme.darkMode ? '/assets/crcouncilvoting/icon/darkmode/withdraw.svg' : '/assets/crcouncilvoting/icon/withdraw.svg' });
                 titleBar.addOnItemClickedListener(titleBarIconClickedListener = (icon) => {
                     void this.withdrawCandidate(available, '/crcouncilvoting/candidates');
                 });
