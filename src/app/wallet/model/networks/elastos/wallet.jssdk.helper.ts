@@ -17,7 +17,7 @@ import { JSSDKLocalStorage } from "./localstorage.jssdk";
 export class WalletJSSDKHelper {
   private static masterWalletManager: MasterWalletManager = null;
 
-  public static async loadMasterWalletManager(): Promise<MasterWalletManager> {
+  public static async loadMasterWalletManager(didString : string = null): Promise<MasterWalletManager> {
     if (this.masterWalletManager) return this.masterWalletManager;
 
     let networkTemplate = await GlobalNetworksService.instance.getActiveNetworkTemplate();
@@ -25,7 +25,7 @@ export class WalletJSSDKHelper {
       networkTemplate = "PrvNet";
     }
 
-    const browserStorage = new JSSDKLocalStorage(DIDSessionsStore.signedInDIDString);
+    const browserStorage = new JSSDKLocalStorage(didString ? didString : DIDSessionsStore.signedInDIDString);
     const netConfig = { NetType: networkTemplate, ELA: {} };
 
     const { MasterWalletManager } = await lazyElastosWalletSDKImport();
@@ -95,7 +95,7 @@ export class WalletJSSDKHelper {
 
     let elastosNetworkOptions = masterWallet.getNetworkOptions("elastos") as ElastosMainChainWalletNetworkOptions;
 
-    console.log("masterWallet.signersExtPubKeys", masterWallet.signersExtPubKeys)
+    Logger.log("wallet", "masterWallet.signersExtPubKeys", masterWallet.signersExtPubKeys)
 
     let walletExists = this.masterWalletManager.getAllMasterWalletID().indexOf(masterWallet.id) >= 0;
     //let existingWallet = await this.masterWalletManager.getMasterWallet(masterWallet.id);
@@ -183,9 +183,9 @@ export class WalletJSSDKHelper {
   }
 
   // Call this when delete identiy
-  public static async deleteAllWallet() {
+  public static async deleteAllWallet(didString: string) {
     // The MasterWalletManager is not created if the user does not signin.
-    await this.loadMasterWalletManager();
+    await this.loadMasterWalletManager(didString);
     let allMasterWallets = this.masterWalletManager.getAllMasterWalletID();
     Logger.log('wallet', 'WalletJSSDKHelper deleteAllWallet count:', allMasterWallets.length);
     for (let i = 0; i < allMasterWallets.length; i++) {
