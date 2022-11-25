@@ -4,12 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { App } from 'src/app/model/app.enum';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCouncilService } from '../../services/crcouncil.service';
 
 
@@ -23,13 +21,13 @@ export class CRNodePage implements OnInit {
 
     public masterWalletId: string;
     public nodePublicKey: string = null;
-    public crmemberInfo: any = {};
+    public oldPublicKey: string = null;
+    public did: string = null;
     public label = '';
 
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletService,
         public voteService: VoteService,
         public popupProvider: PopupProvider,
         public crCouncilService: CRCouncilService,
@@ -45,14 +43,20 @@ export class CRNodePage implements OnInit {
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.claim-dpos-node'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-        if (this.crCouncilService.isCRMember) {
-            this.crmemberInfo = this.crCouncilService.crmemberInfo;
-        }
-        else if (this.crCouncilService.isElected) {
-            this.crmemberInfo = this.crCouncilService.nextCRInfo;
+
+        if (!this.oldPublicKey || this.oldPublicKey == "" || !this.did) {
+            if (this.crCouncilService.isElected) {
+                this.oldPublicKey = this.crCouncilService.nextCRInfo.dpospublickey;
+                this.did = this.crCouncilService.nextCRInfo.did;
+            }
+
+            if ((!this.oldPublicKey || this.oldPublicKey == "") && this.crCouncilService.isCRMember) {
+                this.oldPublicKey = this.crCouncilService.crmemberInfo.dpospublickey;
+                this.did = this.crCouncilService.crmemberInfo.did;
+            }
+            this.nodePublicKey = this.oldPublicKey;
         }
 
-        this.nodePublicKey = this.crmemberInfo.dpospublickey;
         if (!this.nodePublicKey || this.nodePublicKey == "") {
             this.label = this.translate.instant('crcouncilvoting.enter-node-publickey');
         }
@@ -78,7 +82,7 @@ export class CRNodePage implements OnInit {
             return false;
         }
 
-        if (!this.crCouncilService.isElected && this.nodePublicKey == this.crmemberInfo.dpospublickey) {
+        if (!this.crCouncilService.isElected && this.nodePublicKey == this.oldPublicKey) {
             this.globalNative.genericToast('crcouncilvoting.text-public-key-dont-modify');
             return false;
         }
@@ -99,7 +103,7 @@ export class CRNodePage implements OnInit {
             //Get payload
             var payload = {
                 NodePublicKey: this.nodePublicKey,
-                CRCouncilMemberDID: this.crmemberInfo.did,
+                CRCouncilMemberDID: this.did,
             } as CRCouncilMemberClaimNodeInfo;
             Logger.log('crproposal', "Got review proposal payload.", payload);
 
@@ -122,7 +126,7 @@ export class CRNodePage implements OnInit {
                 const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(version, payload, '');
                 await this.globalNative.hideLoading();
 
-                let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
+                let ret = await this.voteService.signAndSendRawTransaction(rawTx);
                 if (ret) {
                     this.voteService.toastSuccessfully('crcouncilvoting.claim-dpos-node');
                 }
