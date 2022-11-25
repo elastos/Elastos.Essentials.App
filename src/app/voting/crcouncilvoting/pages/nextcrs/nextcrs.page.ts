@@ -66,4 +66,8 @@ export class NextCRsPage implements OnInit {
     claimDposNode() {
         void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crnode');
     }
+
+    async onShowNextCRInfo(did: string) {
+        await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/nextcr/' + did);
+    }
 }

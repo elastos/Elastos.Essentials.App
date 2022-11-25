@@ -1,0 +1,180 @@
+@import "../../root.scss";
+
+ion-col {
+    margin: 0px;
+}
+
+.id-row {
+    margin-top: 29px;
+    .avatar {
+        width: 68px;
+        height: 68px;
+    }
+
+    .name-col {
+        flex-direction: column;
+        align-self: center;
+        align-items: flex-start;
+
+        .name {
+            font-style: normal;
+            font-weight: 600;
+            font-size: 24px;
+            line-height: 29px;
+            margin: 0;
+        }
+
+        .location {
+            opacity: 0.7;
+            margin: 0;
+        }
+    }
+
+    .status {
+        min-width: 68px;
+        text-align: center;
+        padding: 5px 10px;
+        border-radius: 10px;
+        height: 22;
+        font-size: 10px;
+        font-weight: 600;
+    }
+
+    .elected {
+        color: #000000;
+        background-color: #74ffde;
+    }
+
+    .impeached {
+        color: #ffffff;
+        background-color: #7b6700;
+    }
+
+    .returned {
+        color: #ffffff;
+        background-color: #7774ff;
+    }
+
+    .terminated {
+        color: #ffffff;
+        background-color: #bc1212;
+    }
+
+    .inactive {
+        color: #808080;
+        background-color: #ececec;
+    }
+
+    .active {
+        color: #000000;
+        background-color: #74ffde;
+    }
+
+    .illegal {
+        color: #bc1212;
+        border: 1px solid #bc1212;
+    }
+
+    .expired {
+        color: #000000;
+        border: 1px solid #c4c4c4;
+    }
+}
+
+.impeachment-row {
+    margin-top: 24px;
+    height: 153px;
+    border-radius: 21px;
+    display: flex;
+    // flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--essentials-box-color);
+
+    .progress-container {
+        padding-left: 10px !important;
+    }
+
+    .progress-wrapper {
+        width: 100%;
+        height: 100%;
+
+        .ratio {
+            position: absolute;
+            top: 50%;
+            bottom: auto;
+            left: 50%;
+            transform: translateY(-50%) translateX(-50%);
+            font-weight: 500;
+            font-size: 18px;
+            line-height: 22px;
+        }
+
+        round-progress {
+            width: 100% !important;
+            height: 100% !important;
+        }
+    }
+
+    #impeachment-title {
+        margin-top: 0px;
+        font-weight: 600;
+        font-size: 18px;
+    }
+
+    h4 {
+        font-weight: 500;
+        font-size: 14px;
+    }
+}
+
+ion-segment {
+    margin-top: 24px;
+    padding: 7px 5px;
+    height: 47px;
+    background: var(--essentials-box-color);
+
+    ion-segment-button {
+        color: var(--ion-text-color);
+
+        font-weight: bold;
+        font-size: 14px;
+        line-height: 142%;
+
+        &.segment-button-checked {
+            background: var(--ion-background-color);
+        }
+    }
+}
+
+.voteResult {
+    padding: 5px 10px;
+    border-radius: 6px;
+    height: 22;
+    font-size: 10px;
+}
+
+.support {
+    color: #00b978;
+    background-color: rgba(96, 206, 180, 0.15);
+}
+
+.reject {
+    color: #ff3838;
+    background-color: #ffeaea;
+}
+
+.abstention {
+    color: #ffffff;
+    background-color: #282828;
+}
+
+.undecided {
+    color: #cccccc;
+    background-color: rgba(96, 206, 180, 0.15);
+}
+
+.footer-space {
+    height: 113px;
+    width: 100%;
+}

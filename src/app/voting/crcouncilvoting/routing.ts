@@ -7,6 +7,7 @@ import { CRMembersPage } from './pages/crmembers/crmembers.page';
 import { CRNodePage } from './pages/crnode/crnode.page';
 import { HistoryPage } from './pages/history/history.page';
 import { ImpeachCRMemberPage } from './pages/impeach/impeach.page';
+import { NextCRPage } from './pages/nextcr/nextcr.page';
 import { NextCRsPage } from './pages/nextcrs/nextcrs.page';
 import { RegisterUpdatePage } from './pages/register-update/register-update.page';
 import { CandidateRegistrationTermsPage } from './pages/registration-terms/registration-terms.page';
@@ -19,6 +20,7 @@ const routes: Routes = [
     { path: 'crmembers', component: CRMembersPage },
     { path: 'crmember', component: CRMemberPage },
     { path: 'nextcrs', component: NextCRsPage },
+    { path: 'nextcr/:did', component: NextCRPage },
     { path: 'impeach', component: ImpeachCRMemberPage },
     { path: 'secretary', component: CRSecretaryPage },
     { path: 'vote', component: VotePage },

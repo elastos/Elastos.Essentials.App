@@ -1,0 +1,67 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <div *ngIf="member != null" [class.darkContainer]="theme.darkMode">
+        <ion-list class="container">
+            <ion-row class="id-row">
+                <ion-col size="2.75" class="left-col">
+                    <ion-avatar class="avatar">
+                        <img-svg-fallback class="img" [src]="member.avatar"
+                            default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
+                    </ion-avatar>
+                </ion-col>
+
+                <ion-col size="6.5" class="name-col">
+                    <h2 class="name">{{ member.nickname }}</h2>
+                    <!-- <p class="location">
+                        <ion-icon src="/assets/crcouncilvoting/icon/location.svg"></ion-icon>
+                        {{ 'crcouncilvoting.' + member.location | translate }}
+                    </p> -->
+                </ion-col>
+                <ion-col size="2.75" class="right-col align-center align-right">
+                    <p class="status" [class.elected]="member.state === 'Elected'"
+                        [class.impeached]="member.state === 'Impeached'"
+                        [class.returned]="member.state === 'Returned'"
+                        [class.terminated]="member.state === 'Terminated'"
+                        [class.inactive]="member.state === 'Inactive'" [class.active]="member.state === 'Active'"
+                        [class.illegal]="member.state === 'Illegal'" [class.expired]="member.state === 'Expired'">
+                        {{'crcouncilvoting.'+ member.state | translate }}</p>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data">
+                <ion-col>
+                    <h5>{{'crcouncilvoting.member-did' | translate}}</h5>
+                    <h4>{{ member.did }}</h4>
+                </ion-col>
+            </ion-row>
+
+            <ion-row class="profile-data" *ngIf="member.url">
+                <h5>{{'crcouncilvoting.member-url' | translate}}</h5>
+                <ion-row class="url-container" (click)="uxService.openLink(member.url)">
+                    <ion-col class="label-col" size="10.75">
+                        <a>{{ member.url }} </a>
+                    </ion-col>
+                    <ion-col size="1.25">
+                        <img [src]="'assets/crproposalvoting/icons/link.svg'">
+                    </ion-col>
+                </ion-row>
+            </ion-row>
+
+        </ion-list>
+
+        <ion-footer *ngIf="isSelf">
+            <ion-row class="btn-container">
+                <ion-col>
+                    <ebutton [title]="'crcouncilvoting.claim-dpos-node' | translate" (clicked)="claimDposNode()">
+                    </ebutton>
+                </ion-col>
+            </ion-row>
+        </ion-footer>
+    </div>
+
+    <div *ngIf="member == null" class="no-data">
+        {{ 'crcouncilvoting.no-member-info' | translate }}
+    </div>
+
+</ion-content>
