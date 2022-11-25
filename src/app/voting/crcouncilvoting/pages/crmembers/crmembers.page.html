@@ -22,7 +22,7 @@
         </ion-row>
     </div>
 
-    <div class="content" [class.vote-open]="crCouncilService.isVoting">
+    <div class="content" [class.vote-open]="crCouncilService.isVoting || crCouncilService.inClaiming">
         <ion-grid *ngIf="crCouncilService.crmembers.length > 0" class="container ion-no-padding">
             <ion-list lines="none" class="candidate-list">
                 <ion-item class="candidate" *ngFor="let member of crCouncilService.crmembers">
