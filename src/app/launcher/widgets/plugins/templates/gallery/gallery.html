@@ -10,7 +10,8 @@
       <ion-col size="6" *ngFor="let i of pageIndexes" class="page-col">
         <div class="item ion-activatable ripple" *ngIf="hasItemAt(i)" (click)="onItemClicked($event, i)">
           <div class="picture">
-            <img [cache]="getIcon(i)" />
+            <!-- maxsize is used to reduce upcoming pictures from external source into a maximum size to not cache too big data -->
+            <img [cache]="getIcon(i)" maxsize=150/>
           </div>
           <div class="subinfo" *ngIf="getSubInfo(i)">
             {{ getSubInfo(i) }}

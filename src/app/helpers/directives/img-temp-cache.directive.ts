@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, ElementRef, Input } from '@angular/core';
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { Logger } from 'src/app/logger';
-import { transparentPixelIconDataUrl } from '../picture.helpers';
+import { compressImage, transparentPixelIconDataUrl } from '../picture.helpers';
 
 /**
  * Local storage cache for img tags.
@@ -30,6 +30,8 @@ export class ImageCacheDirective implements AfterViewInit {
     this._cache = value;
     this.updatePicture();
   }
+
+  @Input('maxsize') maxsize: number = undefined;
 
   constructor(public el: ElementRef, private http: HTTP) { }
 
@@ -72,7 +74,7 @@ export class ImageCacheDirective implements AfterViewInit {
     };
     this.http.sendRequest(url, <any>reqOptions).then(response => {
       let reader = new FileReader();
-      reader.onloadend = () => {
+      reader.onloadend = async () => {
         //console.log('Got data for cache: ', this._cache, reader.result);
 
         // If the picture cache url changes during a fetch, just forget the fetch result.
@@ -82,8 +84,17 @@ export class ImageCacheDirective implements AfterViewInit {
           return;
         }
 
-        localStorage.setItem(this._cache, reader.result.toString());
-        this.el.nativeElement.src = reader.result;
+        let rawData = reader.result.toString();
+
+        // If there is a max size given, resize the picture.
+        let smallerData: string;
+        if (this.maxsize !== undefined)
+          smallerData = await compressImage(rawData, this.maxsize);
+        else
+          smallerData = rawData;
+
+        localStorage.setItem(this._cache, smallerData);
+        this.el.nativeElement.src = smallerData;
 
         fetchedSessionUrls[url] = true;
       }

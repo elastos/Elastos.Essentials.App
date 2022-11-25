@@ -227,7 +227,7 @@ export class WidgetsFeedsNewsService implements GlobalService {
         }
         catch (e) {
             // Possibly, not a feeds user
-            Logger.warn("feeds", "Failed to retrieve channels", []);
+            Logger.warn("feeds", "Failed to retrieve channels", e);
             return [];
         }
     }
