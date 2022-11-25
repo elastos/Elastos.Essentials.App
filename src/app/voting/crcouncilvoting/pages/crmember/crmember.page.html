@@ -144,10 +144,9 @@
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-col> -->
                 <ion-col class="right-col">
-                    <div class="btn-container align-center" id="confirm" (click)="claimDposNode()">
-                        {{ 'crcouncilvoting.claim-dpos-node' | translate }}
+                    <div class="btn-container align-center">
+                        <ebutton [title]="'crcouncilvoting.claim-dpos-node' | translate" id="confirm" (clicked)="claimDposNode()"></ebutton>
                     </div>
-                    <ion-ripple-effect></ion-ripple-effect>
                 </ion-col>
             </ion-row>
         </ion-footer>
