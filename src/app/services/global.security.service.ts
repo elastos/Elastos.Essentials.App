@@ -52,7 +52,7 @@ export class GlobalSecurityService implements GlobalService {
    */
   public async isDeviceRooted(): Promise<boolean> {
     let ret = await internalManager.isDeviceRooted();
-    Logger.log("security", "isDeviceRooted:", ret);
+    Logger.log("security", "Is device rooted?", ret);
     return ret;
   }
 
