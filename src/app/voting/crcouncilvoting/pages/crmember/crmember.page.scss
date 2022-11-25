@@ -136,11 +136,14 @@ ion-segment {
 
     ion-segment-button {
         color: var(--ion-text-color);
-        background: var(--ion-background-color);
 
         font-weight: bold;
         font-size: 14px;
         line-height: 142%;
+
+        &.segment-button-checked {
+            background: var(--ion-background-color);
+        }
     }
 }
 

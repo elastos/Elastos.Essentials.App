@@ -1,5 +1,3 @@
-
-
 ion-input {
     background: var(--essentials-box-color);
     height: 45px;
@@ -16,7 +14,7 @@ ion-list {
 
     .profile-data {
         padding: 15px 0px 10px 0px;
-        border-bottom: 1px solid #dbdbdb;
+        border-bottom: 1px solid vqr(--essentials-border-separator-color);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -51,12 +49,5 @@ ion-list {
         font-size: 14px;
         font-weight: 500;
         letter-spacing: 0.1px;
-    }
-}
-
-.darkContainer {
-    ion-input {
-        background-color: #212021;
-        box-shadow: none;
     }
 }
