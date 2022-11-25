@@ -24,7 +24,7 @@ export interface ElastosMainChainSafe {
   createDepositTransaction(inputs: UTXOInput[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string): Promise<any>;
 
   // CR
-  CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo): string;
+  CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo, version: number): string;
   proposalOwnerDigest(payload: NormalProposalOwnerInfo): string;
   proposalCRCouncilMemberDigest(payload: NormalProposalOwnerInfo): string;
 
@@ -88,7 +88,7 @@ export interface ElastosMainChainSafe {
   createUnregisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string): Promise<any>;
   createUpdateCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, fee: string, memo: string): Promise<any>;
   createRetrieveCRDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string): Promise<any>;
-  createCRCouncilMemberClaimNodeTransaction(inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string): Promise<any>;
+  createCRCouncilMemberClaimNodeTransaction(version: number, inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string): Promise<any>;
 
   //Dpos 2.0
   createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx;

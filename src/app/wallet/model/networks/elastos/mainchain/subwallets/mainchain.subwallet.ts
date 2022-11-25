@@ -498,10 +498,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     // CR
-    public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo): string {
-        Logger.log('wallet', 'CRCouncilMemberClaimNodeDigest:', payload);
+    public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo, version: number): string {
+        Logger.log('wallet', 'CRCouncilMemberClaimNodeDigest:', payload, ' version:', version);
 
-        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).CRCouncilMemberClaimNodeDigest(payload);
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).CRCouncilMemberClaimNodeDigest(payload, version);
     }
 
     /**
@@ -1664,11 +1664,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    public async createCRCouncilMemberClaimNodeTransaction(payload: CRCouncilMemberClaimNodeInfo, memo = ""): Promise<EncodedTx> {
+    public async createCRCouncilMemberClaimNodeTransaction(version: number, payload: CRCouncilMemberClaimNodeInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createCRCouncilMemberClaimNodeTransaction(
+            version,
             au.utxo,
             payload,
             '10000',

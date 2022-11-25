@@ -46,9 +46,10 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo) {
-    return (<MainchainSubWallet>this.sdkSubWallet).CRCouncilMemberClaimNodeDigest(
-      payload
+  public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo, version: number) {
+    return (<MainchainSubWallet>this.sdkSubWallet).crCouncilMemberClaimNodeDigest(
+      payload,
+      version
     );
   }
 
@@ -386,8 +387,9 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  public async createCRCouncilMemberClaimNodeTransaction(inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
+  public async createCRCouncilMemberClaimNodeTransaction(version: number, inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
     return await (<MainchainSubWallet>this.sdkSubWallet).createCRCouncilMemberClaimNodeTransaction(
+      version,
       inputs,
       payload,
       fee,

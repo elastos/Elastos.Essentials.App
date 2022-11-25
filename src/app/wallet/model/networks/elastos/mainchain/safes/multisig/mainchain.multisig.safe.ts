@@ -115,7 +115,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return await tx;
   }
 
-  public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo) {
+  public CRCouncilMemberClaimNodeDigest(payload: CRCouncilMemberClaimNodeInfo, version: number) {
     // TODO: Do not support.
     return null;
   }
@@ -340,7 +340,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return null;
   }
 
-  public createCRCouncilMemberClaimNodeTransaction(inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
+  public createCRCouncilMemberClaimNodeTransaction(version: number, inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
     // TODO: Do not support.
     return null;
   }

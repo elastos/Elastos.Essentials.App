@@ -104,7 +104,8 @@ export class CRNodePage implements OnInit {
             Logger.log('crproposal', "Got review proposal payload.", payload);
 
             //Get digest
-            var digest = await this.voteService.sourceSubwallet.CRCouncilMemberClaimNodeDigest(payload);
+            let version = 0;
+            var digest = await this.voteService.sourceSubwallet.CRCouncilMemberClaimNodeDigest(payload, version);
             Logger.log('crproposal', "Got review proposal digest.", digest);
 
             let signature = await this.crCouncilService.getSignature(digest);
@@ -114,7 +115,8 @@ export class CRNodePage implements OnInit {
                 await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
                 //Create transaction and send
-                const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(payload, '');
+                let version = 0;
+                const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(version, payload, '');
                 await this.globalNative.hideLoading();
 
                 let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
