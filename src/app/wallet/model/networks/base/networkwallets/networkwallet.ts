@@ -535,8 +535,8 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     // Clean up NFTs that have been sent.
     public cleanUpNFT(nftTokes: ERCTokenInfo[]) {
-        this.nfts = this.nfts.filter( nft => {
-            return nftTokes.findIndex( n => {
+        this.nfts = this.nfts.filter(nft => {
+            return nftTokes.findIndex(n => {
                 return n.contractAddress === nft.contractAddress
             }) >= 0
         })
@@ -658,7 +658,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
      * storage instead.
      */
     public async populateWithExtendedInfo(extendedInfo: ExtendedNetworkWalletInfo): Promise<void> {
-        //Logger.log("wallet", "Populating network master wallet with extended info", this.id, extendedInfo);
+        //Logger.log("wallet", "Populating network wallet with extended info", this, extendedInfo);
 
         // In case of newly created wallet we don't have extended info from local storage yet,
         // which is normal.

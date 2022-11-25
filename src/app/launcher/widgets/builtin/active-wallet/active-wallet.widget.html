@@ -19,8 +19,8 @@
       </div>
 
       <!-- Wallets list - horizontal slide -->
-      <ion-slides pager={true} [style]="masterWalletWithNetworkWalletList.length === 0 ? 'display:gone':''"
-        #walletsSlider [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()" (ionSlidesDidLoad)="slideLoad()">
+      <ion-slides [pager]="true"
+        #walletsSlider [options]="walletsSlideOpts" (ionSlideDidChange)="onWalletWidgetSlideChanged()" (ionSlidesDidLoad)="slideToActiveWallet()">
         <ion-slide *ngFor="let masterWalletMap of masterWalletWithNetworkWalletList">
           <div class="wallet-widget-row ripple ion-activatable" [style.background]="backgroundGradient">
             <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
