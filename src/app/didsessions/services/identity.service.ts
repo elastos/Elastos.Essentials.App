@@ -513,7 +513,8 @@ export class IdentityService {
               } */
 
             // Delete all wallets.
-            await WalletJSSDKHelper.deleteAllWallet();
+            await WalletJSSDKHelper.deleteAllWallet(identity.didString);
+            WalletJSSDKHelper.resetMasterWalletManager();
 
             // Delete the did store, as for now, 1 DID = 1 DID store
             await this.deleteDIDStore(identity.didStoreId);
