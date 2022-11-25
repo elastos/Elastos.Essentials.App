@@ -6,18 +6,19 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ label }}</h5>
-                    <h4>
-                        <ion-input type="text" name="publickey" ngDefaultControl [(ngModel)]="nodePublicKey" clearInput>
-                        </ion-input>
-                    </h4>
+                    <ion-input type="text" name="publickey" ngDefaultControl [(ngModel)]="nodePublicKey" clearInput>
+                    </ion-input>
                 </ion-col>
             </ion-row>
         </ion-list>
+    </div>
 
+    <ion-footer>
         <ion-row class="btn-container">
             <ion-col>
                 <ebutton (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
             </ion-col>
         </ion-row>
-    </div>
+    </ion-footer>
+
 </ion-content>

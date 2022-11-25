@@ -5,7 +5,7 @@
             <ion-list lines="none" class="candidate-list">
                 <ion-item class="candidate" *ngFor="let member of crCouncilService.nextCRs">
                     <ion-grid>
-                        <ion-row>
+                        <ion-row (click)=onShowNextCRInfo(member.did)>
                             <ion-col size="1.25" class="rank-col">
                                 {{ crCouncilService.nextCRs.indexOf(member) + 1 }}
                             </ion-col>
