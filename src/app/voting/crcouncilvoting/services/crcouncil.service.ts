@@ -431,12 +431,6 @@ export class CRCouncilService {
             this.isVoting = result.invoting || false;
             this.inClaiming = result.inClaiming || false;
 
-            this.isVoting = false;
-            this.inClaiming = true;
-
-            // this.isVoting = false;
-            // this.inClaiming = true;
-
             // let currentHeight = await this.voteService.getCurrentHeight();
             // var block_remain = 0;
             // if (this.isVoting && result.votingendheight > currentHeight) {
