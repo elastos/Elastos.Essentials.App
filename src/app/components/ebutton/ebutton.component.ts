@@ -22,6 +22,12 @@ export class EButtonComponent implements OnInit {
   @Input()
   public spinning = false;
 
+  @Input()
+  public small = false; // Less padding, smaller text
+
+  @Input("roundedicon")
+  public roundedIcon = false; // Icon rendered as a circle if true
+
   @Input("lefticon")
   public leftIcon: string = null;
 

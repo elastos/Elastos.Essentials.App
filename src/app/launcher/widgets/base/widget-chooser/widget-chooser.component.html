@@ -17,7 +17,7 @@
       <ion-col size="9">
         <ion-input type="url" #input autosize clearInput autocomplete="off" autocorrect="off"
           [placeholder]="'launcher.paste-widget-url' | translate" [(ngModel)]="widgetUrl" mode="ios" name="didInput"
-          ngDefaultControl (input)='onSendToAddressInput($event.target.value)'></ion-input>
+          ngDefaultControl (ionBlur)='onSendToAddressInput($event.target.value)'></ion-input>
       </ion-col>
       <ion-col size="1" class="right-col" (click)="paste()">
         <ion-icon mode="ios" name="clipboard-outline"></ion-icon>

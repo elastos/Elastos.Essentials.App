@@ -8,6 +8,7 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import type { WidgetInstance } from 'src/app/launcher/widgets/services/widgets.service';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
+import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
@@ -104,6 +105,9 @@ export class WidgetContainerComponent implements OnInit {
           this.dragRefs.push(dragRef);
           this.holdersInstances.push(widgetHolderComponentRef);
           this.widgetsReadyToDisplay[widgetComponentInstance.widgetState.id] = false; // Widget not ready yet
+        }
+        else {
+          Logger.warn("widgets", "Failed to restore widget into container", widget);
         }
       }
 
@@ -242,6 +246,7 @@ export class WidgetContainerComponent implements OnInit {
 
   public async restoreAllWidgets() {
     await this.widgetsService.resetAllWidgets();
+    this.exitEdition();
   }
 
   // Content can be reseted while editing this container, but also another container.

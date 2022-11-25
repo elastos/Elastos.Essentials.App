@@ -43,7 +43,13 @@ const builtInWidgets: WidgetState[] = [
     { category: "builtin", builtInType: "hive-sync", displayCategories: [DisplayCategories.IDENTITY] },
     { category: "builtin", builtInType: "notifications", displayCategories: [DisplayCategories.COMMUNITY] },
     { category: "builtin", builtInType: "swap", displayCategories: [DisplayCategories.FINANCE] },
-    { category: "app-plugin", displayCategories: [DisplayCategories.COMMUNITY], plugin: { pluginType: "news" } }
+    { category: "app-plugin", displayCategories: [DisplayCategories.COMMUNITY], plugin: { pluginType: "news" } },
+];
+
+const partnerPluginUrls = [
+    "https://ela.city/api/templates/portal",
+    "https://ela.city/api/templates/gallery/popular?size=6",
+    "https://ela.city/api/templates/gallery/buyNow?size=6"
 ];
 
 export type WidgetInstance = {
@@ -425,6 +431,14 @@ export class WidgetsService {
                 widgets.push(this.createBuiltInWidgetState("discover-dapps"));
                 widgets.push(this.createBuiltInWidgetState("red-packets"));
 
+                // When default container states are regenerated (the very first time essentials is launched,
+                // or when user resets his config), we fetch partner plugins asynchronously.
+                // We do this only for the "main" container to fetch plugins only once, and this mechanism
+                // is asynchronous, meaning that until the widgets are fetched and saved, they won't
+                // appear in user's "dapps" panel to be added by the user, but this is ok, as we don't want
+                // to block the UI for that.
+                void this.fetchPartnerPlugins();
+
                 break;
             case "right":
                 widgets.push(this.createBuiltInWidgetState("cyber-republic"));
@@ -432,6 +446,13 @@ export class WidgetsService {
                 widgets.push(this.createBuiltInWidgetState("elastos-voting"));
                 widgets.push(this.createBuiltInWidgetState("contacts"));
                 widgets.push(this.createBuiltInWidgetState("hive"));
+
+                // Can't do this... this would force us to fetch plugins when starting essentials for
+                // the first time
+                // and block the UI during this time. Unless and async mechanism is created to add widgets.
+                // For now, just don't do it.
+                //widgets.push(...this.getDefaultPartnerPlugins());
+
                 break;
         }
 
@@ -439,6 +460,24 @@ export class WidgetsService {
             widgets
         };
     }
+
+    private fetchPartnerPlugins() {
+        for (let partnerPluginUrl of partnerPluginUrls) {
+            void this.pluginService.fetchWidgetPlugin(partnerPluginUrl);
+        }
+    }
+
+    /* private getDefaultPartnerPlugins(): WidgetState[] {
+        let state = this.createWidgetState({
+            category: "app-plugin",
+            displayCategories: [DisplayCategories.DAPPS],
+            plugin: {
+                pluginType: "standard",
+                url: "https://ela.city/api/templates/portal"
+            }
+        })
+        return [state];
+    } */
 
     private async resetWidgets(containerName: string) {
         await this.saveContainerState(containerName, this.generateDefaultContainerState(containerName));
