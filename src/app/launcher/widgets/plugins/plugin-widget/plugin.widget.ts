@@ -35,8 +35,6 @@ export class PluginWidget extends WidgetBase implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): Promise<void> {
-    console.log("DESTROYING PLUGIN WIDGET COMPONENT")
-
     if (this.refreshWidgetTimer) {
       clearTimeout(this.refreshWidgetTimer);
       this.refreshWidgetTimer = null;
@@ -58,6 +56,7 @@ export class PluginWidget extends WidgetBase implements OnInit, OnDestroy {
     await this.widgetsService.refreshWidgetPluginContentIfRightTime(this.widgetState);
     this.rearmWidgetContentRefreshTimer();
   }
+
   private rearmWidgetContentRefreshTimer() {
     setTimeout(() => {
       void this.checkRightTimeToRefreshWidgetContent();

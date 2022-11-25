@@ -1,15 +1,15 @@
 <div class="root ion-activatable ripple" [class.cancel]="mode == 'cancel'" [class.danger]="mode == 'danger'"
     [class.disabled]="disabled" (click)="onClicked()">
     <div *ngIf="!spinning" class="inner-content" [class.left-icon-container]="leftIcon"
-        [class.top-icon-container]="topIcon">
+        [class.top-icon-container]="topIcon" [class.small]="small">
 
         <!-- NOTE: We use inlineSVG (works only with SVG) for non remote pictures, so they can be inlined thus colorized with CSS current color -->
 
-        <img [cache]="leftIcon" *ngIf="leftIcon && leftIconShouldBeCached()" class="icon left-icon" />
-        <div [inlineSVG]="leftIcon" *ngIf="leftIcon && !leftIconShouldBeCached()" class="icon left-icon"></div>
+        <img [cache]="leftIcon" *ngIf="leftIcon && leftIconShouldBeCached()" class="icon left-icon" [class.roundedIcon]="roundedIcon"/>
+        <div [inlineSVG]="leftIcon" *ngIf="leftIcon && !leftIconShouldBeCached()" class="icon left-icon" [class.roundedIcon]="roundedIcon"></div>
 
-        <img [cache]="topIcon" *ngIf="topIcon && topIconShouldBeCached()" class="icon top-icon" />
-        <div [inlineSVG]="topIcon" *ngIf="topIcon && !topIconShouldBeCached()" class="icon top-icon"></div>
+        <img [cache]="topIcon" *ngIf="topIcon && topIconShouldBeCached()" class="icon top-icon" [class.roundedIcon]="roundedIcon"/>
+        <div [inlineSVG]="topIcon" *ngIf="topIcon && !topIconShouldBeCached()" class="icon top-icon" [class.roundedIcon]="roundedIcon"></div>
 
         <div class="title" [class.smaller]="topIcon" [class.uppercase]="uppercase">{{ title }}</div>
     </div>

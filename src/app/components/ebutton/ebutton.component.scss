@@ -42,6 +42,10 @@
             align-items: center;
             text-align: center;
 
+            &.small {
+                padding: 5px 10px;
+            }
+
             &.top-icon-container {
                 flex-direction: column;
             }
@@ -58,7 +62,17 @@
                 height: 20px;
             }
 
+            .roundedIcon {
+                border-radius: 50%;
+                overflow: hidden;
+            }
+
             .title {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                flex: 1; // Title only should be compressed, not the icon
+
                 &.smaller {
                     font-size: 11px;
                 }

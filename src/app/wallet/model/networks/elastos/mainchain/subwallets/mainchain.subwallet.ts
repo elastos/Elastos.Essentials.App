@@ -1267,7 +1267,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             }
         } while (!this.isSingleAddress());
 
-        Logger.log("wallet", ' utxoArray length:', utxoArray ? utxoArray.length : 0);
+        //Logger.log("wallet", ' utxoArray length:', utxoArray ? utxoArray.length : 0);
         return utxoArray;
     }
 

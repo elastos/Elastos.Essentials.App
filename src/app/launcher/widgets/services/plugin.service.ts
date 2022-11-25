@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import type { JSONObject } from '@elastosfoundation/did-js-sdk';
 import moment from 'moment';
+import PromiseQueue from 'promise-queue';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
@@ -49,6 +50,7 @@ export class WidgetPluginsService implements GlobalService {
     public onPluginUrlRefreshed = new Subject<string>(); // Event emitted when a plugin url has been refreshed - UI can refresh widgets based on this
 
     private state: PluginsState = null;
+    private fetchQueue = new PromiseQueue(1);
 
     constructor(
         private http: HttpClient,
@@ -99,31 +101,34 @@ export class WidgetPluginsService implements GlobalService {
      * returns the fetched content.
      */
     public fetchWidgetPlugin(widgetUrl: string): Promise<PluginConfig<any>> {
-        Logger.log("widgets-plugins", "Fetching widget plugin at:", widgetUrl);
+        // Fetch only one plugin at a time.
+        return this.fetchQueue.add(() => {
+            Logger.log("widgets-plugins", "Fetching widget plugin at:", widgetUrl);
 
-        return new Promise((resolve, reject) => {
-            this.http.get(widgetUrl).subscribe({
-                // eslint-disable-next-line @typescript-eslint/no-misused-promises
-                next: async (json) => {
-                    Logger.log("widget-plugins", "Got widget plugin data:", json);
+            return new Promise((resolve, reject) => {
+                this.http.get(widgetUrl).subscribe({
+                    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                    next: async (json) => {
+                        Logger.log("widget-plugins", "Got widget plugin data:", json);
 
-                    // Validate json format
-                    const validationResult = this.validatePluginConfig(<PluginConfig<any>>json);
-                    if (!validationResult.isValid) {
-                        return reject("Invalid widget configuration. " + validationResult.error);
+                        // Validate json format
+                        const validationResult = this.validatePluginConfig(<PluginConfig<any>>json);
+                        if (!validationResult.isValid) {
+                            return reject("Invalid widget configuration. " + validationResult.error);
+                        }
+                        else {
+                            // Content fetched, update plugin state/cache
+                            await this.savePluginContent(widgetUrl, <PluginConfig<any>>json);
+
+                            return resolve(<PluginConfig<any>>json);
+                        }
+                    },
+                    error: err => {
+                        reject("Failed to fetch plugin data. Is this a valid url?");
                     }
-                    else {
-                        // Content fetched, update plugin state/cache
-                        await this.savePluginContent(widgetUrl, <PluginConfig<any>>json);
-
-                        return resolve(<PluginConfig<any>>json);
-                    }
-                },
-                error: err => {
-                    reject("Failed to fetch plugin data. Is this a valid url?");
-                }
+                });
             });
-        })
+        });
     }
 
     public validatePluginConfig(inputConfig: PluginConfig<any>): ValidationResult {

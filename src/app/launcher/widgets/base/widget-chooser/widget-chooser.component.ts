@@ -175,6 +175,10 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     void this.fetchWidget();
   }
 
+  public onSendToAddressInput() {
+    void this.fetchWidget();
+  }
+
   public async scan() {
     let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent("https://scanner.web3essentials.io/scanqrcode", {}, this.receivedIntent.intentId);
 
@@ -208,6 +212,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       void this.zone.run(async () => {
         // Create the custom widget in the preview container
+        this.previewContainer.emptyAllWidgets();
         let result = await this.previewContainer.addPreviewWidget(this.customWidgetState);
         if (result) {
           let { widgetHolderComponentRef } = result;
