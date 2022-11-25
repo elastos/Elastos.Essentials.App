@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { CRCouncilMemberClaimNodeInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
@@ -99,7 +100,7 @@ export class CRNodePage implements OnInit {
             var payload = {
                 NodePublicKey: this.nodePublicKey,
                 CRCouncilMemberDID: this.crmemberInfo.did,
-            } as any;
+            } as CRCouncilMemberClaimNodeInfo;
             Logger.log('crproposal', "Got review proposal payload.", payload);
 
             //Get digest
