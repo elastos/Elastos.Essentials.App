@@ -115,7 +115,6 @@ export class CRNodePage implements OnInit {
                 await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
                 //Create transaction and send
-                let version = 0;
                 const rawTx = await this.voteService.sourceSubwallet.createCRCouncilMemberClaimNodeTransaction(version, payload, '');
                 await this.globalNative.hideLoading();
 
