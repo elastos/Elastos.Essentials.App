@@ -105,6 +105,10 @@ export class CRNodePage implements OnInit {
 
             //Get digest
             let version = 0;
+            if (this.crCouncilService.inClaiming && this.crCouncilService.isElected) {
+                version = 1;
+            }
+
             var digest = await this.voteService.sourceSubwallet.CRCouncilMemberClaimNodeDigest(payload, version);
             Logger.log('crproposal', "Got review proposal digest.", digest);
 
