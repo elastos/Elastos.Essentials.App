@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIconSlot } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -44,7 +45,7 @@ export class CRNodePage implements OnInit {
         this.titleBar.setTitle(this.translate.instant('crcouncilvoting.claim-dpos-node'));
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
 
-        if (!this.oldPublicKey || this.oldPublicKey == "" || !this.did) {
+        if (!this.oldPublicKey || this.oldPublicKey == "" || !this.did || !Util.isSelfDid(this.did)) {
             if (this.crCouncilService.isElected) {
                 this.oldPublicKey = this.crCouncilService.nextCRInfo.dpospublickey;
                 this.did = this.crCouncilService.nextCRInfo.did;
