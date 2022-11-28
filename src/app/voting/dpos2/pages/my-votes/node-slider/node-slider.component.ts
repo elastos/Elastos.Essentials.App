@@ -148,7 +148,9 @@ export class NodeSliderComponent implements OnInit {
     }
 
     public onInputDaysFocus(node: any) {
-        node.inputStakeDays = null;
+        if (node.inputStakeDays == 0) {
+            node.inputStakeDays = null;
+        }
     }
 
     public onInputDaysBlur(node: any) {
