@@ -79,6 +79,7 @@ export class VotePage implements OnInit, OnDestroy {
             this.totalEla = 0;
         }
 
+        this.selectedNodes = [];
         this.dpos2Service.activeNodes.forEach(node => {
             if (node.isChecked === true) {
                 if (!node.userVotes) {
