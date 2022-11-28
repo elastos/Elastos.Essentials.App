@@ -103,7 +103,7 @@ export class StakePage {
             );
             await this.globalNative.hideLoading();
 
-            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.STAKING, '/staking/staking-home');
+            let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
                 this.voteService.toastSuccessfully('staking.stake');
             }

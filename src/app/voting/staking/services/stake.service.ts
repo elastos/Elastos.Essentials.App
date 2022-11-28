@@ -53,7 +53,12 @@ export class StakeService {
 
     public rewardInfo: RewardInfo;
     public nodeRewardInfo: RewardInfo;
-    public totalRewardInfo: RewardInfo;
+    public totalRewardInfo= {
+            claimable: 0,
+            claiming: 0,
+            claimed: 0,
+            total: 0,
+        } as RewardInfo;
 
     public firstAddress: string;
     public ownerAddress: string;
