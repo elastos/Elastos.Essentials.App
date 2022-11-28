@@ -711,7 +711,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         if (this.id === StandardCoinName.ELA) {
             if (address) { // for createStakeTransaction. Only use the utxos of the first external address.
                 let amountELA = amountSELA / Config.SELA
-                utxoArray = await this.getUtxosByAmount(address, amountELA.toString(), UtxoType.Normal);
+                utxoArray = await this.getUtxosByAmount(address, amountELA.toString(), UtxoType.Mixed);
             } else {
                 let addressesHasBalance = [];
                 for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
