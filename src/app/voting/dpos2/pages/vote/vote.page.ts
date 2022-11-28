@@ -204,7 +204,9 @@ export class VotePage implements OnInit, OnDestroy {
 
     // Event triggered when the text input loses the focus. At this time we can recompute the value.
     public onInputVotesFocus(node: DPoS2Node) {
-        node.userVotes = null;
+        if (node.userVotes == 0) {
+            node.userVotes = null;
+        }
     }
 
     public onInputVotesBlur(node: DPoS2Node) {
@@ -221,7 +223,7 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     public onInputDaysFocus(node: DPoS2Node) {
-        node.userStakeDays = null;
+        // node.userStakeDays = null;
     }
 
     public onInputDaysBlur(node: DPoS2Node) {
