@@ -180,7 +180,7 @@ export class VoteSliderComponent implements OnInit {
         for (const item of this.voteInfos[VoteType.CRProposal].list) {
             let proposal = await this.proposalService.fetchProposalDetails(item.candidate);
             if (proposal) {
-                item.name = proposal.title;
+                item.name = '#' + proposal.id + ' ' + proposal.title;
                 item.id = item.candidate;
                 item.idLabel = "staking.proposal-hash";
             }
