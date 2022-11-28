@@ -175,6 +175,7 @@
         <resource-file src="resources/android/notifications/drawable-xxxhdpi/notification_icon_large.png" target="app/src/main/res/drawable-xxxhdpi/notification_icon_large.png" />
     </platform>
     <platform name="ios">
+        <preference name="target-device" value="handset" />
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <preference name="deployment-target" value="13.0" />
