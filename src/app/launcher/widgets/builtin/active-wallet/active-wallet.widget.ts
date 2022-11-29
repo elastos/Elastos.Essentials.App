@@ -1,5 +1,5 @@
-import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IonSlides, PopoverController } from '@ionic/angular';
+import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
@@ -29,40 +29,18 @@ type MasterWalletWithNetworkWallet = {
   styleUrls: ['./active-wallet.widget.scss'],
 })
 export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy {
-  private _walletsSlider: IonSlides;
-  @ViewChild('walletsSlider') set walletsSlider(_walletsSlider: IonSlides) {
-    this._walletsSlider = _walletsSlider;
-
-    if (_walletsSlider && !this.initialSliderSlideDone) {
-      // First time the slider is available: initialize it and position it to the right slide (active wallet).
-      // This won't happen until the active wallet is ready as we only notify the container that this widget is "ready"
-      // after receiving the wallet status "initialized". And this is only after all widgets are ready that the container
-      // removed the spinner, which makes the widgets shown and this slider becoming defined.
-      void this._walletsSlider.getSwiper().then(swiper => {
-        swiper.init();
-        void this.updateWidgetMainWallet();
-        this.initialSliderSlideDone = true;
-      });
-    }
-  }
+  public activeWalletEntry: MasterWalletWithNetworkWallet = null;
+  public activeWalletIndex = -1;
 
   private popover: HTMLIonPopoverElement = null;
   public masterWalletWithNetworkWalletList: MasterWalletWithNetworkWallet[] = []
   public networkWalletsList: AnyNetworkWallet[] = [];
   private activeWalletAddresses: { [walletId: string]: WalletAddressInfo[] } = {};
   public backgroundGradient: string = null;
-  private initialSliderSlideDone = false;
 
   private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
   private networkWalletSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
   private activeNetworkSub: Subscription = null; // Subscription to wallet service to know when the active network (elastos, heco, bsc, etc) changes
-
-  public walletsSlideOpts = {
-    init: false, // Need manual init when the slider gets displayed, otherwise it's messed up with the container spinner delaying widgets creation in DOM.
-    initialSlide: 0,
-    speed: 200,
-    spaceBetween: 10
-  };
 
   public WalletUtil = WalletUtil;
 
@@ -131,26 +109,14 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     this.walletInitService.start()
   }
 
-  public async onWalletWidgetSlideChanged() {
-    if (!this._walletsSlider || !this.masterWalletWithNetworkWalletList || this.masterWalletWithNetworkWalletList.length === 0)
-      return;
-
-    let activeIndex = await this._walletsSlider.getActiveIndex();
-    let newlyActiveWallet = this.masterWalletWithNetworkWalletList[activeIndex].networkWallet;
-    let masterWallet = null;
-    if (!newlyActiveWallet)
-      masterWallet = this.masterWalletWithNetworkWalletList[activeIndex].masterWallet;
-    void this.walletService.setActiveNetworkWallet(newlyActiveWallet, masterWallet);
-  }
-
   public pickNetwork() {
     void this.walletNetworkUIService.chooseActiveNetwork();
   }
 
-  private async updateWidgetMainWallet() {
+  private updateWidgetMainWallet() {
     //console.log("updateWidgetMainWallet")
 
-    // Widget will show all the master wallets, even some of them are unsupported on the active network.
+    // Widget will show all the master wallets, even if some of them are unsupported on the active network.
     let networkWalletsList = this.walletService.getNetworkWalletsList();
     let masterWallets = this.walletService.getMasterWalletsList();
 
@@ -161,7 +127,7 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
       masterWalletWithNetworkWalletList.push({
         masterWallet: masterWallet,
         networkWallet: networkWallet
-      })
+      });
     }
 
     // Save wallet addresses locally for easy copy
@@ -180,27 +146,27 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     this.networkWalletsList = networkWalletsList;
     this.masterWalletWithNetworkWalletList = masterWalletWithNetworkWalletList;
 
-    // Active wallet changed by an external entity, update our active slider widget
-    if (this._walletsSlider && this.walletService.getActiveMasterWalletIndex() !== await this._walletsSlider.getActiveIndex()) {
-      void this.slideToActiveWallet();
-    }
+    // Update our active wallet on UI
+    this.setActiveWalletByIndex(this.walletService.getActiveMasterWalletIndex());
   }
 
-  /**
-   * Called once by ion-slides when the slider is initialized
-   */
-  public slideToActiveWallet() {
-    if (!this._walletsSlider)
-      return;
+  private setActiveWalletByIndex(index: number) {
+    this.activeWalletIndex = index;
+    this.activeWalletEntry = this.masterWalletWithNetworkWalletList[this.activeWalletIndex];
+  }
 
-    // Select the active wallet in the wallets slides
-    let activeWalletIndex = this.walletService.getActiveMasterWalletIndex();
-    //console.log("sliding to active wallet, activeWalletIndex=", activeWalletIndex, "slider index", await this._walletsSlider.getActiveIndex(), this._walletsSlider)
-    if (activeWalletIndex != -1) { // Happens if no wallet
-      this.zone.run(() => {
-        void this._walletsSlider.slideTo(activeWalletIndex, 0);
-      });
-    }
+  public prevWallet() {
+    let newIndex = this.activeWalletIndex > 0 ? this.activeWalletIndex - 1 : this.masterWalletWithNetworkWalletList.length - 1;
+    this.setActiveWalletByIndex(newIndex);
+  }
+
+  public nextWallet() {
+    let newIndex = (this.activeWalletIndex + 1) % this.masterWalletWithNetworkWalletList.length;
+    this.setActiveWalletByIndex(newIndex);
+  }
+
+  public goToWalletIndex(index: number) {
+    this.setActiveWalletByIndex(index);
   }
 
   public getWalletAddresses(wallet: AnyNetworkWallet): WalletAddressInfo[] {
