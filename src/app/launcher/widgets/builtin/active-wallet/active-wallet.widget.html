@@ -68,10 +68,10 @@
         </ion-row>
         <ion-ripple-effect></ion-ripple-effect>
       </div>
-      <div class="pager">
+      <div class="pager" *ngIf="masterWalletWithNetworkWalletList.length > 1">
         <div class="bullet" *ngFor="let wallet of masterWalletWithNetworkWalletList; let i = index" [class.active]="i === activeWalletIndex" (click)="goToWalletIndex(i)"></div>
-        <ion-icon name="chevron-back-outline" class="left" (click)="prevWallet()"></ion-icon>
-        <ion-icon name="chevron-forward-outline" class="right" (click)="nextWallet()"></ion-icon>
+        <!-- <ion-icon name="chevron-back-outline" class="left" (click)="prevWallet()"></ion-icon>
+        <ion-icon name="chevron-forward-outline" class="right" (click)="nextWallet()"></ion-icon> -->
       </div>
     </ion-col>
   </ion-row>
