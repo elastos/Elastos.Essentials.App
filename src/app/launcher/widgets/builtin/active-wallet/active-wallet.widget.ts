@@ -31,6 +31,7 @@ type MasterWalletWithNetworkWallet = {
 export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy {
   public activeWalletEntry: MasterWalletWithNetworkWallet = null;
   public activeWalletIndex = -1;
+  private activatingWallet = false;
 
   private popover: HTMLIonPopoverElement = null;
   public masterWalletWithNetworkWalletList: MasterWalletWithNetworkWallet[] = []
@@ -147,26 +148,39 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     this.masterWalletWithNetworkWalletList = masterWalletWithNetworkWalletList;
 
     // Update our active wallet on UI
-    this.setActiveWalletByIndex(this.walletService.getActiveMasterWalletIndex());
+    void this.setActiveWalletByIndex(this.walletService.getActiveMasterWalletIndex(), false);
   }
 
-  private setActiveWalletByIndex(index: number) {
+  private async setActiveWalletByIndex(index: number, activate = true) {
     this.activeWalletIndex = index;
     this.activeWalletEntry = this.masterWalletWithNetworkWalletList[this.activeWalletIndex];
+
+    if (activate && !this.activatingWallet) {
+      this.activatingWallet = true;
+
+      let newlyActiveWallet = this.masterWalletWithNetworkWalletList[index].networkWallet;
+      let masterWallet = null;
+      if (!newlyActiveWallet)
+        masterWallet = this.masterWalletWithNetworkWalletList[index].masterWallet;
+
+      await this.walletService.setActiveNetworkWallet(newlyActiveWallet, masterWallet);
+
+      this.activatingWallet = false;
+    }
   }
 
   public prevWallet() {
     let newIndex = this.activeWalletIndex > 0 ? this.activeWalletIndex - 1 : this.masterWalletWithNetworkWalletList.length - 1;
-    this.setActiveWalletByIndex(newIndex);
+    void this.setActiveWalletByIndex(newIndex);
   }
 
   public nextWallet() {
     let newIndex = (this.activeWalletIndex + 1) % this.masterWalletWithNetworkWalletList.length;
-    this.setActiveWalletByIndex(newIndex);
+    void this.setActiveWalletByIndex(newIndex);
   }
 
   public goToWalletIndex(index: number) {
-    this.setActiveWalletByIndex(index);
+    void this.setActiveWalletByIndex(index);
   }
 
   public getWalletAddresses(wallet: AnyNetworkWallet): WalletAddressInfo[] {
