@@ -158,7 +158,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     // Save to permanent storage
     await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(existingCoins));
 
-    this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== coin.getContractAddress().toLowerCase());
+    this.deletedERC20Coins = this.deletedERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== erc20Coin.getContractAddress().toLowerCase());
     await LocalStorage.instance.set("custom-erc20-coins-deleted-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(this.deletedERC20Coins));
 
     this.onCoinAdded.next(erc20Coin.getID());
@@ -170,7 +170,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     this.availableCoins = this.availableCoins.filter((coin) => coin.getID() !== erc20Coin.getID());
     let allCustomERC20Coins = await this.getCustomERC20Coins();
     allCustomERC20Coins = allCustomERC20Coins.filter((coin) => coin.getContractAddress().toLowerCase() !== erc20Coin.getContractAddress().toLowerCase());
-    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, allCustomERC20Coins);
+    await LocalStorage.instance.set("custom-erc20-coins-" + this.localStorageKey, erc20CoinsSerializer.serializeObjectArray(allCustomERC20Coins));
     Logger.log('wallet', 'availableCoins after deleting', this.availableCoins);
 
     this.deletedERC20Coins.push(erc20Coin);
@@ -212,7 +212,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
   }
 
   private async initDeletedCustomERC20Coins(network: AnyNetwork): Promise<ERC20Coin[]> {
-    const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-deleted-" + network.key);
+    const rawCoinList = await LocalStorage.instance.get("custom-erc20-coins-deleted-" + this.localStorageKey);
     if (!rawCoinList) {
       return [];
     }
