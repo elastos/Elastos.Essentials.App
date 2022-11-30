@@ -82,6 +82,7 @@ export const en = {
         'share-friend': 'Add my friend in Essentials',
         'share-add-me-as-friend': 'Add me as a friend',
         'copied-to-clipboard': 'Copied to clipboard',
+        'here-is-my-did': 'Here is my DID:',
 
         //Input error
         'text-input-is-blank': " is blank, It is required.",

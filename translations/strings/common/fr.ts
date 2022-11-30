@@ -82,6 +82,7 @@ export const fr = {
         'share-friend': 'Ajouter mon contact dans Essentials',
         'share-add-me-as-friend': 'Ajoutez moi comme contact',
         'copied-to-clipboard': 'Copié dans le presse-papier',
+        'here-is-my-did': 'Voici mon DID:',
 
         //Input error
         'text-input-is-blank': " is blank, It is required.",

@@ -30,7 +30,7 @@ export class DidService {
 
   shareIdentity(contact: Contact) {
     void this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("common.share-add-me-as-friend"),
+      title: this.translate.instant("common.share-friend"),
       url: this.uxService.getAddFriendShareableUrl(contact.id, contact.notificationsCarrierAddress),
     });
   }

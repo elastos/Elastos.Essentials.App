@@ -83,6 +83,7 @@ export const zh = {
         'share-friend': '在 Essentials 中添加我为好友',
         'share-add-me-as-friend': '加我为好友',
         'copied-to-clipboard': '已复制',
+        'here-is-my-did': 'Here is my DID:',
 
         //Input error
         'text-input-is-blank': "输入为空，这项必填。",

@@ -82,6 +82,7 @@ export const it = {
         'share-friend': 'Aggiungi il mio contatto in Essentials',
         'share-add-me-as-friend': 'Aggiungimi come contatto',
         'copied-to-clipboard': 'Copiato negli appunti',
+        'here-is-my-did': 'Here is my DID:',
 
         //Input error
         'text-input-is-blank': " è vuoto, è obbligatorio.",

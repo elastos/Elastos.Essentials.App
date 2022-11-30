@@ -435,8 +435,8 @@ export class ProfileService extends GlobalService {
     // }
 
     await this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("common.share-add-me-as-friend"),
-      url: await this.getAddFriendShareableUrl(),
+      title: this.translate.instant("common.here-is-my-did"),
+      url: this.didString,
     });
   }
 

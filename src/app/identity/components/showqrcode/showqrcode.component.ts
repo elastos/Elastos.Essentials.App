@@ -42,8 +42,8 @@ export class ShowQRCodeComponent implements OnInit {
 
   shareInvitationLink() {
     void this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("common.share-add-me-as-friend"),
-      url: this.qrCodeString
+      title: this.translate.instant("common.here-is-my-did"),
+      url: this.didString
     });
   }
 }

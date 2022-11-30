@@ -41,18 +41,12 @@ export class DIDManagerService extends GlobalService {
     return this.didSessions.getSignedInIdentity();
   }
 
-  async shareIdentity() {
+  shareIdentity() {
     Logger.log('Launcher', 'Sharing identity', this.signedIdentity);
-    const carrierAddress = await this.contactNotifier.getCarrierAddress();
-
-    const addFriendUrl =
-      "https://contact.web3essentials.io/addfriend?did=" +
-      encodeURIComponent(this.signedIdentity.didString) +
-      '&carrier=' + carrierAddress;
 
     void this.globalIntentService.sendIntent("share", {
-      title: this.translate.instant("common.share-add-me-as-friend"),
-      url: addFriendUrl,
+      title: this.translate.instant("common.here-is-my-did"),
+      url: this.signedIdentity.didString,
     });
   }
 
