@@ -17,7 +17,6 @@ import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLo
 import * as Sentry from '@sentry/browser';
 import { Integrations } from '@sentry/tracing';
 import { Observable } from 'rxjs';
-import { environment } from 'src/environments/environment';
 import { TranslationsLoader } from 'src/translationsloader';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -41,7 +40,9 @@ import { WalletInitModule } from './wallet/init.module';
   providedIn: 'root'
 })
 export class SentryErrorHandler implements ErrorHandler {
-  private version = ''
+  private version = '';
+  private debugVersion = false;
+
   constructor(
     private platform: Platform,
     private appVersion: AppVersion,
@@ -50,6 +51,9 @@ export class SentryErrorHandler implements ErrorHandler {
       this.appVersion.getVersionNumber().then(res => {
         this.version = res;
         Logger.log('Sentry', 'Version:', res);
+        if (this.version.endsWith('.d')) {
+            this.debugVersion = true;
+        }
       }).catch(error => {
         Logger.error('Sentry', 'getVersionNumber error:', error);
       });
@@ -81,7 +85,7 @@ export class SentryErrorHandler implements ErrorHandler {
     Logger.log("Sentry", 'version:', this.version);
 
     // Only send reports to sentry if we are not debugging.
-    if (document.URL.includes('localhost')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
+    if (!this.debugVersion && document.URL.includes('localhost')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       /*const eventId = */ Sentry.captureException(error.originalError || error);
       // Sentry.showReportDialog({ eventId });
     }
@@ -209,10 +213,7 @@ let providers: Provider[] = [
   }
 ]
 
-// Add sentry to prod build only
-if (environment.production) {
-  providers.push({ provide: ErrorHandler, useClass: SentryErrorHandler });
-}
+providers.push({ provide: ErrorHandler, useClass: SentryErrorHandler });
 
 @NgModule({
   declarations: [
@@ -274,14 +275,11 @@ if (environment.production) {
 })
 export class AppModule { }
 
-// Add sentry to prod build only
-if (environment.production) {
-  Sentry.init({
+Sentry.init({
     dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
     release: "default",
     integrations: [
       new Integrations.BrowserTracing(),
     ],
     tracesSampleRate: 1.0,
-  });
-}
+});
