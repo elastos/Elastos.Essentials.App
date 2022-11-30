@@ -2,7 +2,7 @@ import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { pictureMimeType } from 'src/app/helpers/picture.helpers';
+import { dataUrlToRawImageData, pictureMimeType } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -45,7 +45,7 @@ export class PictureComponent implements OnInit {
     if (PictureComponent.shared.dataUrlImageIn) {
       Logger.log('Identity', 'Showing picture chooser with existing image');
       PictureComponent.shared.dataUrlImageOut = PictureComponent.shared.dataUrlImageIn;
-      // TODO PictureComponent.shared.rawBase64ImageOut = PictureComponent.shared.dataUrlImageIn.substr(PictureComponent.shared.dataUrlImageIn.lastIndexOf());
+      PictureComponent.shared.rawBase64ImageOut = dataUrlToRawImageData(PictureComponent.shared.dataUrlImageIn);
     } else {
       Logger.log('Identity', 'Showing picture chooser with no existing image');
       PictureComponent.shared.dataUrlImageOut = null;

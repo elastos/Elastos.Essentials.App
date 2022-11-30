@@ -198,7 +198,7 @@ export class EditProfilePage {
   /********** For 'birthDate' entry **********/
   formatBirthDay(event: CustomEvent, entry) {
     if (event.detail.value)
-        entry.value = event.detail.value.split("T")[0];
+      entry.value = event.detail.value.split("T")[0];
   }
 
   /********** For 'nationality' entry **********/
