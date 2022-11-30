@@ -26,8 +26,8 @@
             <ion-row *ngIf="item.value" class="item-row">
                 <ion-col size="11" class="title-col">
                     <h1>{{ item.title | translate }}</h1> &nbsp;&nbsp;
-                    <ion-icon class='icon' *ngIf="worthCopying(item)" mode="ios" name="copy" (click)="copy(item.value)"></ion-icon>
-                    <ion-icon class='icon' *ngIf="worthOpenForBrowser(item)" mode="ios" name="browsers" (click)="openForBrowseMode(item)"></ion-icon>
+                    <ion-icon class='icon' *ngIf="worthCopying(item)" mode="ios" name="copy-outline" (click)="copy(item.value)"></ion-icon>
+                    <ion-icon class='icon' *ngIf="worthOpenForBrowser(item)" mode="ios" name="open-outline" (click)="openForBrowseMode(item)"></ion-icon>
                 </ion-col>
                 <ion-col size="1" class="arrow-col" (click)="item.show = ! item.show">
                     <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'"
