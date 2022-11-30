@@ -281,7 +281,7 @@ export class FriendsService {
 
         if (carrierAddress) {
           this.contacts[this.contacts.value.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
-          await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts);
+          await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts.value);
           void this.globalNav.navigateRoot('contacts', '/contacts/friends/' + targetContact.id);
           void this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.value.indexOf(targetContact)]);
@@ -807,7 +807,7 @@ export class FriendsService {
   *********************************************************/
   async toggleFav(contact: Contact) {
     contact.isFav = !contact.isFav;
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts);
+    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts.value);
   }
 
   /********************************************************
