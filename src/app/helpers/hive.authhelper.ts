@@ -5,6 +5,7 @@ import moment from "moment";
 import Queue from 'promise-queue';
 import { GlobalConfig } from "../config/globalconfig";
 import { Logger } from "../logger";
+import { GlobalNetworksService, LRW_TEMPLATE } from "../services/global.networks.service";
 import { lazyElastosDIDSDKImport, lazyElastosHiveSDKImport } from "./import.helper";
 import { logAndReject } from "./promises";
 
@@ -132,7 +133,10 @@ export class InternalHiveAuthHelper {
         resolve(vaultServices);
       }
       catch (err) {
-        Logger.error("hiveauthhelper", err);
+        // No vaults service on LRW.
+        if (GlobalNetworksService.instance.getActiveNetworkTemplate() !== LRW_TEMPLATE) {
+            Logger.error("hiveauthhelper", err);
+        }
         reject(err);
       }
     });

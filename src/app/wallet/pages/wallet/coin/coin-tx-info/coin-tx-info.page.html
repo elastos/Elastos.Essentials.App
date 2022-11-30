@@ -26,17 +26,25 @@
             <ion-row *ngIf="item.value" class="item-row">
                 <ion-col size="11" class="title-col">
                     <h1>{{ item.title | translate }}</h1> &nbsp;&nbsp;
-                    <ion-icon *ngIf="worthCopying(item)" mode="ios" name="copy" (click)="copy(item.value)"></ion-icon>
+                    <ion-icon class='icon' *ngIf="worthCopying(item)" mode="ios" name="copy" (click)="copy(item.value)"></ion-icon>
+                    <ion-icon class='icon' *ngIf="worthOpenForBrowser(item)" mode="ios" name="browsers" (click)="openForBrowseMode(item)"></ion-icon>
                 </ion-col>
                 <ion-col size="1" class="arrow-col" (click)="item.show = ! item.show">
                     <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'"
                         [class.rotate]="item.show" />
                 </ion-col>
                 <div *ngIf="item.show" class="details-container" (click)="item.show = ! item.show">
-                    <div *ngIf="!valueIsArray(item.value)" class="details-row" (click)="openForBrowseMode(item)">
+                    <div *ngIf="getValueType(item) == 1" class="details-row">
                         <h2>{{ item.value }}</h2>
                     </div>
-                    <div *ngIf="valueIsArray(item.value)" class="array-row">
+                    <div *ngIf="getValueType(item) == 2" class="array-row">
+                        <ion-row class="subcontent-row" *ngFor="let value of item.value">
+                            <ion-col size="12">
+                                <h2>{{ value }}</h2>
+                            </ion-col>
+                        </ion-row>
+                    </div>
+                    <div *ngIf="getValueType(item) == 3" class="array-row">
                         <ion-row class="subcontent-row" *ngFor="let value of item.value">
                             <ion-col size="12">
                                 <h2>{{ value.Title }}</h2>

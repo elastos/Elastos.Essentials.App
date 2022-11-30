@@ -108,6 +108,10 @@ ion-grid {
             }
         }
     }
+
+    .icon {
+        padding-right: 8px;
+    }
 }
 
 @import "./item-rows.scss";

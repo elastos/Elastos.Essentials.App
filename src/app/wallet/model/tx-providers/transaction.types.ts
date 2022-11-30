@@ -1,4 +1,5 @@
 import { VotesContentInfo } from '@elastosfoundation/wallet-js-sdk';
+import { RenewalVotesContentInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/Voting';
 import BigNumber from 'bignumber.js';
 
 export enum TransactionStatus {
@@ -98,7 +99,8 @@ export type TransactionInfo = {
   subOperations: string[],
   // Show transfer transaction amount, eg. Unstake
   transferAmount?: BigNumber,
-  votesContents?: VotesContentInfo[]
+  votesContents?: VotesContentInfo[],
+  renewalVotesContentInfo?: RenewalVotesContentInfo[],
 };
 
 /**

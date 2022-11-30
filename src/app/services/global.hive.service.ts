@@ -12,7 +12,7 @@ import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { runDelayed } from '../helpers/sleep.helper';
 import { IdentityEntry } from '../model/didsessions/identityentry';
 import { JSONObject } from '../model/json';
-import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
+import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 import { GlobalPopupService } from './global.popup.service';
 import { GlobalPreferencesService } from './global.preferences.service';
 import { GlobalService, GlobalServiceManager } from './global.service.manager';
@@ -143,13 +143,22 @@ export class GlobalHiveService extends GlobalService {
   public async getVaultServicesFor(targetDid: string): Promise<Vault> {
     Logger.log("GlobalHiveService", "Getting vault services for", targetDid);
 
-    let vaultServices = await this.hiveAuthHelper.getVaultServices(targetDid, (e) => {
-      // Auth error
-      Logger.error("GlobalHiveService", "Hive authentication error", e);
-      throw e;
-    });
+    try {
+        let vaultServices = await this.hiveAuthHelper.getVaultServices(targetDid, (e) => {
+          // Auth error
+          Logger.error("GlobalHiveService", "Hive authentication error", e);
+          throw e;
+        });
+        return vaultServices;
+    } catch (e) {
+        // No vaults service on LRW.
+        if (GlobalNetworksService.instance.getActiveNetworkTemplate() !== LRW_TEMPLATE) {
+            Logger.error("GlobalHiveService", "getVaultServices exception:", e);
+            throw e;
+        }
+    }
 
-    return vaultServices;
+    return null;
   }
 
   public getRawHiveContextProvider(appDID: string, userDID: string): Promise<AppContextProvider> {
@@ -342,7 +351,10 @@ export class GlobalHiveService extends GlobalService {
         return null;
       }
       else { */
-      Logger.error("GlobalHiveService", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
+      // No vaults service on LRW.
+      if (GlobalNetworksService.instance.getActiveNetworkTemplate() !== LRW_TEMPLATE) {
+          Logger.error("GlobalHiveService", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
+      }
       this.emitUnknownErrorStatus();
       return null;
       //}

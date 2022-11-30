@@ -6,6 +6,7 @@ import type {
     VotesContentInfo,
     VotingInfo
 } from '@elastosfoundation/wallet-js-sdk';
+import { RenewalVotesContentInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/Voting';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
@@ -215,6 +216,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let transactionName = "wallet.coin-op-sent-token";
         let transferAmount = null;
         let votesContents: VotesContentInfo[] = null;
+        // Update DPoS 2 voting.
+        let renewalVotesContentInfo: RenewalVotesContentInfo[] = null;
 
         try {
             let safe = <MultiSigSafe><any>this.networkWallet.safe;
@@ -240,7 +243,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                             receiverAddress = payloadJson.ToAddress;
                             amount = new BigNumber(0);
                             transferAmount = payloadJson.Value ? new BigNumber(payloadJson.Value).dividedBy(Config.SELA) : null;
-
+                            renewalVotesContentInfo = payloadJson.RenewalVotesContent;
                             votesContents = payloadJson.Contents;
                         }
                         break;
@@ -279,7 +282,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             isCrossChain: false, // TODO: that's elastos specific
             subOperations: [],
             transferAmount: transferAmount,
-            votesContents: votesContents
+            votesContents: votesContents,
+            renewalVotesContentInfo: renewalVotesContentInfo
         }
         return txInfo;
     }
