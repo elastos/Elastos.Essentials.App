@@ -199,10 +199,10 @@
 
   <div class="redpacket-footer-container" *ngIf="!unsupportedNetwork">
     <div class="redpacket-footer-button">
-      <button (click)="createPacket()">
-        <ion-label *ngIf="!creatingPacket">{{ 'redpackets.continue' | translate }}</ion-label>
-        <ion-spinner *ngIf="creatingPacket"></ion-spinner>
-      </button>
+      <ion-button (click)="createPacket()" *ngIf="!creatingPacket">
+        {{ 'redpackets.continue' | translate }}
+      </ion-button>
+      <ion-spinner *ngIf="creatingPacket"></ion-spinner>
     </div>
   </div>
 

@@ -3,10 +3,6 @@
     --ripple-color: var(--ion-color-danger);
   }
 
-  ion-button {
-    --background-activated: linear-gradient(180deg, #c4c4c4 0%, #fc4047 0.01%, #bc1f23 100%);
-  }
-
   ion-tab-button.tab-selected {
     ion-icon,
     ion-label {
@@ -29,6 +25,12 @@
   .item-interactive.ion-valid {
     --highlight-background: #10dc60 !important;
   }
+}
+
+ion-button {
+  transition: all 0.3s ease;
+  --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+  --background-activated: #920e0e;
 }
 
 /** Bottom tab-bar **/
@@ -463,6 +465,7 @@ ion-textarea {
 .redpacket-footer-container {
   padding-top: 80px;
   position: relative;
+
   .redpacket-footer-button {
     bottom: 0;
     left: 0;
@@ -484,13 +487,14 @@ ion-textarea {
       --color: #ffffff;
       font-weight: 500;
       font-size: 16px;
-      background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
-      --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+      //background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+      //--background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+      //--background-activated: linear-gradient(140.79deg, #b22e2e -7.72%, #fe6157 143.51%);
       border-radius: 15px;
       --border-radius: 15px;
-      padding: 20px 0;
-      --padding-top: 20px;
-      --padding-bottom: 20px;
+      //padding: 20px 0;
+      //--padding-top: 20px;
+      //--padding-bottom: 20px;
       text-align: center;
     }
   }

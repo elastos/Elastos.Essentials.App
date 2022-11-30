@@ -1,5 +1,9 @@
 @import "../../root.scss";
 
+ion-spinner {
+  --color: white;
+}
+
 .redpacket-status {
   display: flex;
   flex-direction: row;
@@ -36,7 +40,7 @@
 .redpacket-view-header {
   height: 0;
   padding: 0 0 100%;
-  background-repeat: no-repeat !important;;
+  background-repeat: no-repeat !important;
   background-position: center center;
   background-size: 100%;
   display: flex;
@@ -105,9 +109,11 @@
   justify-content: center;
   margin-bottom: 15px;
   font-weight: bold;
+
   ion-button {
     width: 60%;
     --background: linear-gradient(140.79deg, #920e0e -7.72%, #ee5147 143.51%);
+    --background-activated: linear-gradient(140.79deg, #b22e2e -7.72%, #fe6157 143.51%);
   }
 }
 
