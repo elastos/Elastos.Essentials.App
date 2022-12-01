@@ -1,3 +1,4 @@
+import { Util } from "src/app/model/util";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { erc20CoinsSerializer } from "../services/evm/erc20coin.service";
 import { AnyNetwork } from "./networks/network";
@@ -157,7 +158,7 @@ export class ERC20Coin extends Coin {
         let coin = erc20CoinsSerializer.deserializeObject(jsonCoin, ERC20Coin);
 
         // Backward compatibility: fix wrong decimal type (string instead of number)
-        if (!coin.decimals) coin.decimals = -1
+        if (Util.isNull(coin.decimals)) coin.decimals = -1
         else coin.decimals = parseInt("" + coin.decimals);
 
         coin.network = network;
