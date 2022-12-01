@@ -188,12 +188,14 @@ a {
 }
 
 .identity-mnemonickeypad-component {
-  --height: 280px;
+  --width: 100vw;
+  --height: 35vh;
   align-items: flex-end;
 }
 
 .identity-mnemonickeypad-component-dark {
-  --height: 280px;
+  --width: 100vw;
+  --height: 35vh;
   align-items: flex-end;
 }
 
