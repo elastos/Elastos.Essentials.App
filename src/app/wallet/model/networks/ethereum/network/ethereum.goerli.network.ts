@@ -14,7 +14,7 @@ export class EthereumGoerliNetwork extends EthereumBaseNetwork {
       "ETH",
       "ETH",
       TESTNET_TEMPLATE,
-      3,
+      5,
     );
 
     this.averageBlocktime = 15;
