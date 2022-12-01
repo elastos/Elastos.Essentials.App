@@ -67,7 +67,7 @@
             background: var(--ion-background-color);
             padding: 5px;
             width: 10vw;
-            height: 10vw;
+            height: 40px; // Must remain in fixed px because the mnemonic dialog is also in fixed px
             margin: 2px;
             display: flex;
             align-items: center;
