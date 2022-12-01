@@ -465,7 +465,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         let rawTx = null;
         try {
-            let fromAddress = await this.fromSubWallet.getCurrentReceiverAddress(AddressUsage.EVM_CALL);
+            let fromAddress = this.fromSubWallet.getCurrentReceiverAddress(AddressUsage.EVM_CALL);
 
             if (this.nft.type === NFTType.ERC721) {
                 rawTx = await this.erc721Service.createRawTransferERC721Transaction(
@@ -720,15 +720,25 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
     }
 
+    private getFromTitle() {
+        if (this.fromSubWallet.getAddressCount() == 1) {
+            return this.fromSubWallet.getCurrentReceiverAddress();
+        } else {
+            // Only the ela main chain wallet may be a multi-address wallet.
+            return StandardCoinName.ELA;
+        }
+    }
+
     async showConfirm() {
         const txInfo = {
             type: this.transferType,
-            transferFrom: this.subWalletId,
+            transferFrom: this.getFromTitle(),
             transferTo: this.toAddress,
             toChainId: this.transferType === TransferType.RECHARGE ? this.coinTransferService.toSubWalletId : null,
-            amount: this.amount,
+            amount: this.amount == -1 ? this.networkWallet.subWallets[this.subWalletId].getDisplayBalance() : this.amount,
             precision: this.fromSubWallet.tokenDecimals,
             memo: this.memo ? this.memo : null,
+            tokensymbol: this.tokensymbol
         };
 
         this.native.popup = await this.native.popoverCtrl.create({
