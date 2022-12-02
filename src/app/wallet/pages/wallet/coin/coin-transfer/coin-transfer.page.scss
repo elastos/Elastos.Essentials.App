@@ -5,7 +5,7 @@
     /********************** Recharge Container **********************/
     .recharge-container {
         min-height: 100%;
-        padding: 20px;
+        padding: 15px;
 
         .main-title-row {
             margin-left: 10px;
@@ -17,13 +17,29 @@
                 letter-spacing: 0.7px;
                 text-align: left;
             }
+
+            .right-col {
+                p {
+                    text-align: right;
+                }
+            }
+
+            .arrow-col {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                .rotate {
+                    transform: rotate(-180deg);
+                }
+            }
         }
 
         .item-row {
             position: relative;
             border-radius: 17px;
             padding: 7.5px 10px 7.5px 0;
-            margin-bottom: 32px;
+            margin-bottom: 18px;
             background-color: var(--essentials-box-color);
 
             .left-col {
@@ -87,24 +103,6 @@
                     font-size: 10px;
                     font-weight: 500;
                 }
-            }
-
-            .arrow-down {
-                position: absolute;
-                z-index: 0;
-                bottom: -15px;
-                left: 6%;
-                height: 30px;
-                width: 30px;
-                transform: translate(2px, -2px) rotate(-45deg);
-                -webkit-transform: translate(2px, -2px) rotate(-45deg);
-                border-right: 2px solid transparent;
-                border-top: 2px solid transparent;
-                display: inline-block;
-                -moz-transform: translate(2px, -2px) rotate(-45deg);
-                -ms-transform: translate(2px, -2px) rotate(-45deg);
-                -o-transform: translate(2px, -2px) rotate(-45deg);
-                background-color: #ffffff;
             }
         }
 
@@ -369,11 +367,11 @@
     }
 
     .footer-container {
-        margin-top: 30px;
+        margin-top: 20px;
         padding: 0 10px;
 
         .btn-container {
-            padding: 20px 10px;
+            padding: 10px 10px;
         }
     }
 

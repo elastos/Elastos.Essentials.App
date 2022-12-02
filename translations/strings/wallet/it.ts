@@ -196,6 +196,8 @@ export const it = {
         "transfer-to": "Trasferisci a",
         "transfer-amount": "Importo del trasferimento",
         "transfer-receiver-address": "Indirizzo del destinatario",
+        "transfer-receiver-address-placeholder": "Inserisci l'indirizzo di destinazione",
+        "transfer-custum-address": "Use a custom destination address",
         "transfer-send-ela": "Invia ELA",
         "balance": "Bilancio",
         "balance-remaining": "Saldo residuo:",

@@ -104,6 +104,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public fromSubWallet: AnySubWallet;
     public toSubWallet: AnySubWallet = null;
     public destNetworkInfo: NetworkInfo = null;
+    // For cross chain transfer
+    public useCustumReceiverAddress = false;
 
     // User can set gas price and limit.
     private gasPrice: string = null;
@@ -282,6 +284,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 if (this.toSubWallet) {
                     this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
                 } else {
+                    this.useCustumReceiverAddress = true;
                     this.destNetworkInfo = this.coinTransferService.networkInfo;
                 }
                 // Setup params for recharge transaction
@@ -1053,5 +1056,18 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return false;
 
         return true;
+    }
+
+    /*
+     * User can set the custum receiver address for chross chain transfer.
+     */
+    public enableCustumReceiverAddress() {
+        this.zone.run(() => {
+            this.useCustumReceiverAddress = !this.useCustumReceiverAddress;
+            // Reset toAddress
+            if (!this.useCustumReceiverAddress) {
+                this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
+            }
+        });
     }
 }

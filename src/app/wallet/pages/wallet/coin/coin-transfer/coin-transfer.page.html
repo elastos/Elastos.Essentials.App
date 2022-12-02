@@ -58,9 +58,26 @@
                     <p>{{ destNetworkInfo.friendName }}</p>
                 </ion-col>
             </ion-row>
-            <ion-row class="item-row" *ngIf="!toSubWallet">
-                <ion-col size="11">
-                    <ion-input type="url" placeholder="{{ 'wallet.transfer-receiver-address' | translate}}"
+            <ion-row class="main-title-row">
+                <ion-col size="6">
+                    <p>{{ 'wallet.transfer-receiver-address' | translate }}</p>
+                </ion-col>
+                <ion-col size="5" class="right-col" *ngIf="toSubWallet">
+                    <p>{{ 'wallet.transfer-custum-address' | translate }}</p>
+                </ion-col>
+                <ion-col size="1" class="arrow-col" (click)="enableCustumReceiverAddress()" *ngIf="toSubWallet">
+                    <img [src]="!theme.darkMode ? 'assets/wallet/icons/down-arrow.svg' : 'assets/wallet/icons/darkmode/down-arrow.svg'"
+                        [class.rotate]="!useCustumReceiverAddress" />
+                </ion-col>
+            </ion-row>
+            <ion-row class="item-row" *ngIf="!useCustumReceiverAddress">
+                <ion-col size="12" class="left-col">
+                    <p>{{ toAddress }}</p>
+                </ion-col>
+            </ion-row>
+            <ion-row class="item-row" *ngIf="useCustumReceiverAddress">
+                <ion-col size="11" class="left-col">
+                    <ion-input type="url" placeholder="{{ 'wallet.transfer-receiver-address-placeholder' | translate}}"
                         autocomplete="off" autocorrect="off" [(ngModel)]="toAddress" name="toAddress" ngDefaultControl
                         (input)='onSendToAddressInput($event.target.value)'>
                     </ion-input>
