@@ -737,7 +737,9 @@ export class CoinHomePage implements OnInit {
         // We got the activeNetworkWallet event first, but the WalletNetworkService.instance.isActiveNetworkElastosMainchain still return true.
         if (this.networkWallet && (this.networkWallet.network.key === 'elastos')) {
             let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
-            this.stakedELA = await subwallet.getStakedBalance();
+            if (subwallet) {
+                this.stakedELA = await subwallet.getStakedBalance();
+            }
         }
     }
 
