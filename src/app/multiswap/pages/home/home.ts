@@ -504,6 +504,7 @@ export class HomePage {
       chaingeSwapWebApp += `&fromToken=${this.activeTransfer.sourceToken.getSymbol()}`;
       chaingeSwapWebApp += `&toChain=${this.chaingeSwapService.essentialsToChaingeChainName(this.activeTransfer.destinationToken.network)}`;
       chaingeSwapWebApp += `&toToken=${this.activeTransfer.destinationToken.getSymbol()}`;
+      chaingeSwapWebApp += `&fromAmount=${this.activeTransfer.amount.toString(10)}`;
 
       // Open in the built-in browser (attempt), disregarding the "external/internal" setting of ios users.
       void this.dAppBrowserService.open(chaingeSwapWebApp);
