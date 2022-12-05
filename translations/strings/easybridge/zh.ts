@@ -3,6 +3,7 @@ export const zh = {
         // Home screen
         "home-title": "Easy Tokens",
         "start-transfer": "开始兑换",
+        "start-transfer-chainge": "Start (in Chainge swap app)",
         "resume-transfer": "继续兑换",
         "not-started": "未开始",
         "transfer-agreement-title": "兑换协议",

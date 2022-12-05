@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonInput, NavController } from '@ionic/angular';
+import { IonInput, NavController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { filter, Subscription, take } from 'rxjs';
@@ -24,6 +24,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Transfer, TransferStep } from '../../model/transfer';
 import { UIToken } from '../../model/uitoken';
+import { ChaingeSwapService } from '../../services/chaingeswap.service';
 import { SwapUIService } from '../../services/swap.ui.service';
 import { TokenChooserService } from '../../services/tokenchooser.service';
 
@@ -59,6 +60,7 @@ export class HomePage {
   public selectedDestinationToken: UIToken = null;
   public transferAmount: string = null;
   public sendMax = false;
+  private isIOS = false;
 
   private masterWallet: MasterWallet = null;
   private evmWalletAddress: string = null;
@@ -84,23 +86,35 @@ export class HomePage {
     public globalNativeService: GlobalNativeService,
     private dAppBrowserService: DappBrowserService,
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
+    private chaingeSwapService: ChaingeSwapService,
     route: ActivatedRoute,
     private router: Router,
     private zone: NgZone,
     private tokenChooserService: TokenChooserService,
-    private swapUIService: SwapUIService
+    private swapUIService: SwapUIService,
+    private platform: Platform
   ) {
     GlobalFirebaseService.instance.logEvent("multiswap_home_enter");
 
-    route.queryParams.subscribe(params => {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
+    route.queryParams.subscribe(async params => {
       if (this.router.getCurrentNavigation().extras.state) {
         let state: MultiSwapHomePageParams = this.router.getCurrentNavigation().extras.state;
 
-        // Source and destination tokens can be provided by the caller, or not
-        this.selectedSourceToken = state.sourceToken;
-        this.selectedDestinationToken = state.destinationToken;
+        // Clear any existing on going transfer if any
+        if (state.sourceToken || state.destinationToken) {
+          await this.reset(false);
+
+          // Source and destination tokens can be provided by the caller, or not
+          Logger.log("multiswap", "Using manually provided source and dest tokens", state.sourceToken, state.destinationToken);
+          this.selectedSourceToken = state.sourceToken;
+          this.selectedDestinationToken = state.destinationToken;
+        }
       }
     });
+
+    this.isIOS = this.platform.platforms().indexOf('android') < 0;
+    //this.isIOS = true; // TMP
   }
 
   ionViewWillEnter() {
@@ -116,7 +130,7 @@ export class HomePage {
 
     // Transfer is completed? Clean it up to restart fresh next time
     if (this.activeTransfer && this.activeTransfer.currentStep === TransferStep.COMPLETED) {
-      void this.activeTransfer.reset();
+      void Transfer.forgetActiveTransfer();
     }
   }
 
@@ -132,10 +146,13 @@ export class HomePage {
 
     // No on going transfer? Prepare for a new one
     if (!this.activeTransfer) {
+      Logger.log("multiswap", "No existing transfer found");
       await this.prepareForNewTransfer();
       await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
     }
     else {
+      Logger.log("multiswap", "Existing transfer, restoring it", this.activeTransfer);
+
       if (this.activeTransfer.currentStep !== TransferStep.NEW)
         this.canEditFields = false;
 
@@ -260,6 +277,9 @@ export class HomePage {
   }
 
   public getEstimatedReceivedAmount(): string {
+    if (!this.activeTransfer.estimatedReceivedAmount)
+      return "";
+
     return this.getDisplayableAmount(this.activeTransfer.estimatedReceivedAmount);
   }
 
@@ -448,8 +468,12 @@ export class HomePage {
   }
 
   public getTransferButtonText(): string {
-    if (!this.activeTransfer || this.activeTransfer.currentStep === TransferStep.NEW)
-      return this.translate.instant("easybridge.start-transfer");
+    if (!this.activeTransfer || this.activeTransfer.currentStep === TransferStep.NEW) {
+      if (!this.isIOS)
+        return this.translate.instant("easybridge.start-transfer");
+      else
+        return this.translate.instant("easybridge.start-transfer-chainge");
+    }
     else
       return this.translate.instant("easybridge.resume-transfer");
   }
@@ -467,34 +491,53 @@ export class HomePage {
    * Starts or continues the transfer process where it was interrupted.
    */
   public async transfer() {
-    this.transferStarted = true;
-    this.canEditFields = false;
+    // On iOS, we are not allowed to use a third party swap. So we launch chainge swap in a web view
+    // instead of using the sdk directly.
+    if (this.isIOS) {
+      // Switch active network to the transfer source network to avoid "unsupported network" or wrong source network selection
+      // on the chainge swap web app.
+      await this.networkService.setActiveNetwork(this.activeTransfer.sourceToken.network);
 
-    void this.firebase.logEvent("multiswap_transfer_start", {
-      fromtoken: this.activeTransfer.sourceToken.getSymbol(),
-      fromchain: this.activeTransfer.sourceToken.network.key,
-      totoken: this.activeTransfer.destinationToken.getSymbol(),
-      tochain: this.activeTransfer.destinationToken.network.key,
-      amount: this.activeTransfer.amount
-    });
+      // https://openapi.chainge.finance/app?channel=4&fromChain=ETH&toChain=FSN&fromToken=USDT&toToken=USDT
+      let chaingeSwapWebApp = "https://openapi.chainge.finance/app?channel=4"; // 'channel = 4' == Essentials accounts
+      chaingeSwapWebApp += `&fromChain=${this.chaingeSwapService.essentialsToChaingeChainName(this.activeTransfer.sourceToken.network)}`;
+      chaingeSwapWebApp += `&fromToken=${this.activeTransfer.sourceToken.getSymbol()}`;
+      chaingeSwapWebApp += `&toChain=${this.chaingeSwapService.essentialsToChaingeChainName(this.activeTransfer.destinationToken.network)}`;
+      chaingeSwapWebApp += `&toToken=${this.activeTransfer.destinationToken.getSymbol()}`;
 
-    await this.activeTransfer.execute();
+      // Open in the built-in browser (attempt), disregarding the "external/internal" setting of ios users.
+      void this.dAppBrowserService.open(chaingeSwapWebApp);
+    }
+    else {
+      this.transferStarted = true;
+      this.canEditFields = false;
 
-    // Log "completed" only if really completed transfer
-    if (this.activeTransfer.status.value.step === TransferStep.COMPLETED) {
-      void this.firebase.logEvent("multiswap_transfer_completed", {
+      void this.firebase.logEvent("multiswap_transfer_start", {
         fromtoken: this.activeTransfer.sourceToken.getSymbol(),
         fromchain: this.activeTransfer.sourceToken.network.key,
         totoken: this.activeTransfer.destinationToken.getSymbol(),
         tochain: this.activeTransfer.destinationToken.network.key,
         amount: this.activeTransfer.amount
       });
+
+      await this.activeTransfer.execute();
+
+      // Log "completed" only if really completed transfer
+      if (this.activeTransfer.status.value.step === TransferStep.COMPLETED) {
+        void this.firebase.logEvent("multiswap_transfer_completed", {
+          fromtoken: this.activeTransfer.sourceToken.getSymbol(),
+          fromchain: this.activeTransfer.sourceToken.network.key,
+          totoken: this.activeTransfer.destinationToken.getSymbol(),
+          tochain: this.activeTransfer.destinationToken.network.key,
+          amount: this.activeTransfer.amount
+        });
+      }
+
+      // Refresh selected source token balance after spending some
+      void this.refreshActiveTransferSourceTokenBalance();
+
+      this.transferStarted = false;
     }
-
-    // Refresh selected source token balance after spending some
-    void this.refreshActiveTransferSourceTokenBalance();
-
-    this.transferStarted = false;
   }
 
   public canReset(): boolean {
@@ -504,8 +547,8 @@ export class HomePage {
   /**
    * Deletes current transfer state to restart from scratch.
    */
-  public async reset() {
-    let agreed = await this.popupService.showConfirmationPopup(
+  public async reset(confirmationRequired = true) {
+    let agreed = !confirmationRequired || await this.popupService.showConfirmationPopup(
       this.translate.instant("easybridge.reset-confirmation-title"),
       this.translate.instant("multiswap.reset-confirmation-content"),
       undefined,
@@ -513,12 +556,12 @@ export class HomePage {
     );
 
     if (agreed) {
+      Logger.log("multiswap", "Resetting context");
+
       this.unsubscribeFromTransferStatus();
 
-      if (this.activeTransfer) {  // Normally, should always be set, just in case.
-        await this.activeTransfer.reset();
-        this.activeTransfer = null;
-      }
+      await Transfer.forgetActiveTransfer(); // Note: we sometimes reset the potential existing transfer (on disk) before loading it (activeTransfer not set)
+      this.activeTransfer = null;
 
       this.selectedSourceToken = null;
       this.selectedDestinationToken = null;

@@ -3,6 +3,7 @@ export const fr = {
         // Home screen
         "home-title": "Easy Tokens",
         "start-transfer": "Lancer le transfert",
+        "start-transfer-chainge": "Commencer (via Chainge swap)",
         "resume-transfer": "Continuer le transfert",
         "not-started": "Pas encore commencé",
         "transfer-agreement-title": "Accord de transfert",

@@ -540,7 +540,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   /**
    * Estimated cost in native coin readable amount, of a ERC20 transfer cost.
    */
-  public async estimateERC20TransferTransactionFees(tokenAddress: string): Promise<BigNumber> {
+  public estimateERC20TransferTransactionFees(tokenAddress: string): Promise<BigNumber> {
     let senderAddress = this.getCurrentReceiverAddress();
     return ERC20CoinService.instance.estimateERC20TransferTransactionFees(tokenAddress, senderAddress, this.getNetwork());
   }

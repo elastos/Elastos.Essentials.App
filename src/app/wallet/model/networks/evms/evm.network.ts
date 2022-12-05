@@ -45,7 +45,7 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
     erc1155Providers: ERC1155Provider[] = [],
     erc721Providers: ERC721Provider[] = []
   ) {
-    super(key, name, shortName, logo, networkTemplate, earnProviders, swapProviders, bridgeProviders, erc1155Providers, erc721Providers);
+    super(key, name, shortName, logo, "ETH" + key.toUpperCase(), networkTemplate, earnProviders, swapProviders, bridgeProviders, erc1155Providers, erc721Providers);
   }
 
   public async init(): Promise<void> {

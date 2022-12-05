@@ -1,4 +1,5 @@
 import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
+import { StandardCoinName } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
@@ -22,6 +23,7 @@ export abstract class ElastosNetworkBase<WalletNetworkOptionsType extends Wallet
       displayName,
       shortDisplayName,
       logo,
+      StandardCoinName.ELA,
       networkTemplate,
       earnProviders,
       swapProviders,
