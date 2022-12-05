@@ -40,6 +40,12 @@ export class ImageCacheDirective implements AfterViewInit {
 
   private updatePicture() {
     //console.log('Trying to get image from cache: ', this._cache);
+
+    if (!this._cache) { // null string passed to the component as [cache]
+      this.el.nativeElement.src = transparentPixelIconDataUrl();
+      return;
+    }
+
     this.el.nativeElement.crossOrigin = null; // CORS enabling
     let cache = localStorage.getItem(this._cache);
 
@@ -77,10 +83,15 @@ export class ImageCacheDirective implements AfterViewInit {
       reader.onloadend = async () => {
         //console.log('Got data for cache: ', this._cache, reader.result);
 
+        if (!this._cache) { // Cache was nullified while fetching, for some reasons
+          Logger.warn("directives", "Image cache url was nullified while receiving the previous content. Skipping content.");
+          return;
+        }
+
         // If the picture cache url changes during a fetch, just forget the fetch result.
         // Otherwise, this would overwrite the picture with a wrong content.
         if (this._cache !== url) {
-          Logger.warn("directives", "Image cache url ahs changed while receiving the previous content. Skipping content.");
+          Logger.warn("directives", "Image cache url has changed while receiving the previous content. Skipping content.");
           return;
         }
 
