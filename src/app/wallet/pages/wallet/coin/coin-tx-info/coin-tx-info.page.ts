@@ -269,7 +269,7 @@ export class CoinTxInfoPage implements OnInit {
                 {
                     type: 'blockId',
                     title: 'wallet.tx-info-block-id',
-                    value: this.height <= 0 ? 0 : this.height,
+                    value: this.height <= 0 ? '0' : this.height.toString(),
                     show: false,
                 },
                 {

@@ -56,7 +56,7 @@ export class Native {
         this.globalNative.genericToast(msg, duration);
     }
 
-    copyClipboard(text) {
+    copyClipboard(text: string) {
         return this.globalNative.copyClipboard(text);
     }
 
