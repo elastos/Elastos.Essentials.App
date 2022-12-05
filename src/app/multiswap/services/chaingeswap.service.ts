@@ -69,7 +69,7 @@ export class ChaingeSwapService {
    *
    * 2022.10.18: getSupportChains() = FSN ETH BSC HECO OKT MATIC AVAX ARB CRO CUBE OP ETHW FTM ELA ETC
    */
-  private essentialsToChaingeChainName(network: AnyNetwork): string {
+  public essentialsToChaingeChainName(network: AnyNetwork): string {
     switch (network.key) {
       case "fusion": return "FSN";
       case "ethereum": return "ETH";

@@ -1,6 +1,6 @@
 import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
-import type { CoinID } from "../../../coin";
+import { CoinID, StandardCoinName } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
@@ -26,6 +26,7 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
       displayName,
       displayName,
       "assets/wallet/networks/btc.svg",
+      StandardCoinName.BTC,
       networkTemplate,
       earnProviders,
       swapProviders,

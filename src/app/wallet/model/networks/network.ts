@@ -1,5 +1,6 @@
 import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
+import { Coin, NativeCoin } from "../coin";
 import { BridgeProvider } from "../earn/bridgeprovider";
 import { EarnProvider } from "../earn/earnprovider";
 import type { SwapProvider } from "../earn/swapprovider";
@@ -11,11 +12,14 @@ import type { ERC1155Provider } from "./evms/nfts/erc1155.provider";
 import { ERC721Provider } from "./evms/nfts/erc721.provider";
 
 export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOptions> {
+  private nativeCoin: Coin = null;
+
   constructor(
     public key: string, // unique identifier
     public name: string, // Human readable network name - Elastos, HECO
     public shortName: string, // Humane readable network name but as short as possible for small UI locations - eg: "ESC" instead of "Elastos Smart Chain"
     public logo: string, // Path to the network icon
+    private nativeTokenId: string,
     public networkTemplate: string, // For which network template is this network available
     public earnProviders: EarnProvider[] = [],
     public swapProviders: SwapProvider[] = [],
@@ -26,6 +30,7 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
   }
 
   public init(): Promise<void> {
+    this.nativeCoin = new NativeCoin(this, this.nativeTokenId, this.getMainTokenSymbol(), this.getMainTokenSymbol());
     return;
   }
 
@@ -35,6 +40,10 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
    * single or multi address mode.
    */
   public abstract getDefaultWalletNetworkOptions(): WalletNetworkOptionsType;
+
+  public getNativeCoin() {
+    return this.nativeCoin;
+  }
 
   /**
    * Creates a network wallet for the given master wallet.

@@ -117,8 +117,11 @@ export class Transfer {
 
     transfer.sourceToken = sourceNetwork.getCoinByID(serializedTransfer.sourceToken.coinId);
     if (!transfer.sourceToken) {
-      Logger.warn("multiswap", `Source token ${serializedTransfer.sourceToken.coinId} not found, unable to restore previous transfer state`);
-      return null;
+      transfer.sourceToken = sourceNetwork.getNativeCoin();
+      if (!transfer.sourceToken || transfer.sourceToken.getID() !== serializedTransfer.sourceToken.coinId) {
+        Logger.warn("multiswap", `Source token ${serializedTransfer.sourceToken.coinId} not found, unable to restore previous transfer state`);
+        return null;
+      }
     }
 
     let destNetwork = <EVMNetwork>WalletNetworkService.instance.getNetworkByKey(serializedTransfer.destinationToken.network);
@@ -129,8 +132,11 @@ export class Transfer {
 
     transfer.destinationToken = destNetwork.getCoinByID(serializedTransfer.destinationToken.coinId);
     if (!transfer.destinationToken) {
-      Logger.warn("multiswap", `Destination token ${serializedTransfer.destinationToken.coinId} not found, unable to restore previous transfer state`);
-      return null;
+      transfer.destinationToken = destNetwork.getNativeCoin();
+      if (!transfer.destinationToken || transfer.destinationToken.getID() !== serializedTransfer.destinationToken.coinId) {
+        Logger.warn("multiswap", `Destination token ${serializedTransfer.destinationToken.coinId} not found, unable to restore previous transfer state`);
+        return null;
+      }
     }
 
     transfer.amount = new BigNumber(serializedTransfer.amount);
@@ -177,7 +183,7 @@ export class Transfer {
       NetworkTemplateStore.networkTemplate, "multiswap", "activetransfer", serializedTransfer);
   }
 
-  public reset() {
+  public static forgetActiveTransfer() {
     return GlobalStorageService.instance.deleteSetting(GlobalDIDSessionsService.instance.getSignedInIdentity().didString,
       NetworkTemplateStore.networkTemplate, "multiswap", "activetransfer");
   }

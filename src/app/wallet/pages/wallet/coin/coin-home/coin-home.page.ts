@@ -578,7 +578,7 @@ export class CoinHomePage implements OnInit {
             amount: this.subWallet.getBalance()
         }
 
-        // If there is a balancem use this token as source token for the swap (UI convenience).
+        // If there is a balance, use this token as source token for the swap (UI convenience).
         // If balance is 0, use it as destination (assume user wants to receive that token because he has none).
         let selectTokenAsSource = targetToken.amount.gt(0);
         let params: MultiSwapHomePageParams = {
