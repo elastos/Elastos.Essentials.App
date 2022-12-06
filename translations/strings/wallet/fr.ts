@@ -735,6 +735,7 @@ export const fr = {
         'ext-tx-info-type-bridge-erc20': 'Transfert cross-chaine {{ symbol }}',
         'ext-tx-info-type-liquidity-deposit': 'Dépôt de liquidités',
         'ext-tx-info-type-add-liquidity-with-symbols': 'Ajout de {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-add-liquidity-with-one-symbols': 'Ajout de {{ symbolA }} LP',
         'ext-tx-info-type-remove-liquidity': 'Retrait de liquidités',
         'ext-tx-info-type-remove-liquidity-with-symbols': 'Retrait de {{ symbolA }} + {{ symbolB }} LP',
         'ext-tx-info-type-withdraw': 'Retrait',
@@ -747,6 +748,7 @@ export const fr = {
         'ext-tx-info-type-lock': 'Blocage',
         'ext-tx-info-type-claim-tokens': 'Retrait de jetons',
         'ext-tx-info-type-withdraw-to-mainchain': 'Vers ELA mainchain',
+        'ext-tx-info-type-harvest': 'Récolter',
 
         /***************************
         * Migrator *

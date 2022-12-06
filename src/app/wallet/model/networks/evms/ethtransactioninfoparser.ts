@@ -352,6 +352,18 @@ export class ETHTransactionInfoParser {
           txInfo.operation = { description: "wallet.ext-tx-info-type-liquidity-deposit" };
         }
         break;
+      case '0xf305d719': // addLiquidityETH(address token, uint256 amountTokenDesired, uint256 amountTokenMin, uint256 amountETHMin, address to, uint256 deadline)
+        txInfo.type = ETHOperationType.ADD_LIQUIDITY;
+        try {
+            let params = await this.extractTransactionParamValues(["function addLiquidityETH(address,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
+            let tokenAAddress = this.stringTransactionParamAt(params, 0);
+            let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-add-liquidity-with-one-symbols', descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol } };
+          }
+          catch (e) {
+            txInfo.operation = { description: "wallet.ext-tx-info-type-liquidity-deposit" };
+          }
+        break;
 
       case '0xbaa2abde': // removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)
         txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
@@ -370,6 +382,7 @@ export class ETHTransactionInfoParser {
 
       case '0x2195995c': // removeLiquidityWithPermit(address,address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)
       case '0xded9382a': // removeLiquidityETHWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)
+      case '0x02751cec': // removeLiquidityETH(address token, uint256 liquidity, uint256 amountTokenMin, uint256 amountETHMin, address to, uint256 deadline)
         txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
         txInfo.operation = { description: "wallet.ext-tx-info-type-remove-liquidity" };
         break;
@@ -377,6 +390,7 @@ export class ETHTransactionInfoParser {
       case '0x2e1a7d4d': // withdraw(uint256)
       case '0xf1d5314a': // withdrawApplication(uint256)
       case '0x441a3e70': // withdraw(uint256,uint256)
+      case '0xd1abb907': // withdrawAndHarvest(uint256 pid, uint256 amount, address to)
         txInfo.type = ETHOperationType.WITHDRAW;
         txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw" }; // TODO: refine - withdraw what?
         break;
@@ -390,6 +404,7 @@ export class ETHTransactionInfoParser {
         break;
       case '0xe2bbb158': // deposit(uint256,uint256)
       case '0xb6b55f25': // deposit(uint256)
+      case '0xd0e30db0': // deposit()
         txInfo.type = ETHOperationType.DEPOSIT;
         txInfo.operation = { description: "wallet.ext-tx-info-type-deposit" }; // TODO: refine - deposit what?
         break;
@@ -411,11 +426,16 @@ export class ETHTransactionInfoParser {
       case '0x53b1a6ce': // claimXmdx()
       case '0x718489c5': // claimUnlocked(address)
       case '0x4e71d92d': // claim()
+      case '0x1c3db2e0': // claimComp(address holder, address[] cTokens)
         txInfo.operation = { description: "wallet.ext-tx-info-type-claim-tokens" };
         break;
 
       case '0x67d630fa': // receivePayload(string _addr, uint256 _amount, uint256 _fee), Send ela from side chain to main chain
         txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw-to-mainchain" };
+        break;
+
+      case '0x18fccc76': // harvest(uint256 pid, address to)
+        txInfo.operation = { description: "wallet.ext-tx-info-type-harvest" };
         break;
 
       // Known signatures but no clear way to display information about them = consider as generic contract call

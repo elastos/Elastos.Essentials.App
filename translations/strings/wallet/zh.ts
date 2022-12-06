@@ -735,6 +735,7 @@ export const zh = {
         'ext-tx-info-type-bridge-erc20': '桥接 {{ symbol }}',
         'ext-tx-info-type-liquidity-deposit': '流动性存款',
         'ext-tx-info-type-add-liquidity-with-symbols': '添加 {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-add-liquidity-with-one-symbols': '添加 {{ symbolA }} LP',
         'ext-tx-info-type-remove-liquidity': '移除流动性',
         'ext-tx-info-type-remove-liquidity-with-symbols': '移除 {{ symbolA }} + {{ symbolB }} LP',
         'ext-tx-info-type-withdraw': '提现',
@@ -747,6 +748,7 @@ export const zh = {
         'ext-tx-info-type-lock': '锁币',
         'ext-tx-info-type-claim-tokens': '申请代币',
         'ext-tx-info-type-withdraw-to-mainchain': '主链提现',
+        'ext-tx-info-type-harvest': '收获',
 
         /***************************
         * Migrator *

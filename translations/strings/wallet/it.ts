@@ -735,6 +735,7 @@ export const it = {
         'ext-tx-info-type-bridge-erc20': 'Bridge {{ symbol }}',
         'ext-tx-info-type-liquidity-deposit': 'Liquidity deposit',
         'ext-tx-info-type-add-liquidity-with-symbols': 'Add {{ symbolA }} + {{ symbolB }} LP',
+        'ext-tx-info-type-add-liquidity-one-symbols': 'Add {{ symbolA }} LP',
         'ext-tx-info-type-remove-liquidity': 'Remove liquidity',
         'ext-tx-info-type-remove-liquidity-with-symbols': 'Remove {{ symbolA }} + {{ symbolB }} LP',
         'ext-tx-info-type-withdraw': 'Withdraw',
@@ -747,6 +748,7 @@ export const it = {
         'ext-tx-info-type-lock': 'Lock',
         'ext-tx-info-type-claim-tokens': 'Claim tokens',
         'ext-tx-info-type-withdraw-to-mainchain': 'A Main Chain',
+        'ext-tx-info-type-harvest': 'Harvest',
 
         /***************************
         * Migrator *

@@ -28,6 +28,7 @@ import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionTy
 import { WalletUtil } from '../../../wallet.util';
 import type { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { SerializedSubWallet, SubWallet } from '../../base/subwallets/subwallet';
+import { ETHTransactionInfoParser } from '../ethtransactioninfoparser';
 import type { EVMNetwork } from '../evm.network';
 import type { EthTransaction } from '../evm.types';
 import type { AnyEVMNetworkWallet, EVMNetworkWallet } from '../networkwallets/evm.networkwallet';
@@ -47,6 +48,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     protected spvConfigEVMCode: string = null; // Ex: ETHHECO, ETHSC
     private fetchTokenValueTimer: any = null;
     private redPacketServerAddress = null;
+    protected txInfoParser: ETHTransactionInfoParser;
 
     // For fusion FRC759:
     public hasParentWallet = false;
@@ -103,6 +105,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         this.erc20ABI = require("src/assets/wallet/ethereum/StandardErc20ABI.json");
 
         this.redPacketServerAddress = GlobalRedPacketServiceAddresses[this.spvConfigEVMCode];
+
+        this.txInfoParser = new ETHTransactionInfoParser(this.networkWallet.network);
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -435,11 +439,27 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             transactionInfo.symbol = '';
         }
 
+        // Not blocking retrieval of extended transaction information
+        void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
+            // Got a partial info, now compute more things (main contract operation type, events...) then save
+            if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
+            extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
+            await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
+            transactionInfo.name = await this.getTransactionName(transaction);
+            transactionInfo.payStatusIcon = await this.getTransactionIconPath(transaction);
+            }
+        });
+
         return transactionInfo;
     }
 
     // TODO: Refine / translate with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
     protected async getTransactionName(transaction: EthTransaction): Promise<string> {
+        // Use extended info is there is some
+        let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+        if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
+            return GlobalTranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
+
         const direction = transaction.Direction ? transaction.Direction : await this.getERC20TransactionDirection(transaction.to);
         switch (direction) {
             case TransactionDirection.RECEIVED:
