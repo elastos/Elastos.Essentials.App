@@ -60,6 +60,7 @@
     "@ethersproject/providers": "^5.7.1",
     "@ethersproject/solidity": "^5.7.0",
     "@ethersproject/wordlists": "^5.7.0",
+    "@evmos/address-converter": "^0.1.9",
     "@feedsnetwork/feeds-js-sdk": "^1.0.0",
     "@ionic-native/core": "5.36.0",
     "@ionic-native/qr-scanner": "5.36.0",
@@ -74,8 +75,8 @@
     "@ledgerhq/hw-transport": "^6.27.6",
     "@ledgerhq/logs": "^6.10.0",
     "@ngx-translate/core": "14.0.0",
-    "@sentry/browser": "6.8.0",
-    "@sentry/tracing": "6.8.0",
+    "@sentry/browser": "7.23.0",
+    "@sentry/tracing": "7.23.0",
     "@teamhive/lottie-player": "1.0.0",
     "@types/big.js": "^4.0.5",
     "@types/hammerjs": "2.0.41",
@@ -281,8 +282,8 @@
       "elastos-essentials-plugin-internal": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "android",
+      "ios"
     ]
   }
 }

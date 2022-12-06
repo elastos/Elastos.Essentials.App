@@ -28,7 +28,7 @@ export class GlobalNativeService {
         GlobalNativeService.instance = this;
     }
 
-    copyClipboard(text) {
+    copyClipboard(text: string) {
         return this.clipboard.copy(text);
     }
 

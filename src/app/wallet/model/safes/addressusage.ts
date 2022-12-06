@@ -9,5 +9,6 @@ export enum AddressUsage {
   COVALENT_FETCH_TRANSACTIONS = "covalent_fetch_transactions", // 0x for EVMs, ioXXXX for iotex network
   DISPLAY_TRANSACTIONS = "display_transactions",
   IOTEX = "iotex", // ioXXXX
-  KAVA = "kava" // kavaxxxx
+  KAVA = "kava", // kavaxxxx
+  EVMOS = 'evmos' // evmosxxxx
 }

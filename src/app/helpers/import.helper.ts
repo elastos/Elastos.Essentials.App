@@ -226,6 +226,13 @@ export const lazyKavaImport = async (): Promise<any> => {
   return importsCache["@kava-labs/javascript-sdk"];
 }
 
+export const lazyEvmosImport = async (): Promise<any> => {
+    if (!importsCache["@evmos/address-converter"])
+      importsCache["@evmos/address-converter"] = await import("@evmos/address-converter");
+
+    return importsCache["@evmos/address-converter"];
+  }
+
 export const lazyChaingeImport = async (): Promise<typeof Web3> => {
   if (!importsCache["@chainge/sdk"])
     importsCache["@chainge/sdk"] = await import("@chainge/sdk");

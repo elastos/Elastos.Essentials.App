@@ -27,6 +27,8 @@ import { ElastosLRWNetwork } from '../model/networks/elastos/lrw/network/elastos
 import { ElastosMainChainMainNetNetwork, ElastosMainChainTestNetNetwork } from '../model/networks/elastos/mainchain/network/elastos.networks';
 import { EthereumGoerliNetwork } from '../model/networks/ethereum/network/ethereum.goerli.network';
 import { EthereumMainNetNetwork } from '../model/networks/ethereum/network/ethereum.mainnet.network';
+import { EvmosMainNetNetwork } from '../model/networks/evmos/network/evmos.mainnet.network';
+import { EvmosTestNetNetwork } from '../model/networks/evmos/network/evmos.testnet.network';
 import { FantomMainNetNetwork } from '../model/networks/fantom/network/fantom.mainnet.network';
 import { FantomTestNetNetwork } from '../model/networks/fantom/network/fantom.testnet.network';
 import { FuseMainNetNetwork } from '../model/networks/fuse/network/fuse.mainnet.network';
@@ -166,6 +168,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new FuseMainNetNetwork());
     await this.createAndRegisterNetwork(new CronosMainNetNetwork());
     await this.createAndRegisterNetwork(new KavaMainNetNetwork());
+    await this.createAndRegisterNetwork(new EvmosMainNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
@@ -184,6 +187,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new HooTestNetNetwork());
     await this.createAndRegisterNetwork(new CronosTestNetNetwork());
     await this.createAndRegisterNetwork(new KavaTestNetNetwork());
+    await this.createAndRegisterNetwork(new EvmosTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
 
