@@ -69,6 +69,10 @@ export class DIDHelper {
         if (e.message.includes("Network error") || e.message.includes("Network Error")) {
             return new NetworkException();
         }
+
+        if (e.message.includes("cannot parse response")) {
+            return new NetworkException();
+        }
       }
     }
 
