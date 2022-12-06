@@ -127,14 +127,14 @@ export class CustomNetworkService {
                 networkDiskEntry.rpcUrl,
                 networkDiskEntry.mainCurrencySymbol || "ETH"
             )
+
+            // If we edit the active network, then we need to recreate networkwallet.
+            if (WalletNetworkService.instance.activeNetwork.value.key == networkInstance.key) {
+                WalletNetworkService.instance.setActiveNetwork(networkInstance)
+            }
         }
 
         await this.globalStorage.setSetting<CustomNetworkDiskEntry[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "customnetworks", this.customNetworkDiskEntries);
-
-        // As we are modifying the network config we have to destroy and configure the spvsdk again
-        // NOTE: We should normally destroy the SPVSDK, set the new config, re-created the master wallets
-        // to register the standard subwallet, etc. For convenience for now, we restart essentials.
-        await this.globalNavService.showRestartPrompt(true);
     }
 
     public async deleteCustomNetwork(networkDiskEntry: CustomNetworkDiskEntry): Promise<void> {
