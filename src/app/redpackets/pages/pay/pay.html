@@ -44,14 +44,14 @@
             <div class="payment-section-process-step-details">{{ 'redpackets.balance-n-tokens' | translate: { amount:
               currentNativeBalance, symbol: getNativeTokenSymbol() } }}</div>
             <div class="payment-section-process-step-button">
-              <button *ngIf="!isNativePaymentCompleted() && nativeTokenBalanceIsEnough && !nativePaymentStepError"
+              <ion-button *ngIf="!isNativePaymentCompleted() && nativeTokenBalanceIsEnough && !nativePaymentStepError"
                 (click)="sendNativeToken()">
                 <ion-label *ngIf="!sendingNativePayment">
                   {{ 'redpackets.send-n-tokens' | translate: { amount:
                   getNativeTokenTotal(), symbol: getNativeTokenSymbol() } }}
                 </ion-label>
                 <ion-spinner *ngIf="sendingNativePayment"></ion-spinner>
-              </button>
+              </ion-button>
               <div class="payment-section-process-step-success" *ngIf="isNativePaymentCompleted()">
                 {{ 'redpackets.n-tokens-sent' | translate: { amount:
                 getNativeTokenTotal(), symbol: getNativeTokenSymbol() } }}</div>
@@ -87,12 +87,12 @@
               </h2>
             </div>
             <div class="payment-section-process-step-button" *ngIf="!isERC20PaymentCompleted()">
-              <button [disabled]="!isNativePaymentCompleted() || erc20PaymentStepError" (click)="sendERC20Tokens()">
+              <ion-button [disabled]="!isNativePaymentCompleted() || erc20PaymentStepError" (click)="sendERC20Tokens()">
                 <ion-label *ngIf="!sendingERC20Payment">{{ 'redpackets.send-n-tokens' | translate: { amount:
                   getERC20TokenTotal(), symbol: getERC20TokenSymbol() } }}
                 </ion-label>
                 <ion-spinner *ngIf="sendingERC20Payment"></ion-spinner>
-              </button>
+              </ion-button>
             </div>
 
             <div class="payment-section-process-step-success" *ngIf="isERC20PaymentCompleted()">
@@ -240,9 +240,9 @@
   <div class="redpacket-footer-container sticky-bottom-container"
     *ngIf="!fetchingPacketInfo && areAllPaymentsCompleted()">
     <div class="redpacket-footer-button">
-      <button (click)="openPacketDetails()">
+      <ion-button (click)="openPacketDetails()">
         <ion-label>{{ 'redpackets.view-packet' | translate }}</ion-label>
-      </button>
+      </ion-button>
     </div>
   </div>
 

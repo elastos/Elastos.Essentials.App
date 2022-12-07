@@ -244,9 +244,9 @@
   <div class="redpacket-footer-container sticky-bottom-container"
     *ngIf="!fetchingPacket && packet && activeWalletIsCreator() && !packet.isActive && !packet.isCancelled">
     <div class="redpacket-footer-button">
-      <button (click)="finalizePayment()">
+      <ion-button (click)="finalizePayment()">
         <ion-label>{{ 'redpackets.complete-payment' | translate }}</ion-label>
-      </button>
+      </ion-button>
     </div>
   </div>
 

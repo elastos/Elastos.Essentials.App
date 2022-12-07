@@ -233,7 +233,7 @@ export class RequestCredentialsPage {
   }
 
   /**
-   * Method for backward compatibility to convert v1 claim formats (before May 2022) to vs claim
+   * Method for backward compatibility to convert v1 claim formats (before May 2022) to v2 claim
    * format (after May 2022).
    */
   private convertRawClaimsIfNeeded() {
