@@ -530,6 +530,10 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value, this.networkWallet.network.key);
   }
 
+  public async estimateTransferTransactionGas() {
+    return await 21000; // All EVM seem to use this amount of gas for native coin transfer
+  }
+
   /**
    * Estimated cost of a native coin transfer, in readable native coin amount.
    */

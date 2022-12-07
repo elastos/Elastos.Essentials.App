@@ -493,6 +493,34 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         return Promise.resolve([]);
     }
 
+    /**
+     * IMPORTANT NOTES:
+     * We use a fake amount of 1 token (minimal value after decimals conversion) just to estimate
+     * the transfer cost.
+     * 0 doesn't simulate a transaction creation so the gas estimation is wrong. Must be >0
+     *
+     * We use the real token owner address because cost estimation works only when "from" actually owns
+     * tokens. Otherwise, it simulates a "failed transfer / not enough tokens" call.
+     */
+    public async estimateTransferTransactionGas() {
+        const tokenAccountAddress = this.getTokenAccountAddress();
+        const contractAddress = this.coin.getContractAddress();
+        const erc20Contract = new this.highPriorityWeb3.eth.Contract(this.erc20ABI, contractAddress, { from: tokenAccountAddress });
+        let toAddress = "0x298163B65453Dcd05418A9a5333E4605eDA6D998"; // Fake address, doesn't impact the transfer cost
+        const method = erc20Contract.methods.transfer(toAddress, this.highPriorityWeb3.utils.toBN(1));
+
+        let gasLimit = 100000;
+        try {
+            // Estimate gas cost
+            let gasTemp = await method.estimateGas();
+            // '* 1.5': Make sure the gaslimit is big enough.
+            gasLimit = Util.ceil(gasTemp * 1.5);
+        } catch (error) {
+            Logger.log('wallet', 'estimateGas error:', error);
+        }
+        return gasLimit;
+    }
+
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<any> {
         toAddress = await this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
 
@@ -519,15 +547,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
         let gasLimit = gasLimitArg;
         if (gasLimit == null) {
-            gasLimit = '100000';
-            try {
-                // Estimate gas cost
-                let gasTemp = await method.estimateGas();
-                // '* 1.5': Make sure the gaslimit is big enough.
-                gasLimit = Util.ceil(gasTemp * 1.5).toString();
-            } catch (error) {
-                Logger.log('wallet', 'estimateGas error:', error);
-            }
+            gasLimit = (await this.estimateTransferTransactionGas()).toString();
         }
 
         let nonce = await this.getNonce();
@@ -599,7 +619,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
      */
     public async getGasPrice(): Promise<string> {
         const gasPrice = await this.highPriorityWeb3.eth.getGasPrice();
-        Logger.log('wallet', "GAS PRICE: ", gasPrice)
+        // Logger.log('wallet', "GAS PRICE: ", gasPrice)
         return gasPrice;
     }
 

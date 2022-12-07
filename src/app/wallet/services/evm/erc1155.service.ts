@@ -243,12 +243,7 @@ export class ERC1155Service {
         return observable;
     }
 
-    /**
-    * Creates a raw EVM transaction to transfer a ERC1155 NFT.
-    */
-    public async createRawTransferERC1155Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
-        Logger.log("wallet", "Creating ERC1155 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
-
+    public async estimateTransferERC1155TransactionGas(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string) {
         let web3 = await this.evmService.getWeb3(networkWallet.network);
 
         const erc1155Contract = new web3.eth.Contract(this.erc1155ABI, nftAddress, {
@@ -263,12 +258,32 @@ export class ERC1155Service {
             // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
             gasLimit = Math.ceil(gasTemp * 1.5);
         } catch (error) {
-            Logger.warn("wallet", 'createRawTransferERC1155Transaction(): estimateGas error:', error);
+            Logger.error("wallet", 'estimateTransferERC1155TransactionGas(): estimateGas error:', error);
             if (new String(error).includes("gas required exceeds allowance")) {
                 // This highly probably means that the transfer method will fail because it's locked somehow (by non standard implementations).
-                Logger.warn("wallet", "createRawTransferERC1155Transaction(): transfer method can't be called. Unable to create transfer transaction.");
+                Logger.warn("wallet", "estimateTransferERC1155TransactionGas(): transfer method can't be called. Unable to create transfer transaction.");
                 return null;
             }
+        }
+        return gasLimit;
+    }
+
+    /**
+    * Creates a raw EVM transaction to transfer a ERC1155 NFT.
+    */
+    public async createRawTransferERC1155Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
+        Logger.log("wallet", "Creating ERC1155 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
+
+        let web3 = await this.evmService.getWeb3(networkWallet.network);
+
+        const erc1155Contract = new web3.eth.Contract(this.erc1155ABI, nftAddress, {
+            from: senderAddress
+        });
+        const transferMethod = erc1155Contract.methods.safeTransferFrom(senderAddress, destinationAddress, nftAssetId, 1);
+
+        var gasLimit = this.estimateTransferERC1155TransactionGas(networkWallet, senderAddress, nftAddress, nftAssetId, destinationAddress);
+        if (gasLimit == null) {
+            return null;
         }
 
         let gasPrice = await this.evmService.getGasPrice(networkWallet.network);

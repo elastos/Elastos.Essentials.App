@@ -415,6 +415,7 @@ export class ETHTransactionInfoParser {
         break;
       case '0x1249c58b': // mint()
       case '0xd0def521': // mint(address,string)
+      case '0xa0712d68': // mint(uint256 _mintAmount)
         txInfo.operation = { description: "wallet.ext-tx-info-type-mint" };
         break;
       case '0xdb006a75': // redeem(uint256)

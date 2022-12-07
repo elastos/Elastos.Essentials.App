@@ -64,7 +64,7 @@ export class ElastosSmartChainLedgerNetworkWallet extends ElastosLedgerEVMNetwor
   }
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
-    return this.mainTokenSubWallet;
+    return this.mainTokenSubWallet as ElastosEVMSubWallet;
   }
 
   public getMainTokenSubWallet(): AnySubWallet {

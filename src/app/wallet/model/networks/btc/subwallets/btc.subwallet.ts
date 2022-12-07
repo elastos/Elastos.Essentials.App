@@ -223,7 +223,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         let toAmount = 0;
         if (amount.eq(-1)) {
             utxo = await this.getAvailableUtxo(-1);
-            if (!utxo) return;
+            if (!utxo) return null;
 
             let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 1, feerate)
             fee = Util.accMul(feeBTC, Config.SATOSHI);
@@ -232,7 +232,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         } else {
             toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
             utxo = await this.getAvailableUtxo(toAmount + fee);
-            if (!utxo) return;
+            if (!utxo) return null;
 
             let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate)
             fee = Util.accMul(feeBTC, Config.SATOSHI);

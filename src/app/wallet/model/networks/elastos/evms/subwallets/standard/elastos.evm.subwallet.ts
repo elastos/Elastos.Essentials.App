@@ -14,6 +14,8 @@ import { MainCoinEVMSubWallet } from '../../../../evms/subwallets/evm.subwallet'
  * Specialized standard sub wallet for EVM sidechains.
  */
 export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWalletNetworkOptions> {
+  private ethscWithdrawContract: any = null;
+
   constructor(networkWallet: AnyEVMNetworkWallet, id: StandardCoinName, friendlyName: string) {
     //let rpcApiUrl = GlobalElastosAPIService.instance.getApiUrlForChainCode(id);
 
@@ -51,10 +53,37 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
     return this.withdrawContractAddress;
   }
 
+  private async getWithdrawContract() {
+    if (!this.ethscWithdrawContract) {
+        const contractAbi = require("src/assets/wallet/ethereum/ETHSCWithdrawABI.json");
+        this.ethscWithdrawContract = new ((await this.getWeb3(true)).eth.Contract)(contractAbi, this.withdrawContractAddress);
+    }
+    return this.ethscWithdrawContract;
+  }
+
+  public async estimateWithdrawTransactionGas(toAddress: string) {
+    const ethscWithdrawContract = await this.getWithdrawContract()
+
+    const method = ethscWithdrawContract.methods.receivePayload(toAddress, '1000000000000000000', Config.ETHSC_WITHDRAW_GASPRICE);
+    let estimateGas = 28100;
+    try {
+      // Can not use method.estimateGas(), must set the "value"
+      let tx = {
+        data: method.encodeABI(),
+        to: this.withdrawContractAddress,
+        value: '1000000000000000000',
+      }
+      estimateGas = await this.estimateGas(tx);
+    } catch (error) {
+        Logger.error('wallet', 'estimateWithdrawTransactionGas error:', error);
+    }
+
+    return estimateGas;
+  }
+
   public async createWithdrawTransaction(toAddress: string, toAmount: number, memo: string, gasPriceArg: string, gasLimitArg: string, nonceArg = -1): Promise<string> {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const contractAbi = require("src/assets/wallet/ethereum/ETHSCWithdrawABI.json");
-    const ethscWithdrawContract = new ((await this.getWeb3(true)).eth.Contract)(contractAbi, this.withdrawContractAddress);
+    const ethscWithdrawContract = await this.getWithdrawContract()
+
     let gasPrice = gasPriceArg;
     if (gasPrice === null) {
       gasPrice = await this.getGasPrice();
@@ -75,24 +104,7 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
     // }
     // condition: _amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee
     if (toAmount === -1) {
-      let balanceString = this.balance.toFixed()
-      //amount % 10000000000 == 0
-      let estimateAmount = balanceString.substring(0, balanceString.length - 10) + "0000000000"
-      const method = ethscWithdrawContract.methods.receivePayload(toAddress, estimateAmount, Config.ETHSC_WITHDRAW_GASPRICE);
-      let estimateGas = 0;
-      try {
-        // Can not use method.estimateGas(), must set the "value"
-        let tx = {
-          data: method.encodeABI(),
-          to: this.withdrawContractAddress,
-          value: estimateAmount,
-        }
-        estimateGas = await (await this.getWeb3(true)).eth.estimateGas(tx);
-      } catch (error) {
-        Logger.error('wallet', 'estimateGas error:', error);
-        estimateGas = 28100;
-      }
-
+      let estimateGas = await this.estimateWithdrawTransactionGas(toAddress);
       gasLimit = estimateGas.toString();
 
       let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(this.tokenAmountMulipleTimes);

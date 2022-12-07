@@ -14,6 +14,9 @@
   <h3 *ngIf="displayAmount">{{ 'wallet.amount' | translate }}:</h3>
   <h4 *ngIf="displayAmount">{{ displayAmount }} {{ txInfo.tokensymbol }}</h4>
 
+  <h3 *ngIf="fees">{{ 'wallet.tx-info-transaction-fees' | translate }}:</h3>
+  <h4 *ngIf="fees">{{ fees }}</h4>
+
   <h3 *ngIf="txInfo.memo">{{ 'wallet.tx-info-memo' | translate }}:</h3>
   <h4 *ngIf="txInfo.memo">{{ txInfo.memo }}</h4>
 

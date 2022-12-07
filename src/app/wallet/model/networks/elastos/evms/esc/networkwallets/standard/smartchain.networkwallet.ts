@@ -59,7 +59,7 @@ export class ElastosSmartChainStandardNetworkWallet extends ElastosStandardEVMNe
   }
 
   public getMainEvmSubWallet(): ElastosEVMSubWallet {
-    return this.mainTokenSubWallet;
+    return this.mainTokenSubWallet as ElastosEVMSubWallet;
   }
 
   public getMainTokenSubWallet(): AnySubWallet {
