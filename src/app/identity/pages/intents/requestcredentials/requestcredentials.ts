@@ -1,5 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
+import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
 import { DID as ConnSDKDID } from "@elastosfoundation/elastos-connectivity-sdk-js";
 import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
@@ -18,6 +19,7 @@ import { GlobalCredentialTypesService } from 'src/app/services/credential-types/
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
@@ -144,7 +146,9 @@ export class RequestCredentialsPage {
     private dappbrowserService: DappBrowserService,
     private globalHiveService: GlobalHiveService,
     private globalApplicationDidService: GlobalApplicationDidService,
-    private credentialsToolboxService: GlobalCredentialToolboxService
+    private credentialsToolboxService: GlobalCredentialToolboxService,
+    private clipboard: Clipboard,
+    private native: GlobalNativeService
   ) {
     GlobalFirebaseService.instance.logEvent("intent_req_cred_enter");
   }
@@ -760,6 +764,12 @@ export class RequestCredentialsPage {
   }
 
   public openRecommendation(recommendation: ConnSDKDID.NoMatchRecommendation) {
-    void this.dappbrowserService.open(recommendation.url, recommendation.title);
+    // Don't open the recommended dapp link, because the target dapp may use a sign in intent that we don't want to "queue".
+    // And if we first send the intent response for the current intent, essentials returns to the original app which is not right either.
+    //void this.dappbrowserService.open(recommendation.url, recommendation.title);
+
+    // Instead, copy the recommended url to the clipboard
+    void this.clipboard.copy(recommendation.url);
+    this.native.genericToast('common.copied-to-clipboard', 2000);
   }
 }
