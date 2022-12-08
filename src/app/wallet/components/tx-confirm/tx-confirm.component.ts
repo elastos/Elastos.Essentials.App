@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { Config } from '../../config/Config';
 import { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { WalletUtil } from '../../model/wallet.util';
 import { CurrencyService } from '../../services/currency.service';
@@ -24,11 +25,16 @@ export class TxConfirmComponent implements OnInit {
   public txIcon: string;
   public displayAmount: string = null;
 
-  public fees : string = null;
+  public fee : string = null;
 
   public gasPrice: string = null;
   public gasLimit: string = null;
   private mainTokenSubWallet: AnyMainCoinEVMSubWallet = null;
+
+  public gasPriceGwei = '';
+  public feeDisplay = ''; // ELA
+
+  public showEditGasPrice = false;
 
   constructor(
     private navParams: NavParams,
@@ -56,14 +62,15 @@ export class TxConfirmComponent implements OnInit {
       this.txIcon = '/assets/wallet/tx/send.svg';
     }
 
-    if (this.txInfo.fees) {
-        this.fees = this.txInfo.fees;
+    if (this.txInfo.fee) {
+        this.fee = this.txInfo.fee;
     } else if (this.txInfo.gasLimit) {
         this.gasLimit = this.txInfo.gasLimit;
         this.mainTokenSubWallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
         this.gasPrice = await this.mainTokenSubWallet.getGasPrice()
+        this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
 
-        await this.getEVMTransactionFees();
+        await this.getEVMTransactionfee();
     }
   }
 
@@ -73,14 +80,27 @@ export class TxConfirmComponent implements OnInit {
 
   confirm() {
     this.native.popup.dismiss({
-      confirm: true
+      confirm: true,
+      gasPrice: this.gasPrice,
+      gasLimit: this.gasLimit,
     });
   }
 
-  private async getEVMTransactionFees() {
+  private async getEVMTransactionfee() {
     let fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice)).dividedBy(this.mainTokenSubWallet.tokenAmountMulipleTimes);
     let nativeFee = fee + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
     let currencyFee = this.mainTokenSubWallet.getAmountInExternalCurrency(new BigNumber(fee)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
-    this.fees = `${nativeFee} (~ ${currencyFee})`;
+    this.fee = `${nativeFee} (~ ${currencyFee})`;
+  }
+
+  public editGasPrice() {
+    this.showEditGasPrice = !this.showEditGasPrice;
+  }
+
+  public async updateGasprice(event) {
+    if (!this.gasPriceGwei) return;
+
+    this.gasPrice = new BigNumber(this.gasPriceGwei).multipliedBy(Config.GWEI).toString();
+    await this.getEVMTransactionfee()
   }
 }

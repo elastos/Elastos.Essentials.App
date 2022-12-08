@@ -41,6 +41,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { BTCSubWallet } from 'src/app/wallet/model/networks/btc/subwallets/btc.subwallet';
 import { ElastosSmartChainNetworkBase } from 'src/app/wallet/model/networks/elastos/evms/esc/network/esc.networks';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
@@ -109,7 +110,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public useCustumReceiverAddress = false;
 
     // For ELA mainchain
-    private feesOfELA : string = null;
+    private feeOfELA: string = null;
+
+    // For BTC
+    private feeOfBTC: string = null
 
     // User can set gas price and limit.
     private gasPrice: string = null;
@@ -295,7 +299,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createRechargeTransaction;
 
-                this.feesOfELA = '0.0002'; // ELA
+                this.feeOfELA = '0.0002'; // ELA
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
                 Logger.log('wallet', 'Transferring To..', this.toSubWallet);
@@ -330,7 +334,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     // standardization for credential types that could store wallet addresses.
                     this.setContactsKeyVisibility(true);
 
-                    this.feesOfELA = '0.0001'; // ELA
+                    this.feeOfELA = '0.0001'; // ELA
                 } else {
                     if (this.networkWallet.network.isEVMNetwork()) {
                         if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
@@ -338,8 +342,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                         } else if (this.fromSubWallet instanceof ERC20SubWallet) {
                             this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         }
-                    } else {
-                        // BTC
+                    } else if (this.fromSubWallet instanceof BTCSubWallet) {
+                        this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                     }
                 }
 
@@ -365,7 +369,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 this.intentId = this.coinTransferService.intentTransfer.intentId;
 
                 if (this.subWalletId === StandardCoinName.ELA) {
-                    this.feesOfELA = '0.0001'; // ELA
+                    this.feeOfELA = '0.0001'; // ELA
                 } else {
                     if (this.networkWallet.network.isEVMNetwork()) {
                         if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
@@ -373,8 +377,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                         } else if (this.fromSubWallet instanceof ERC20SubWallet) {
                             this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         }
-                    } else {
-                        // BTC
+                    } else if (this.fromSubWallet instanceof BTCSubWallet) {
+                        this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                     }
                 }
                 break;
@@ -398,18 +402,16 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                         this.networkWallet,
                         fromAddress,
                         this.nft.contractAddress,
-                        this.nftAsset.id,
-                        this.toAddress
-                    )).toString();
+                        this.nftAsset.id
+                    ))?.toString();
                 }
                 else if (this.nft.type === NFTType.ERC1155) {
-                    this.gasLimit = (await this.erc1155Service.createRawTransferERC1155Transaction(
+                    this.gasLimit = (await this.erc1155Service.estimateTransferERC1155TransactionGas(
                         this.networkWallet,
                         fromAddress,
                         this.nft.contractAddress,
-                        this.nftAsset.id,
-                        this.toAddress
-                    )).toString();
+                        this.nftAsset.id
+                    ))?.toString();
                 }
 
                 Logger.log("wallet", "Initialization complete for NFT details", this.networkWallet, this.nft, this.nftAsset);
@@ -444,7 +446,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // the spv sdk doesn't support ERC20 yet).
         let rawTx = null;
         try {
-            if (this.fromSubWallet instanceof ERC20SubWallet) {
+            if ((this.fromSubWallet instanceof ERC20SubWallet) || (this.fromSubWallet instanceof MainCoinEVMSubWallet)) {
                 rawTx = await this.fromSubWallet.createPaymentTransaction(
                     this.toAddress, // User input address
                     new BigNumber(this.amount), // User input amount
@@ -530,7 +532,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     fromAddress,
                     this.nft.contractAddress,
                     this.nftAsset.id,
-                    this.toAddress
+                    this.toAddress,
+                    this.gasPrice,
+                    this.gasLimit
                 );
             }
             else if (this.nft.type === NFTType.ERC1155) {
@@ -539,7 +543,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     fromAddress,
                     this.nft.contractAddress,
                     this.nftAsset.id,
-                    this.toAddress
+                    this.toAddress,
+                    this.gasPrice,
+                    this.gasLimit
                 );
             }
 
@@ -697,7 +703,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
 
         if (this.fromSubWallet.type === CoinType.ERC20) {
-            // Balance can cover fees?
+            // Balance can cover fee?
             // TODO: 0.0001 works only for Elastos ESC! Rework this.
             if (!this.networkWallet.getMainEvmSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
                 const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
@@ -787,12 +793,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async showConfirm() {
-        let feesString = null;
+        let feeString = null;
         // ELA main chain
-        if (this.feesOfELA) {
-            let nativeFee = this.feesOfELA + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
-            let currencyFee = this.fromSubWallet.getAmountInExternalCurrency(new BigNumber(this.feesOfELA)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
-            feesString = `${nativeFee} (~ ${currencyFee})`;
+        if (this.feeOfELA) {
+            let nativeFee = this.feeOfELA + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+            let currencyFee = this.fromSubWallet.getAmountInExternalCurrency(new BigNumber(this.feeOfELA)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+            feeString = `${nativeFee} (~ ${currencyFee})`;
+        }
+
+        if (this.feeOfBTC) {
+            let fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
+            let nativeFee = fee + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+            let currencyFee = this.fromSubWallet.getAmountInExternalCurrency(fee).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+            feeString = `${nativeFee} (~ ${currencyFee})`;
         }
 
         const txInfo = {
@@ -804,7 +817,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             precision: this.fromSubWallet.tokenDecimals,
             memo: this.memo ? this.memo : null,
             tokensymbol: this.tokensymbol,
-            fees: feesString,
+            fee: feeString,
             gasLimit: this.gasLimit
         }
 
@@ -820,6 +833,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.native.popup = null;
             Logger.log('wallet', 'Confirm tx params', params);
             if (params.data && params.data.confirm) {
+                if (params.data.gasPrice) this.gasPrice = params.data.gasPrice;
+                if (params.data.gasLimit) this.gasLimit = params.data.gasLimit;
                 void this.transaction();
             }
         });

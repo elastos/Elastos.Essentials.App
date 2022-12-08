@@ -14,8 +14,29 @@
   <h3 *ngIf="displayAmount">{{ 'wallet.amount' | translate }}:</h3>
   <h4 *ngIf="displayAmount">{{ displayAmount }} {{ txInfo.tokensymbol }}</h4>
 
-  <h3 *ngIf="fees">{{ 'wallet.tx-info-transaction-fees' | translate }}:</h3>
-  <h4 *ngIf="fees">{{ fees }}</h4>
+  <h3 *ngIf="fee">{{ 'wallet.esctransaction-fees' | translate }}</h3>
+
+  <ion-row class="item-row ripple ion-activatable" *ngIf="fee">
+    <ion-col size="11" class="price">
+      <span> {{ fee }} </span>
+    </ion-col>
+    <ion-col size="1" class="edit-gas-col" *ngIf="gasLimit">
+      <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
+    </ion-col>
+  </ion-row>
+  <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
+    <ion-col size="6">
+      <div>{{ 'wallet.eth-gasprice' | translate }}</div>
+      <ion-input autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPriceGwei"
+        (ionChange)="updateGasprice($event)" mode="ios">
+      </ion-input>
+    </ion-col>
+    <ion-col size="6">
+      <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
+      <ion-input autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
+      </ion-input>
+    </ion-col>
+  </ion-row>
 
   <h3 *ngIf="txInfo.memo">{{ 'wallet.tx-info-memo' | translate }}:</h3>
   <h4 *ngIf="txInfo.memo">{{ txInfo.memo }}</h4>

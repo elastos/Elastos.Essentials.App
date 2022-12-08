@@ -207,6 +207,18 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return utxoArrayForSDK;
     }
 
+    public async estimateTransferTransactionGas() {
+        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
+        if (!feerate) {
+            Logger.warn('wallet', 'BTCSubWallet: Can not get the feerate');
+            return null;
+        }
+
+        // TODO: Normally the data less than 1KB.
+        // Fees are related to input and output.
+        return Util.accMul(feerate, Config.SATOSHI);
+    }
+
     // Ignore gasPrice, gasLimit and nonce.
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);

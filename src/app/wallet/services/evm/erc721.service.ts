@@ -459,13 +459,17 @@ export class ERC721Service {
         return newCoin;
     } */
 
-    public async estimateTransferERC721TransactionGas(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string) {
+    public async estimateTransferERC721TransactionGas(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string) {
         let web3 = await this.evmService.getWeb3(networkWallet.network);
 
         const erc721Contract = new web3.eth.Contract(this.erc721ABI, nftAddress, {
             from: senderAddress
         });
-        const transferMethod = erc721Contract.methods.safeTransferFrom(senderAddress, destinationAddress, nftAssetId);
+        /**
+         * IMPORTANT NOTES:
+         * We use a fake destination address just to estimate the transfer cost.
+         */
+        const transferMethod = erc721Contract.methods.safeTransferFrom(senderAddress, senderAddress, nftAssetId);
 
         var gasLimit = 3000000; // Default value
         try {
@@ -487,7 +491,7 @@ export class ERC721Service {
     /**
     * Creates a raw EVM transaction to transfer a ERC721 NFT.
     */
-    public async createRawTransferERC721Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string): Promise<any> {
+    public async createRawTransferERC721Transaction(networkWallet: AnyNetworkWallet, senderAddress: string, nftAddress: string, nftAssetId: string, destinationAddress: string, gasPriceArg: string = null, gasLimitArg: string = null): Promise<any> {
         Logger.log("wallet", "Creating ERC721 transfer transaction", networkWallet.network.name, senderAddress, nftAddress, nftAssetId, destinationAddress);
 
         let web3 = await this.evmService.getWeb3(networkWallet.network);
@@ -497,12 +501,15 @@ export class ERC721Service {
         });
         const transferMethod = erc721Contract.methods.safeTransferFrom(senderAddress, destinationAddress, nftAssetId);
 
-        var gasLimit = await this.estimateTransferERC721TransactionGas(networkWallet, senderAddress, nftAddress, nftAssetId, destinationAddress);
-        if (gasLimit == null) {
+        let gasLimit = gasLimitArg;
+        if (gasLimit == null)
+            gasLimit = (await this.estimateTransferERC721TransactionGas(networkWallet, senderAddress, nftAddress, nftAssetId)).toString();
+        if (gasLimit == null)
             return null;
-        }
 
-        let gasPrice = await this.evmService.getGasPrice(networkWallet.network);
+        let gasPrice = gasPriceArg;
+        if (gasPrice == null)
+            gasPrice = await this.evmService.getGasPrice(networkWallet.network);
 
         let rawTransaction = await (networkWallet.safe as unknown as EVMSafe).createContractTransaction(
             nftAddress,
