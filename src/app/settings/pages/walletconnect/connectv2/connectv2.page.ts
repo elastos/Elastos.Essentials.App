@@ -70,6 +70,7 @@ export class WalletConnectConnectV2Page implements OnInit {
   public unsupportedChains: string[] = [];
 
   private backSubscription: Subscription = null;
+  private activeNetworkWalletSubscription: Subscription = null;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -96,14 +97,23 @@ export class WalletConnectConnectV2Page implements OnInit {
 
       // Use only the active master wallet.
       this.ethAccounts = [];
-      let activeWallet = this.walletManager.activeNetworkWallet.value;
-      if (activeWallet) {
-        let subwallet = activeWallet.getMainEvmSubWallet();
-        if (subwallet) // Can be null, if the active network is not EVM
-          this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
-      }
+      // Sometimes it is necessary to wait for the wallet to initialize.
+      this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async (activeWallet) => {
+        if (activeWallet) {
+            let subwallet = activeWallet.getMainEvmSubWallet();
+            if (subwallet) // Can be null, if the active network is not EVM
+                this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
+        }
+      })
 
       await this.initialize();
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.activeNetworkWalletSubscription) {
+        this.activeNetworkWalletSubscription.unsubscribe();
+        this.activeNetworkWalletSubscription = null;
     }
   }
 

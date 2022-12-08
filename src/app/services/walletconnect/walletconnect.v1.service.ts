@@ -216,7 +216,9 @@ export class WalletConnectV1Service extends GlobalService {
       if (this.shouldShowDisconnectionInfo(payload))
         this.native.genericToast("settings.wallet-connect-session-disconnected");
 
-      this.initiatingConnector = null;
+      if (this.initiatingConnector && this.initiatingConnector.key == connector.key) {
+          this.initiatingConnector = null;
+      }
 
       let instance = walletConnectStore.findById(connector.key);
       walletConnectStore.delete(instance);
