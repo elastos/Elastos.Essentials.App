@@ -413,7 +413,7 @@ export class GlobalHiveService extends GlobalService {
       if (publicationStarted) {
         // Force update the provider address.
         const { AppContext } = await lazyElastosHiveSDKImport();
-        await AppContext.getProviderAddress(this.didSessions.getSignedInIdentity().didString, null, true);
+        await AppContext.getProviderAddressByUserDid(this.didSessions.getSignedInIdentity().didString, null, true);
         void this.retrieveVaultStatus();
       }
 
