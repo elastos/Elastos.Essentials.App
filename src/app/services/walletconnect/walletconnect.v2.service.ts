@@ -136,7 +136,9 @@ export class WalletConnectV2Service implements GlobalService {
 
     void this.createSignClient(REGIONALIZED_RELAYER_ENDPOINTS[0].value).then(async client => {
       this.signClient = client;
-      await this.restoreSessions();
+
+      if (this.signClient)
+        await this.restoreSessions();
     });
 
     return;
@@ -147,7 +149,7 @@ export class WalletConnectV2Service implements GlobalService {
     // NOTE: called when the network changes as well, as a new "network wallet" is created.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(activeWallet => {
-      if (activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
+      if (this.signClient && activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
         void this.updateAllSessionsAfterWalletChange();
       }
     });
@@ -226,23 +228,30 @@ export class WalletConnectV2Service implements GlobalService {
 
   private async createSignClient(relayUrl: string): Promise<SignClient> {
     const Client = await lazyWalletConnectSignClientImport();
-    let signClient = await Client.init({
-      logger: 'debug',
-      projectId: GlobalConfig.WallectConnect.PROJECT_ID,
-      relayUrl,
-      metadata: {
-        description: "Essentials",
-        url: "https://www.trinity-tech.io/essentials",
-        icons: ["https://www.trinity-tech.io/images/apps/Essentials.svg"],
-        name: "Essentials"
-      }
-    });
 
-    await this.prepareClientForEvents(signClient);
+    try {
+      let signClient = await Client.init({
+        logger: 'debug',
+        projectId: GlobalConfig.WallectConnect.PROJECT_ID,
+        relayUrl,
+        metadata: {
+          description: "Essentials",
+          url: "https://www.trinity-tech.io/essentials",
+          icons: ["https://www.trinity-tech.io/images/apps/Essentials.svg"],
+          name: "Essentials"
+        }
+      });
 
-    Logger.log("walletconnectv2", "Created v2 client:", signClient);
+      await this.prepareClientForEvents(signClient);
 
-    return signClient;
+      Logger.log("walletconnectv2", "Created v2 client:", signClient);
+
+      return signClient;
+    }
+    catch (e) {
+      Logger.warn("walletconnectv2", "Failed to create client", e);
+      return null;
+    }
   }
 
   private prepareClientForEvents(client: SignClient) {
@@ -293,6 +302,11 @@ export class WalletConnectV2Service implements GlobalService {
   }
 
   public async killAllSessions(): Promise<void> {
+    if (!this.signClient) {
+      Logger.warn("walletconnectv2", "Client not initialized, unable to kill all sessions");
+      return;
+    }
+
     let topics = this.getAllTopics();
     Logger.log("walletconnectv2", "Killing " + topics.length + " v2 sessions.");
 
