@@ -1,6 +1,6 @@
 
 import WalletConnect from "@walletconnect/client";
-import { PairingTypes } from "@walletconnect/types";
+import { SessionTypes } from "@walletconnect/types";
 import { WalletConnectSessionExtension } from "src/app/model/walletconnect/types";
 import { WalletConnectV1Service } from "./walletconnect.v1.service";
 import { WalletConnectV2Service } from "./walletconnect.v2.service";
@@ -68,43 +68,43 @@ export class WalletConnectV1Instance extends WalletConnectInstance {
 }
 
 export class WalletConnectV2Instance extends WalletConnectInstance {
-  pairing: PairingTypes.Struct;
+  session: SessionTypes.Struct;
 
-  constructor(pairing: PairingTypes.Struct, sessionExtension: WalletConnectSessionExtension) {
+  constructor(session: SessionTypes.Struct, sessionExtension: WalletConnectSessionExtension) {
     super(sessionExtension);
-    this.pairing = pairing;
+    this.session = session;
   }
 
   public get id(): string {
-    return this.pairing.topic;
+    return this.session.topic;
   }
 
   public getName(): string {
-    if (this.pairing.peerMetadata)
-      return this.pairing.peerMetadata.name;
+    if (this.session.peer.metadata)
+      return this.session.peer.metadata.name;
     else
       return "Unknown session";
   }
 
   public getLogo(): string {
-    if (!this.pairing || !this.pairing.peerMetadata || !this.pairing.peerMetadata.icons || this.pairing.peerMetadata.icons.length == 0)
+    if (!this.session || !this.session.peer || !this.session.peer.metadata || !this.session.peer.metadata.icons || this.session.peer.metadata.icons.length == 0)
       return 'assets/settings/icon/walletconnect.svg';
 
-    return this.pairing.peerMetadata.icons[0];
+    return this.session.peer.metadata.icons[0];
   }
 
   public getDescription(): string {
-    if (!this.pairing || !this.pairing.peerMetadata || !this.pairing.peerMetadata.description)
+    if (!this.session || !this.session.peer || !this.session.peer.metadata || !this.session.peer.metadata.description)
       return null;
 
-    return this.pairing.peerMetadata.description;
+    return this.session.peer.metadata.description;
   }
 
   public getUrl(): string {
-    if (!this.pairing || !this.pairing.peerMetadata || !this.pairing.peerMetadata.url)
+    if (!this.session || !this.session.peer || !this.session.peer.metadata || !this.session.peer.metadata.url)
       return null;
 
-    return this.pairing.peerMetadata.url;
+    return this.session.peer.metadata.url;
   }
 
   public async killSession() {

@@ -119,6 +119,7 @@ export class CoinTransferService {
     // intent: didtransaction
     public didrequest: any;
     // intent: esctransaction
+    public sendTransactionChainId: number; // For esctransaction intents, optional "chainid" numeric value representing the EVM chain to send transaction to.
     public payloadParam: ContractPayloadParam;
     // NFT transfer info
     public nftTransfer: NFTTransfer;

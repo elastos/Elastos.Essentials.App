@@ -98,11 +98,12 @@ export class WalletConnectConnectV2Page implements OnInit {
       // Use only the active master wallet.
       this.ethAccounts = [];
       // Sometimes it is necessary to wait for the wallet to initialize.
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async (activeWallet) => {
         if (activeWallet) {
-            let subwallet = activeWallet.getMainEvmSubWallet();
-            if (subwallet) // Can be null, if the active network is not EVM
-                this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
+          let subwallet = activeWallet.getMainEvmSubWallet();
+          if (subwallet) // Can be null, if the active network is not EVM
+            this.ethAccounts.push(await subwallet.getCurrentReceiverAddress());
         }
       })
 
@@ -112,8 +113,8 @@ export class WalletConnectConnectV2Page implements OnInit {
 
   ngOnDestroy() {
     if (this.activeNetworkWalletSubscription) {
-        this.activeNetworkWalletSubscription.unsubscribe();
-        this.activeNetworkWalletSubscription = null;
+      this.activeNetworkWalletSubscription.unsubscribe();
+      this.activeNetworkWalletSubscription = null;
     }
   }
 

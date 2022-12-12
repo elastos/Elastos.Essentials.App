@@ -38,6 +38,7 @@ import { ApproveERC20Operation, ETHTransactionInfo, ETHTransactionInfoParser } f
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -55,6 +56,7 @@ import { WalletService } from '../../../services/wallet.service';
 export class EscTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+  public targetNetwork: AnyNetwork = null;
   public networkWallet: AnyNetworkWallet = null;
   public evmSubWallet: AnyMainCoinEVMSubWallet = null;
   private intentTransfer: IntentTransfer;
@@ -135,11 +137,23 @@ export class EscTransactionPage implements OnInit {
   }
 
   async init() {
-    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam);
-    this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
+    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam, this.coinTransferService.sendTransactionChainId);
+
+    // If there is a provided chain ID, use that chain id network (eg: wallet connect v2).
+    // Otherwise, use the active network
+    if (this.coinTransferService.sendTransactionChainId) {
+      this.targetNetwork = WalletNetworkService.instance.getNetworkByChainId(this.coinTransferService.sendTransactionChainId);
+    }
+    else {
+      this.targetNetwork = WalletNetworkService.instance.activeNetwork.value;
+    }
+
+    this.currentNetworkName = this.targetNetwork.name;
 
     this.intentTransfer = this.coinTransferService.intentTransfer;
-    this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
+    let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+    this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
+    //this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
     if (!this.networkWallet) return;
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.

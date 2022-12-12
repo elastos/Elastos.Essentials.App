@@ -16,6 +16,9 @@ class WalletConnectStore {
     return <WalletConnectV2Instance[]>this.wcInstances.value.filter(i => i instanceof WalletConnectV2Instance);
   }
 
+  /**
+   * gets instance by PAIRING id.
+   */
   public findById(id: string): WalletConnectInstance {
     return this.wcInstances.value.find(i => i.id === id);
   }

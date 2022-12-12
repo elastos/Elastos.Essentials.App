@@ -167,6 +167,7 @@ export class IntentService {
 
             case 'esctransaction':
                 this.nextScreen = '/wallet/intents/esctransaction';
+                this.coinTransferService.sendTransactionChainId = intent.params.chainid; // optional - ok to be undefined
                 this.coinTransferService.payloadParam = intent.params.payload.params[0];
                 break;
 

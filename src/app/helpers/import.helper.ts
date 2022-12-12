@@ -14,6 +14,7 @@ import type { JsonRpcProvider } from "@ethersproject/providers";
 import type { Channel, Logger as FeedsLogger, MediaType, MyProfile, Post, RuntimeContext } from '@feedsnetwork/feeds-js-sdk';
 import type { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import type WalletConnect from "@walletconnect/client";
+import type Client from "@walletconnect/sign-client";
 import type { ec } from "elliptic";
 import type PhishingDetector from "eth-phishing-detect";
 import type { providers, utils, Wallet, wordlists } from "ethers";
@@ -126,6 +127,13 @@ export const lazyWalletConnectImport = async (): Promise<typeof WalletConnect> =
   return importsCache["@walletconnect/client"].default;
 }
 
+export const lazyWalletConnectSignClientImport = async (): Promise<typeof Client> => {
+  if (!importsCache["@walletconnect/sign-client"])
+    importsCache["@walletconnect/sign-client"] = await import("@walletconnect/sign-client");
+
+  return importsCache["@walletconnect/sign-client"].default;
+}
+
 export const lazyEllipticImport = async (): Promise<{ ec: typeof ec }> => {
   if (!importsCache["elliptic"])
     importsCache["elliptic"] = await import("elliptic");
@@ -227,11 +235,11 @@ export const lazyKavaImport = async (): Promise<any> => {
 }
 
 export const lazyEvmosImport = async (): Promise<any> => {
-    if (!importsCache["@evmos/address-converter"])
-      importsCache["@evmos/address-converter"] = await import("@evmos/address-converter");
+  if (!importsCache["@evmos/address-converter"])
+    importsCache["@evmos/address-converter"] = await import("@evmos/address-converter");
 
-    return importsCache["@evmos/address-converter"];
-  }
+  return importsCache["@evmos/address-converter"];
+}
 
 export const lazyChaingeImport = async (): Promise<typeof Web3> => {
   if (!importsCache["@chainge/sdk"])

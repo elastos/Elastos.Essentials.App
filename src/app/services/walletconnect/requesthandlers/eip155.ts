@@ -196,7 +196,7 @@ export class EIP155RequestHandler {
    * Legacy eth_sign. Can receive either a raw hex buffer (unsafe), or a prefixed utf8 string (safe)
    */
   public static async handleEthSignRequest(params: any): Promise<EIP155ResultOrError<string>> {
-    const buffer = this.messageToBuffer(params[1]);
+    const buffer = this.messageToBuffer(params[0]);
     const hex = this.bufferToHex(buffer);
 
     /**
@@ -230,7 +230,11 @@ export class EIP155RequestHandler {
     }
   }
 
-  public static async handleSendTransactionRequest(params: any): Promise<EIP155ResultOrError<string>> {
+  /**
+   * 
+   * @param chainId Optional target chain id, base10 number
+   */
+  public static async handleSendTransactionRequest(params: any, chainId?: number): Promise<EIP155ResultOrError<string>> {
     try {
       Logger.log("walletconnecteip155", "Sending esctransaction intent", params[0]);
       let response: {
@@ -240,6 +244,7 @@ export class EIP155RequestHandler {
           status: "published" | "cancelled"
         }
       } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/esctransaction", {
+        chainid: chainId,
         payload: { params }
       });
       Logger.log("walletconnecteip155", "Got esctransaction intent response", response);
