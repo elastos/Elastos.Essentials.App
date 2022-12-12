@@ -58,7 +58,7 @@ export class PluginWidget extends WidgetBase implements OnInit, OnDestroy {
   }
 
   private rearmWidgetContentRefreshTimer() {
-    setTimeout(() => {
+    this.refreshWidgetTimer = setTimeout(() => {
       void this.checkRightTimeToRefreshWidgetContent();
     }, 30000);
   }
