@@ -210,8 +210,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     public async estimateTransferTransactionGas() {
         let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
         if (!feerate) {
-            Logger.warn('wallet', 'BTCSubWallet: Can not get the feerate');
-            return null;
+            throw new Error("Failed to estimatesmartfee");
         }
 
         // TODO: Normally the data less than 1KB.
@@ -223,8 +222,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
         if (!feerate) {
-            Logger.warn('wallet', 'BTCSubWallet: Can not get the feerate');
-            return null;
+            throw new Error("Failed to estimatesmartfee");
         }
 
         // TODO: Normally the data less than 1KB.

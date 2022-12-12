@@ -510,13 +510,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async getNonce() {
     const address = await this.getAccountAddress();
-    try {
-      return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
-    }
-    catch (err) {
-      Logger.error('wallet', 'getNonce failed, ', this.id, ' error:', err);
-    }
-    return -1;
+    return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
   }
 
   public async estimateGas(tx): Promise<number> {

@@ -336,14 +336,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
                     this.feeOfELA = '0.0001'; // ELA
                 } else {
-                    if (this.networkWallet.network.isEVMNetwork()) {
-                        if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
-                            this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
-                        } else if (this.fromSubWallet instanceof ERC20SubWallet) {
-                            this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                    try {
+                        if (this.networkWallet.network.isEVMNetwork()) {
+                            if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
+                                this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                            } else if (this.fromSubWallet instanceof ERC20SubWallet) {
+                                this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                            }
+                        } else if (this.fromSubWallet instanceof BTCSubWallet) {
+                            this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         }
-                    } else if (this.fromSubWallet instanceof BTCSubWallet) {
-                        this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                    }
+                    catch (err) {
+                        Logger.warn('wallet', 'estimateTransferTransactionGas exception:', err)
                     }
                 }
 
@@ -371,14 +376,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 if (this.subWalletId === StandardCoinName.ELA) {
                     this.feeOfELA = '0.0001'; // ELA
                 } else {
-                    if (this.networkWallet.network.isEVMNetwork()) {
-                        if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
-                            this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
-                        } else if (this.fromSubWallet instanceof ERC20SubWallet) {
-                            this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                    try {
+                        if (this.networkWallet.network.isEVMNetwork()) {
+                            if (this.fromSubWallet instanceof MainCoinEVMSubWallet) {
+                                this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                            } else if (this.fromSubWallet instanceof ERC20SubWallet) {
+                                this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                            }
+                        } else if (this.fromSubWallet instanceof BTCSubWallet) {
+                            this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         }
-                    } else if (this.fromSubWallet instanceof BTCSubWallet) {
-                        this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                    }
+                    catch (err) {
+                        Logger.warn('wallet', 'estimateTransferTransactionGas exception:', err)
                     }
                 }
                 break;
@@ -779,7 +789,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (reworkedEx instanceof Web3Exception) {
             await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
-            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", err.message);
+            let message = typeof (err) === "string" ? err : err.message;
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", message);
         }
     }
 
