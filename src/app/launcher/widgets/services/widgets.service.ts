@@ -395,15 +395,17 @@ export class WidgetsService {
         }
 
         for (let source of pluginSources) {
-            const lastFetched = this.pluginService.getLastFetched(source);
             let config = <PluginConfig<any>>await this.pluginService.getPluginContent(source);
+            if (config != null) {// in case, the config is null when user signs out.
+                const lastFetched = this.pluginService.getLastFetched(source);
 
-            const now = moment();
-            const refreshDelaySec = config.refresh || (1 * 24 * 60 * 60); // 1 day by default if not specified
+                const now = moment();
+                const refreshDelaySec = config.refresh || (1 * 24 * 60 * 60); // 1 day by default if not specified
 
-            if (now.subtract(refreshDelaySec, "seconds").isSameOrAfter(lastFetched)) {
-                // Right time to refresh
-                await this.pluginService.fetchWidgetPlugin(source);
+                if (now.subtract(refreshDelaySec, "seconds").isSameOrAfter(lastFetched)) {
+                    // Right time to refresh
+                    await this.pluginService.fetchWidgetPlugin(source);
+                }
             }
         }
     }
