@@ -5,7 +5,18 @@
         <div *ngIf="qrcode" class="qrcode-container">
             <qrcode class="qrcode" [qrdata]="qrcode" [width]="200"></qrcode>
         </div>
-        <h1>{{ 'wallet.coin-receive-ela-address' | translate: { coinName: tokenName } }}</h1>
+        <ion-row class="address-title-row">
+            <ion-col class="title-col" [size]="walletAddressInfo.length > 1 ? 6 : 12"
+                [class.active]="addressType == 0" (click)="setAddressType(0)">
+                <h1>{{ walletAddressInfo[0].title }}</h1>
+            </ion-col>
+
+            <ion-col *ngIf="walletAddressInfo.length > 1" class="title-col" size="6"
+                [class.active]="addressType == 1" (click)="setAddressType(1)">
+                <h1>{{ walletAddressInfo[1].title }}</h1>
+            </ion-col>
+        </ion-row>
+
         <h2 *ngIf="qrcode" (click)="copyAddress()">
             {{ qrcode.slice(0,20) }}<br>{{ qrcode.slice(20,50) }}
         </h2>

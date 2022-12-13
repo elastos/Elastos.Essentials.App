@@ -59,4 +59,24 @@
         padding-bottom: 5px;
         text-decoration: underline;
     }
+
+    .address-title-row {
+        margin-bottom: 10px;
+        border-radius: 17px;
+
+        .title-col {
+            opacity: 0.6;
+
+            h1 {
+                margin: 0;
+                font-weight: 300;
+                font-size: 12px;
+                text-align: center;
+            }
+
+            &.active {
+                opacity: 1;
+            }
+        }
+    }
 }

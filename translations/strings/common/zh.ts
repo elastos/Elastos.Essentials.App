@@ -36,6 +36,7 @@ export const zh = {
         'leave': '离开',
         'activate': '启用',
         'update': '更新',
+        'address': '地址',
 
         // Navigation
         'settings': '设置',

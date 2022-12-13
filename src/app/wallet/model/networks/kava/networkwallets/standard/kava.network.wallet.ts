@@ -1,4 +1,5 @@
 import { lazyKavaImport } from 'src/app/helpers/import.helper';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletNetworkOptions } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from "src/app/wallet/model/safes/addressusage";
@@ -46,13 +47,14 @@ export class KavaNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOpt
     }
 
     public getAddresses(): WalletAddressInfo[] {
+        let addressString = GlobalTranslationService.instance.translateInstant('common.address');
         return [
             {
-                title: "EVM address",
+                title: "EVM " + addressString,
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVM_CALL)
             },
             {
-                title: "Kava address",
+                title: "Kava " + addressString,
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.KAVA)
             }
         ];

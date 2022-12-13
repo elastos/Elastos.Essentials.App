@@ -35,6 +35,7 @@ export const it = {
         'leave': 'Leave',
         'activate': 'Activate',
         'update': 'Update',
+        'address': 'Address',
 
         // Navigation
         'settings': 'Impostazioni',

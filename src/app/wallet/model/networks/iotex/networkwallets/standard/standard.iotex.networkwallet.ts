@@ -1,4 +1,5 @@
 import { from } from '@iotexproject/iotex-address-ts';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { TransactionProvider } from 'src/app/wallet/model/tx-providers/transaction.provider';
 import { StandardMasterWallet } from '../../../../masterwallets/masterwallet';
@@ -45,13 +46,14 @@ export class StandardIoTeXNetworkWallet<WalletNetworkOptionsType extends WalletN
     }
 
     public getAddresses(): WalletAddressInfo[] {
+        let addressString = GlobalTranslationService.instance.translateInstant('common.address');
         return [
             {
-                title: "EVM address",
+                title: "EVM " + addressString,
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVM_CALL)
             },
             {
-                title: "IoTeX address",
+                title: "IoTeX " + addressString,
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.IOTEX)
             }
         ];

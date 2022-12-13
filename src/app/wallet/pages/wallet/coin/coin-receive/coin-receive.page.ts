@@ -6,10 +6,9 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
-import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { StandardCoinName } from '../../../../model/coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -30,6 +29,8 @@ export class CoinReceivePage implements OnInit, OnDestroy {
     public tokenName = '';
     public qrcode: string = null;
     public isSingleAddress = false;
+    public walletAddressInfo: WalletAddressInfo[] = [];
+    public addressType = 0;
     private selectSubscription: Subscription = null;
 
     constructor(
@@ -65,7 +66,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
         this.tokenName = this.subWallet.getDisplayTokenName();
 
-        await this.getAddress();
+        this.getAddress();
         this.isSingleAddressSubwallet();
     }
 
@@ -80,11 +81,18 @@ export class CoinReceivePage implements OnInit, OnDestroy {
 
     copyAddress() {
         void this.native.copyClipboard(this.qrcode);
-        this.native.toast(this.translate.instant("wallet.coin-address-copied", { coinName: this.tokenName }));
+        this.native.toast(this.translate.instant("common.copied-to-clipboard"));
     }
 
     async getAddress() {
-        this.qrcode = await this.subWallet.getCurrentReceiverAddress(AddressUsage.RECEIVE_FUNDS);
+        this.walletAddressInfo = this.networkWallet.getAddresses();
+
+        this.setAddressType(0);
+    }
+
+    setAddressType(type: number) {
+        this.addressType = type;
+        this.qrcode = this.walletAddressInfo[type].address;
         Logger.log('wallet', 'Address', this.qrcode);
     }
 

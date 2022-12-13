@@ -814,7 +814,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         if (this.feeOfBTC) {
             let fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
-            let nativeFee = fee + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+            let nativeFee = WalletUtil.getAmountWithoutScientificNotation(fee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
             let currencyFee = this.fromSubWallet.getAmountInExternalCurrency(fee).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
             feeString = `${nativeFee} (~ ${currencyFee})`;
         }

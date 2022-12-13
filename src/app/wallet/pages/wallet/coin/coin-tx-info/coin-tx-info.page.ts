@@ -95,7 +95,7 @@ export class CoinTxInfoPage implements OnInit {
     private isUnvoteTx = false;
 
     // Other Values
-    public payFee: number = null;
+    public payFee: string = null;
     public targetAddress = null;
     public fromAddress = null;
     public isRedPacket = false;
@@ -186,7 +186,7 @@ export class CoinTxInfoPage implements OnInit {
             this.height = this.transactionInfo.height;
             this.targetAddress = this.transactionInfo.to;
             this.fromAddress = this.transactionInfo.from;
-            this.payFee = this.transactionInfo.fee !== null ? new BigNumber(this.transactionInfo.fee).toNumber() : null;
+            this.payFee = this.transactionInfo.fee !== null ? WalletUtil.getAmountWithoutScientificNotation(new BigNumber(this.transactionInfo.fee), 8) : null;
             this.displayAmount = WalletUtil.getAmountWithoutScientificNotation(this.amount, this.subWallet.tokenDecimals) || "0";
             this.isRedPacket = this.transactionInfo.isRedPacket;
             this.transferAmount = this.transactionInfo.transferAmount ? WalletUtil.getAmountWithoutScientificNotation(this.transactionInfo.transferAmount, this.subWallet.tokenDecimals) || "0" : null;

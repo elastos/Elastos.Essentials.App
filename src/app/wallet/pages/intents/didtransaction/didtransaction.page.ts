@@ -33,6 +33,7 @@ import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { IdentityTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/eid/tx-builders/identity.txbuilder';
 import { ElastosEVMSubWallet } from 'src/app/wallet/model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
@@ -169,7 +170,7 @@ export class DidTransactionPage implements OnInit {
         this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
 
         this.fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice)).dividedBy(this.sourceSubwallet.tokenAmountMulipleTimes);
-        let nativeFee = this.fee + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+        let nativeFee = WalletUtil.getAmountWithoutScientificNotation(this.fee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
         let currencyFee = this.sourceSubwallet.getAmountInExternalCurrency(this.fee).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
         this.feeDisplay = `${nativeFee} (~ ${currencyFee})`;
     }

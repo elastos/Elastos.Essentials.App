@@ -1,4 +1,5 @@
 import { lazyEvmosImport } from "src/app/helpers/import.helper";
+import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
 import { AddressUsage } from "src/app/wallet/model/safes/addressusage";
@@ -47,13 +48,14 @@ export class EvmosNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOp
     }
 
     public getAddresses(): WalletAddressInfo[] {
+        let addressString = GlobalTranslationService.instance.translateInstant('common.address');
         return [
             {
-                title: "EVM address",
+                title: "EVM " + addressString,
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVM_CALL)
             },
             {
-                title: "Evmos address",
+                title: "Evmos " + addressString,
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVMOS)
             }
         ];
