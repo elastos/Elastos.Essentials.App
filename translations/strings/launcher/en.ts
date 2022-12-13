@@ -122,6 +122,7 @@ export const en = {
         'selected-theme': 'Selected:',
         'restore-all-widgets': 'Restore all widgets to defaults',
         'invalid-widget': 'Invalid widget content returned, not JSON format?',
+        'swap-disabled-in-ios': 'Built-in swap currently disabled on iOS, please stay tuned for updates.',
 
         /******** Theming *********/
         'theme-name-black': 'Black',

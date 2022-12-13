@@ -10,7 +10,7 @@
   </ion-row>
   <ion-row class="price-row">
     <div class="coin-name">{{ getNetworkWithCoin() }} </div>
-    <div class="price" *ngIf="coinDisplayPrice">${{ coinDisplayPrice }}</div>
+    <div class="price" *ngIf="coinDisplayPrice">{{ coinDisplayPrice }}</div>
   </ion-row>
 
   <ion-ripple-effect></ion-ripple-effect>

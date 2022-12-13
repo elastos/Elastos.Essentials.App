@@ -26,9 +26,9 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
   public activeNetwork: AnyNetwork = null;
   public coinDisplayPrice: string = null;
 
-  private walletServiceSub: Subscription = null; // Subscription to wallet service initialize completion event
-  private networkWalletSub: Subscription = null; // Subscription to wallet service to know when a wallet is created, deleted
   private activeNetworkSub: Subscription = null; // Subscription to wallet service to know when the active network (elastos, heco, bsc, etc) changes
+  private pricesFetchedSub: Subscription = null; // Subscription to currency service to know when the price is fetched
+  private currencyChangedSub: Subscription = null; // Subscription to currency service to know when the currency changes
 
   constructor(
     public theme: GlobalThemeService,
@@ -50,8 +50,13 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
     });
 
     // Refresh when native coin prices are fetched
-    this.currencyService.pricesFetchedSubject.subscribe(() => {
+    this.pricesFetchedSub = this.currencyService.pricesFetchedSubject.subscribe(() => {
       void this.prepare();
+    })
+
+    // Refresh when the currency is changed
+    this.currencyChangedSub = this.currencyService.currencyChangedSubject.subscribe(() => {
+        void this.prepare();
     })
 
     void this.prepare();
@@ -60,19 +65,18 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
   }
 
   ngOnDestroy(): Promise<void> {
-    if (this.walletServiceSub) {
-      this.walletServiceSub.unsubscribe();
-      this.walletServiceSub = null;
-    }
-    if (this.networkWalletSub) {
-      this.networkWalletSub.unsubscribe();
-      this.networkWalletSub = null;
-    }
     if (this.activeNetworkSub) {
       this.activeNetworkSub.unsubscribe();
       this.activeNetworkSub = null;
     }
-
+    if (this.pricesFetchedSub) {
+      this.pricesFetchedSub.unsubscribe();
+      this.pricesFetchedSub = null;
+    }
+    if (this.currencyChangedSub) {
+      this.currencyChangedSub.unsubscribe();
+      this.currencyChangedSub = null;
+    }
     return;
   }
 
@@ -80,7 +84,7 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
     if (this.activeNetwork) {
       let coinPrice = this.currencyService.getMainTokenValue(new BigNumber(1), this.activeNetwork, 'USD'); // TODO: Use user currency from wallet settings
       if (coinPrice && !coinPrice.isNaN()) {
-        this.coinDisplayPrice = coinPrice.decimalPlaces(this.currencyService.selectedCurrency.decimalplace, BigNumber.ROUND_DOWN).toFixed();
+        this.coinDisplayPrice = this.currencyService.usdToCurrencyAmount(coinPrice).decimalPlaces(this.currencyService.selectedCurrency.decimalplace, BigNumber.ROUND_DOWN).toFixed() + ' ' + this.currencyService.selectedCurrency.symbol;
       } else {
         this.coinDisplayPrice = '--'
       }

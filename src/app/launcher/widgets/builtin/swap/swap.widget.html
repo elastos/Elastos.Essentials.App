@@ -1,5 +1,5 @@
 <ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode" *ngIf="isIOS && (forSelection || editing)">
-  Built-in swap currently disabled on iOS, please stay tuned for updates.
+  {{ 'launcher.swap-disabled-in-ios' | translate }}
 </ion-row>
 
 <ion-row class="widget widget-background" [class.darkContainer]="theme.darkMode" *ngIf="!isIOS">

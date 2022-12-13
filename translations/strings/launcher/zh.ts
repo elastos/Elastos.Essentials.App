@@ -122,6 +122,7 @@ export const zh = {
         'selected-theme': '选定：',
         'restore-all-widgets': '将所有小组件恢复为默认值',
         'invalid-widget': '返回的小组件内容无效，不是 JSON 格式？',
+        'swap-disabled-in-ios': '目前在 iOS 上禁用内置swap功能，请继续关注更新',
 
         /******** Theming *********/
         'theme-name-black': '黑色',

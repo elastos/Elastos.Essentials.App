@@ -88,6 +88,7 @@ export class CurrencyService {
   private networkMainTokenPrice = {};
   private updateInterval = null;
   public pricesFetchedSubject = new BehaviorSubject<boolean>(false);
+  public currencyChangedSubject = new BehaviorSubject<string>('');
 
   private exchangeRates: ExchangeRateCache = {};
   private pricesCache: TimeBasedPersistentCache<CachedTokenPrice>; // Cache that contains latest prices for all tokens (native and ERC)
@@ -185,6 +186,8 @@ export class CurrencyService {
       this.selectedCurrency = displayableCurrencies.find((currency) => currency.symbol === 'USD');
       Logger.log('wallet', 'No currency saved, using default USD', this.selectedCurrency);
     }
+
+    this.currencyChangedSubject.next(this.selectedCurrency.symbol);
   }
 
   /**
@@ -248,6 +251,7 @@ export class CurrencyService {
   async saveCurrency(currency: DisplayableCurrency): Promise<void> {
     this.selectedCurrency = currency;
     await this.storage.setCurrency(currency.symbol);
+    this.currencyChangedSubject.next(currency.symbol);
   }
 
   /**
