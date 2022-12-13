@@ -66,7 +66,8 @@ export class TxConfirmComponent implements OnInit {
         this.fee = this.txInfo.fee;
     } else if (this.txInfo.gasLimit) {
         this.gasLimit = this.txInfo.gasLimit;
-        this.mainTokenSubWallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
+        // getMainEvmSubWallet return null on Identity Chain.
+        this.mainTokenSubWallet = WalletService.instance.activeNetworkWallet.value.getMainTokenSubWallet() as AnyMainCoinEVMSubWallet;
         this.gasPrice = await this.mainTokenSubWallet.getGasPrice();
         let decimalPlaces = this.gasPrice.length < 10 ? 11 - this.gasPrice.length : 1;
         this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(decimalPlaces);
