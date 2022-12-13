@@ -106,7 +106,7 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
     if (!this.activeNetwork)
       return "";
 
-    return `${this.activeNetwork.name} (${this.activeNetwork.getMainTokenSymbol()})`;
+    return `${this.activeNetwork.getMainTokenSymbol()}`;
   }
 
   public pickNetwork() {

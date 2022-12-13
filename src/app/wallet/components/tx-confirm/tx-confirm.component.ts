@@ -67,9 +67,9 @@ export class TxConfirmComponent implements OnInit {
     } else if (this.txInfo.gasLimit) {
         this.gasLimit = this.txInfo.gasLimit;
         this.mainTokenSubWallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
-        this.gasPrice = await this.mainTokenSubWallet.getGasPrice()
-        this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
-
+        this.gasPrice = await this.mainTokenSubWallet.getGasPrice();
+        let decimalPlaces = this.gasPrice.length < 10 ? 11 - this.gasPrice.length : 1;
+        this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(decimalPlaces);
         await this.getEVMTransactionfee();
     }
   }
@@ -88,7 +88,7 @@ export class TxConfirmComponent implements OnInit {
 
   private async getEVMTransactionfee() {
     let fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice)).dividedBy(this.mainTokenSubWallet.tokenAmountMulipleTimes);
-    let nativeFee = fee + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+    let nativeFee = WalletUtil.getAmountWithoutScientificNotation(fee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
     let currencyFee = this.mainTokenSubWallet.getAmountInExternalCurrency(new BigNumber(fee)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
     this.fee = `${nativeFee} (~ ${currencyFee})`;
   }

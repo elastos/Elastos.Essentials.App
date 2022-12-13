@@ -9,7 +9,7 @@
     <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
   </ion-row>
   <ion-row class="price-row">
-    <div class="coin-name">{{ getNetworkWithCoin() }} </div>
+    <div class="coin-name">{{ getNetworkWithCoin() }} {{ 'launcher.token-price' | translate }}</div>
     <div class="price" *ngIf="coinDisplayPrice">{{ coinDisplayPrice }}</div>
   </ion-row>
 
