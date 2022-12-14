@@ -8,7 +8,7 @@
                 <ion-icon name="refresh-outline"></ion-icon>
             </ion-col>
         </ion-row>
-        <ion-item-sliding *ngFor="let contact of supportedCryptoAddresses">
+        <ion-item-sliding *ngFor="let contact of supportedCryptoAddresses" (click)="selectContact(contact)">
             <ion-item>
                 <ion-row class="subwallet-row ripple ion-activatable">
                     <ion-col size="2" class="left-col">
