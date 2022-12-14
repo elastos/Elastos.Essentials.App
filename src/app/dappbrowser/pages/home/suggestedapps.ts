@@ -170,15 +170,15 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
   //     walletConnectSupported: false,
   //     networks: ["avalanchecchain", "bsc", "ethereum", "polygon"]
   // },
-  {
-    icon: '/assets/browser/dapps/raven.png',
-    title: 'Moe Raven',
-    description: 'The magical matic yield optimizer',
-    url: 'https://raven.moe/',
-    useExternalBrowser: false,
-    walletConnectSupported: false,
-    networks: ["elastossmartchain", "polygon"]
-  },
+//   {
+//     icon: '/assets/browser/dapps/raven.png',
+//     title: 'Moe Raven',
+//     description: 'The magical matic yield optimizer',
+//     url: 'https://raven.moe/',
+//     useExternalBrowser: false,
+//     walletConnectSupported: false,
+//     networks: ["elastossmartchain", "polygon"]
+//   },
   {
     icon: '/assets/browser/dapps/tokbridge.svg',
     title: 'Shadow Tokens',
