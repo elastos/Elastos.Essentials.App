@@ -359,6 +359,8 @@ export class EscTransactionPage implements OnInit {
   }
 
   public updateGasprice(event) {
+    if (!this.gasPriceGwei) return;
+
     this.gasPrice = Math.floor(this.gasPriceGwei * Config.GWEI).toString();
   }
 

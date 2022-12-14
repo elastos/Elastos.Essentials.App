@@ -104,4 +104,10 @@ export class TxConfirmComponent implements OnInit {
     this.gasPrice = new BigNumber(this.gasPriceGwei).multipliedBy(Config.GWEI).toString();
     await this.getEVMTransactionfee()
   }
+
+  public async updateGasLimit(event) {
+    if (!this.gasLimit) return;
+
+    await this.getEVMTransactionfee()
+  }
 }

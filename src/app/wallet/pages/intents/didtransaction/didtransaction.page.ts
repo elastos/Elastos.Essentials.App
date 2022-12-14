@@ -166,6 +166,12 @@ export class DidTransactionPage implements OnInit {
         await this.updateGasInfo()
     }
 
+    public async updateGasLimit(event) {
+        if (!this.gasLimit) return;
+
+        await this.updateGasInfo()
+    }
+
     private updateGasInfo() {
         this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(1);
 

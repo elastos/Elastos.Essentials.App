@@ -67,7 +67,7 @@
             {{ 'wallet.eth-gasprice' | translate }}
           </ion-col>
           <ion-col size="7">
-            <ion-input autosize name="gasPriceGwei" ngDefaultControl [(ngModel)]="gasPriceGwei"
+            <ion-input type="number" autosize name="gasPriceGwei" ngDefaultControl [(ngModel)]="gasPriceGwei"
               (ionChange)="updateGasprice($event)" mode="ios"></ion-input>
           </ion-col>
         </ion-row>
@@ -76,7 +76,7 @@
             {{ 'wallet.eth-gaslimit' | translate }}
           </ion-col>
           <ion-col size="7">
-            <ion-input autosize name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
+            <ion-input type="number" autosize name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
             </ion-input>
           </ion-col>
         </ion-row>

@@ -27,13 +27,14 @@
     <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
       <ion-col size="6">
         <div>{{ 'wallet.eth-gasprice' | translate }}</div>
-        <ion-input autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPriceGwei"
+        <ion-input type="number" autosize clearInput name="gasPrice" ngDefaultControl [(ngModel)]="gasPriceGwei"
           (ionChange)="updateGasprice($event)" mode="ios">
         </ion-input>
       </ion-col>
       <ion-col size="6">
         <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
-        <ion-input autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
+        <ion-input type="number" autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit"
+          (ionChange)="updateGasLimit($event)" mode="ios">
         </ion-input>
       </ion-col>
     </ion-row>
