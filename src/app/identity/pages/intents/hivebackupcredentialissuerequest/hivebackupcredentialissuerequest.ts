@@ -93,7 +93,7 @@ export class HiveBackupCredentialIssueRequestPage {
         if (this.requestingAppIconUrl) {
             return this.sanitizer.bypassSecurityTrustResourceUrl(this.requestingAppIconUrl);
         } else {
-            return 'assets/shared/essentials-black-circle.svg'
+            return 'assets/launcher/icons/hive-cross.svg'
         }
     }
 
