@@ -1,7 +1,9 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { App } from "src/app/model/app.enum";
+import { GlobalAppBackgroundService } from 'src/app/services/global.appbackground.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
@@ -35,7 +37,9 @@ export class MenuPage implements OnInit {
     public translate: TranslateService,
     private nav: GlobalNavService,
     private prefsService: GlobalPreferencesService,
-    private settingsService: SettingsService
+    private settingsService: SettingsService,
+    public didService: DIDManagerService,
+    private appBackGroundService: GlobalAppBackgroundService
   ) {
     GlobalFirebaseService.instance.logEvent("settings_menu_enter");
     void this.init();
@@ -72,5 +76,10 @@ export class MenuPage implements OnInit {
 
   open(router: string) {
     void this.nav.navigateTo(App.SETTINGS, router);
+  }
+
+  async signOut() {
+    await this.appBackGroundService.stop();
+    await this.didService.signOut();
   }
 }

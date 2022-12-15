@@ -97,7 +97,7 @@
             </ion-col>
         </ion-row>
         <!-- Developer mode -->
-        <ion-row class="section dev-mode">
+        <ion-row class="section">
             <ion-col size="9" class="title-col">
                 <h1>{{ 'settings.dev-mode' | translate }}</h1>
                 <h2 class="secondary-text" *ngIf="prefs.developerMode">{{ 'settings.on' | translate }}</h2>
@@ -106,6 +106,16 @@
             <ion-col size="3" class="right-col arrow-col">
                 <ion-toggle mode="ios" [(ngModel)]="prefs.developerMode" (ngModelChange)="toggleDeveloperMode()"
                     ngDefaultControl></ion-toggle>
+            </ion-col>
+        </ion-row>
+        <!-- Sign out -->
+        <ion-row class="section sign-out" (click)="signOut()">
+            <ion-col size="11" class="title-col">
+                <h1>{{ 'common.sign-out' | translate }}</h1>
+            </ion-col>
+            <ion-col size="1" class="right-col arrow-col">
+                <img
+                    [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
             </ion-col>
         </ion-row>
     </ion-grid>
