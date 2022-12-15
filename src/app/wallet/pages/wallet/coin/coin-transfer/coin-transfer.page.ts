@@ -906,10 +906,14 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     private resolverName(name: string) {
+        let targetSubwallet = null;
+        if (this.transferType !== TransferType.RECHARGE) {
+            targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
+        }
         // eslint-disable-next-line no-async-foreach/no-async-foreach, @typescript-eslint/no-misused-promises
         this.nameResolvingService.getResolvers().forEach(async resolver => {
             // resolvers can answer at any time, asynchronously
-            const results = await resolver.resolve(name, this.fromSubWallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
+            const results = await resolver.resolve(name, targetSubwallet); // Use fromSubWallet just to know the network (toSubWallet is not always set)
             Logger.log('wallet', "Name resolver got results from", resolver.getName(), results);
             this.suggestedAddresses = this.suggestedAddresses.concat(results);
 

@@ -87,6 +87,19 @@
                         [src]="!theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg'">
                 </ion-col>
             </ion-row>
+            <!-- Selected address name (cryptoname, etc) -->
+            <ion-row class="contact-row" [class.invisible]="!addressName">
+                <p>{{ addressName }}</p>
+            </ion-row>
+
+            <!-- Dynamically suggested addresses list -->
+            <ion-row *ngIf="suggestedAddresses.length > 0" class="cryptoname-row">
+                <ion-col size="12" *ngFor="let suggestedAddress of suggestedAddresses"
+                    (click)="selectSuggestedAddress(suggestedAddress)">
+                    <span>{{ suggestedAddress.getDisplayName() }}</span>
+                    <ion-icon mode="ios" name="add"></ion-icon>
+                </ion-col>
+            </ion-row>
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <p>{{ 'wallet.transfer-amount' | translate }}</p>

@@ -28,6 +28,11 @@ export class UnstoppableDomainsAddressResolver extends Resolver {
      * Returns UD's record key to be used for a given Essential's network.
      */
     private resolutionRecordKeyForWallet(subWallet: AnySubWallet): string {
+        // The subwallet will be null when the multi-sign wallet cross chain recharge to esc.
+        if (!subWallet) {
+            return "crypto.ELA.version.ESC.address";
+        }
+
         if (subWallet.networkWallet.network instanceof ElastosMainChainMainNetNetwork) {
             if (subWallet instanceof MainChainSubWallet)
                 return "crypto.ELA.version.ELA.address";

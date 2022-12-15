@@ -133,6 +133,45 @@
                 font-weight: 700;
             }
         }
+
+        .contact-row {
+            p {
+                width: 100%;
+                text-align: right;
+            }
+        }
+
+        .cryptoname-row {
+            margin-top: 10px;
+
+            h1 {
+                width: 100%;
+                margin-bottom: 10px;
+                font-weight: 500;
+                font-size: 11px;
+            }
+
+            ion-col {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 5px;
+
+                span,
+                ion-icon {
+                    color: #3880ff;
+                }
+
+                span {
+                    font-size: 14px;
+                    font-weight: 600;
+                }
+
+                ion-icon {
+                    font-size: 20px;
+                }
+            }
+        }
     }
 
     /********************** Send Container **********************/
