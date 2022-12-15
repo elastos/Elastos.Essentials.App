@@ -352,10 +352,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     }
                 }
 
-                // Only show cryptonames key if user has previously used crypto names
-                if (this.contactsService.contacts.length) {
-                    this.setCryptonamesKeyVisibility(true);
-                }
                 break;
             // For Pay Intent
             case TransferType.PAY:
@@ -426,6 +422,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
                 Logger.log("wallet", "Initialization complete for NFT details", this.networkWallet, this.nft, this.nftAsset);
                 break;
+        }
+
+        // Only show cryptonames key if user has previously used crypto names
+        if (this.contactsService.contacts.length) {
+            this.setCryptonamesKeyVisibility(true);
         }
 
         this.displayBalanceString = this.uiService.getFixedBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
@@ -950,7 +951,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async showCryptonames() {
-        let targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
+        let targetSubwallet = null;
+        if (this.transferType !== TransferType.RECHARGE) {
+            targetSubwallet = this.toSubWallet ? this.toSubWallet : this.fromSubWallet;
+        }
         this.modal = await this.modalCtrl.create({
             component: ContactsComponent,
             componentProps: {

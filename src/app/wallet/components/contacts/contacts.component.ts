@@ -4,6 +4,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnySubWallet } from '../../model/networks/base/subwallets/subwallet';
+import { WalletUtil } from '../../model/wallet.util';
 import { ContactsService } from '../../services/contacts.service';
 import { Native } from '../../services/native.service';
 import { WarningComponent } from '../warning/warning.component';
@@ -51,7 +52,7 @@ export class ContactsComponent implements OnInit {
     for (let index = 0; index < this.contactsService.contacts.length; index++) {
       let addresses = this.contactsService.contacts[index].addresses;
       for (let i = 0; i < addresses.length; i++) {
-        let valid = subWallet ? await subWallet.isAddressValid(addresses[i].address) : true;
+        let valid = await this.isAddressValid(subWallet, addresses[i].address);
         if (valid) {
           this.supportedCryptoAddresses.push({
             cryptoname: this.contactsService.contacts[index].cryptoname,
@@ -63,6 +64,15 @@ export class ContactsComponent implements OnInit {
       }
     }
   }
+
+  private async isAddressValid(subWallet: AnySubWallet, address: string) {
+    if (subWallet) {
+        return await subWallet.isAddressValid(address);
+    } else {
+        // Multi-sign wallet transfer to ESC or EID.
+        return WalletUtil.isEVMAddress(address);
+    }
+}
 
   selectContact(contact: CryptoAddressInfo) {
     void this.modalCtrl.dismiss({
