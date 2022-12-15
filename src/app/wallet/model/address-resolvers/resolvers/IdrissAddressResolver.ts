@@ -1,5 +1,6 @@
 import { Util } from "src/app/model/util";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
+import { WalletUtil } from "../../wallet.util";
 import { Address } from '../addresses/Address';
 import { IdrissAddress } from "../addresses/IdrissAddress";
 import { Resolver } from "./Resolver";
@@ -32,7 +33,7 @@ export class IdrissResolver extends Resolver {
 
             if (result) {
                 for (var index in result) {
-                    if (!subWallet || await subWallet.isAddressValid(result[index])) {
+                    if (await this.isAddressValid(subWallet, result[index])) {
                         addresses.push(new IdrissAddress(name, result[index], index));
                     }
                 }
@@ -55,5 +56,14 @@ export class IdrissResolver extends Resolver {
 
         let isTwitter = input.startsWith('@');
         return isTwitter
+    }
+
+    private async isAddressValid(subWallet: AnySubWallet, address: string) {
+        if (subWallet) {
+            return await subWallet.isAddressValid(address);
+        } else {
+            // Multi-sign wallet transfer to ESC or EID.
+            return WalletUtil.isEVMAddress(address);
+        }
     }
 }

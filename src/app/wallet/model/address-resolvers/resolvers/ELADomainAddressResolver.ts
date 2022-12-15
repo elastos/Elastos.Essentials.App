@@ -2,6 +2,7 @@ import { Subscription } from "rxjs";
 import { Logger } from "src/app/logger";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
+import { WalletUtil } from "../../wallet.util";
 import { Address } from '../addresses/Address';
 import { ELADomainAddress } from '../addresses/ELADomainAddress';
 import { Resolver } from "./Resolver";
@@ -76,7 +77,7 @@ export class ELADomainResolver extends Resolver {
             let result = await this.domainSDK.getOwner(name, false);
             if (result && result.owner) {
                 let address = result.owner;
-                if (!subWallet || await subWallet.isAddressValid(address)) {
+                if (await this.isAddressValid(subWallet, address)) {
                     addresses.push(new ELADomainAddress(name, address, ''));
                 }
             }
@@ -86,5 +87,14 @@ export class ELADomainResolver extends Resolver {
         }
 
         return addresses;
+    }
+
+    private async isAddressValid(subWallet: AnySubWallet, address: string) {
+        if (subWallet) {
+            return await subWallet.isAddressValid(address);
+        } else {
+            // Multi-sign wallet transfer to ESC or EID.
+            return WalletUtil.isEVMAddress(address);
+        }
     }
 }

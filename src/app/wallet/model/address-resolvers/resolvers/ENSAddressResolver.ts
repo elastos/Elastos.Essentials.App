@@ -3,6 +3,7 @@ import { lazyEthersImport } from 'src/app/helpers/import.helper';
 import { Logger } from "src/app/logger";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
 import { EthereumAPI, EthereumAPIType } from '../../networks/ethereum/network/ethereum.api';
+import { WalletUtil } from '../../wallet.util';
 import { Address } from '../addresses/Address';
 import { ENSAddress } from '../addresses/ENSAddress';
 import { Resolver } from "./Resolver";
@@ -56,7 +57,7 @@ export class ENSResolver extends Resolver {
                 for (var index in result.records.coinTypes) {
                     let coinType = result.records.coinTypes[index];
                     let address = (coinType as any).addr;
-                    if (coinType.type === 'addr' && address && (!subWallet || await subWallet.isAddressValid(address))) {
+                    if (coinType.type === 'addr' && address && (await this.isAddressValid(subWallet, address))) {
                         addresses.push(new ENSAddress(name, address, coinType.coin));
                     }
                 }
@@ -67,5 +68,14 @@ export class ENSResolver extends Resolver {
         }
 
         return addresses;
+    }
+
+    private async isAddressValid(subWallet: AnySubWallet, address: string) {
+        if (subWallet) {
+            return await subWallet.isAddressValid(address);
+        } else {
+            // Multi-sign wallet transfer to ESC or EID.
+            return WalletUtil.isEVMAddress(address);
+        }
     }
 }

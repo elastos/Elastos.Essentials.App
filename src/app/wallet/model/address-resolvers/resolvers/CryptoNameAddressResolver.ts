@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Logger } from "src/app/logger";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
+import { WalletUtil } from '../../wallet.util';
 import { Address } from '../addresses/Address';
 import { CryptoNameAddress } from '../addresses/CryptoNameAddress';
 import { Resolver } from "./Resolver";
@@ -31,7 +32,7 @@ export class CryptoNameResolver extends Resolver {
             if (result) {
               let resultObj = JSON.parse(result)
                 for (var index in resultObj) {
-                  if (index.endsWith('.address') && (!subWallet || await subWallet.isAddressValid(resultObj[index]))) {
+                  if (index.endsWith('.address') && (await this.isAddressValid(subWallet, resultObj[index]))) {
                       addresses.push(new CryptoNameAddress(name, resultObj[index], index));
                   }
               }
@@ -42,5 +43,14 @@ export class CryptoNameResolver extends Resolver {
         }
 
         return addresses;
+    }
+
+    private async isAddressValid(subWallet: AnySubWallet, address: string) {
+        if (subWallet) {
+            return await subWallet.isAddressValid(address);
+        } else {
+            // Multi-sign wallet transfer to ESC or EID.
+            return WalletUtil.isEVMAddress(address);
+        }
     }
 }
