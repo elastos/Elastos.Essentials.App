@@ -1,8 +1,7 @@
 <!-- Wallet Connect -->
 <div class="widget widget-background wallet-connect-row" [class.darkContainer]="theme.darkMode"
   *ngIf="someWalletConnectSessionsCanBeDisplayed() || forSelection || editing" (click)="showWalletConnectSessions()">
-  <img class="icon" src="assets/settings/icon/walletconnect.svg">
-  <ion-label>{{ 'launcher.active-wallet-connect-sessions' | translate }}</ion-label>
+  <ion-label>{{ 'launcher.wallet-connect-sessions' | translate }}</ion-label>
 
   <!-- List of connections -->
   <div class="connections-row">
