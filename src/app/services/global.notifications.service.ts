@@ -18,6 +18,8 @@ export type NotificationRequest = {
     title: string;
     /** Detailed message for this notification. */
     message: string;
+    /** Sub message */
+    subMessage?: string;
     /** App that sent notification */
     app: App;
 
@@ -87,6 +89,7 @@ export class GlobalNotificationsService extends GlobalService {
             key: request.key,
             title: request.title,
             message: request.message,
+            subMessage: request.subMessage,
             app: request.app ? request.app : null,
             notificationId: characters.charAt(Math.floor(Math.random() * characters.length)),
             url: request.url ? request.url : null,

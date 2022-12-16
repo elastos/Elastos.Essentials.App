@@ -198,4 +198,8 @@ export class NotificationManagerService {
       return notification.message;
     }
   }
+
+  getNotificationSubMessage(notification: LauncherNotification) {
+    return notification.subMessage;
+  }
 }

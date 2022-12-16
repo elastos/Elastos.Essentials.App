@@ -336,6 +336,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
       key: 'newtokens-' + this.networkWallet.network.key,
       title: GlobalLanguageService.instance.translate('wallet.find-new-token'),
       message: message,
+      subMessage: GlobalLanguageService.instance.translate('wallet.find-new-tokens-warning-msg'),
       url: '/wallet/coin-list' + '?network=' + this.networkWallet.network.key,
     };
     void GlobalNotificationsService.instance.sendNotification(notification);

@@ -21,6 +21,9 @@
                         <ion-col size="12" class="message-col" (click)="start(notification)">
                             <p>{{ notificationService.getNotificationMessage(notification) | translate }}</p>
                         </ion-col>
+                        <ion-col *ngIf="notification.subMessage" size="12" class="message-col" (click)="start(notification)">
+                            <p>{{ notificationService.getNotificationSubMessage(notification) | translate }}</p>
+                        </ion-col>
                         <ion-ripple-effect></ion-ripple-effect>
                     </ion-row>
                 </ion-item>
