@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavParams } from '@ionic/angular';
+import { NavParams, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
@@ -36,11 +36,17 @@ export class TxConfirmComponent implements OnInit {
 
   public showEditGasPrice = false;
 
+  public isIOS = false;
+  private rootContent: any;
+  private keyboardShowEventListener: () => void;
+  private keyboardHideEventListener: () => void;
+
   constructor(
     private navParams: NavParams,
     public theme: GlobalThemeService,
     private translate: TranslateService,
-    private native: Native
+    private native: Native,
+    private platform: Platform,
   ) { }
 
   async ngOnInit() {
@@ -72,6 +78,33 @@ export class TxConfirmComponent implements OnInit {
         let decimalPlaces = this.gasPrice.length < 10 ? 11 - this.gasPrice.length : 1;
         this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(decimalPlaces);
         await this.getEVMTransactionfee();
+    }
+
+    // TODO: To improve it, we set margin-bottom on ios, because scrollIntoView can't work on ios.
+    this.isIOS = this.platform.platforms().indexOf('android') < 0;
+    this.rootContent = document.getElementById('tx-confirm');
+    if (this.rootContent) {
+        window.addEventListener("keyboardDidShow", this.keyboardShowEventListener = () => {
+            if (this.isIOS) {
+                this.rootContent.style['margin-bottom'] = '150px';
+            } else {
+                this.rootContent.scrollIntoView(true);
+            }
+        });
+        window.addEventListener("keyboardDidHide", this.keyboardHideEventListener = () => {
+            if (this.isIOS) {
+                this.rootContent.style['margin-bottom'] = '0px';
+            }
+        });
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.keyboardShowEventListener) {
+        window.removeEventListener("keyboardDidShow", this.keyboardShowEventListener);
+    }
+    if (this.keyboardHideEventListener) {
+        window.removeEventListener("keyboardDidHide", this.keyboardHideEventListener);
     }
   }
 
