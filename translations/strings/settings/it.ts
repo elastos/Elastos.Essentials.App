@@ -87,6 +87,7 @@ export const it = {
                 'get-a-new-qr-code': 'genera un nuovo codice QR',
                 'wallet-connect-request-error2': ' nell\'applicazione originale e scansionalo di nuovo.',
                 'wallet-connect-request-error3': 'La connessione sembra richiedere troppo tempo. Puoi annullare e riprovare dall\'applicazione originale.',
+                'wallet-connect-request-error4': 'La connessione non è riuscita. Puoi riprovare dall\'applicazione originale.',
                 'scan-again': 'Scansiona di nuovo',
                 'wallet-connect-request-title': 'Richiesta Wallet Connect',
                 'wallet-connect-request-des': 'Vuoi collegarti alla seguente applicazione?',

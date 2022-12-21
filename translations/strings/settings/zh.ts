@@ -87,6 +87,7 @@ export const zh = {
           'get-a-new-qr-code': '获取新的二维码',
           'wallet-connect-request-error2': '并再次扫描它。',
           'wallet-connect-request-error3': '连接长时间无响应，您可以点击取消并从原应用程序重试。',
+          'wallet-connect-request-error4': '连接失败，您可以从原应用程序重试。',
           'scan-again': '重新扫描',
           'wallet-connect-request-title': '钱包连接请求',
           'wallet-connect-request-des': '您想使用以下外部应用程序打开会话吗？',

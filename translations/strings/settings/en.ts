@@ -87,6 +87,7 @@ export const en = {
                 'get-a-new-qr-code': 'get a new QR code',
                 'wallet-connect-request-error2': ' from the calling application and scan it again.',
                 'wallet-connect-request-error3': 'Connection seems to take a long time. You could cancel it and try again from the original app.',
+                'wallet-connect-request-error4': 'Connection failed. You could try again from the original app.',
                 'scan-again': 'Scan again',
                 'wallet-connect-request-title': 'Wallet Connect Request',
                 'wallet-connect-request-des': 'Would you like to open a session with the following external app?',

@@ -6,6 +6,7 @@ import { SignClientTypes } from '@walletconnect/types';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { SessionProposalEvent } from 'src/app/model/walletconnect/types';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -162,12 +163,17 @@ export class WalletConnectConnectV2Page implements OnInit {
   }
 
   async openSession() {
-    await this.walletConnectV2.acceptSessionRequest(this.sessionProposal.event.params, this.ethAccounts);
+    try {
+        await this.walletConnectV2.acceptSessionRequest(this.sessionProposal.event.params, this.ethAccounts);
+        // Because for now we don't close Essentials after handling wallet connect requests, we simply
+        // inform users to manually "alt tab" to return to the app they are coming from.
+        this.native.genericToast("settings.wallet-connect-popup", 2000);
+    }
+    catch (e) {
+        Logger.warn('walletconnect', 'acceptSessionRequest failed:', e)
+        this.native.genericToast("settings.wallet-connect-request-error4", 5000);
+    }
     await this.nav.exitCurrentContext();
-
-    // Because for now we don't close Essentials after handling wallet connect requests, we simply
-    // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("settings.wallet-connect-popup", 2000);
   }
 
   public getProposerMeta(): SignClientTypes.Metadata {

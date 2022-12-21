@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { SessionRequestParams } from 'src/app/model/walletconnect/types';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -100,11 +101,17 @@ export class WalletConnectConnectPage implements OnInit {
   }
 
   async openSession() {
-    await this.walletConnectV1.acceptSessionRequest(this.sessionRequest.connectorKey, this.ethAccounts);
-    await this.nav.exitCurrentContext();
+    try {
+        await this.walletConnectV1.acceptSessionRequest(this.sessionRequest.connectorKey, this.ethAccounts);
+        // Because for now we don't close Essentials after handling wallet connect requests, we simply
+        // inform users to manually "alt tab" to return to the app they are coming from.
+        this.native.genericToast("settings.wallet-connect-popup", 2000);
+    }
+    catch (e) {
+        Logger.warn('walletconnect', 'acceptSessionRequest failed:', e)
+        this.native.genericToast("settings.wallet-connect-request-error4", 5000);
+    }
 
-    // Because for now we don't close Essentials after handling wallet connect requests, we simply
-    // inform users to manually "alt tab" to return to the app they are coming from.
-    this.native.genericToast("settings.wallet-connect-popup", 2000);
+    await this.nav.exitCurrentContext();
   }
 }
