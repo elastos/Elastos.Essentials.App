@@ -250,7 +250,7 @@ export class CoinHomePage implements OnInit {
         if (updateAll) {
             // Must one by one.
             await this.subWallet.fetchNewestTransactions(TransactionListType.NORMAL),
-                await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
+            await this.subWallet.fetchNewestTransactions(TransactionListType.INTERNAL)
         } else {
             void this.subWallet.fetchNewestTransactions(this.transactionListType);
         }
@@ -275,6 +275,7 @@ export class CoinHomePage implements OnInit {
         // Update balance and get the latest transactions.
         await this.subWallet.update();
         await this.getStakedELA();
+        void this.initData();
     }
 
     async checkInternalTransactions() {
@@ -476,7 +477,7 @@ export class CoinHomePage implements OnInit {
             await this.storage.setVisit(true);
         }
 
-        void this.initData();
+        void this.updateWalletInfo();
         // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         setTimeout(() => {
             event.target.complete();
