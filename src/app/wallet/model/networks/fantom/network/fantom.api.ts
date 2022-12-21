@@ -11,7 +11,9 @@ export class FantomAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case FantomApiType.RPC: return 'https://rpcapi.fantom.network';
+        //   case FantomApiType.RPC: return 'https://rpcapi.fantom.network';
+        //   case FantomApiType.RPC: return 'https://rpc.ankr.com/fantom';
+          case FantomApiType.RPC: return 'https://rpc.ftm.tools';
           case FantomApiType.ETHERSCAN_API: return 'https://api.ftmscan.com/api';
           case FantomApiType.BLOCK_EXPLORER: return 'https://ftmscan.com';
           default:
