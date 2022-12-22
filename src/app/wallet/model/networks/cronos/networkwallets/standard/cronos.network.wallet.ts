@@ -1,9 +1,9 @@
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { StandardEVMNetworkWallet } from "../../../evms/networkwallets/standard/standard.evm.networkwallet";
-import { EtherscanTransactionProvider } from "../../../evms/tx-providers/etherscan.tx.provider";
+import { CronosTransactionProvider } from "../../tx-providers/cronos.transaction.provider";
 
 export class CronosNetworkWallet extends StandardEVMNetworkWallet<any> {
   protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
-    return new EtherscanTransactionProvider(this);
+    return new CronosTransactionProvider(this);
   }
 }

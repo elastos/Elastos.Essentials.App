@@ -1,9 +1,9 @@
 import { TransactionProvider } from "../../../../tx-providers/transaction.provider";
 import { LedgerEVMNetworkWallet } from "../../../evms/networkwallets/ledger/ledger.evm.networkwallet";
-import { EtherscanTransactionProvider } from "../../../evms/tx-providers/etherscan.tx.provider";
+import { CronosTransactionProvider } from "../../tx-providers/cronos.transaction.provider";
 
 export class CronosLedgerNetworkWallet extends LedgerEVMNetworkWallet<any> {
   protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
-    return new EtherscanTransactionProvider(this);
+    return new CronosTransactionProvider(this);
   }
 }
