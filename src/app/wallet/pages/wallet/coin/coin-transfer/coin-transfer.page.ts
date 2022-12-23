@@ -309,13 +309,14 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 // Setup page display
                 this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: this.subWalletId }));
 
-                this.toSubWallet = await this.getELASubwalletByID(StandardCoinName.ELA);
-
                 // Setup params for withdraw transaction
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
                 this.transaction = this.createWithdrawTransaction;
-                this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
 
+                this.toSubWallet = await this.getELASubwalletByID(StandardCoinName.ELA);
+                if (this.toSubWallet) {
+                    this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
+                }
                 this.gasLimit = (await (this.fromSubWallet as ElastosEVMSubWallet).estimateWithdrawTransactionGas(this.toAddress)).toString();
 
                 Logger.log('wallet', 'Transferring from..', this.fromSubWallet);
