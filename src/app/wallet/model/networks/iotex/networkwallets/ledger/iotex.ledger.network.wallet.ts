@@ -1,4 +1,4 @@
-import { lazyKavaImport } from "src/app/helpers/import.helper";
+import { from } from "@iotexproject/iotex-address-ts";
 import { GlobalTranslationService } from "src/app/services/global.translation.service";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
@@ -7,11 +7,11 @@ import { TransactionProvider } from "../../../../tx-providers/transaction.provid
 import { WalletAddressInfo } from "../../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../../evms/evm.network";
 import { EVMNetworkWallet } from "../../../evms/networkwallets/evm.networkwallet";
-import { KavaLedgerSafe } from "../../safes/kava.ledger.safe";
-import { KavaMainCoinSubwallet } from "../../subwallets/kava.subwallet";
-import { KavaTransactionProvider } from "../../tx-providers/kava.transaction.provider";
+import { IotexLedgerSafe } from "../../safes/iotex.ledger.safe";
+import { IoTeXMainCoinSubwallet } from "../../subwallets/iotex.subwallet";
+import { IoTeXChainTransactionProvider } from "../../tx-providers/iotex.transaction.provider";
 
-export class KavaLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<LedgerMasterWallet, WalletNetworkOptionsType> {
+export class IOTEXLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends EVMNetworkWallet<LedgerMasterWallet, WalletNetworkOptionsType> {
     constructor(
         masterWallet: LedgerMasterWallet,
         network: EVMNetwork,
@@ -22,7 +22,7 @@ export class KavaLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetw
         super(
             masterWallet,
             network,
-            new KavaLedgerSafe(masterWallet, network.getMainChainID()),
+            new IotexLedgerSafe(masterWallet, network.getMainChainID()),
             displayToken,
             mainSubWalletFriendlyName,
             averageBlocktime
@@ -30,7 +30,7 @@ export class KavaLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetw
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
-        this.mainTokenSubWallet = new KavaMainCoinSubwallet(
+        this.mainTokenSubWallet = new IoTeXMainCoinSubwallet(
             this,
             this.network.getEVMSPVConfigName(),
             this.mainSubWalletFriendlyName
@@ -40,7 +40,7 @@ export class KavaLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetw
     }
 
     protected createTransactionDiscoveryProvider(): TransactionProvider<any> {
-        return new KavaTransactionProvider(this);
+        return new IoTeXChainTransactionProvider(this);
     }
 
     public getAddresses(): WalletAddressInfo[] {
@@ -51,8 +51,8 @@ export class KavaLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetw
                 address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.EVM_CALL)
             },
             {
-                title: "Kava " + addressString,
-                address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.KAVA)
+                title: "IoTeX " + addressString,
+                address: this.getMainEvmSubWallet().getCurrentReceiverAddress(AddressUsage.IOTEX)
             }
         ];
     }
@@ -60,36 +60,21 @@ export class KavaLedgerNetworkWallet<WalletNetworkOptionsType extends WalletNetw
     // Override - Can convert kavaXXX to 0x
     public async convertAddressForUsage(address: string, usage: AddressUsage): Promise<string> {
         let addressTemp;
-        if (!address.startsWith('kava') && !address.startsWith('0x')) {
+        if (!address.startsWith('io') && !address.startsWith('0x')) {
             addressTemp = '0x' + address;
         } else {
             addressTemp = address;
         }
 
-        let isKavaAddress = false;
-        if (addressTemp.startsWith('kava')) {
-            isKavaAddress = true;
-        }
-
         if (usage === AddressUsage.EVM_CALL) {
-            if (isKavaAddress) {
-                const { utils } = await lazyKavaImport();
-                return utils.kavaToEthAddress(addressTemp);
-            } else {
-                return addressTemp
-            }
+            const addr = from(addressTemp);
+            return await addr.stringEth();
         }
         else if (usage === AddressUsage.DISPLAY_TRANSACTIONS) {
-            // The block explorer use evm address.
-            if (isKavaAddress) {
-                const { utils } = await lazyKavaImport();
-                return utils.kavaToEthAddress(addressTemp);
-            } else {
-                return addressTemp
-            }
-            // return utils.ethToKavaAddress(addressTemp);
+            const addr = from(addressTemp);
+            return await addr.string();
         }
         else
-            return addressTemp;
+            return await addressTemp;
     }
 }

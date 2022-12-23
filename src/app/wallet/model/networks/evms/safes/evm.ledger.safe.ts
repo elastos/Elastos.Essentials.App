@@ -7,6 +7,7 @@ import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
 import { LedgerAccountType } from "../../../ledger.types";
 import { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
+import { AddressUsage } from "../../../safes/addressusage";
 import { LedgerSafe } from "../../../safes/ledger.safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
@@ -16,7 +17,7 @@ import { EVMSafe } from "./evm.safe";
  * Safe specialized for EVM networks, with additional methods.
  */
 export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
-    private evmAddress = null;
+    protected evmAddress = null;
     private addressPath = '';
     private signedTx = null;
     private unsignedTx = null;
@@ -41,7 +42,7 @@ export class EVMLedgerSafe extends LedgerSafe implements EVMSafe {
         }
     }
 
-    public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
+    public getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): string[] {
         if (this.evmAddress) {
             return [this.evmAddress];
         }

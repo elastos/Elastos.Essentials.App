@@ -1,4 +1,3 @@
-import { Logger } from 'src/app/logger';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletNetworkOptions } from '../../../../masterwallets/wallet.types';
 import type { EVMNetwork } from '../../evm.network';
@@ -24,8 +23,6 @@ export abstract class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends Wa
             mainSubWalletFriendlyName,
             averageBlocktime
         );
-
-        Logger.warn('wallet', 'LedgerEVMNetworkWallet constructor:', this)
     }
 
     protected async prepareStandardSubWallets(): Promise<void> {
@@ -36,7 +33,5 @@ export abstract class LedgerEVMNetworkWallet<WalletNetworkOptionsType extends Wa
         );
         await this.mainTokenSubWallet.initialize();
         this.subWallets[this.network.getEVMSPVConfigName()] = this.mainTokenSubWallet;
-
-        Logger.warn('wallet', 'LedgerEVMNetworkWallet prepareStandardSubWallets:', this)
     }
 }
