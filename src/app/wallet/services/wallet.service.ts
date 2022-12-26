@@ -33,6 +33,9 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
 import { LedgerAccountType } from '../model/ledger.types';
@@ -723,6 +726,9 @@ export class WalletService {
         // Save this modification to our permanent local storage
         await this.localStorage.deleteMasterWallet(this.masterWallets[id].id);
 
+        // Delete cache.
+        this.deleteMasterWalletCache(this.masterWallets[id].id);
+
         // Destroy from our local model
         delete this.masterWallets[id];
 
@@ -751,6 +757,13 @@ export class WalletService {
                 this.goToLauncherScreen();
             }
         }
+    }
+
+    // Move to masterwallet?
+    // Delete all cache: balance, transactions, exttxinfo.
+    private deleteMasterWalletCache(masterWalletId: string) {
+        GlobalStorageService.instance.deleteDIDSettingsLocalStorageStartWithKey(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'cache_' + masterWalletId);
+        GlobalStorageService.instance.deleteDIDSettingsLocalStorageStartWithKey(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'cache_exttxinfo-' + masterWalletId);
     }
 
     public setHasPromptTransfer2IDChain() {
