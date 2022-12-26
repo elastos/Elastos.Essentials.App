@@ -17,7 +17,7 @@ export type CacheEntry<T> = {
  * - Adds or overwrites existing items by key.
  *
  * NOTE: This cache uses browser local storage, not ionic storage, to be faster, as we accept the data
- * can be lsot and rebuilt at any time.
+ * can be lost and rebuilt at any time.
  */
 export class TimeBasedPersistentCache<T extends JSONObject> {
   // List of items, sorted by time value.

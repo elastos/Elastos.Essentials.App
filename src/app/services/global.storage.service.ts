@@ -74,14 +74,30 @@ export class GlobalStorageService {
     let deletedEntries = 0;
     for (let i = localStorage.length - 1; i >= 0; i--) {
       let key = localStorage.key(i);
-      let item = localStorage.getItem(key);
-      if (item.startsWith(fullKey)) {
+      if (key.startsWith(fullKey)) {
         localStorage.removeItem(key);
         deletedEntries++;
       }
     }
 
     Logger.log("StorageService", "Deleted " + deletedEntries + " local storage settings entries for DID " + did + " for network template " + networkTemplate);
+  }
+
+  public deleteDIDSettingsLocalStorageStartWithKey(did: string, networkTemplate: string, keyPrefix: string) {
+    const networkKey = networkTemplate === 'MainNet' ? '' : ':' + networkTemplate;
+    const fullKey = did + networkKey + "_" + keyPrefix;
+
+    // Delete backward as we are changing the storage length while deleting
+    let deletedEntries = 0;
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      let key = localStorage.key(i);
+      if (key.startsWith(fullKey)) {
+        localStorage.removeItem(key);
+        deletedEntries++;
+      }
+    }
+
+    Logger.log("StorageService", "Deleted " + deletedEntries + " local storage settings entries for DID " + did + " for network template " + networkTemplate + " with key " + keyPrefix);
   }
 
   public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T, location: StorageLocation = "ionic"): Promise<void> {
