@@ -441,11 +441,12 @@ export class ProfileService extends GlobalService {
   }
 
   async getAddFriendShareableUrl(): Promise<string> {
-    let carrierAddress = await this.contactNotifier.getCarrierAddress();
     let addFriendUrl =
       "https://contact.web3essentials.io/addfriend?did=" +
       encodeURIComponent(this.didString);
-    addFriendUrl += "&carrier=" + carrierAddress;
+    let carrierAddress = await this.contactNotifier.getCarrierAddress();
+    if (carrierAddress)
+        addFriendUrl += "&carrier=" + carrierAddress;
 
     return addFriendUrl;
   }
