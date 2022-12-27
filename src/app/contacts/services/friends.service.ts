@@ -252,7 +252,9 @@ export class FriendsService {
           if (scannedUrl.pathname == "/addfriend") {
             let did = scannedUrl.searchParams.get("did");
             let carrierAddress = scannedUrl.searchParams.get("carrier");
-
+            if (carrierAddress === 'null') {
+                carrierAddress = null;
+            }
             void this.addContactByIntent(did, carrierAddress);
             scannedContentHandled = true;
           }
