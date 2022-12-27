@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Storage } from '@ionic/storage';
 import { Logger } from '../logger';
+import { GlobalServiceManager } from './global.service.manager';
 
 export type Preference<T> = {
   key: string;
@@ -100,7 +101,7 @@ export class GlobalStorageService {
     Logger.log("StorageService", "Deleted " + deletedEntries + " local storage settings entries for DID " + did + " for network template " + networkTemplate + " with key " + keyPrefix);
   }
 
-  public setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T, location: StorageLocation = "ionic"): Promise<void> {
+  public async setSetting<T>(did: string | null, networkTemplate: string | null, context: string, key: string, value: T, location: StorageLocation = "ionic"): Promise<void> {
     let fullKey = this.getFullStorageKey(did, networkTemplate, context, key);
 
     this.cache[fullKey] = JSON.stringify(value);
@@ -108,8 +109,20 @@ export class GlobalStorageService {
     // Don't await to save time. We have the local memory cache
     if (location === "ionic")
       void this.storage.set(fullKey, JSON.stringify(value)).then((res) => { }, (err) => { });
-    else if (location === "browserlocalstorage")
-      localStorage.setItem(fullKey, JSON.stringify(value));
+    else if (location === "browserlocalstorage") {
+        try {
+            localStorage.setItem(fullKey, JSON.stringify(value));
+        } catch (e) {
+            Logger.warn("StorageService", "localStorage.setItem exception:");
+            if (e.name == "QuotaExceededError") {
+                Logger.warn("StorageService", "QuotaExceededError, clear all localStorage");
+                localStorage.clear();
+                lottie.splashscreen.show();
+                await GlobalServiceManager.getInstance().emitUserSignOut();
+                window.location.href = "/";
+            }
+        }
+    }
 
     return;
   }
