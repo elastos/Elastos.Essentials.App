@@ -280,13 +280,12 @@ export class FriendsService {
       const targetContact: Contact = this.contacts.value.find(contact => contact.id === did);
       if (targetContact) {
         const promptName = this.getPromptName(targetContact);
-
-        if (carrierAddress) {
-          this.contacts[this.contacts.value.indexOf(targetContact)].notificationsCarrierAddress = carrierAddress;
+        if (carrierAddress && (carrierAddress != "null")) {
+          targetContact.notificationsCarrierAddress = carrierAddress;
           await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "contacts", "contacts", this.contacts.value);
           void this.globalNav.navigateRoot('contacts', '/contacts/friends/' + targetContact.id);
           void this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
-          Logger.log('contacts', 'Contact is already added but carrier address is updated', this.contacts[this.contacts.value.indexOf(targetContact)]);
+          Logger.log('contacts', 'Contact is already added but carrier address is updated', targetContact);
         } else {
           void this.native.genericToast(promptName + this.translate.instant('contacts.is-already-added'));
           void this.globalNav.navigateRoot('contacts', '/contacts/friends/' + targetContact.id);
@@ -641,10 +640,10 @@ export class FriendsService {
 
       if (targetContact) {
         if (this.pendingContact.carrierAddress) {
-          this.contacts[this.contacts.value.indexOf(targetContact)].carrierAddress = this.pendingContact.carrierAddress;
+          targetContact.carrierAddress = this.pendingContact.carrierAddress;
 
           // Modify contact in backup
-          this.events.publish("backup:contact", this.contacts[this.contacts.value.indexOf(targetContact)]);
+          this.events.publish("backup:contact", targetContact);
 
           void this.native.genericToast(promptName + this.translate.instant('contacts.did-carrier-added'));
           Logger.log('contacts', 'Contact is already added but carrier address is updated');
@@ -775,11 +774,11 @@ export class FriendsService {
   * If contact of next index doesn't exist, change active slide to previous index
   **/
   updateContactsSlide(contact: Contact) {
-    const replacedSlide = this.contacts[this.contacts.value.indexOf(contact) + 1];
+    const replacedSlide = this.contacts.value[this.contacts.value.indexOf(contact) + 1];
     if (replacedSlide) {
       this.activeSlide = replacedSlide
     } else {
-      this.activeSlide = this.contacts[this.contacts.value.indexOf(contact) - 1];
+      this.activeSlide = this.contacts.value[this.contacts.value.indexOf(contact) - 1];
     }
     Logger.log('contacts', 'Active slide after deletion', this.activeSlide);
   }
