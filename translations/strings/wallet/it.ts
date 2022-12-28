@@ -232,8 +232,8 @@ export const it = {
         * Contacts Component *
         **********************/
         "select-address": "Seleziona indirizzo",
-        "cryptonames": "Cryptonames",
-        "delete-contact-confirm-title": "Delete Cryptoname",
+        "cryptonames": "Wallet names",
+        "delete-contact-confirm-title": "Delete wallet name",
 
         /*******************************
         * Confirm Transaction Component *

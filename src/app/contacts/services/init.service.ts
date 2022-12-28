@@ -11,6 +11,9 @@ import { FriendsService } from './friends.service';
   providedIn: 'root'
 })
 export class ContactsInitService extends GlobalService {
+
+  private backupTimeout: NodeJS.Timeout = null;
+
   constructor(
     private intentService: IntentService,
     private friendsService: FriendsService,
@@ -32,10 +35,11 @@ export class ContactsInitService extends GlobalService {
     this.intentService.init();
 
     // Contacts backup/restore uses hive and DIDs a lot, that's slow.
-    runDelayed(() => this.backupService.init(), 10000);
+    this.backupTimeout = runDelayed(() => this.backupService.init(), 10000);
   }
 
   public onUserSignOut(): Promise<void> {
+    clearTimeout(this.backupTimeout);
     this.friendsService.stop();
     this.intentService.stop();
     this.backupService.stop();

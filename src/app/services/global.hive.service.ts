@@ -65,6 +65,8 @@ export class GlobalHiveService extends GlobalService {
   private subscription: Subscription = null;
   private availableHiveNodeProviders: string[] = null;
 
+  private retrieveVaultStatusTimeout: NodeJS.Timeout = null;
+
   constructor(
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
@@ -118,7 +120,7 @@ export class GlobalHiveService extends GlobalService {
     });
 
     // Wait a moment then check active user's vault status and get things ready to use.
-    runDelayed(() => {
+    this.retrieveVaultStatusTimeout = runDelayed(() => {
       void this.retrieveVaultStatus();
     }, 3000);
 
@@ -126,6 +128,7 @@ export class GlobalHiveService extends GlobalService {
   }
 
   async onUserSignOut(): Promise<void> {
+    clearTimeout(this.retrieveVaultStatusTimeout);
     await this.stop();
     return;
   }
