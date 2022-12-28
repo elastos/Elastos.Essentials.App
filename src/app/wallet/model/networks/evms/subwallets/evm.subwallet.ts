@@ -463,7 +463,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     let gasLimit = gasLimitArg;
     if (gasLimit === null) {
       // gasLimit = '100000';
-      let estimateGas = await this.estimateGasForPaymentTransaction(toAddress, '0x186a0111');
+      let estimateGas = await this.estimateTransferTransactionGas();
       if (estimateGas === -1) {
         Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
         return null;
@@ -518,14 +518,9 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return gasLimit;
   }
 
-  // value is hexadecimal string, eg: "0x1000"
-  private async estimateGasForPaymentTransaction(to: string, value: string) {
-    const address = await this.getAccountAddress();
-    return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, to, value, this.networkWallet.network.key);
-  }
-
   public async estimateTransferTransactionGas() {
-    return await 21000; // All EVM seem to use this amount of gas for native coin transfer
+    const address = await this.getAccountAddress();
+    return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, address, '0x186a0111', this.networkWallet.network.key);
   }
 
   /**
