@@ -47,6 +47,8 @@ export class WidgetsFeedsNewsService implements GlobalService {
     public channels = new BehaviorSubject<FeedsChannel[]>([]);
     public fetchingChannels = new BehaviorSubject<boolean>(false);
 
+    private fetchedSubscribedChannelsTimeout: NodeJS.Timeout = null;
+
     constructor(
         private globalStorageService: GlobalStorageService,
         private globalHiveService: GlobalHiveService,
@@ -61,10 +63,11 @@ export class WidgetsFeedsNewsService implements GlobalService {
         this.channels.next(this.channels.value);
 
         // Wait a moment after the boot as fetching feeds posts is a heavy process for now.
-        runDelayed(() => this.fetchedSubscribedChannels(), 10000);
+        this.fetchedSubscribedChannelsTimeout = runDelayed(() => this.fetchedSubscribedChannels(), 10000);
     }
 
     onUserSignOut(): Promise<void> {
+        clearTimeout(this.fetchedSubscribedChannelsTimeout);
         this.channels.next([]);
         return;
     }

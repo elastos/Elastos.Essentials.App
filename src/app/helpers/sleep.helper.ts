@@ -12,7 +12,7 @@ export function sleep(ms: number): Promise<void> {
  * This method can't be awaited, this is on purpose, to delay non mandatory actions for later.
  */
 export function runDelayed(method: () => unknown, delayMs: number) {
-    setTimeout(() => {
+    return setTimeout(() => {
         method();
     }, delayMs);
 }
