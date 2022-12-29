@@ -689,13 +689,25 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     checkValuesReady(showToast = true): boolean {
         // Check amount only when used (eg: no for NFT transfers)
         if (!this.isTransferTypeSendNFT()) {
+            let fee = null;
+            if (this.feeOfELA) {
+                fee = new BigNumber(this.feeOfELA);
+            }
+            else if (this.feeOfBTC) {
+                fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
+            }
+
             if (!this.sendMax) {
                 if (Util.isNull(this.amount) || this.amount <= 0) {
                     this.conditionalShowToast('wallet.amount-invalid', showToast);
                     return false;
                 }
 
-                const amountBigNumber = new BigNumber(this.amount || 0);
+                let amountBigNumber = new BigNumber(this.amount || 0);
+                if (fee) {
+                    amountBigNumber = amountBigNumber.plus(fee)
+                }
+
                 if (!this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(amountBigNumber)) {
                     this.conditionalShowToast('wallet.insufficient-balance', showToast);
                     return false;
@@ -703,6 +715,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
                 if (!this.networkWallet.subWallets[this.subWalletId].isAmountValid(amountBigNumber)) {
                     this.conditionalShowToast('wallet.amount-invalid', showToast);
+                    return false;
+                }
+            } else {
+                if (!this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(fee)) {
+                    this.conditionalShowToast('wallet.insufficient-balance', showToast);
                     return false;
                 }
             }
@@ -831,7 +848,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             memo: this.memo ? this.memo : null,
             tokensymbol: this.tokensymbol,
             fee: feeString,
-            gasLimit: this.gasLimit
+            gasLimit: this.gasLimit,
+            coinType: this.fromSubWallet.type
         }
 
         this.native.popup = await this.native.popoverCtrl.create({

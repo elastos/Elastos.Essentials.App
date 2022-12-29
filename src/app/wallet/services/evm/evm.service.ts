@@ -178,7 +178,11 @@ class ETHTransactionManager {
           }
           else {
             this.closePublicationLoader()
-            await PopupProvider.instance.ionicAlert('wallet.transaction-fail', result.message ? result.message : '');
+            let message = result.message ? result.message : '';
+            if (message.includes("insufficient funds for gas * price + value")) {
+                message = 'wallet.insufficient-balance';
+            }
+            await PopupProvider.instance.ionicAlert('wallet.transaction-fail', message);
           }
         }
         return result.txid;

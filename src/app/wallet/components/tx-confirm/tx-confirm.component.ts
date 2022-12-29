@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Config } from '../../config/Config';
+import { CoinType } from '../../model/coin';
 import { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { WalletUtil } from '../../model/wallet.util';
 import { CurrencyService } from '../../services/currency.service';
@@ -29,6 +30,7 @@ export class TxConfirmComponent implements OnInit {
 
   public gasPrice: string = null;
   public gasLimit: string = null;
+  private evmNativeFee = null;
   private mainTokenSubWallet: AnyMainCoinEVMSubWallet = null;
 
   public gasPriceGwei = '';
@@ -113,17 +115,19 @@ export class TxConfirmComponent implements OnInit {
   }
 
   confirm() {
-    this.native.popup.dismiss({
-      confirm: true,
-      gasPrice: this.gasPrice,
-      gasLimit: this.gasLimit,
-    });
+    if (this.isBalanceEnough()) {
+        this.native.popup.dismiss({
+          confirm: true,
+          gasPrice: this.gasPrice,
+          gasLimit: this.gasLimit,
+        });
+    }
   }
 
   private async getEVMTransactionfee() {
-    let fee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice)).dividedBy(this.mainTokenSubWallet.tokenAmountMulipleTimes);
-    let nativeFee = WalletUtil.getAmountWithoutScientificNotation(fee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
-    let currencyFee = this.mainTokenSubWallet.getAmountInExternalCurrency(new BigNumber(fee)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+    this.evmNativeFee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice)).dividedBy(this.mainTokenSubWallet.tokenAmountMulipleTimes);
+    let nativeFee = WalletUtil.getAmountWithoutScientificNotation(this.evmNativeFee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+    let currencyFee = this.mainTokenSubWallet.getAmountInExternalCurrency(this.evmNativeFee).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
     this.fee = `${nativeFee} (~ ${currencyFee})`;
   }
 
@@ -142,5 +146,23 @@ export class TxConfirmComponent implements OnInit {
     if (!this.gasLimit) return;
 
     await this.getEVMTransactionfee()
+  }
+
+  // Only for evm network.
+  private isBalanceEnough() {
+    if (!this.gasLimit) return true;
+
+    let totalCost = null;
+    if (this.txInfo.coinType == CoinType.ERC20) {
+        totalCost = this.evmNativeFee;
+    } else {
+        totalCost = this.evmNativeFee.plus(new BigNumber(this.txInfo.amount));
+    }
+
+    if (!this.mainTokenSubWallet.isBalanceEnough(totalCost)) {
+        this.native.toast_trans('wallet.insufficient-balance', 4000);
+        return false;
+    }
+    return true;
   }
 }
