@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
@@ -30,6 +30,8 @@ export class WidgetHolderComponent implements OnInit {
 
   public onWidgetSelected = new Subject<WidgetState>();
 
+  private editionModeSub: Subscription = null;
+
   constructor(
     public theme: GlobalThemeService,
     private widgetsService: WidgetsService,
@@ -40,7 +42,14 @@ export class WidgetHolderComponent implements OnInit {
   }
 
   ngOnInit() {
-    WidgetsServiceEvents.editionMode.subscribe(editionMode => this.editing = editionMode);
+    this.editionModeSub = WidgetsServiceEvents.editionMode.subscribe(editionMode => this.editing = editionMode);
+  }
+
+  ngOnDestroy(): void {
+    if (this.editionModeSub) {
+        this.editionModeSub.unsubscribe();
+        this.editionModeSub = null;
+    }
   }
 
   /* onWidgetInit(): Promise<void> {

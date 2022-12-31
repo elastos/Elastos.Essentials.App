@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { HiveManagerInitService } from 'src/app/hivemanager/services/init.service';
@@ -35,6 +36,7 @@ export class NotificationsPage implements OnInit {
   private modalAlreadyDismissed = false;
 
   public notifications: LauncherNotification[] = [];
+  private notificationsSub: Subscription = null;
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -53,7 +55,14 @@ export class NotificationsPage implements OnInit {
   }
 
   ngOnInit() {
-    this.notificationService.notifications.subscribe(notifications => this.notifications = notifications);
+    this.notificationsSub = this.notificationService.notifications.subscribe(notifications => this.notifications = notifications);
+  }
+
+  ngOnDestroy(): void {
+    if (this.notificationsSub) {
+        this.notificationsSub.unsubscribe();
+        this.notificationsSub = null;
+    }
   }
 
   ionViewWillEnter() {

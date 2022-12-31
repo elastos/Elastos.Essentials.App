@@ -6,6 +6,7 @@ import { connectivity } from '@elastosfoundation/elastos-connectivity-sdk-js';
 import { IonRouterOutlet, Platform } from '@ionic/angular';
 import { GlobalConfig } from './config/globalconfig';
 import { ElastosSDKHelper } from './helpers/elastossdk.helper';
+import { WidgetsService } from './launcher/widgets/services/widgets.service';
 import { Logger } from './logger';
 import { InternalElastosConnector } from './model/internalelastosconnector';
 import { GlobalCredentialToolboxService } from './services/credential-toolbox/global.credential-toolbox.service';
@@ -75,7 +76,8 @@ export class AppComponent {
     private globalSecurityService: GlobalSecurityService,
     private globalELAUtxoService: GlobalELAUtxoService,
     private globalNativeService: GlobalNativeService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
-    private firebase: FirebaseX
+    private firebase: FirebaseX,
+    private widgetsService: WidgetsService,
   ) { }
 
   ngOnInit() {
@@ -125,6 +127,8 @@ export class AppComponent {
       void this.globalELAUtxoService.init();
       // Init after globalNetworksService.init()
       void this.globalBTCService.init();
+
+      await this.widgetsService.init();
 
       // "DApps" initializations
       await this.globalAppBackgroundService.init();

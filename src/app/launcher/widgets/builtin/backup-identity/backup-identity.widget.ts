@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { DIDManagerService } from 'src/app/launcher/services/didmanager.service';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
@@ -16,6 +17,9 @@ export class BackupIdentityWidget extends WidgetBase implements OnInit, OnDestro
 
   public identityBackedUp = true;
 
+  private activeIdentityBackedUpSub: Subscription = null;
+  private editionModeSub: Subscription = null;
+
   constructor(
     public theme: GlobalThemeService,
     public didService: DIDManagerService,
@@ -27,10 +31,10 @@ export class BackupIdentityWidget extends WidgetBase implements OnInit, OnDestro
 
   ngOnInit() {
     // Watch identity backed up by user
-    this.didSessions.activeIdentityBackedUp.subscribe(identityBackedUp => this.identityBackedUp = identityBackedUp);
+    this.activeIdentityBackedUpSub = this.didSessions.activeIdentityBackedUp.subscribe(identityBackedUp => this.identityBackedUp = identityBackedUp);
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
-    WidgetsServiceEvents.editionMode.subscribe(editing => {
+    this.editionModeSub = WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
 
@@ -38,6 +42,14 @@ export class BackupIdentityWidget extends WidgetBase implements OnInit, OnDestro
   }
 
   ngOnDestroy(): void {
+    if (this.activeIdentityBackedUpSub) {
+        this.activeIdentityBackedUpSub.unsubscribe();
+        this.activeIdentityBackedUpSub = null;
+    }
+    if (this.editionModeSub) {
+        this.editionModeSub.unsubscribe();
+        this.editionModeSub = null;
+    }
   }
 
   backupIdentity() {

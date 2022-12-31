@@ -5,7 +5,9 @@ import moment from 'moment';
 import { Subject } from 'rxjs';
 import { unsafeRandomHex } from 'src/app/helpers/random.helper';
 import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -86,6 +88,18 @@ export class WidgetsService {
         /* void this.deleteContainerState("left");
         void this.deleteContainerState("right");
         void this.deleteContainerState("main"); */
+    }
+
+    init() {
+        GlobalServiceManager.getInstance().registerService(this);
+    }
+
+    public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    }
+
+    public async onUserSignOut(): Promise<void> {
+        // TODO: When is the best time to clean the componentsInstances?
+        this.componentsInstances = [];
     }
 
     public getAvailableBuiltInWidgets(): WidgetState[] {
@@ -490,6 +504,7 @@ export class WidgetsService {
      * Restores all containers to their original content
      */
     public async resetAllWidgets() {
+        this.componentsInstances = [];
         await this.resetWidgets("left");
         await this.resetWidgets("main");
         await this.resetWidgets("right");
@@ -503,7 +518,6 @@ export class WidgetsService {
                     return { containerName, widgetState };
             }
         }
-
-        return null;
+        return { containerName: null, widgetState: null};
     }
 }

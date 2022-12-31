@@ -1,11 +1,12 @@
 import {
-  animate, state,
-  style, transition, trigger
+    animate, state,
+    style, transition, trigger
 } from '@angular/animations';
 import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, NgZone, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import type { WidgetInstance } from 'src/app/launcher/widgets/services/widgets.service';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { Logger } from 'src/app/logger';
@@ -58,6 +59,10 @@ export class WidgetContainerComponent implements OnInit {
   private widgetsReadyToDisplay: { [widgetId: string]: boolean } = {}; // List of widgets ready to be displayed (they emited their ready to display event)
   public allWidgetsReadyToDisplay = false;
 
+  private editionModeSub: Subscription = null;
+  private onWidgetContainerContentResetSub: Subscription = null;
+  private droppedSub: Subscription = null;
+
   constructor(
     private zone: NgZone,
     public theme: GlobalThemeService,
@@ -76,12 +81,12 @@ export class WidgetContainerComponent implements OnInit {
 
       this.loadContainer();
 
-      WidgetsServiceEvents.editionMode.subscribe(editing => {
+      this.editionModeSub = WidgetsServiceEvents.editionMode.subscribe(editing => {
         this.cdkList.disabled = !editing;
         this.editing = editing;
       });
 
-      this.widgetsService.onWidgetContainerContentReset.subscribe(containerName => {
+      this.onWidgetContainerContentResetSub = this.widgetsService.onWidgetContainerContentReset.subscribe(containerName => {
         if (containerName === this.name) {
           this.onWidgetContentReset();
         }
@@ -89,6 +94,21 @@ export class WidgetContainerComponent implements OnInit {
     }
     else {
       this.allWidgetsReadyToDisplay = true; // In selection mode, don't bother with the "blink" problem
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.editionModeSub) {
+        this.editionModeSub.unsubscribe();
+        this.editionModeSub = null;
+    }
+    if (this.onWidgetContainerContentResetSub) {
+        this.onWidgetContainerContentResetSub.unsubscribe();
+        this.onWidgetContainerContentResetSub = null;
+    }
+    if (this.droppedSub) {
+        this.droppedSub.unsubscribe();
+        this.droppedSub = null;
     }
   }
 
@@ -111,22 +131,36 @@ export class WidgetContainerComponent implements OnInit {
         }
       }
 
-      for (let holder of this.holdersInstances) {
-        holder.instance.widgetComponent.onReadyToDisplay.subscribe(ready => {
-          this.zone.run(() => {
-            this.widgetsReadyToDisplay[holder.instance.widgetComponent.widgetState.id] = ready; // Widget not ready yet
+      if (this.holdersInstances.length === 0) {
+        this.allWidgetsReadyToDisplay = true;
+      } else {
+          for (let holder of this.holdersInstances) {
+            holder.instance.widgetComponent.onReadyToDisplay.subscribe(ready => {
+              this.zone.run(() => {
+                this.widgetsReadyToDisplay[holder.instance.widgetComponent.widgetState.id] = ready; // Widget not ready yet
 
-            // NOTE: settimeout to solve the "Expression has changed after it was checked" error
-            setTimeout(() => { this.checkAllWidgetsReady(); }, 0);
-          });
-        });
+                // NOTE: settimeout to solve the "Expression has changed after it was checked" error
+                setTimeout(() => { this.checkAllWidgetsReady(); }, 0);
+              });
+            });
+          }
       }
 
       this.cdkList.withItems(this.dragRefs);
       this.cdkList.disabled = true; // Initially disabled. Only allow moving items when in edition mode
 
+      if (this.droppedSub) {
+        this.droppedSub.unsubscribe();
+      }
+
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      this.cdkList.dropped.subscribe(async event => {
+      this.droppedSub = this.cdkList.dropped.subscribe(async event => {
+          if ((event.previousIndex == -1) || (event.currentIndex == -1)) {
+            //Just in case
+            Logger.warn('widget', 'dropped: wrong event,', event)
+            return;
+        }
+
         // Move on UI model
         this.container.move(this.container.get(event.previousIndex), event.currentIndex)
 
