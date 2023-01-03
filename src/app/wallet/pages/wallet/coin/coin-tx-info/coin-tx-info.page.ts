@@ -348,14 +348,16 @@ export class CoinTxInfoPage implements OnInit {
                 );
             }
 
-            this.txDetails.unshift(
-                {
-                    type: 'address',
-                    title: 'wallet.tx-info-receiver-address',
-                    value: this.transactionInfo.isCrossChain ? this.targetAddress : await this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
-                    show: true,
-                }
-            );
+            if (this.targetAddress !== null) {
+                this.txDetails.unshift(
+                    {
+                        type: 'address',
+                        title: 'wallet.tx-info-receiver-address',
+                        value: this.transactionInfo.isCrossChain ? this.targetAddress : await this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
+                        show: true,
+                    }
+                );
+            }
         }
         else { // Receving or move transaction
             // Sending address
@@ -453,7 +455,7 @@ export class CoinTxInfoPage implements OnInit {
     async getETHSCTransactionTargetAddres(transaction: EthTransaction) {
         let targetAddress = transaction.to;
         const withdrawContractAddress = (this.subWallet as ElastosEVMSubWallet).getWithdrawContractAddress();
-        if (transaction.to.toLowerCase() === withdrawContractAddress.toLowerCase()) {
+        if (targetAddress && (transaction.to.toLowerCase() === withdrawContractAddress.toLowerCase())) {
             targetAddress = await GlobalElastosAPIService.instance.getETHSCWithdrawTargetAddress(parseInt(transaction.blockNumber) + 6, transaction.hash);
             this.crossChainNetworkKey = 'elastos';
         }

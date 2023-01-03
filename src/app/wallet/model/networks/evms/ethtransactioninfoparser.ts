@@ -457,9 +457,15 @@ export class ETHTransactionInfoParser {
       default:
         Logger.log('wallet', 'Unhandled EVM contract method action:', methodAction)
         // Not handled before - return a generic transaction.
-        txInfo.operation = {
-          description: 'wallet.coin-op-contract-call'
-        };
+        if (txTo) {
+            txInfo.operation = {
+              description: 'wallet.coin-op-contract-call'
+            };
+        } else {
+            txInfo.operation = {
+              description: 'wallet.coin-op-contract-create'
+            };
+        }
     }
   }
 

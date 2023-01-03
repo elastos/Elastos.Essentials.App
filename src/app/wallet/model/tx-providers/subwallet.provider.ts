@@ -75,6 +75,11 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends AnySubW
       let providerTransactionInfo = this.getProviderTransactionInfo(newTransactions[i]);
 
       let cache = await this.getCache(providerTransactionInfo.cacheKey);
+      // In order to reduce the size of the cache, do not save useless data.
+      if ((newTransactions[i] as any).input) {
+        (newTransactions[i] as any).input = "";
+      }
+
       cache.set(providerTransactionInfo.cacheEntryKey, newTransactions[i], providerTransactionInfo.cacheTimeValue);
 
       modifiedCaches.set(providerTransactionInfo.cacheKey, cache); // Same key, same cache, but we want to save each cache only once
