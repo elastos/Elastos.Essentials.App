@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import { Logger } from '../logger';
-import { AddressResult, BalanceHistory, BTCTransaction, BTCUTXO } from '../wallet/model/btc.types';
+import { AddressResult, BalanceHistory, BTCNetworkInfoResult, BTCTransaction, BTCUTXO } from '../wallet/model/btc.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
@@ -158,6 +158,23 @@ export class GlobalBTCRPCService {
             return await this.globalJsonRPCService.httpPost(rpcApiUrl, param, "btc");
         } catch (err) {
             Logger.error('GlobalBTCRPCService', 'sendrawtransaction error:', err);
+        }
+        return null;
+    }
+
+    public async getnetworkinfo(rpcApiUrl: string): Promise<BTCNetworkInfoResult> {
+        const param = {
+            'API_key': this.apikey,
+            method: 'getnetworkinfo',
+            params: [],
+            "jsonrpc": "2.0",
+            "id": "1",
+        };
+
+        try {
+            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param, "btc");
+        } catch (err) {
+            Logger.error('GlobalBTCRPCService', 'getnetworkinfo error:', err);
         }
         return null;
     }

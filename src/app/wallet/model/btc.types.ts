@@ -94,3 +94,25 @@ export type BTCTxData = {
   Data?: string;
   TxHash?: string;
 }
+
+/**
+ * Result of networkinfo
+ */
+export type BTCNetworkInfoResult = {
+    version: number;
+    subversion: string;
+    protocolversion: number;
+    localservices: string;
+    localservicesnames: string[];
+    localrelay: boolean;
+    timeoffset: number;
+    networkactive: number;
+    connections: number;
+    connections_in: number;
+    connections_out: number;
+    networks: any[];
+    relayfee: number; // 0.00001
+    incrementalfee: number;
+    localaddresses: any[];
+    warnings: string;
+  }

@@ -87,6 +87,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
                 return await "wallet.coin-op-received-token";
             case TransactionDirection.SENT:
                 return "wallet.coin-op-sent-token";
+            case TransactionDirection.MOVED:
+                return "wallet.coin-op-transfered-token";
             default:
                 return "Invalid";
         }
@@ -225,20 +227,22 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             throw new Error("Failed to estimatesmartfee");
         }
 
-        // TODO: Normally the data less than 1KB.
-        // Fees are related to input and output.
-        let fee = Util.accMul(feerate, Config.SATOSHI);
-
+        let fee;
         let utxo: BTCUTXO[] = [];
         let toAmount = 0;
         if (amount.eq(-1)) {
             utxo = await this.getAvailableUtxo(-1);
             if (!utxo) return null;
 
-            let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 1, feerate)
+            let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate);
+            // let networkInfo = await GlobalBTCRPCService.instance.getnetworkinfo(this.rpcApiUrl);
+            // if (feeBTC < networkInfo.relayfee) {
+            //     feeBTC = networkInfo.relayfee;
+            // }
             fee = Util.accMul(feeBTC, Config.SATOSHI);
 
             toAmount = Math.floor(this.balance.minus(fee).toNumber());
+
         } else {
             toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
             utxo = await this.getAvailableUtxo(toAmount + fee);
