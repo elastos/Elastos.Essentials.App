@@ -14,9 +14,12 @@
             font-weight: 600;
             line-height: 1.46;
 
-            img {
-                height: 22px;
-                width: 22px;
+            .img {
+                border-radius: 50%;
+                overflow: hidden;
+
+                height: 40px;
+                width: 40px;
             }
         }
 
