@@ -347,7 +347,7 @@ export class HomePage {
 
     // Exchange source and dest
     let tmpToken = this.selectedSourceToken;
-    this.selectedSourceToken = this.selectedDestinationToken;
+    this.selectedSourceToken = (this.selectedDestinationToken && this.selectedDestinationToken.amount) ? this.selectedDestinationToken : null;
     this.selectedDestinationToken = tmpToken;
 
     // Reset amount
