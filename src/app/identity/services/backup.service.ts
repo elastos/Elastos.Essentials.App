@@ -206,7 +206,7 @@ export class BackupService extends GlobalService {
         Logger.error("identitybackup", "Catched exception during backup service initialization:");
         Logger.error("identitybackup", e);
       }
-    });
+    }).catch((e) => Logger.error("identitybackup", "Catchd exception during getActiveUserVaultServices:", e));
   }
 
   async addCredentialEntryLocally(credential: DIDPlugin.VerifiableCredential) {
