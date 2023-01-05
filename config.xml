@@ -41,7 +41,6 @@
         <preference name="android-minSdkVersion" value="24" />
         <preference name="SplashScreenDelay" value="1" />
         <preference name="AndroidWindowSplashScreenBackground" value="#000000" />
-        <preference name="MixedContentMode" value="2" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />
         </edit-config>

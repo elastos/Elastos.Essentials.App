@@ -1,2 +1,2 @@
-<img [class.hidden]="!initialLoadCompleted || loadFailed" [src]="srcPath" (load)="onLoad()" (error)="onError()"/>
+<img [class.hidden]="!initialLoadCompleted || loadFailed" [src]="srcPath" (load)="onLoad()" (error)="onError()"  referrerpolicy="no-referrer"/>
 <div class="inline-svg" *ngIf="!initialLoadCompleted || loadFailed" [inlineSVG]="defaultPath"></div>
