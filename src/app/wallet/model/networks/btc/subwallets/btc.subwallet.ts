@@ -244,6 +244,9 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             toAmount = Math.floor(this.balance.minus(fee).toNumber());
 
         } else {
+            // In order to estimate how much utxo is needed
+            fee = Util.accMul(feerate, Config.SATOSHI);
+
             toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
             utxo = await this.getAvailableUtxo(toAmount + fee);
             if (!utxo) return null;

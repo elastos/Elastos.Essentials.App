@@ -10,7 +10,7 @@ export const fr = {
         'provide-name': 'Veuillez nommer l\'application',
         'provide-mnemonic': 'Veuillez fournir un DID d\'application existant, ou en créer un nouveau',
         'create-new-app': 'Créer une Application',
-        'create-app-message': 'Creating a new app means creating a new permanent DID for it. This DID must be saved carefully because this is the only way to upgrade your application in the future. To learn how to build an app, visit https://developer.elastos.org',
+        'create-app-message': 'Creating a new app means creating a new permanent DID for it. This DID must be saved carefully because this is the only way to upgrade your application in the future. To learn how to build an app, visit https://docs.elastos.net',
         'app-name': 'Nom de l\'application',
         'create-did': 'Créer une nouveau DID',
         'import-did': 'Importer un DID existant',

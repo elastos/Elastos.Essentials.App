@@ -10,7 +10,7 @@ export const zh = {
         'provide-name': '请提供您的应用名称',
         'provide-mnemonic': '请提供现有的应用程序 DID 助记词，否则请创建新的助记词',
         'create-new-app': '创建新的应用',
-        'create-app-message': '创建一个新的应用程序意味着为其创建一个新的永久 DID。必须仔细保存此 DID，因为这是将来升级应用程序的唯一方法。要了解如何构建应用程序，请访问https://developer.elastos.org',
+        'create-app-message': '创建一个新的应用程序意味着为其创建一个新的永久 DID。必须仔细保存此 DID，因为这是将来升级应用程序的唯一方法。要了解如何构建应用程序，请访问https://docs.elastos.net',
         'app-name': '应用名称',
         'create-did': '创建一个新的 DID',
         'import-did': ' 导入已有的 DID',
