@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
+import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { Config } from '../../../../../../config/Config';
@@ -73,7 +74,9 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
         to: this.withdrawContractAddress,
         value: '1000000000000000000',
       }
-      estimateGas = await this.estimateGas(tx);
+      // Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
+      estimateGas = Util.ceil(await this.estimateGas(tx), 100);
+
     } catch (error) {
         Logger.error('wallet', 'estimateWithdrawTransactionGas error:', error);
     }

@@ -153,7 +153,7 @@ export class TxConfirmComponent implements OnInit {
     if (!this.gasLimit) return true;
 
     let totalCost = null;
-    if (this.txInfo.coinType == CoinType.ERC20) {
+    if ((this.txInfo.coinType == CoinType.ERC20) || this.txInfo.sendAll) {
         totalCost = this.evmNativeFee;
     } else {
         totalCost = this.evmNativeFee.plus(new BigNumber(this.txInfo.amount));

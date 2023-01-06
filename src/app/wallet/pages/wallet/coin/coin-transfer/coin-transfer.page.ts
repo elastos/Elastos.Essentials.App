@@ -718,7 +718,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
             } else {
-                if (!this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(fee)) {
+                if (fee && !this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(fee)) {
                     this.conditionalShowToast('wallet.insufficient-balance', showToast);
                     return false;
                 }
@@ -844,6 +844,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             transferTo: this.toAddress,
             toChainId: this.transferType === TransferType.RECHARGE ? this.coinTransferService.toSubWalletId : null,
             amount: this.amount == -1 ? this.networkWallet.subWallets[this.subWalletId].getDisplayBalance() : this.amount,
+            sendAll: this.amount == -1 ? true : false,
             precision: this.fromSubWallet.tokenDecimals,
             memo: this.memo ? this.memo : null,
             tokensymbol: this.tokensymbol,
