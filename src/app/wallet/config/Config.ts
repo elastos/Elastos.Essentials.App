@@ -40,7 +40,7 @@ export class Config {
 
     public static SATOSHI = 100000000; // Number of satoshi per BTC.
 
-    public static BLOCKCHAIN_URL = 'https://blockchain.elastos.org/';
+    public static BLOCKCHAIN_URL = 'https://blockchain.elastos.io/';
 
     public static IDCHAIN_DEPOSIT_ADDRESS = "XKUh4GLhFJiqAMTF6HyWQrV9pK9HcGUdfJ";
 
