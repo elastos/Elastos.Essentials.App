@@ -39,6 +39,7 @@ import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.typ
 import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
+import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -274,7 +275,7 @@ export class EscTransactionPage implements OnInit {
    *
    * Input values in "payloadParam" are in WEI
    */
-  public getTotalTransactionCostInCurrency(): { totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string } {
+  public getTotalTransactionCostInCurrency(): { totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string, currencyFee: string } {
     let weiToDisplayCurrencyRatio = new BigNumber("1000000000000000000");
 
     let gas = new BigNumber(this.gasLimit);
@@ -283,10 +284,13 @@ export class EscTransactionPage implements OnInit {
     let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
     let total = currencyValue.plus(fees);
 
+    let currencyFee = this.evmSubWallet.getAmountInExternalCurrency(fees).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+
     // Logger.log('wallet', "gasPrice", gasPrice.toFixed())
     // Logger.log('wallet', "gas", gas.toFixed())
     // Logger.log('wallet', "currencyValue", currencyValue.toFixed())
     // Logger.log('wallet', "fees/gas", fees.toFixed());
+    // Logger.log('wallet', "currencyFee", currencyFee);
     // Logger.log('wallet', "total", total.toFixed());
 
     return {
@@ -295,7 +299,8 @@ export class EscTransactionPage implements OnInit {
       valueAsBigNumber: currencyValue,
       value: currencyValue.toFixed(),
       feesAsBigNumber: fees,
-      fees: fees.toFixed()
+      fees: fees.toFixed(),
+      currencyFee: currencyFee
     }
   }
 
