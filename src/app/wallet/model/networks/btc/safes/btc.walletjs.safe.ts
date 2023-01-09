@@ -14,6 +14,7 @@ import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { BTCSafe } from "./btc.safe";
 
 const DefaultDerivationPath = "44'/0'/0'/0/0";
+const DUST = 550; // TODO: How to calculate the dust value?
 
 export class BTCWalletJSSafe extends Safe implements BTCSafe {
     private btcAddress = null;
@@ -117,6 +118,10 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         Logger.log('wallet', 'BTCWalletJSSafe signTransaction ', rawTransaction)
 
         let keypair = await this.getKeyPair(DefaultDerivationPath, true);
+        if (!keypair) {
+            // User canceled the password
+            return signTransactionResult;
+        }
 
         const psbt = new BTC.Psbt({ network: this.btcNetwork });
 
@@ -137,8 +142,13 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
         // change
         let changeAmount = totalAmount - rawTransaction.outputs[0].Amount - rawTransaction.fee;
-        psbt.addOutput({address: this.btcAddress, value: changeAmount});
         Logger.log('wallet', 'BTCWalletJSSafe changeAmount ', changeAmount)
+        if (changeAmount >= DUST) {
+            psbt.addOutput({address: this.btcAddress, value: changeAmount});
+        } else {
+            // Bitcoin Core considers a transaction output to be dust, when its value is lower than the cost of spending it at the dustRelayFee rate.
+            Logger.log('wallet', 'BTCWalletJSSafe changeAmount too small, dust')
+        }
 
         psbt.signAllInputs(keypair);
         psbt.finalizeAllInputs();
