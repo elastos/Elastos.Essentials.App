@@ -29,6 +29,7 @@ import { LauncherModule } from './launcher/module';
 import { Logger } from './logger';
 import { ScannerInitModule } from './scanner/init.module';
 import { GlobalNativeService } from './services/global.native.service';
+import { GlobalServiceManager } from './services/global.service.manager';
 import { SettingsInitModule } from './settings/init.module';
 import { CRCouncilVotingInitModule } from './voting/crcouncilvoting/init.module';
 import { CRProposalVotingInitModule } from './voting/crproposalvoting/init.module';
@@ -74,10 +75,31 @@ export class SentryErrorHandler implements ErrorHandler {
     return false;
   }
 
+    // Some dapps use localStorage.
+    private handleQuotaExceededError(error) {
+        let stringifiedError = "" + error;
+        if (stringifiedError.indexOf("QuotaExceededError") >= 0) {
+            Logger.warn("Sentry", "QuotaExceededError, clear all localStorage");
+            localStorage.clear();
+            lottie.splashscreen.show();
+            void GlobalServiceManager.getInstance().emitUserSignOut();
+            window.location.href = "/";
+            return true;
+        }
+
+        return false;
+    }
+
   handleError(error) {
     if (this.shouldHandleAsSilentError(error)) {
       Logger.warn("Sentry", "Globally catched exception (silently):", error);
       return;
+    }
+
+    // In case of
+    if (this.handleQuotaExceededError(error)) {
+        Logger.warn("Sentry", "Globally catched exception (QuotaExceededError):", error);
+        return;
     }
 
     Logger.error("Sentry", "Globally catched exception:", error);
