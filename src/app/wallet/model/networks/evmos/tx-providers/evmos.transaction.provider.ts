@@ -1,19 +1,19 @@
 import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
-import { EtherscanEVMSubWalletInternalTransactionProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.internaltx.provider";
-import { EtherscanEVMSubWalletProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.provider";
-import { EtherscanEVMSubWalletTokenProvider, FetchMode } from "../../evms/tx-providers/etherscan.token.subwallet.provider";
+import { CovalentEvmSubWalletProvider } from "../../evms/tx-providers/covalent.evm.subwallet.provider";
+import { CovalentSubWalletTokenProvider } from "../../evms/tx-providers/covalent.token.subwallet.provider";
 import { EVMTransactionProvider } from "../../evms/tx-providers/evm.transaction.provider";
 
 export class EvmosTransactionProvider extends EVMTransactionProvider {
-  protected createEVMSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.mainProvider = new EtherscanEVMSubWalletProvider(this, mainCoinSubWallet);
-  }
+    protected createEVMSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
+        this.mainProvider = new CovalentEvmSubWalletProvider(this, mainCoinSubWallet);
+    }
 
-  protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.Compatibility1);
-  }
+    protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
+        this.tokenProvider = new CovalentSubWalletTokenProvider(this, mainCoinSubWallet);
+    }
 
-  protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.internalTXProvider = new EtherscanEVMSubWalletInternalTransactionProvider(this, mainCoinSubWallet);
-  }
+    protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
+        // Not implemented
+        this.internalTXProvider = null;
+    }
 }

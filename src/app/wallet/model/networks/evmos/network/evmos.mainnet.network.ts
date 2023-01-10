@@ -24,6 +24,6 @@ export class EvmosMainNetNetwork extends EvmosBaseNetwork {
     this.builtInCoins = [
     ];
 
-    this.averageBlocktime = 5;
+    this.averageBlocktime = 7;
   }
 }
