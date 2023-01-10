@@ -65,17 +65,18 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
   public async estimateWithdrawTransactionGas(toAddress: string) {
     const ethscWithdrawContract = await this.getWithdrawContract()
 
-    const method = ethscWithdrawContract.methods.receivePayload(toAddress, '1000000000000000000', Config.ETHSC_WITHDRAW_GASPRICE);
-    let estimateGas = 28100;
+    const method = ethscWithdrawContract.methods.receivePayload(toAddress, '100000000000000000000', Config.ETHSC_WITHDRAW_GASPRICE);
+    let estimateGas = 30000;
     try {
       // Can not use method.estimateGas(), must set the "value"
       let tx = {
         data: method.encodeABI(),
         to: this.withdrawContractAddress,
-        value: '1000000000000000000',
+        value: '100000000000000000000',
       }
+      let tempGasLimit = await this.estimateGas(tx);
       // Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
-      estimateGas = Util.ceil(await this.estimateGas(tx), 100);
+      estimateGas = Util.ceil(tempGasLimit * 1.5, 100);
 
     } catch (error) {
         Logger.error('wallet', 'estimateWithdrawTransactionGas error:', error);
@@ -94,7 +95,9 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
 
     let gasLimit = gasLimitArg;
     if (gasLimit === null) {
-      gasLimit = '100000';
+    //   gasLimit = '100000';
+      let estimateGas = await this.estimateWithdrawTransactionGas(toAddress);
+      gasLimit = estimateGas.toString();
     }
 
     // Contract:
@@ -107,10 +110,7 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
     // }
     // condition: _amount % 10000000000 == 0 && _amount.sub(_fee) >= _fee
     if (toAmount === -1) {
-      let estimateGas = await this.estimateWithdrawTransactionGas(toAddress);
-      gasLimit = estimateGas.toString();
-
-      let fee = new BigNumber(estimateGas).multipliedBy(new BigNumber(gasPrice)).dividedBy(this.tokenAmountMulipleTimes);
+      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice)).dividedBy(this.tokenAmountMulipleTimes);
       toAmount = this.balance.dividedBy(this.tokenAmountMulipleTimes).minus(fee).toNumber();
       if (toAmount <= 0)
         return null;

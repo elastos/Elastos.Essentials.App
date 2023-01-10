@@ -462,15 +462,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     let gasLimit = gasLimitArg;
     if (gasLimit === null) {
-      // gasLimit = '100000';
-      let estimateGas = await this.estimateTransferTransactionGas();
-      if (estimateGas === -1) {
-        Logger.warn('wallet', 'createPaymentTransaction can not estimate gas');
-        return null;
-      }
-
-      // '* 1.5':Make sue the gaslimit is big enough.
-      gasLimit = Util.ceil(estimateGas * 1.5).toString();
+        gasLimit = (await this.estimateTransferTransactionGas()).toString();
     }
 
     if (amount.eq(-1)) {//-1: send all.
@@ -519,8 +511,16 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async estimateTransferTransactionGas() {
-    const address = await this.getAccountAddress();
-    return await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, address, '0x186a0111', this.networkWallet.network.key);
+    let gasLimit = 100000;// Default value
+    try {
+        const address = await this.getAccountAddress();
+        let tempGasLimit = await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, address, '0x186a0111', this.networkWallet.network.key);
+        gasLimit = Util.ceil(tempGasLimit * 1.5, 100);
+    }
+    catch (e) {
+        Logger.warn('wallet', 'Failed to eth_estimateGas:', e);
+    }
+    return gasLimit
   }
 
   /**
