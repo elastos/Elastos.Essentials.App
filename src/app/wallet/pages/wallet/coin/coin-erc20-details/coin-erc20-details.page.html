@@ -4,7 +4,7 @@
     <div class="icon-container">
       <div class="inline-svg" inlineSVG="assets/wallet/tx/ethereum.svg"></div>
     </div>
-    <div class="coinTitle">{{ coin.getDescription() }}</div>
+    <div *ngIf="coin" class="coinTitle">{{ coin.getDescription() }}</div>
     <div *ngIf="contractAddress" class="qrcode-container">
       <qrcode [qrdata]="contractAddress" [width]="200"></qrcode>
     </div>

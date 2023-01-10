@@ -18,7 +18,6 @@ import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { WalletEditionService } from '../../../../services/walletedition.service';
 
 @Component({
     selector: 'app-coin-earn',
@@ -46,7 +45,6 @@ export class CoinEarnPage implements OnInit {
         private walletManager: WalletService,
         private swapService: SwapService,
         public currencyService: CurrencyService,
-        private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {

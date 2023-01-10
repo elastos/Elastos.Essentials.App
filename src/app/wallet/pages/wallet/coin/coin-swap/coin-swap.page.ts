@@ -17,7 +17,6 @@ import { UiService } from 'src/app/wallet/services/ui.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { WalletEditionService } from '../../../../services/walletedition.service';
 
 @Component({
     selector: 'app-coin-swap',
@@ -44,7 +43,6 @@ export class CoinSwapPage implements OnInit {
         private walletManager: WalletService,
         public currencyService: CurrencyService,
         private swapService: SwapService,
-        private walletEditionService: WalletEditionService,
         private translate: TranslateService,
         public theme: GlobalThemeService
     ) {

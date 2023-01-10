@@ -45,8 +45,9 @@ export class CoinErc20DetailsPage implements OnInit {
   ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
+      let masterWalletId = navigation.extras.state.masterWalletId;
       let coinId = navigation.extras.state.coinId;
-      this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.walletEditionService.modifiedMasterWalletId);
+      this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
       this.network = <EVMNetwork>this.networkWallet.network;
       this.coin = <ERC20Coin>this.network.getCoinByID(coinId);
       this.subWallet = this.networkWallet.getSubWallet(this.coin.getID());
