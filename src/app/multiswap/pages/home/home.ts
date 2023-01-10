@@ -147,8 +147,11 @@ export class HomePage {
     // No on going transfer? Prepare for a new one
     if (!this.activeTransfer) {
       Logger.log("multiswap", "No existing transfer found");
-      await this.prepareForNewTransfer();
-      await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
+      // In case of no master wallet.
+      if (this.walletService.activeMasterWalletId) {
+          await this.prepareForNewTransfer();
+          await this.loadWalletAndAddress(this.walletService.activeMasterWalletId, <EVMNetwork>this.networkService.activeNetwork.value);
+      }
     }
     else {
       Logger.log("multiswap", "Existing transfer, restoring it", this.activeTransfer);

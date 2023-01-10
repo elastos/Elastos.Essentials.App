@@ -138,17 +138,19 @@ export class TokenChooserComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Get network wallets for all displayed networks
-    let networkWalletPromises: Promise<AnyNetworkWallet>[] = [];
-    for (let network of this.networksToShowInList) {
-      networkWalletPromises.push(this.getOrCreateNetworkWallet(this.masterWallet, network).then(networkWallet => {
-        this.networkWallets.push(<AnyEVMNetworkWallet>networkWallet);
+    if (this.masterWallet) {
+        // Get network wallets for all displayed networks
+        let networkWalletPromises: Promise<AnyNetworkWallet>[] = [];
+        for (let network of this.networksToShowInList) {
+          networkWalletPromises.push(this.getOrCreateNetworkWallet(this.masterWallet, network).then(networkWallet => {
+            this.networkWallets.push(<AnyEVMNetworkWallet>networkWallet);
 
-        // Start updating tokens as each wallet gets ready
-        void this.updateNetworkWalletTokens(networkWallet);
+            // Start updating tokens as each wallet gets ready
+            void this.updateNetworkWalletTokens(networkWallet);
 
-        return networkWallet;
-      }));
+            return networkWallet;
+          }));
+        }
     }
   }
 

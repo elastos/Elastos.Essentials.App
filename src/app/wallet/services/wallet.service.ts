@@ -175,6 +175,7 @@ export class WalletService {
         Logger.log('wallet', "Wallet service is stopping");
         await this.terminateActiveNetworkWallets();
         this.activeNetworkWallet.next(null);
+        this.activeMasterWalletId = null;
 
         this.networkService.resetPriorityNetworkChangeCallback();
 
@@ -750,10 +751,12 @@ export class WalletService {
                     this.native.setRootRouter("/wallet/wallet-home");
                 } else {
                     this.activeNetworkWallet.next(null);
+                    this.activeMasterWalletId = null;
                     this.goToLauncherScreen();
                 }
             } else {
                 this.activeNetworkWallet.next(null);
+                this.activeMasterWalletId = null;
                 this.goToLauncherScreen();
             }
         }
