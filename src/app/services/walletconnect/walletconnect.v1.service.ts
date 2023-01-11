@@ -444,7 +444,7 @@ export class WalletConnectV1Service extends GlobalService {
 
     let connector: WalletConnect = null;
     let isRejectInitiatingConnector = false;
-    if (connectorKey && (connectorKey != this.initiatingConnector.key)) {
+    if (connectorKey && (connectorKey != this.initiatingConnector?.key)) {
       // We are rejecting a from a "session request" screen. The connector is already in our
       // connectors list and it's not a "initiatingconnector" any more.
       // We delete this connector from our list.
