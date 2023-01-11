@@ -443,7 +443,8 @@ export class WalletConnectV1Service extends GlobalService {
     Logger.log("walletconnectv1", "Rejecting session request", this.initiatingConnector);
 
     let connector: WalletConnect = null;
-    if (connectorKey) {
+    let isRejectInitiatingConnector = false;
+    if (connectorKey && (connectorKey != this.initiatingConnector.key)) {
       // We are rejecting a from a "session request" screen. The connector is already in our
       // connectors list and it's not a "initiatingconnector" any more.
       // We delete this connector from our list.
@@ -455,7 +456,7 @@ export class WalletConnectV1Service extends GlobalService {
     }
     else {
       connector = this.initiatingConnector;
-      this.initiatingConnector = null;
+      isRejectInitiatingConnector = true;
     }
 
     // Reject Session
@@ -486,6 +487,8 @@ export class WalletConnectV1Service extends GlobalService {
       /* this.connectors.delete(connectorKey);
       this.walletConnectSessionsStatus.next(this.connectors);
       void this.deleteSession(connector.session); */
+
+      if (isRejectInitiatingConnector) this.initiatingConnector = null;
     }
   }
 
