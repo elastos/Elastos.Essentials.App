@@ -12,7 +12,6 @@ import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService } from '../../services/stake.service';
 
 @Component({
@@ -34,23 +33,17 @@ export class UnstakePage {
         public stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
-        public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNative: GlobalNativeService,
         public zone: NgZone,
     ) {
-
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('staking.unstake'));
 
         this.maxStake = this.stakeService.votesRight.minRemainVoteRight;
-    }
-
-    ionViewWillLeave() {
-
     }
 
     async unstake() {

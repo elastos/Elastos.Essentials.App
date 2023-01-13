@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
-import { Subscription } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -19,7 +18,6 @@ export class ProposalService {
     public allResults: ProposalSearchResult[] = [];
     public allSearchResults: ProposalSearchResult[] = [];
     private pageNumbersLoaded = 0;
-    private subscription: Subscription = null;
     public blockWaitingDict = {};
     public currentProposal: ProposalDetails = null;
 
@@ -32,22 +30,6 @@ export class ProposalService {
     ) { }
 
     init() {
-
-    }
-
-    public avatarList = {
-        "Sunnyfenghan": "https://api.elastos.io/images/SunnyFengHan.png",
-        "Donald Bullers": "https://api.elastos.io/images/DonaldBullers.png",
-        "Elation Studios": "https://api.elastos.io/images/ElationStudios.png",
-        "Mark Xing": "https://api.elastos.io/images/MarkXing.png",
-        "Brittany Kaiser": "https://api.elastos.io/images/BrittanyKaiser.png",
-        "Ryan | Starfish Labs": "https://api.elastos.io/images/Starfish.png",
-        "SJun Song": "https://api.elastos.io/images/SjunSong.png",
-        "Rebecca Zhu": "https://api.elastos.io/images/RebeccaZhu.png",
-        "The Strawberry Council": "https://api.elastos.io/images/TheStrawberryCouncil.png",
-        "Zhang Feng": "https://api.elastos.io/images/ZhangFeng.png",
-        "Jingyu Niu": "https://api.elastos.io/images/NiuJingyu.png",
-        "Orchard Trinity": "https://api.elastos.io/images/Orchard.png",
     }
 
     public stop() {

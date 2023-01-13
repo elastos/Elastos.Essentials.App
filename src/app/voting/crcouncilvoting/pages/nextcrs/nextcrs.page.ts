@@ -8,7 +8,6 @@ import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from "src/app/voting/services/vote.service";
-import { WalletService } from "src/app/wallet/services/wallet.service";
 import { CRCouncilService } from "../../services/crcouncil.service";
 
 @Component({
@@ -31,7 +30,6 @@ export class NextCRsPage implements OnInit {
         private globalNav: GlobalNavService,
         public theme: GlobalThemeService,
         public popupProvider: GlobalPopupService,
-        private walletManager: WalletService,
         public voteService: VoteService,
         public translate: TranslateService
     ) {

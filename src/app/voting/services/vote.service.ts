@@ -436,7 +436,6 @@ export class VoteService implements GlobalService {
     }
 
     async getConfirmCount(txid: string): Promise<number> {
-        //Get ower info
         const param = {
             method: 'getrawtransaction',
             params: {

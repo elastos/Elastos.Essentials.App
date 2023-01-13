@@ -11,7 +11,6 @@ import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService } from '../../services/stake.service';
 
 @Component({
@@ -32,13 +31,11 @@ export class StakePage {
         public stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
-        public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNative: GlobalNativeService,
         public zone: NgZone,
     ) {
-
     }
 
     async ionViewWillEnter() {
@@ -55,10 +52,6 @@ export class StakePage {
             this.maxStake = 0;
         }
         this.dataFetched = true;
-    }
-
-    ionViewWillLeave() {
-
     }
 
     async stake() {

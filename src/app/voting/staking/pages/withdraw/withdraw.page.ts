@@ -12,7 +12,6 @@ import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService } from '../../services/stake.service';
 
 @Component({
@@ -38,14 +37,12 @@ export class WithdrawPage {
         public stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
-        public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNative: GlobalNativeService,
         public keyboard: Keyboard,
         public zone: NgZone,
     ) {
-
     }
 
     ionViewWillEnter() {
@@ -66,10 +63,6 @@ export class WithdrawPage {
                 this.isKeyboardHide = true;
             });
         });
-    }
-
-    ionViewWillLeave() {
-
     }
 
     async withdraw() {

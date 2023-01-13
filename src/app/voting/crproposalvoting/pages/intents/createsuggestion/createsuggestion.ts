@@ -10,7 +10,6 @@ import { SuggestionDetail } from 'src/app/voting/crproposalvoting/model/suggesti
 import { SuggestionService } from 'src/app/voting/crproposalvoting/services/suggestion.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { UXService } from '../../../../services/ux.service';
 import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 
@@ -54,7 +53,6 @@ export class CreateSuggestionPage {
         private crOperations: CROperationsService,
         public translate: TranslateService,
         private globalNav: GlobalNavService,
-        private walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         public uxService: UXService,

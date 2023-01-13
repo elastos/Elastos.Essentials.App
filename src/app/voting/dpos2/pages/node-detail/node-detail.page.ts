@@ -14,9 +14,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
-import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DPoS2RegistrationInfo, DPoS2Service } from '../../services/dpos2.service';
 
 type DPoSTransactionInfo = {
@@ -75,17 +73,13 @@ export class NodeDetailPage implements OnInit {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletService,
         public voteService: VoteService,
-        private authService: AuthService,
         public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
-        private globalElastosAPIService: GlobalElastosAPIService,
         private globalNav: GlobalNavService,
         public dpos2Service: DPoS2Service,
         private globalNative: GlobalNativeService,
     ) {
-
     }
 
     ngOnInit() {

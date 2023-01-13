@@ -10,7 +10,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CRCommandType, CROperationsService } from '../../../services/croperations.service';
 import { DraftService } from '../../../services/draft.service';
 import { ProposalService } from '../../../services/proposal.service';
@@ -49,7 +48,6 @@ export class UpdatMilestonePage {
         private crOperations: CROperationsService,
         public translate: TranslateService,
         private globalNav: GlobalNavService,
-        private walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNative: GlobalNativeService,

@@ -16,7 +16,6 @@ import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
 type VoteForProposalCommand = CRCommand & {
@@ -45,7 +44,6 @@ export class VoteForProposalPage {
         private stakeService: StakeService,
         public translate: TranslateService,
         public popupProvider: PopupProvider,
-        public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,

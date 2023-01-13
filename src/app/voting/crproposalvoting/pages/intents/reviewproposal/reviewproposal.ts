@@ -10,9 +10,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
-import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DraftService } from '../../../services/draft.service';
 
 type ReviewProposalCommand = CRCommand & {
@@ -44,9 +42,7 @@ export class ReviewProposalPage {
     constructor(
         private crOperations: CROperationsService,
         public translate: TranslateService,
-        public walletManager: WalletService,
         private voteService: VoteService,
-        private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
         private globalNative: GlobalNativeService,

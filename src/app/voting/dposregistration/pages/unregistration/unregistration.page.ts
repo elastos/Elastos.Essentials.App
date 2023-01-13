@@ -18,7 +18,6 @@ import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { PopupProvider } from 'src/app/wallet/services/popup.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 
 type DPoSTransactionInfo = {
     Status?: string;
@@ -75,7 +74,6 @@ export class DPosUnRegistrationPage implements OnInit {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
-        private walletManager: WalletService,
         public voteService: VoteService,
         private authService: AuthService,
         public popupProvider: PopupProvider,
@@ -85,11 +83,9 @@ export class DPosUnRegistrationPage implements OnInit {
         public nodesService: NodesService,
         private globalNative: GlobalNativeService,
     ) {
-
     }
 
     ngOnInit() {
-        Logger.log("DPosRegistrationPage", "ngOnInit")
     }
 
     ionViewWillLeave() {
@@ -97,7 +93,6 @@ export class DPosUnRegistrationPage implements OnInit {
     }
 
     async ionViewWillEnter() {
-
         Logger.log("DPosRegistrationPage", this.voteService.masterWalletId);
         this.masterWalletId = this.voteService.masterWalletId;
         // this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);

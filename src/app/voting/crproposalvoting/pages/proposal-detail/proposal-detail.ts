@@ -9,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { CRCouncilService } from 'src/app/voting/crcouncilvoting/services/crcouncil.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { UXService } from '../../../services/ux.service';
@@ -55,6 +56,7 @@ export class ProposalDetailPage implements OnDestroy {
     constructor(
         public uxService: UXService,
         private router: Router,
+        public crCouncilService: CRCouncilService,
         private proposalService: ProposalService,
         private changeDetector: ChangeDetectorRef,
         public theme: GlobalThemeService,
@@ -89,7 +91,9 @@ export class ProposalDetailPage implements OnDestroy {
         this.titleBar.setTitle(this.translate.instant('crproposalvoting.loading-proposal'));
 
         try {
-            this.isCRMember = await this.voteService.isCRMember();
+            //Get the crc avatar by councilService.
+            await this.crCouncilService.fetchCRMembers();
+            this.isCRMember = await this.crCouncilService.isCRMember;
             this.proposal = await this.proposalService.fetchProposalDetails(this.proposalHash);
             Logger.log('CRProposal', "proposal", this.proposal);
 
@@ -139,8 +143,6 @@ export class ProposalDetailPage implements OnDestroy {
                             this.crvotes.abstain += 1;
                             break;
                     }
-
-                    vote.avatar = this.proposalService.avatarList[vote.name];
                 }
             }
 

@@ -22,7 +22,6 @@ import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.st
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { RawTransactionType, TransactionStatus, Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { VoteService } from '../../services/vote.service';
 import { Candidate, CandidateBaseInfo } from '../model/candidates.model';
 import { SelectedCandidate } from '../model/selected.model';
@@ -64,7 +63,6 @@ export class CRCouncilService {
         public translate: TranslateService,
         public jsonRPCService: GlobalJsonRPCService,
         public voteService: VoteService,
-        private walletManager: WalletService,
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
         private globalNative: GlobalNativeService,
@@ -72,7 +70,6 @@ export class CRCouncilService {
         private globalHiveCacheService: GlobalHiveCacheService,
         private theme: GlobalThemeService
     ) {
-
     }
 
     /** Election **/
@@ -127,13 +124,15 @@ export class CRCouncilService {
 
     initData() {
         this.candidates = [];
-        this.crmembers = [];
         this.selectedCandidates = [];
         this.selectedMember = null;
         this.isVoting = false
     }
 
     async fetchCRMembers() {
+        // Already fetched
+        if (this.crmembers.length) return;
+
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
 
         this.crmembers = [];
@@ -161,6 +160,28 @@ export class CRCouncilService {
                     this.crmemberInfo = member;
                 }
                 this.getAvatar(member);
+            }
+
+            // Get secretariat
+            let resultFromCR = await this.jsonRPCService.httpGet(this.voteService.getCrRpcApi() + "/api/council/list");
+            Logger.log(App.CRCOUNCIL_VOTING, "council list from CR:", result.data);
+            for (let item of resultFromCR.data.secretariat) {
+                if (item.status == 'CURRENT') {
+                    this.getAvatar(item);
+                    if (item.startDate) {
+                        item.startDate = Util.timestampToDateTime(item.startDate * 1000);
+                    }
+
+                    this.secretaryGeneralInfo = item;
+                    Logger.log(App.VOTING, 'secretaryGeneral:', item);
+                }
+            }
+            // Get didName for crmembers
+            // The data returned by rpc api listcurrentcrs does not contain the didName
+            for (let item of resultFromCR.data.council) {
+                let crmember = this.crmembers.find( cr => cr.did == item.did);
+                if (crmember)
+                    crmember.didName = item.didName;
             }
         }
         catch (err) {
@@ -200,29 +221,7 @@ export class CRCouncilService {
     }
 
     async getSecretary(): Promise<any> {
-        this.secretaryGeneralInfo = null;
-        try {
-            let result = await this.jsonRPCService.httpGet(this.voteService.getCrRpcApi() + "/api/council/list");
-            Logger.log(App.VOTING, 'Get Current CRMembers:', result);
-            if (result && result.data && result.data.secretariat) {
-                for (let item of result.data.secretariat) {
-                    if (item.status == 'CURRENT') {
-                        this.getAvatar(item);
-                        if (item.startDate) {
-                            item.startDate = Util.timestampToDateTime(item.startDate * 1000);
-                        }
-
-                        this.secretaryGeneralInfo = item;
-                        Logger.log(App.VOTING, 'secretaryGeneral:', item);
-                        return item;
-                    }
-                }
-            }
-        }
-        catch (err) {
-            Logger.error(App.VOTING, 'getCurrentCRMembers error:', err);
-        }
-        return null;
+        return this.secretaryGeneralInfo;
     }
 
     async getSelectedCandidates(): Promise<any> {

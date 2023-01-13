@@ -11,7 +11,6 @@ import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
 type WithdrawCommand = CRCommand & {
@@ -41,7 +40,6 @@ export class WithdrawPage {
     constructor(
         private crOperations: CROperationsService,
         public translate: TranslateService,
-        private walletManager: WalletService,
         private voteService: VoteService,
         private proposalService: ProposalService,
         public theme: GlobalThemeService,

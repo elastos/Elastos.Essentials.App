@@ -10,7 +10,6 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { CRCommand, CRCommandType, CROperationsService } from 'src/app/voting/crproposalvoting/services/croperations.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DraftService } from '../../../services/draft.service';
 
 type ReviewMilestoneCommand = CRCommand & {
@@ -52,7 +51,6 @@ export class ReviewMilestonePage {
     constructor(
         private crOperations: CROperationsService,
         public translate: TranslateService,
-        public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,

@@ -10,7 +10,6 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { SuggestionDetail } from '../../../model/suggestion-model';
 import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
 import { SuggestionService } from '../../../services/suggestion.service';
@@ -57,7 +56,6 @@ export class CreateProposalPage {
         private suggestionService: SuggestionService,
         private crOperations: CROperationsService,
         public translate: TranslateService,
-        public walletManager: WalletService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
