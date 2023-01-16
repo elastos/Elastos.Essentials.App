@@ -7,6 +7,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
+import { NetworkException } from 'src/app/model/exceptions/network.exception';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
 export type EditProfileStateParams = {
@@ -76,9 +77,10 @@ export class EditProfilePage {
             await this.identityService.runNextStep(this.nextStepId, this.name);
         }
         catch (e) {
-            // TODO: org.spongycastle.crypto.InvalidCipherTextException: pad block corrupted.
-            // It can work if try again.
             Logger.warn('didsessions', 'Editprofile - runNextStep exception:', e);
+            if (e instanceof NetworkException) {
+                await this.uxService.toast_trans("common.network-or-server-error");
+            }
         }
     }
     this.creatingDid = false;
