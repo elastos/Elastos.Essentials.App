@@ -39,7 +39,8 @@ export enum WalletConnectSessionRequestSource {
 export class WalletConnectV1Service extends GlobalService {
   public static instance: WalletConnectV1Service;
 
-  private initiatingConnector: WalletConnect = null;
+  // Due to network or other reasons, users may initiate multiple wallet connection requests.
+  private initiatingConnectors: WalletConnect[] = [];
   private activeWalletSubscription: Subscription = null;
   private onGoingRequestSource: WalletConnectSessionRequestSource = null;
 
@@ -165,7 +166,7 @@ export class WalletConnectV1Service extends GlobalService {
     );
 
     // Remember this connector for a while, for example to be able to reject the session request
-    this.initiatingConnector = connector;
+    this.initiatingConnectors.push(connector);
 
     // TODO: wallet connect automatically reuses the persisted session from storage, if one was
     // established earlier. for debug purpose, we just always disconnect before reconnecting.
@@ -216,14 +217,15 @@ export class WalletConnectV1Service extends GlobalService {
       if (this.shouldShowDisconnectionInfo(payload))
         this.native.genericToast("settings.wallet-connect-session-disconnected");
 
-      if (this.initiatingConnector && this.initiatingConnector.key == connector.key) {
-          this.initiatingConnector = null;
-      }
+      let index = this.initiatingConnectors.findIndex(c => c.key == connector.key)
+      if (index >= 0)
+        this.initiatingConnectors.splice(index, 1)
 
       let instance = walletConnectStore.findById(connector.key);
       walletConnectStore.delete(instance);
 
       void this.deleteSession(connector.session);
+
     });
   }
 
@@ -420,31 +422,39 @@ export class WalletConnectV1Service extends GlobalService {
     Logger.log("walletconnectv1", "Accepting session request with params:", connectorKey, ethAccountAddresses, chainId);
 
     // Approve Session
-    let connector = this.initiatingConnector;
-    await connector.approveSession({
-      accounts: ethAccountAddresses,
-      chainId: chainId
-    });
+    let connector = null;
+    let index = this.initiatingConnectors.findIndex(c => c.key === connectorKey);
+    if (index != -1) {
+        connector = this.initiatingConnectors[index];
+        await connector.approveSession({
+          accounts: ethAccountAddresses,
+          chainId: chainId
+        });
 
-    let sessionExtension: WalletConnectSessionExtension = {
-      timestamp: moment().unix()
+        let sessionExtension: WalletConnectSessionExtension = {
+          timestamp: moment().unix()
+        }
+
+        const instance = new WalletConnectV1Instance(connector, sessionExtension);
+        walletConnectStore.add(instance);
+
+        await this.saveSession(connector.session);
+        await walletConnectStore.saveSessionExtension(instance.id, sessionExtension);
+
+        this.initiatingConnectors.splice(index, 1)
     }
-
-    const instance = new WalletConnectV1Instance(connector, sessionExtension);
-    walletConnectStore.add(instance);
-
-    await this.saveSession(connector.session);
-    await walletConnectStore.saveSessionExtension(instance.id, sessionExtension);
-
-    this.initiatingConnector = null;
   }
 
   public async rejectSession(connectorKey: string, reason: string) {
-    Logger.log("walletconnectv1", "Rejecting session request", this.initiatingConnector);
+    Logger.log("walletconnectv1", "Rejecting session request", this.initiatingConnectors);
 
     let connector: WalletConnect = null;
     let isRejectInitiatingConnector = false;
-    if (connectorKey && (connectorKey != this.initiatingConnector?.key)) {
+
+    let index = 0;
+    if (connectorKey)
+        index = this.initiatingConnectors.findIndex(c => c.key === connectorKey);
+    if (connectorKey && (index === -1)) {
       // We are rejecting a from a "session request" screen. The connector is already in our
       // connectors list and it's not a "initiatingconnector" any more.
       // We delete this connector from our list.
@@ -455,7 +465,7 @@ export class WalletConnectV1Service extends GlobalService {
       Logger.log("walletconnectv1", "Rejecting session with connector key", connectorKey, connector);
     }
     else {
-      connector = this.initiatingConnector;
+      connector = this.initiatingConnectors[index];
       isRejectInitiatingConnector = true;
     }
 
@@ -488,7 +498,7 @@ export class WalletConnectV1Service extends GlobalService {
       this.walletConnectSessionsStatus.next(this.connectors);
       void this.deleteSession(connector.session); */
 
-      if (isRejectInitiatingConnector) this.initiatingConnector = null;
+      if (isRejectInitiatingConnector) this.initiatingConnectors.splice(index, 1)
     }
   }
 
