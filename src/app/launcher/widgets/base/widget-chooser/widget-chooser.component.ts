@@ -107,10 +107,13 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       key: "close",
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-      key: "add-custom",
-      iconPath: BuiltInIcon.ADD
-    });
+
+    if (!this.addingCustomWidget) {
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+          key: "add-custom",
+          iconPath: BuiltInIcon.ADD
+        });
+    }
 
     this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
       switch (icon.key) {
