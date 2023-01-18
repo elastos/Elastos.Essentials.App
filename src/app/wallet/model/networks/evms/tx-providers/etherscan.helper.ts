@@ -90,6 +90,12 @@ export class EtherscanHelper {
   private static mergeTransactionsWithSameHash(transactions: EthTransaction[], accountAddress: string) {
     let sendValue = new BigNumber(0), receiveValue = new BigNumber(0);
     for (let i = 0; i < transactions.length; i++) {
+      if ((i > 0) && (JSON.stringify(transactions[i-1]) == JSON.stringify(transactions[i]))) {
+        // Avoid duplication of transactions returned by the api.
+        // eg. Hecp api, 2023.1.18
+        continue;
+      }
+
       if (transactions[i].to.toLowerCase() === accountAddress) {
         receiveValue = receiveValue.plus(new BigNumber(transactions[i].value));
       } else {
