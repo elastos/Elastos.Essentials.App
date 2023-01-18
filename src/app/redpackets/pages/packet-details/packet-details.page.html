@@ -28,7 +28,7 @@
 
     <!-- User has no wallet -->
     <div class="ion-padding redpacket-error-container" *ngIf="!walletAddress">
-      {{ 'redpackets.no-user-wallet' | translate }}
+      {{ promptMessage }}
     </div>
 
     <!-- Status (live - not live - error) -->

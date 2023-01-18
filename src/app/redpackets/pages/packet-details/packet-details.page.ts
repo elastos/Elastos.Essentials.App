@@ -59,6 +59,7 @@ export class PacketDetailsPage implements OnInit {
   public captchaChallengeRequired = false;
   public packetIsInactive = false; // Whether the packet is live for everyone or not (paid)
   private walletAddress: string;
+  public promptMessage = '';
 
   // UI Model
   public winners: WinnerDisplayEntry[] = [];
@@ -110,6 +111,14 @@ export class PacketDetailsPage implements OnInit {
         // Don't block the UI
         void (async () => {
           this.walletAddress = this.getActiveWalletAddress();
+          if (!this.walletAddress) {
+            let walletCount = this.walletService.getMasterWalletsCount();
+            if (walletCount == 0) {
+                this.promptMessage = this.translate.instant('redpackets.no-user-wallet');
+            } else {
+                this.promptMessage = this.translate.instant('redpackets.unsupported-network-intro');
+            }
+          }
 
           // Refresh packet with latest data
           if (packetHash) {
