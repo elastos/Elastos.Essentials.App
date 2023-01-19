@@ -18,15 +18,15 @@ export class TelosAPI {
         switch (type) {
           case TelosAPIType.RPC: return 'https://mainnet.telos.net/evm';
           case TelosAPIType.TELOS_EXPLORER_API: return 'https://rpc1.us.telos.net';
-          case TelosAPIType.BLOCK_EXPLORER: return 'https://rpc1.us.telos.net/v2/explore/evm';
+          case TelosAPIType.BLOCK_EXPLORER: return 'https://www.teloscan.io';
           default:
             throw new Error("Telos API - Unknown api type " + type);
         }
       case TESTNET_TEMPLATE:
         switch (type) {
           case TelosAPIType.RPC: return 'https://testnet.telos.net/evm';
-          //case TelosAPIType.ACCOUNT_RPC: return 'NOT_SUPPORTED_YET';
-          case TelosAPIType.BLOCK_EXPLORER: return null;
+          case TelosAPIType.TELOS_EXPLORER_API: return 'https://testnet.telos.net';
+          case TelosAPIType.BLOCK_EXPLORER: return 'https://testnet.teloscan.io';
           default:
             throw new Error("Telos API - Unknown api type " + type);
         }
