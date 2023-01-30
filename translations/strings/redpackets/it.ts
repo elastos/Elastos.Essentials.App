@@ -39,6 +39,7 @@ export const it = {
     **************/
     'new-red-packet-title': 'Nuovi Red Packet',
     'unsupported-network-intro': 'I Red packets non sono supportati per questa rete. Selezionane un altro.',
+    'unsupported-wallet-intro': 'I Red packets non sono supportati per questa portafoglio. Selezionane un altro.',
     'quantity': 'Quantità',
     'quantity-hint': 'Numero totale dei pacchetti che possono essere presi dagli utenti.',
     'token': 'Token',

@@ -39,6 +39,7 @@ export const fr = {
     **************/
     'new-red-packet-title': 'Nouveau Paquet Rouge',
     'unsupported-network-intro': 'Les paquets rouges ne sont pas supportés sur ce réseau, veuillez en sélectionner un autre.',
+    'unsupported-wallet-intro': 'Les paquets rouges ne sont pas supportés sur ce portefeuille, veuillez en sélectionner un autre.',
     'quantity': 'Quantité',
     'quantity-hint': 'Nombre total de paquets que les utilisateurs peuvent obtenir.',
     'token': 'Jeton',

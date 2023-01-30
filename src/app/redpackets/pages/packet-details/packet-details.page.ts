@@ -116,7 +116,12 @@ export class PacketDetailsPage implements OnInit {
             if (walletCount == 0) {
                 this.promptMessage = this.translate.instant('redpackets.no-user-wallet');
             } else {
-                this.promptMessage = this.translate.instant('redpackets.unsupported-network-intro');
+                if (this.walletNetworkService.activeNetwork.value.isEVMNetwork()) {
+                    // Multi-sign wallet or hardware wallet
+                    this.promptMessage = this.translate.instant('redpackets.unsupported-wallet-intro');
+                } else {
+                    this.promptMessage = this.translate.instant('redpackets.unsupported-network-intro');
+                }
             }
           }
 

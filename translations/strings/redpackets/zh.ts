@@ -39,6 +39,7 @@ export const zh = {
     **************/
     'new-red-packet-title': '新的红包',
     'unsupported-network-intro': '此网络不支持红包，请选择另一个网络',
+    'unsupported-wallet-intro': '此钱包不支持红包，请选择其它钱包',
     'quantity': '数量',
     'quantity-hint': '红包数量',
     'token': '代币',
