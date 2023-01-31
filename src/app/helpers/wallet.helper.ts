@@ -35,6 +35,10 @@ export class WalletExceptionHelper {
         if (e.message.includes("Invalid JSON response")) {
             return new Web3Exception();
         }
+
+        if (e.message.includes("No network connection available")) {
+            return new Web3Exception();
+        }
       }
 
       Logger.log("wallet", "No specific exception info");

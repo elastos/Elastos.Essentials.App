@@ -350,6 +350,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     }
                     catch (err) {
                         Logger.warn('wallet', 'estimateTransferTransactionGas exception:', err)
+                        await this.parseException(err);
                     }
                 }
 
@@ -386,6 +387,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     }
                     catch (err) {
                         Logger.warn('wallet', 'estimateTransferTransactionGas exception:', err)
+                        await this.parseException(err);
                     }
                 }
                 break;
