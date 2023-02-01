@@ -122,6 +122,11 @@ export class BrowserPage implements DappBrowserClient {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
     }
 
+    ngOnDestroy() {
+        // The user may return to the launcher page through other pages.
+        void dappBrowser.close();
+    }
+
     onLoadStart() {
         // Reset title bar colors to default to override possibly previous colors set by a previous
         // html page theme.
@@ -140,7 +145,8 @@ export class BrowserPage implements DappBrowserClient {
                 break;
             default:
                 this.dAppBrowserService.setClient(null);
-                void this.nav.navigateBack();
+                if (this.nav.canGoBack())
+                    void this.nav.navigateBack();
         }
     }
 
