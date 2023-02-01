@@ -284,7 +284,7 @@ export class EscTransactionPage implements OnInit {
     let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
     let total = currencyValue.plus(fees);
 
-    let currencyFee = this.evmSubWallet.getAmountInExternalCurrency(fees).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+    let currencyFee = this.evmSubWallet.getAmountInExternalCurrency(fees);
 
     // Logger.log('wallet', "gasPrice", gasPrice.toFixed())
     // Logger.log('wallet', "gas", gas.toFixed())
@@ -300,13 +300,18 @@ export class EscTransactionPage implements OnInit {
       value: currencyValue.toFixed(),
       feesAsBigNumber: fees,
       fees: fees.toFixed(),
-      currencyFee: currencyFee
+      currencyFee: currencyFee.toFixed()
     }
   }
 
   // ELA, HT, etc
   public getCurrencyInUse(): string {
     return this.evmSubWallet.getDisplayTokenName();
+  }
+
+  // CNY, USD, etc
+  public getNativeCurrencyInUse(): string {
+    return CurrencyService.instance.selectedCurrency.symbol;
   }
 
   async createEscTransaction() {
