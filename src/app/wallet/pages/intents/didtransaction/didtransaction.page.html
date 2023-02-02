@@ -39,8 +39,13 @@
       </ion-col>
     </ion-row>
 
-    <ebutton class="btn cancel" mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate">
-    </ebutton>
-    <ebutton class="btn confirm" (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
+    <ion-row class="btn-row">
+      <ion-col size="5.6">
+        <ebutton mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate"></ebutton>
+      </ion-col>
+      <ion-col size="5.6">
+        <ebutton (clicked)="goTransaction()" [title]="'common.confirm' | translate"></ebutton>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>

@@ -65,18 +65,6 @@
             }
         }
 
-        ion-input {
-            background: var(--essentials-box-color);
-            height: 32px;
-            opacity: 0.8;
-            border-radius: 5px;
-            font-size: 14px;
-            text-align: left;
-            --padding-start: 12px;
-            --padding-end: 10px;
-            margin-top: 5px;
-        }
-
         .price {
             text-align: left;
         }
@@ -84,28 +72,18 @@
         .edit-gas-col {
             display: flex;
         }
+    }
 
-        .edit-gas-row {
-            background: transparent;
-            border-radius: 10px;
-            margin-top: 0px;
-            margin-bottom: 10px;
-
-            .title {
-                font-weight: 600;
-                text-align: left;
-                display: flex;
-                justify-content: flex-end;
-                height: 100%;
-                min-height: 100%;
-            }
-
-            ion-input {
-                --background: var(--essentials-box-color);
-                height: 30px;
-                margin-top: 10px;
-            }
-        }
+    ion-input {
+        background: var(--essentials-box-color);
+        height: 32px;
+        opacity: 0.8;
+        border-radius: 5px;
+        font-size: 14px;
+        text-align: left;
+        --padding-start: 12px;
+        --padding-end: 10px;
+        margin-top: 5px;
     }
 
     .msg-container {
@@ -126,17 +104,11 @@
         }
     }
 
-    .btn {
-        width: 46.5%;
-        position: fixed;
-        bottom: 20px;
-    }
-
-    .cancel {
-        left: 2%;
-    }
-
-    .confirm {
-        right: 2%;
+    .btn-row {
+        margin-top: 20px;
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
     }
 }
