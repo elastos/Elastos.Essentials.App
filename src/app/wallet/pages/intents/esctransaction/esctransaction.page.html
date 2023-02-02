@@ -53,36 +53,34 @@
           <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
         </ion-col>
         <ion-col size="6" class="price">
-          <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{
-          getCurrencyInUse() }}
-          <span> {{ getTotalTransactionCostInCurrency().currencyFee }}</span> {{
-            getNativeCurrencyInUse() }}
+            <ion-col class="fee">
+                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{
+                    getCurrencyInUse() }}
+            </ion-col>
+            <ion-col class="fee">
+                <span> {{ getTotalTransactionCostInCurrency().currencyFee }}</span> {{
+                    getNativeCurrencyInUse() }}
+            </ion-col>
         </ion-col>
         <ion-col size="1" class="edit-gas-col">
           <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
         </ion-col>
       </ion-row>
 
-      <ion-grid class="item-row edit-gas-row ripple ion-activatable" *ngIf="showEditGasPrice">
-        <ion-row>
-          <ion-col size="5" class="title">
-            {{ 'wallet.eth-gasprice' | translate }}
-          </ion-col>
-          <ion-col size="7">
-            <ion-input type="number" autosize name="gasPriceGwei" ngDefaultControl [(ngModel)]="gasPriceGwei"
-              (ionChange)="updateGasprice($event)" mode="ios"></ion-input>
-          </ion-col>
-        </ion-row>
-        <ion-row>
-          <ion-col size="5" class="title">
-            {{ 'wallet.eth-gaslimit' | translate }}
-          </ion-col>
-          <ion-col size="7">
-            <ion-input type="number" autosize name="gasLimit" ngDefaultControl [(ngModel)]="gasLimit" mode="ios">
-            </ion-input>
-          </ion-col>
-        </ion-row>
-      </ion-grid>
+      <ion-row class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
+        <ion-col size="6">
+          <div>{{ 'wallet.eth-gasprice' | translate }}</div>
+          <ion-input type="number" autosize clearInput name="gasPriceGwei" ngDefaultControl [(ngModel)]="gasPriceGwei"
+            (ionChange)="updateGasprice($event)" mode="ios">
+          </ion-input>
+        </ion-col>
+        <ion-col size="6">
+          <div>{{ 'wallet.eth-gaslimit' | translate }}</div>
+          <ion-input type="number" autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimitDisplay"
+            (ionChange)="updateGasLimit($event)" mode="ios">
+          </ion-input>
+        </ion-col>
+      </ion-row>
 
       <ion-row class="item-row ripple ion-activatable">
         <ion-col size="5">

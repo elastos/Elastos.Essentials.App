@@ -126,6 +126,10 @@
 
         .price {
             text-align: left;
+
+            .fee {
+                padding-left: 0px;
+            }
         }
 
         .edit-gas-col {

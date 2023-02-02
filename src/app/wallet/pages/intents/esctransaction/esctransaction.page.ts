@@ -65,6 +65,7 @@ export class EscTransactionPage implements OnInit {
   public gasPrice: string;
   public gasPriceGwei: number;
   public gasLimit: string;
+  public gasLimitDisplay: string;
   public showEditGasPrice = false;
   public hasOpenETHSCChain = false;
   public transactionInfo: ETHTransactionInfo;
@@ -188,6 +189,8 @@ export class EscTransactionPage implements OnInit {
         this.gasLimit = '3000000';
       }
     }
+
+    this.gasLimitDisplay = this.gasLimit;
 
     Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
 
@@ -372,6 +375,10 @@ export class EscTransactionPage implements OnInit {
     if (!this.gasPriceGwei) return;
 
     this.gasPrice = Math.floor(this.gasPriceGwei * Config.GWEI).toString();
+  }
+
+  public async updateGasLimit(event) {
+    if (this.gasLimitDisplay) this.gasLimit = this.gasLimitDisplay;
   }
 
   public getApproveTokenNameWithSymbol(transactionInfo: ETHTransactionInfo): string {
