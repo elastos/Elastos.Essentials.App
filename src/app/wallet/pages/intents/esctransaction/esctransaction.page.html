@@ -53,14 +53,18 @@
           <div>{{ 'wallet.esctransaction-fees' | translate }}</div>
         </ion-col>
         <ion-col size="6" class="price">
+          <ion-row>
             <ion-col class="fee">
-                <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{
-                    getCurrencyInUse() }}
+              <span> {{ uiService.getFixedBalance(getTotalTransactionCostInCurrency().feesAsBigNumber) }}</span> {{
+                getCurrencyInUse() }}
             </ion-col>
+          </ion-row>
+          <ion-row>
             <ion-col class="fee">
-                <span> {{ getTotalTransactionCostInCurrency().currencyFee }}</span> {{
-                    getNativeCurrencyInUse() }}
+              <span> {{ getTotalTransactionCostInCurrency().currencyFee }}</span> {{
+                getNativeCurrencyInUse() }}
             </ion-col>
+          </ion-row>
         </ion-col>
         <ion-col size="1" class="edit-gas-col">
           <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
