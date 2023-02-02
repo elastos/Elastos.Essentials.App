@@ -124,6 +124,18 @@
             }
         }
 
+        ion-input {
+            background: var(--essentials-box-color);
+            height: 32px;
+            opacity: 0.8;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: left;
+            --padding-start: 12px;
+            --padding-end: 10px;
+            margin-top: 5px;
+        }
+
         .price {
             text-align: left;
 
