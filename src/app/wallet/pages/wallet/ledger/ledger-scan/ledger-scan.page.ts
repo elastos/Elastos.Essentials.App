@@ -37,7 +37,7 @@ import { LedgerConnectType } from '../ledger-connect/ledger-connect.page';
 
 declare let ble: BLECentralPlugin.BLECentralPluginStatic;
 
-const TAG = 'ledger';
+const TAG = 'WalletLedger';
 
 @Component({
   selector: 'app-ledger-scan',

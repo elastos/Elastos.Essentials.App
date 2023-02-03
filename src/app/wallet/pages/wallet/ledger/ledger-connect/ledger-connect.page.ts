@@ -52,7 +52,7 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletNetworkUIService } from 'src/app/wallet/services/network.ui.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 
-const TAG = 'ledger';
+const TAG = 'WalletLedger';
 
 export enum LedgerConnectType {
     CreateWallet = 'create',// Get address to create wallet
@@ -139,7 +139,7 @@ export class LedgerConnectPage implements OnInit {
 
     async ionViewWillLeave() {
         if (this.transport) {
-            await this.transport.close();
+            await this.closeTransport();
             await BluetoothTransport.disconnect(this.transport.id)
         }
         this.closeConnectTimeout();
@@ -147,10 +147,10 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private async doConnect() {
-        Logger.log('wallet', 'LedgerConnectPage doConnect')
+        Logger.log(TAG, 'LedgerConnectPage doConnect')
         try {
             if (this.transport) {
-                await this.transport.close();
+                await this.closeTransport();
                 await BluetoothTransport.disconnect(this.transport.id)
                 this.transport = null;
                 this.ledgerConnectStatus.next(false);
@@ -169,7 +169,7 @@ export class LedgerConnectPage implements OnInit {
             }
         }
         catch (e) {
-            Logger.error('ledger', ' initLedger error:', e);
+            Logger.error(TAG, ' initLedger error:', e);
             this.connectError = true;
         }
         this.connecting = false;
@@ -183,15 +183,28 @@ export class LedgerConnectPage implements OnInit {
         void this.doConnect();
 
         this.connectDeviceTimeout = setTimeout(() => {
-            Logger.warn('wallet', 'LedgerConnectPage connect timeout, Connect device again');
+            Logger.warn(TAG, 'LedgerConnectPage connect timeout, Connect device again');
             void this.connectDevice();
         }, 3000);
     }
 
-    private async reConnectDecice() {
-        Logger.log('wallet', 'LedgerConnectPage reConnectDecice')
-        if (this.transport) {
+    // TODO: this.transport.close() can't return sometimes?
+    private closeTransport(): Promise<void> {
+        return new Promise(async resolve => {
+            let timeout = setTimeout(() => {
+                Logger.warn(TAG, 'transport.close timeout')
+                resolve();
+            }, 2000);
             await this.transport.close();
+            clearTimeout(timeout)
+            resolve();
+        });
+      }
+
+    private async reConnectDecice() {
+        Logger.log(TAG, 'LedgerConnectPage reConnectDecice')
+        if (this.transport) {
+            await this.closeTransport();
             await BluetoothTransport.disconnect(this.transport.id)
             this.transport = null;
             this.ledgerConnectStatus.next(false);
@@ -210,14 +223,14 @@ export class LedgerConnectPage implements OnInit {
 
     private closeConnectTimeout() {
         if (this.connectDeviceTimeout) {
-            Logger.warn('ledger', 'closeConnectTimeout');
+            Logger.warn(TAG, 'closeConnectTimeout');
             clearTimeout(this.connectDeviceTimeout);
             this.connectDeviceTimeout = null;
         }
     }
 
     private async refreshAddresses() {
-        Logger.log('wallet', 'LedgerConnectPage refreshAddresses')
+        Logger.log(TAG, 'LedgerConnectPage refreshAddresses')
 
         // Every time we change the app on ledger, we need to reconnect ledger.
         if (this.failedToGetAddress) {
@@ -230,7 +243,7 @@ export class LedgerConnectPage implements OnInit {
         try {
             // We only get 5 addresses.
             for (let i = 0; i < 5 && this.gettingAddresses; i++) {
-                Logger.log('wallet', 'LedgerConnectPage call getAddresses ', i)
+                Logger.log(TAG, 'LedgerConnectPage call getAddresses ', i)
                 let addresses = await this.ledgerApp.getAddresses(this.addressType, i, 1, false);
                 this.addresses = [...this.addresses, ...addresses];
 
@@ -245,7 +258,7 @@ export class LedgerConnectPage implements OnInit {
             this.gettingAddresses = false;
             this.failedToGetAddress = true;
 
-            Logger.warn('wallet', 'LedgerConnectPage getAddresses exception', e)
+            Logger.warn(TAG, 'LedgerConnectPage getAddresses exception', e)
 
             // CustomError -- statusCode 25873(0x6511) name: DisconnectedDeviceDuringOperation -- the app is not started.
             // CustomError -- message: DisconnectedDeviceDuringOperation name:DisconnectedDeviceDuringOperation
@@ -301,16 +314,16 @@ export class LedgerConnectPage implements OnInit {
 
         void this.refreshAddresses();
 
-        Logger.log('ledger', ' Set Timeout for getting addresses:', this.getAddressTimeoutValue);
+        Logger.log(TAG, ' Set Timeout for getting addresses:', this.getAddressTimeoutValue);
         this.getAddressTimeout = setTimeout(() => {
-            Logger.warn('ledger', ' Timeout, Get address again');
+            Logger.warn(TAG, ' Timeout, Get address again');
             void this.refreshAddresses();
         }, this.getAddressTimeoutValue);
     }
 
     private closeGetAddressTimeout() {
         if (this.getAddressTimeout) {
-            Logger.warn('ledger', 'closeGetAddressTimeout');
+            Logger.warn(TAG, 'closeGetAddressTimeout');
             clearTimeout(this.getAddressTimeout);
             this.getAddressTimeout = null;
         }
@@ -475,7 +488,7 @@ export class LedgerConnectPage implements OnInit {
             }
         }
         catch (err) {
-            Logger.error('wallet', 'Wallet import error:', err);
+            Logger.error(TAG, 'Wallet import error:', err);
         }
         finally {
             await this.native.hideLoading();
@@ -483,7 +496,7 @@ export class LedgerConnectPage implements OnInit {
     }
 
     private async importWalletWithLedger(payPassword: string) {
-        Logger.log('wallet', 'create ledger wallet');
+        Logger.log(TAG, 'create ledger wallet');
         await this.walletService.newLedgerWallet(
             this.masterWalletId,
             this.walletName,
