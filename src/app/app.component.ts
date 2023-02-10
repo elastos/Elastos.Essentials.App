@@ -30,6 +30,7 @@ import { GlobalPublicationService } from './services/global.publication.service'
 import { GlobalSecurityService } from './services/global.security.service';
 import { GlobalStartupService } from './services/global.startup.service';
 import { GlobalStorageService } from './services/global.storage.service';
+import { GlobalTronGridService } from './services/global.tron.service';
 import { GlobalThemeService } from './services/theming/global.theme.service';
 import { GlobalWalletConnectService } from './services/walletconnect/global.walletconnect.service';
 import { VoteService } from './voting/services/vote.service';
@@ -70,6 +71,7 @@ export class AppComponent {
     private globalStartupService: GlobalStartupService,
     public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
+    public globalTronGridService: GlobalTronGridService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private voteService: VoteService,
     private credentialTypesService: GlobalCredentialTypesService,
     private credentialToolboxService: GlobalCredentialToolboxService,
@@ -127,6 +129,7 @@ export class AppComponent {
       void this.globalELAUtxoService.init();
       // Init after globalNetworksService.init()
       void this.globalBTCService.init();
+      void this.globalTronGridService.init();
 
       await this.widgetsService.init();
 

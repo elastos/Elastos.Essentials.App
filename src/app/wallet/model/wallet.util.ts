@@ -24,7 +24,7 @@ import { Network, validate } from 'bitcoin-address-validation';
 
 import moment from 'moment';
 import { ELAAddressPrefix } from 'src/app/helpers/ela/ela.address';
-import { lazyElastosWalletSDKImport, lazyEthersImport, lazyEthersLibUtilImport } from 'src/app/helpers/import.helper';
+import { lazyElastosWalletSDKImport, lazyEthersImport, lazyEthersLibUtilImport, lazyTronWebImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
 import { CurrencyService } from '../services/currency.service';
@@ -152,6 +152,14 @@ export class WalletUtil {
   public static async isEVMAddress(address: string): Promise<boolean> {
     const isAddress = (await import('web3-utils')).isAddress;
     return isAddress(address);
+  }
+
+  public static async isTronAddress(address: string): Promise<boolean> {
+    const TronWeb = await lazyTronWebImport();
+    const tronWeb = new TronWeb({
+        fullHost: 'https://api.shasta.trongrid.io/',
+    })
+    return tronWeb.isAddress(address);
   }
 
   public static async getMnemonicWordlist(mnemonic: string) {

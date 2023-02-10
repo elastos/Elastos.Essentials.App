@@ -48,6 +48,8 @@ import { PolygonMainNetNetwork } from '../model/networks/polygon/network/polygon
 import { PolygonTestNetNetwork } from '../model/networks/polygon/network/polygon.testnet.network';
 import { TelosMainNetNetwork } from '../model/networks/telos/network/telos.mainnet.network';
 import { TelosTestNetNetwork } from '../model/networks/telos/network/telos.testnet.network';
+import { TronMainNetNetwork } from '../model/networks/tron/network/tron.mainnet.network';
+import { TronShastaTestNetNetwork } from '../model/networks/tron/network/tron.shasta.network';
 import { ContactsService } from './contacts.service';
 import { CurrencyService } from './currency.service';
 import { BridgeService } from './evm/bridge.service';
@@ -169,6 +171,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new CronosMainNetNetwork());
     await this.createAndRegisterNetwork(new KavaMainNetNetwork());
     await this.createAndRegisterNetwork(new EvmosMainNetNetwork());
+    await this.createAndRegisterNetwork(new TronMainNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
@@ -188,6 +191,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new CronosTestNetNetwork());
     await this.createAndRegisterNetwork(new KavaTestNetNetwork());
     await this.createAndRegisterNetwork(new EvmosTestNetNetwork());
+    await this.createAndRegisterNetwork(new TronShastaTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
 

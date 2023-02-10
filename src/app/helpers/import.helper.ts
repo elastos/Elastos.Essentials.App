@@ -247,3 +247,10 @@ export const lazyChaingeImport = async (): Promise<typeof Web3> => {
 
   return importsCache["@chainge/sdk"].default;
 }
+
+export const lazyTronWebImport = async (): Promise<any> => {
+    if (!importsCache["tronweb"])
+      importsCache["tronweb"] = await import("tronweb");
+
+    return importsCache["tronweb"].default;
+}

@@ -7,7 +7,8 @@ export type CoinID = string; // ELA, IDChain, ERC1, ERC2...
 
 export enum CoinType {
     STANDARD = "STANDARD", // For ELA, IDChain, ETHSC
-    ERC20 = "ERC20" // For ERC20 tokens
+    ERC20 = "ERC20", // For ERC20 tokens
+    TRC20 = "TRC20", // For TRC20 tokens
 }
 
 export enum StandardCoinName {
@@ -15,6 +16,7 @@ export enum StandardCoinName {
     ETHSC = 'ETHSC',
     ETHDID = 'ETHDID',
     BTC = 'BTC',
+    TRON = 'TRON'
 }
 
 export namespace StandardCoinName {
