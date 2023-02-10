@@ -11,7 +11,7 @@ export abstract class EVMTransactionBuilder extends TransactionBuilder {
   /**
    * Returns the current gas price on chain.
    */
-   public async getGasPrice(): Promise<string> {
+  public async getGasPrice(): Promise<string> {
     const gasPrice = await (await this.getWeb3()).eth.getGasPrice();
     //Logger.log('wallet', "GAS PRICE: ", gasPrice)
     return gasPrice;
