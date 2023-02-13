@@ -1,5 +1,7 @@
+import { lazyTronWebImport } from "src/app/helpers/import.helper";
 import { Logger } from "src/app/logger";
-import { BTCOutObj, BTCTransaction } from "../../../btc.types";
+import { GlobalTronGridService } from "src/app/services/global.tron.service";
+import { TronTransaction } from "../../../tron.types";
 import { ProviderTransactionInfo } from "../../../tx-providers/providertransactioninfo";
 import { SubWalletTransactionProvider } from "../../../tx-providers/subwallet.provider";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
@@ -9,21 +11,32 @@ import { TronSubWallet } from "../subwallets/tron.subwallet";
 
 const MAX_RESULTS_PER_FETCH = 100;
 
-export class TronSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, BTCTransaction> {
-
+export class TronSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, TronTransaction> {
     protected canFetchMore = true;
-
-    private transactions = null;
+    private accountAddress = null;
+    private tronWeb = null;
 
     constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, protected rpcApiUrl: string) {
         super(provider, subWallet);
+
+        this.accountAddress = this.subWallet.getCurrentReceiverAddress();
+
+        void this.iniTronWebObj();
     }
 
-    protected getProviderTransactionInfo(transaction: BTCTransaction): ProviderTransactionInfo {
+    async iniTronWebObj() {
+        const TronWeb = await lazyTronWebImport();
+        this.tronWeb = new TronWeb({
+            fullHost: 'https://api.trongrid.io/',
+            privateKey: '01'
+        })
+    }
+
+    protected getProviderTransactionInfo(transaction: TronTransaction): ProviderTransactionInfo {
         return {
             cacheKey: this.subWallet.getTransactionsCacheKey(),
-            cacheEntryKey: transaction.txid,
-            cacheTimeValue: transaction.blockTime,
+            cacheEntryKey: transaction.txID,
+            cacheTimeValue: transaction.block_timestamp,
             subjectKey: this.subWallet.id
         };
     }
@@ -37,93 +50,47 @@ export class TronSubWalletProvider<SubWalletType extends AnySubWallet> extends S
      * @param timestamp get the transactions after the timestamp
      * @returns
      */
-    public async fetchTransactions(subWallet: TronSubWallet, afterTransaction?: BTCTransaction): Promise<void> {
-        Logger.warn('wallet', 'TronSubWalletProvider fetchTransactions')
-        // let page = 1;
-        // // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
-        // if (afterTransaction) {
-        //     let afterTransactionIndex = (await this.getTransactions(subWallet)).findIndex(t => t.blockHash === afterTransaction.blockHash);
-        //     if (afterTransactionIndex) { // Just in case, should always be true but...
-        //         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
-        //         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
-        //         page = 1 + Math.floor((afterTransactionIndex + 1) / MAX_RESULTS_PER_FETCH);
-        //     }
-        //     Logger.log('wallet', 'fetchTransactions page:', page);
+    public async fetchTransactions(subWallet: TronSubWallet, afterTransaction?: TronTransaction): Promise<void> {
+        let max_timestamp = 0; // maximum block_timestamp is now if max_timestamp = 0
+        if (afterTransaction) {
+            max_timestamp = afterTransaction.block_timestamp;
+        }
 
-        //     let tokenAddress = subWallet.getCurrentReceiverAddress();
-        //     let rpcApiUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.NOWNODE_EXPLORER);
-        //     let btcInfo = await GlobalBTCRPCService.instance.address(rpcApiUrl, tokenAddress, MAX_RESULTS_PER_FETCH, page);
-        //     if (btcInfo) {
-        //         if (btcInfo.txids.length < MAX_RESULTS_PER_FETCH) {
-        //             this.canFetchMore = false;
-        //         } else {
-        //             this.canFetchMore = true;
-        //         }
-        //         if (btcInfo.txids.length > 0) {
-        //             await this.getRawTransactionByTxid(subWallet, btcInfo.txids);
-        //         }
-        //     }
-        // } else {
-        //     let txidList = subWallet.getTxidList();
-        //     if (!txidList) return;
+        try {
+            let transactions = await GlobalTronGridService.instance.getTransactions(this.rpcApiUrl, this.accountAddress, MAX_RESULTS_PER_FETCH, max_timestamp);
+            Logger.warn('wallet', 'fetchTransactions ', transactions);
+            if (!(transactions instanceof Array)) {
+                Logger.warn('wallet', 'TronSubWalletProvider fetchTransactions invalid transactions:', transactions)
+                return null;
+            }
+            if (transactions.length < MAX_RESULTS_PER_FETCH) {
+                // Got less results than expected: we are at the end of what we can fetch. remember this
+                // (in memory only)
+                this.canFetchMore = false;
+            }
 
-        //     await this.getRawTransactionByTxid(subWallet, txidList);
-        // }
+            this.updateTransactionsInfo(transactions);
+            await this.saveTransactions(transactions);
+        } catch (e) {
+            Logger.error('wallet', 'TronSubWalletProvider fetchTransactions error:', e)
+        }
+        return null;
     }
 
-    private async getRawTransactionByTxid(subWallet: TronSubWallet, txidList: string[]) {
-        if (!txidList) return;
+    private updateTransactionsInfo(transactions: TronTransaction[]) {
+        transactions.forEach(tx => {
+            if (tx.raw_data.contract[0].parameter.value) {
+                tx.value = tx.raw_data.contract[0].parameter.value.amount.toString();
+                // Hex -> base58 (Txxx)
+                tx.from = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.owner_address);
+                tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.to_address);
 
-        this.transactions = await this.getTransactions(this.subWallet);
-
-        for (let i = 0; i < txidList.length; i++) {
-            let tx: BTCTransaction = this.transactions.find((tx) => {
-                return tx.txid === txidList[i];
-            })
-            // if the transaction status is pending, we need update it.
-            if ((!tx) || tx.blockHeight == -1) {
-                let transaction = await subWallet.getTransactionDetails(txidList[i]);
-                if (transaction) {
-                    this.updateTransactionInfo(subWallet, transaction);
-                    this.transactions.push(transaction);
+                if (tx.to == this.accountAddress) {
+                    tx.direction = TransactionDirection.RECEIVED;
+                } else {
+                    tx.direction = TransactionDirection.SENT;
                 }
             }
-        }
-
-        await this.saveTransactions(this.transactions);
-    }
-
-    private updateTransactionInfo(subWallet: TronSubWallet, transaction: BTCTransaction) {
-        let tokenAddress = subWallet.getCurrentReceiverAddress();
-        let index = transaction.vin.findIndex(btcinobj => btcinobj.addresses.indexOf(tokenAddress) !== -1);
-        let btcoutobjArray: BTCOutObj[] = [];
-        if (index !== -1) {
-            transaction.direction = TransactionDirection.SENT;
-            // TODO: Get all receiving address?
-            btcoutobjArray = transaction.vout.filter(btcoutobj => btcoutobj.addresses.indexOf(tokenAddress) === -1);
-            if (btcoutobjArray && btcoutobjArray.length > 0) {
-                // Set first output address as receiving address.
-                transaction.to = btcoutobjArray[0].addresses[0];
-            } else {
-                // Move: send to self.
-                transaction.to = tokenAddress;
-                transaction.direction = TransactionDirection.MOVED;
-                transaction.realValue = 0;
-                return;
-            }
-        } else {
-            transaction.direction = TransactionDirection.RECEIVED;
-            // TODO: Get all sending address?
-            // Set first inout address as sending address.
-            transaction.from = transaction.vin[0].addresses[0];
-
-            btcoutobjArray = transaction.vout.filter(btcoutobj => btcoutobj.addresses.indexOf(tokenAddress) !== -1);
-        }
-
-        let totalValue = 0;
-        for (let i = 0; i < btcoutobjArray.length; i++) {
-            totalValue += parseInt(btcoutobjArray[i].value);
-        }
-        transaction.realValue = totalValue;
+        })
     }
 }
