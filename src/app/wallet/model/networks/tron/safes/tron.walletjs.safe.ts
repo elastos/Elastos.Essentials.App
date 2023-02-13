@@ -6,6 +6,7 @@ import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from "../../../safes/safe.types";
 import { WalletUtil } from '../../../wallet.util';
+import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { TronSafe } from './tron.safe';
@@ -13,6 +14,7 @@ import { TronSafe } from './tron.safe';
 
 export class TronWalletJSSafe extends Safe implements TronSafe {
     private tronAddress = null;
+    private tronWeb = null;
 
     constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
         super(masterWallet);
@@ -33,10 +35,34 @@ export class TronWalletJSSafe extends Safe implements TronSafe {
     }
 
     private async initJSWallet() {
+        try {
+            let privateKey = await this.getPrivateKey();
+            if (privateKey) {
+                await this.initTronWeb()
+                this.tronWeb.setPrivateKey(privateKey.startsWith('0x') ? privateKey.substring(2) : privateKey)
+                this.tronAddress = this.tronWeb.defaultAddress.base58;
+            }
+
+        } catch (e) {
+            Logger.warn('wallet', 'TronWalletJSSafe initJSWallet exception:', e)
+        }
+    }
+
+    private async initTronWeb() {
+        if (this.tronWeb) return;
+
+        const TronWeb = await lazyTronWebImport();
+        this.tronWeb = new TronWeb({
+            fullHost: this.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.RPC),
+            privateKey: '01'
+        })
+    }
+
+    private async getPrivateKey(forceShowMasterPrompt = false) {
         // No data - need to compute
-        let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
+        let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id, true, forceShowMasterPrompt);
         if (!payPassword)
-            return; // Can't continue without the wallet password - cancel the initialization
+            return null; // Can't continue without the wallet password - cancel the initialization
 
         try {
             let privateKey: string = null;
@@ -50,17 +76,10 @@ export class TronWalletJSSafe extends Safe implements TronSafe {
                 privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
             }
 
-            if (privateKey) {
-                const TronWeb = await lazyTronWebImport();
-                const tronWeb = new TronWeb({
-                    fullHost: 'https://api.trongrid.io/',
-                    privateKey: privateKey.startsWith('0x') ? privateKey.substring(2) : privateKey
-                })
-                this.tronAddress = tronWeb.defaultAddress.base58;
-            }
-
+            return privateKey;
         } catch (e) {
-            Logger.warn('wallet', 'initJSWallet exception:', e)
+            Logger.warn('wallet', 'TronWalletJSSafe getPrivateKey exception:', e)
+            return null;
         }
     }
 
@@ -72,16 +91,32 @@ export class TronWalletJSSafe extends Safe implements TronSafe {
         return Promise.resolve([]);
     }
 
-    createTransferTransaction(toAddress: string, amount: string): Promise<any> {
-        return Promise.resolve([]);
+    async createTransferTransaction(toAddress: string, amount: string): Promise<any> {
+        await this.initTronWeb();
+        let amountSun = this.tronWeb.toSun(amount);
+        return this.tronWeb.transactionBuilder.sendTrx(
+            toAddress, amountSun, this.tronAddress
+        );
     }
 
     public async signTransaction(subWallet: AnySubWallet, rawTransaction: any, transfer: Transfer): Promise<SignTransactionResult> {
         let signTransactionResult: SignTransactionResult = {
             signedTransaction: null
         }
-        //TODO
         Logger.log('wallet', 'TronWalletJSSafe signTransaction ', rawTransaction)
+
+        try {
+            let privateKey = await this.getPrivateKey(true);
+            if (privateKey) {
+                await this.initTronWeb();
+                let signedTxn = await this.tronWeb.trx.sign(rawTransaction, privateKey.startsWith('0x') ? privateKey.substring(2) : privateKey);
+                if (signedTxn) {
+                    signTransactionResult.signedTransaction = signedTxn;
+                }
+            }
+        } catch (e) {
+            Logger.warn('wallet', 'TronWalletJSSafe signTransaction exception:', e)
+        }
 
         return signTransactionResult;
     }
