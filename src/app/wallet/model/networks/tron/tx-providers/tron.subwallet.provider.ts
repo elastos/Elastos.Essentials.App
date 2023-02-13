@@ -21,10 +21,11 @@ export class TronSubWalletProvider<SubWalletType extends AnySubWallet> extends S
 
         this.accountAddress = this.subWallet.getCurrentReceiverAddress();
 
-        void this.iniTronWebObj();
+        void this.initTronWebObj();
     }
 
-    async iniTronWebObj() {
+    async initTronWebObj() {
+        // Only used for address format conversion, so don't need apikey and private key.
         const TronWeb = await lazyTronWebImport();
         this.tronWeb = new TronWeb({
             fullHost: 'https://api.trongrid.io/',

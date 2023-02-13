@@ -83,3 +83,15 @@ export type TronTrc20Transaction = GenericTransaction & {
 
     direction?: TransactionDirection;
 };
+
+export type SendTransactionResult = {
+    result: boolean,
+    txid: string,
+    transaction: {
+        visible: boolean,
+        txID: string,
+        raw_data: TronTransactionData,
+        raw_data_hex: string,
+        signature: string[],
+    },
+};

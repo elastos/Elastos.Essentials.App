@@ -1,7 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
-import { AccountResult, TronTransaction, TronTrc20Transaction } from '../wallet/model/tron.types';
+import { AccountResult, SendTransactionResult, TronTransaction, TronTrc20Transaction } from '../wallet/model/tron.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
@@ -26,6 +27,10 @@ export class GlobalTronGridService {
         } else {
             this.apikey = this.apikey_mainnet;
         }
+    }
+
+    public getApiKey() {
+        return this.apikey;
     }
 
     /**
@@ -78,10 +83,35 @@ export class GlobalTronGridService {
         }
     }
 
+    public async sendrawtransaction(rpcApiUrl: string, signedhex: string): Promise<string> {
+        const TronWeb = await lazyTronWebImport();
+        let tronWeb = new TronWeb({
+            fullHost: rpcApiUrl,
+            headers: this.apikey ? { "TRON-PRO-API-KEY": this.apikey } : null,
+        })
+
+        const receipt: SendTransactionResult = await tronWeb.trx.sendRawTransaction(signedhex);
+        Logger.warn('wallet', 'sendRawTransaction:', JSON.stringify(receipt));
+        return receipt?.txid;
+    }
+
+    public async getTransactionById(rpcApiUrl: string, transactionID: string) {
+        let requestUrl = rpcApiUrl + '/wallet/gettransactionbyid';
+
+        let body = JSON.stringify({value: transactionID})
+        try {
+            return await this.httpPost(requestUrl, body);
+        }
+        catch (err) {
+            Logger.error('GlobalTronGridService', 'getTrc20Transactions: http get error:', err);
+            return null;
+        }
+    }
+
     httpGet(url): Promise<any> {
         let options = {
             headers: {
-                'api-key': this.apikey,
+                'TRON_PRO_API_KEY': this.apikey,
             }
         }
 
@@ -90,6 +120,29 @@ export class GlobalTronGridService {
                 resolve(res);
             }, (err) => {
                 Logger.error('GlobalTronGridService', 'http get error:', err);
+                reject(err);
+            });
+        });
+    }
+
+    httpPost(url, body: any): Promise<any> {
+        let options = {
+            headers: this.apikey ? {
+                'TRON_PRO_API_KEY': this.apikey,
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            } :
+            {
+                "Accept": "application/json",
+                "Content-Type": "application/json"
+            }
+        }
+
+        return new Promise((resolve, reject) => {
+            this.http.post<any>(url, body, options).subscribe((res) => {
+                resolve(res);
+            }, (err) => {
+                Logger.error('GlobalTronGridService', 'http post error:', err);
                 reject(err);
             });
         });

@@ -1,10 +1,7 @@
 import BigNumber from 'bignumber.js';
-import { Util } from 'src/app/model/util';
-import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
-import { Config } from '../../../../config/Config';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
@@ -14,6 +11,7 @@ import { TransactionDirection, TransactionInfo, TransactionType } from '../../..
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
+import { TronSafe } from '../safes/tron.safe';
 
 const TRANSACTION_LIMIT = 100;
 
@@ -168,19 +166,12 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     public async estimateTransferTransactionGas() {
-        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
-        if (!feerate) {
-            throw new Error("Failed to estimatesmartfee");
-        }
-
-        // TODO: Normally the data less than 1KB.
-        // Fees are related to input and output.
-        return Util.accMul(feerate, Config.SATOSHI);
+        throw new Error("Method not implemented.");
     }
 
     // Ignore gasPrice, gasLimit and nonce.
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
-        return Promise.resolve('');
+        return (this.networkWallet.safe as unknown as TronSafe).createTransferTransaction(toAddress, amount.toFixed());
     }
 
     public async publishTransaction(transaction: string): Promise<string> {
@@ -189,7 +180,7 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     protected async sendRawTransaction(payload: string) {
-        return Promise.resolve('');
+        return GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload)
     }
 
     // ********************************
