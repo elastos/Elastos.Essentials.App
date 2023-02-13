@@ -1,4 +1,4 @@
-import { GenericTransaction } from "./tx-providers/transaction.types";
+import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
 export type RequestResponse = {
     data: any;
@@ -60,4 +60,26 @@ export type TronTransaction = GenericTransaction & {
     energy_usage_total: number,
     raw_data: TronTransactionData,
     internal_transactions: [],
+
+    from?: string, // base58 strin, Txx
+    to?: string,
+    value?: string,
+    direction?: TransactionDirection;
+};
+
+export type TronTrc20Transaction = GenericTransaction & {
+    transaction_id: string,
+    token_info: {
+        symbol: string,
+        address: string,
+        decimal: number,
+        name: string,
+    },
+    block_timestamp: number,
+    from: string, // base58 strin, Txx
+    to: string, // base58 strin, Txx
+    type: string, // "Transfer"
+    value: string,
+
+    direction?: TransactionDirection;
 };

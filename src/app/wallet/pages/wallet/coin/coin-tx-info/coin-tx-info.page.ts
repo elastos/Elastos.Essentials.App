@@ -335,14 +335,16 @@ export class CoinTxInfoPage implements OnInit {
 
             if (this.payFee !== null) {
                 let nativeFee = this.payFee + ' ' + this.mainTokenSymbol;
-                let currencyFee = this.subWallet.getAmountInExternalCurrency(new BigNumber(this.payFee)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
-                //let valus = [nativeFee, currencyFee]
+                let currencyFee = '';
+                let currencyFeeValue = this.subWallet.getAmountInExternalCurrency(new BigNumber(this.payFee));
+                if (currencyFeeValue)
+                    currencyFee = this.subWallet.getAmountInExternalCurrency(new BigNumber(this.payFee)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
 
                 this.txDetails.unshift(
                     {
                         type: 'fees',
                         title: 'wallet.tx-info-transaction-fees',
-                        value: `${nativeFee} (~ ${currencyFee})`,
+                        value: currencyFee ? `${nativeFee} (~ ${currencyFee})` : nativeFee,
                         show: true,
                     }
                 );
@@ -541,20 +543,31 @@ export class CoinTxInfoPage implements OnInit {
         let network = WalletNetworkService.instance.activeNetwork.value;
         switch (item.type) {
             case 'txid':
-                action = '/tx/';
+                if (network.key == 'tron') {
+                    action = '/#/transaction/';
+                } else action = '/tx/';
                 break;
             case 'blockId':
                 // TODO: use '/block/' after the eid explorer is upgraded.
-                if (network.key === 'elastosidchain') {
-                    action = '/blocks/';
-                } else
-                    action = '/block/';
+                switch (network.key) {
+                    case 'elastosidchain':
+                        action = '/blocks/';
+                        break;
+                    case 'tron':
+                        action = '/#/block/';
+                        break;
+                    default:
+                        action = '/block/';
+                        break;
+                }
                 if (this.subWallet.id === StandardCoinName.ELA) {
                     value = await GlobalElastosAPIService.instance.getELABlockHash(item.value)
                 }
                 break;
             case 'address':
-                action = '/address/';
+                if (network.key == 'tron') {
+                    action = '/#/address/';
+                } else action = '/address/';
 
                 if (this.transactionInfo.isCrossChain && this.crossChainNetworkKey) {
                     network = WalletNetworkService.instance.getNetworkByKey(this.crossChainNetworkKey);

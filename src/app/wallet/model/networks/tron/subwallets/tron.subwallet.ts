@@ -5,19 +5,19 @@ import { GlobalTranslationService } from 'src/app/services/global.translation.se
 import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
-import { BTCTransaction } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
+import { TronTransaction } from '../../../tron.types';
+import { TransactionDirection, TransactionInfo, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 
 const TRANSACTION_LIMIT = 100;
 
-export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
+export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     private tronAddress: string = null;
 
     constructor(networkWallet: AnyNetworkWallet, public rpcApiUrl: string) {
@@ -69,7 +69,7 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return Promise.resolve([]);
     }
 
-    protected async getTransactionName(transaction: BTCTransaction): Promise<string> {
+    protected async getTransactionName(transaction: TronTransaction): Promise<string> {
         switch (transaction.direction) {
             case TransactionDirection.RECEIVED:
                 return await "wallet.coin-op-received-token";
@@ -87,19 +87,19 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         else return 1;
     }
 
-    public async getTransactionInfo(transaction: BTCTransaction): Promise<TransactionInfo> {
-        const timestamp = transaction.blockTime * 1000; // Convert seconds to use milliseconds
+    public async getTransactionInfo(transaction: TronTransaction): Promise<TransactionInfo> {
+        const timestamp = transaction.block_timestamp;
         const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
         const direction = transaction.direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(transaction.realValue).dividedBy(this.tokenAmountMulipleTimes),
+            amount: new BigNumber(transaction.raw_data.contract[0].parameter.value.amount).dividedBy(this.tokenAmountMulipleTimes),
             confirmStatus: -1, // transaction.confirmations, // To reduce RPC calls, we do not update this value
             datetime,
             direction: direction,
-            fee: (new BigNumber(transaction.fees).dividedBy(this.tokenAmountMulipleTimes)).toFixed(),
-            height: transaction.blockHeight,
+            fee: (new BigNumber(transaction.ret[0].fee).dividedBy(this.tokenAmountMulipleTimes)).toFixed(),
+            height: transaction.blockNumber,
             memo: '',
             name: await this.getTransactionName(transaction),
             payStatusIcon: await this.getTransactionIconPath(transaction),
@@ -109,20 +109,20 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             from: transaction.from,
             to: transaction.to,
             timestamp,
-            txid: transaction.txid,
+            txid: transaction.txID,
             type: null,
             isCrossChain: false,
             isRedPacket: false,
             subOperations: []
         };
 
-        if (transaction.confirmations > 0) {
-            transactionInfo.status = TransactionStatus.CONFIRMED;
-            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
-        } else {
-            transactionInfo.status = TransactionStatus.PENDING;
-            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
-        }
+        // if (transaction.confirmations > 0) {
+        //     transactionInfo.status = TransactionStatus.CONFIRMED;
+        //     transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+        // } else {
+        //     transactionInfo.status = TransactionStatus.PENDING;
+        //     transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+        // }
 
         if (direction === TransactionDirection.RECEIVED) {
             transactionInfo.type = TransactionType.RECEIVED;
@@ -139,7 +139,7 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     // eslint-disable-next-line require-await
-    protected async getTransactionIconPath(transaction: BTCTransaction): Promise<string> {
+    protected async getTransactionIconPath(transaction: TronTransaction): Promise<string> {
         switch (transaction.direction) {
             case TransactionDirection.RECEIVED:
                 return './assets/wallet/tx/receive.svg';
@@ -181,64 +181,6 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     // Ignore gasPrice, gasLimit and nonce.
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         return Promise.resolve('');
-        // let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
-        // if (!feerate) {
-        //     throw new Error("Failed to estimatesmartfee");
-        // }
-
-        // let fee;
-        // let utxo: BTCUTXO[] = [];
-        // let toAmount = 0;
-        // if (amount.eq(-1)) {
-        //     utxo = await this.getAvailableUtxo(-1);
-        //     if (!utxo) return null;
-
-        //     let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate);
-        //     // let networkInfo = await GlobalBTCRPCService.instance.getnetworkinfo(this.rpcApiUrl);
-        //     // if (feeBTC < networkInfo.relayfee) {
-        //     //     feeBTC = networkInfo.relayfee;
-        //     // }
-        //     fee = Util.accMul(feeBTC, Config.SATOSHI);
-
-        //     toAmount = Math.floor(this.balance.minus(fee).toNumber());
-
-        // } else {
-        //     // In order to estimate how much utxo is needed
-        //     fee = Util.accMul(feerate, Config.SATOSHI);
-
-        //     toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
-        //     utxo = await this.getAvailableUtxo(toAmount + fee);
-        //     if (!utxo) return null;
-
-        //     let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate)
-        //     fee = Util.accMul(feeBTC, Config.SATOSHI);
-        // }
-
-        // let outputs: BTCOutputData[] = [{
-        //     "Address": toAddress,
-        //     "Amount": toAmount
-        // }]
-
-        // for (let i = 0; i < utxo.length; i++) {
-        //     if (!utxo[i].utxoHex) {
-        //         let rawtransaction = await GlobalBTCRPCService.instance.getrawtransaction(this.explorerApiUrl, utxo[i].txid);
-        //         if (rawtransaction) {
-        //             utxo[i].utxoHex = rawtransaction.hex;
-        //         } else {
-        //             // TODO:
-        //             Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
-        //             return null;
-        //         }
-        //     }
-        // }
-
-        // Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount)
-        // return (this.networkWallet.safe as any as TronSafe).createBTCPaymentTransaction(
-        //     utxo,
-        //     outputs,
-        //     this.tronAddress,
-        //     feerate.toString(),
-        //     fee);
     }
 
     public async publishTransaction(transaction: string): Promise<string> {
@@ -247,7 +189,7 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     protected async sendRawTransaction(payload: string) {
-        return await GlobalBTCRPCService.instance.sendrawtransaction(this.rpcApiUrl, payload)
+        return Promise.resolve('');
     }
 
     // ********************************
@@ -280,20 +222,14 @@ export class TronSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         // return await GlobalBTCRPCService.instance.getrawtransaction(this.explorerApiUrl, txid);
     }
 
-    // BTC chain don't support such "EVM" features for now, so we override the default
-    // implementation to return nothing
     public getAvailableEarnProviders(): EarnProvider[] {
         return [];
     }
 
-    // BTC chain don't support such "EVM" features for now, so we override the default
-    // implementation to return nothing
     public getAvailableSwapProviders(): SwapProvider[] {
         return [];
     }
 
-    // BTC chain don't support such "EVM" features for now, so we override the default
-    // implementation to return nothing
     public getAvailableBridgeProviders(): BridgeProvider[] {
         return [];
     }
