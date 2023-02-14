@@ -109,15 +109,6 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     networks: ["elastossmartchain", "heco", "bsc", "avalanchecchain", "fantom", "polygon", "telos"]
   },
   {
-    icon: '/assets/browser/dapps/vitrim.png',
-    title: 'Vitrim Ecosystem',
-    description: 'Discover the latest #VitrimNFTs on the largest NFT marketplace on Elastos. NFTs + DEFI',
-    url: 'https://vitrim.io/',
-    useExternalBrowser: false,
-    walletConnectSupported: true,
-    networks: ["elastossmartchain"]
-  },
-  {
     icon: '/assets/browser/dapps/filda.png',
     title: 'FilDA',
     description: 'Multi-assets lending and borrowing DeFi platform',
