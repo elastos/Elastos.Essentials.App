@@ -5,7 +5,7 @@ import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
-import { WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
+import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
 import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import type { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { Network } from "../../network";
@@ -65,6 +65,10 @@ export abstract class TronNetworkBase extends Network<WalletNetworkOptions> {
   }
 
   public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
+  }
+
+  public supportedPrivateKeyTypes(): PrivateKeyType[] {
+    return [PrivateKeyType.EVM];
   }
 
   public getMainColor(): string {
