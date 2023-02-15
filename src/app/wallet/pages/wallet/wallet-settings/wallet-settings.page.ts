@@ -137,7 +137,7 @@ export class WalletSettingsPage implements OnInit {
             });
         }
 
-        if (this.networkWallet && this.networkWallet.network.supportsERC20Coins()) {
+        if (this.networkWallet && (this.networkWallet.network.supportsERC20Coins() || this.networkWallet.network.supportsTRC20Coins())) {
             this.settings.push({
                 type: 'coin-list',
                 route: "/wallet/coin-list",

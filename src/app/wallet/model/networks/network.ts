@@ -116,6 +116,10 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
     return false;
   }
 
+  public supportsTRC20Coins(): boolean {
+    return false;
+  }
+
   /**
    * Tells if this network is EVM compatible or not. Used in replacement to "network instanceof EVMNetwork" to reduce circular dependencies
    */

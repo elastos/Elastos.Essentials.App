@@ -11,7 +11,7 @@ import { TronSubWallet } from "../subwallets/tron.subwallet";
 
 const MAX_RESULTS_PER_FETCH = 100;
 
-export class TronSubWalletProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, TronTransaction> {
+export class TronSubWalletProvider<SubWalletType extends TronSubWallet> extends SubWalletTransactionProvider<SubWalletType, TronTransaction> {
     protected canFetchMore = true;
     private accountAddress = null;
     private tronWeb = null;
@@ -59,7 +59,6 @@ export class TronSubWalletProvider<SubWalletType extends AnySubWallet> extends S
 
         try {
             let transactions = await GlobalTronGridService.instance.getTransactions(this.rpcApiUrl, this.accountAddress, MAX_RESULTS_PER_FETCH, max_timestamp);
-            Logger.warn('wallet', 'fetchTransactions ', transactions);
             if (!(transactions instanceof Array)) {
                 Logger.warn('wallet', 'TronSubWalletProvider fetchTransactions invalid transactions:', transactions)
                 return null;

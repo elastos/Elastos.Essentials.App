@@ -65,6 +65,7 @@ import { NameResolvingService } from './nameresolving.service';
 import { NavService } from './nav.service';
 import { WalletNetworkService } from './network.service';
 import { WalletPrefsService } from './pref.service';
+import { TRC20CoinService } from './tvm/trc20coin.service';
 import { UiService } from './ui.service';
 import { WalletService } from './wallet.service';
 import { WalletUIService } from './wallet.ui.service';
@@ -97,6 +98,7 @@ export class WalletInitService extends GlobalService {
     private bridgeService: BridgeService, // IMPORTANT: unused, but keep it here for initialization
     private defiService: DefiService, // IMPORTANT: unused, but keep it here for initialization
     private erc20CoinService: ERC20CoinService,
+    private tron20CoinSerice: TRC20CoinService,
     private walletUIService: WalletUIService, // IMPORTANT: unused, but keep it here for initialization
     private httpClient: HttpClient
   ) {
@@ -118,6 +120,7 @@ export class WalletInitService extends GlobalService {
     await this.customNetworkService.init();
     await this.registerNetworks();
     await this.erc20CoinService.init();
+    await this.tron20CoinSerice.init();
 
     // Register name resolvers
     this.registerNameResolvers();
@@ -232,6 +235,7 @@ export class WalletInitService extends GlobalService {
     await this.intentService.stop();
     this.networkService.stop();
     this.nameResolvingService.reset();
+    this.tron20CoinSerice.stop();
 
     if (this.subscription) {
       this.subscription.unsubscribe();
