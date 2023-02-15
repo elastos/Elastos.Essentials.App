@@ -6,7 +6,7 @@ import { TransactionProvider } from "../../../tx-providers/transaction.provider"
 import { NetworkWallet, WalletAddressInfo } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { MainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
-import { AnyNetwork } from "../../network";
+import { TronNetworkBase } from "../network/tron.base.network";
 import { TronTransactionProvider } from "../tx-providers/tron.transaction.provider";
 
 
@@ -15,7 +15,7 @@ import { TronTransactionProvider } from "../tx-providers/tron.transaction.provid
  */
 export abstract class TronNetworkWallet <MasterWalletType extends MasterWallet, WalletNetworkOptionsType extends WalletNetworkOptions> extends NetworkWallet<MasterWalletType, WalletNetworkOptionsType> {
     constructor(public masterWallet: MasterWalletType,
-                public network: AnyNetwork,
+                public network: TronNetworkBase,
                 safe: Safe) {
         super(
             masterWallet,

@@ -1,6 +1,7 @@
 import { Util } from "src/app/model/util";
 import { JsonObject, JsonProperty } from "typescript-json-serializer";
 import { erc20CoinsSerializer } from "../services/evm/erc20coin.service";
+import { trc20CoinsSerializer } from "../services/tvm/trc20coin.service";
 import { AnyNetwork } from "./networks/network";
 
 export type CoinID = string; // ELA, IDChain, ERC1, ERC2...
@@ -29,7 +30,8 @@ export type TokenAddress = string; // EVM address of the token contract
 export enum TokenType {
     ERC_20 = "ERC-20",
     ERC_721 = "ERC-721",
-    ERC_1155 = "ERC-1155"
+    ERC_1155 = "ERC-1155",
+    TRC_20 = "TRC-20"
 }
 
 @JsonObject()
@@ -158,6 +160,65 @@ export class ERC20Coin extends Coin {
 
     static fromJson(jsonCoin: any, network: AnyNetwork): ERC20Coin {
         let coin = erc20CoinsSerializer.deserializeObject(jsonCoin, ERC20Coin);
+
+        // Backward compatibility: fix wrong decimal type (string instead of number)
+        if (Util.isNull(coin.decimals)) coin.decimals = -1
+        else coin.decimals = parseInt("" + coin.decimals);
+
+        coin.network = network;
+
+        return coin;
+    }
+}
+
+/**
+ * TRC20 tokens, for TVM networks.
+ */
+@JsonObject()
+export class TRC20Coin extends Coin {
+    @JsonProperty() public trc20ContractAddress: string;
+    @JsonProperty() public decimals: number;
+    @JsonProperty() private isCustom: boolean;
+    @JsonProperty() public initiallyShowInWallet = false;
+
+    constructor(
+        network: AnyNetwork,
+        name: string, // Symbol
+        description: string, // Also known as "name" in TVM world.
+        trc20ContractAddress: string,
+        decimals: number,
+        isCustom: boolean,
+        initiallyShowInWallet = false, // Whether to show this coin as subwallet when a wallet is first used by the user
+        timestamp = 0 // 0: builtin coin
+    ) {
+        super(network, CoinType.TRC20, trc20ContractAddress, name, description, true, timestamp);
+
+        // JSON serializer cannot work with decorators in constructor (runtime JS undefined errors)
+        this.trc20ContractAddress = trc20ContractAddress;
+
+        this.decimals = decimals;
+        this.isCustom = isCustom;
+        this.initiallyShowInWallet = initiallyShowInWallet;
+    }
+
+    /**
+     * Returns the smart contract address for this coin.
+     * Used to operate this coin (balance, transfer, etc).
+     */
+    getContractAddress(): string {
+        return this.trc20ContractAddress;
+    }
+
+    getDecimals(): number {
+        return this.decimals;
+    }
+
+    coinIsCustom(): boolean {
+        return this.isCustom;
+    }
+
+    static fromJson(jsonCoin: any, network: AnyNetwork): TRC20Coin {
+        let coin = trc20CoinsSerializer.deserializeObject(jsonCoin, TRC20Coin);
 
         // Backward compatibility: fix wrong decimal type (string instead of number)
         if (Util.isNull(coin.decimals)) coin.decimals = -1

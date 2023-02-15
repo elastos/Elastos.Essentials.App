@@ -23,6 +23,7 @@ import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwall
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EthTransaction } from 'src/app/wallet/model/networks/evms/evm.types';
+import { TRC20SubWallet } from 'src/app/wallet/model/networks/tron/subwallets/trc20.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
@@ -31,7 +32,7 @@ import { OfflineTransactionsService } from 'src/app/wallet/services/offlinetrans
 import { StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { ElastosEVMSubWallet } from '../../../../model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
-import { AnyOfflineTransaction, TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../../model/tx-providers/transaction.types';
+import { AnyOfflineTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../../../../model/tx-providers/transaction.types';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
 
@@ -239,16 +240,6 @@ export class CoinTxInfoPage implements OnInit {
                             this.fromAddress = null;
                         }
                     }
-                } else {
-                    // TODO: We can remove invalid transaction when get the transactions list?
-                    // For erc20, we use getTransactionDetails to check whether the transaction is valid.
-                    if (this.status !== TransactionStatus.CONFIRMED) {
-                        const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(this.transactionInfo.txid);
-                    }
-
-                    // if (this.direction === TransactionDirection.RECEIVED) {
-                    //     this.fromAddress = this.transactionInfo.from;
-                    // }
                 }
             }
         }
@@ -281,18 +272,24 @@ export class CoinTxInfoPage implements OnInit {
                     show: false,
                 },
                 {
-                    type: 'blockId',
-                    title: 'wallet.tx-info-block-id',
-                    value: this.height <= 0 ? '0' : this.height.toString(),
-                    show: false,
-                },
-                {
                     type: 'txid',
                     title: 'wallet.tx-info-transaction-id',
                     value: this.transactionInfo.txid,
                     show: false,
                 },
             );
+
+            // Do't show block height for TRC20 token, because we need to get the block height by other api .
+            // Users can view this transaction on the browser by the transaction id.
+            if (!(this.subWallet instanceof TRC20SubWallet)) {
+                this.txDetails.push(
+                    {
+                    type: 'blockId',
+                    title: 'wallet.tx-info-block-id',
+                    value: this.height <= 0 ? '0' : this.height.toString(),
+                    show: false,
+                });
+            }
         }
 
         // Only show receiving address, total cost and fees if tx was not received

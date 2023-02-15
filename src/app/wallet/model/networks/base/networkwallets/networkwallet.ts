@@ -25,6 +25,7 @@ import { NFT, NFTType, SerializedNFT } from '../../evms/nfts/nft';
 import { NFTAsset } from '../../evms/nfts/nftasset';
 import { MainCoinEVMSubWallet } from '../../evms/subwallets/evm.subwallet';
 import { AnyNetwork } from '../../network';
+import { TronNetworkBase } from '../../tron/network/tron.base.network';
 import { AnySubWallet, SerializedSubWallet } from '../subwallets/subwallet';
 import { SubWalletBuilder } from '../subwallets/subwalletbuilder';
 import { DIDSessionsStore } from './../../../../../services/stores/didsessions.store';
@@ -192,6 +193,17 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
         if (this.network instanceof EVMNetwork) {
             let builtInCoins = this.network.getBuiltInERC20Coins();
+            for (let i = 0; i < builtInCoins.length; i++) {
+                let coin = builtInCoins[i];
+                if (coin.initiallyShowInWallet) {
+                    await this.createNonStandardSubWallet(coin);
+                }
+            }
+        }
+
+        // Tron
+        if (this.network instanceof TronNetworkBase) {
+            let builtInCoins = this.network.getBuiltInTRC20Coins();
             for (let i = 0; i < builtInCoins.length; i++) {
                 let coin = builtInCoins[i];
                 if (coin.initiallyShowInWallet) {

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
-import { AccountResult, SendTransactionResult, TronTransaction, TronTrc20Transaction } from '../wallet/model/tron.types';
+import { AccountResult, SendTransactionResult, TronTransaction, TronTRC20Transaction } from '../wallet/model/tron.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
@@ -68,8 +68,8 @@ export class GlobalTronGridService {
     }
 
     // maximum block_timestamp is now if max_timestamp = 0
-    public async getTrc20Transactions(rpcApiUrl: string, address: string, contractAddress: string, pageSize: number, max_timestamp = 0): Promise<TronTrc20Transaction[]> {
-        let requestUrl = rpcApiUrl + '/v1/accounts/' + address + '/transactions/trc20?contract_address=' + contractAddress + '?limit=' + pageSize + '&max_timestamp=' + max_timestamp;
+    public async getTrc20Transactions(rpcApiUrl: string, address: string, contractAddress: string, pageSize: number, max_timestamp = 0): Promise<TronTRC20Transaction[]> {
+        let requestUrl = rpcApiUrl + '/v1/accounts/' + address + '/transactions/trc20?contract_address=' + contractAddress + '&limit=' + pageSize + '&max_timestamp=' + max_timestamp;
 
         try {
             let ret = await this.httpGet(requestUrl);
@@ -91,7 +91,6 @@ export class GlobalTronGridService {
         })
 
         const receipt: SendTransactionResult = await tronWeb.trx.sendRawTransaction(signedhex);
-        Logger.warn('wallet', 'sendRawTransaction:', JSON.stringify(receipt));
         return receipt?.txid;
     }
 

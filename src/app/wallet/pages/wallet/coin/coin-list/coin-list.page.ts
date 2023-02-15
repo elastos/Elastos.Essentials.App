@@ -146,7 +146,7 @@ export class CoinListPage implements OnInit, OnDestroy {
         this.masterWallet = this.networkWallet.masterWallet;
         this.network = (<EVMNetwork>this.networkWallet.network);
         // TODO: Navigate to this page from a notification, and maybe the active network does not support ERC20 Coins.
-        if (this.network.supportsERC20Coins()) {
+        if (this.network.supportsERC20Coins() || this.network.supportsTRC20Coins()) {
             this.updateSubscription = this.events.subscribe("error:update", () => {
                 this.currentCoin["open"] = false;
             });
@@ -229,10 +229,10 @@ export class CoinListPage implements OnInit, OnDestroy {
         try {
             // Create the sub Wallet (ex: IDChain)
             await this.networkWallet.createNonStandardSubWallet(coin);
-            await this.native.hideLoading();
         } catch (error) {
             this.currentCoin["open"] = false; // TODO: currentCoin type
         }
+        await this.native.hideLoading();
     }
 
     async destroySubWallet(coin: Coin) {

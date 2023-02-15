@@ -2,6 +2,8 @@ import { Logger } from "src/app/logger";
 import { Coin, CoinType } from "../../../coin";
 import { AnyEVMNetworkWallet } from "../../evms/networkwallets/evm.networkwallet";
 import { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
+import { AnyTronNetworkWallet } from "../../tron/networkwallets/tron.networkwallet";
+import { TRC20SubWallet } from "../../tron/subwallets/trc20.subwallet";
 import { NetworkWallet } from "../networkwallets/networkwallet";
 import { AnySubWallet, SerializedSubWallet, SubWallet } from "./subwallet";
 
@@ -17,6 +19,8 @@ export class SubWalletBuilder {
                 return StandardSubWalletBuilder.newFromCoin(networkWallet.masterWallet, coin); */
             case CoinType.ERC20:
                 return ERC20SubWallet.newFromCoin(networkWallet as AnyEVMNetworkWallet, coin);
+            case CoinType.TRC20:
+                return TRC20SubWallet.newFromCoin(networkWallet as AnyTronNetworkWallet, coin);
             default:
                 Logger.warn('wallet', "Unsupported coin type", coin.getType());
                 break;
@@ -39,6 +43,11 @@ export class SubWalletBuilder {
                 // we manually check it here.
                 if (networkWallet.network.supportsERC20Coins())
                     return ERC20SubWallet.newFromSerializedSubWallet(networkWallet as AnyEVMNetworkWallet, serializedSubWallet);
+                else
+                    return null;
+            case CoinType.TRC20:
+                if (networkWallet.network.supportsTRC20Coins())
+                    return TRC20SubWallet.newFromSerializedSubWallet(networkWallet as AnyTronNetworkWallet, serializedSubWallet);
                 else
                     return null;
             default:

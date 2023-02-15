@@ -51,6 +51,7 @@ import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { TRC20SubWallet } from 'src/app/wallet/model/networks/tron/subwallets/trc20.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { ERC1155Service } from 'src/app/wallet/services/evm/erc1155.service';
@@ -475,6 +476,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     this.toAddress, // User input address
                     new BigNumber(this.amount), // User input amount
                     this.memo // User input memo
+                );
+            }
+            else if (this.fromSubWallet instanceof TRC20SubWallet) {
+                rawTx = await this.fromSubWallet.createPaymentTransaction(
+                    this.toAddress, // User input address
+                    new BigNumber(this.amount), // User input amount
                 );
             }
             else {

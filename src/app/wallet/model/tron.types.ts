@@ -9,6 +9,10 @@ export type RequestResponse = {
     };
 }
 
+export type AccountTrc20Token = {
+    [tokenId: string]: string // "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t": "100000000",
+};
+
 export type AccountResult = {
     latest_opration_time: number,
     owner_permission: any,
@@ -18,9 +22,7 @@ export type AccountResult = {
     address: string,
     balance: number, //TRX, unit : sun
     create_time: number,
-    trc20: {
-        [tokenId: string]: string
-    } [],
+    trc20: AccountTrc20Token[],
 };
 
 export type TronContractData = {
@@ -67,7 +69,7 @@ export type TronTransaction = GenericTransaction & {
     direction?: TransactionDirection;
 };
 
-export type TronTrc20Transaction = GenericTransaction & {
+export type TronTRC20Transaction = GenericTransaction & {
     transaction_id: string,
     token_info: {
         symbol: string,

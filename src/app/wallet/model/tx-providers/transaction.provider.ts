@@ -5,12 +5,14 @@ import { GlobalLanguageService } from "src/app/services/global.language.service"
 
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
 import { ERC20CoinService } from "../../services/evm/erc20coin.service";
-import { ERC20Coin, StandardCoinName, TokenAddress, TokenType } from "../coin";
+import { TRC20CoinService } from "../../services/tvm/trc20Coin.service";
+import { ERC20Coin, StandardCoinName, TokenAddress, TokenType, TRC20Coin } from "../coin";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";
 import { EVMNetwork } from "../networks/evms/evm.network";
 import { ERCTokenInfo, TransactionListType } from "../networks/evms/evm.types";
 import { NFTType } from "../networks/evms/nfts/nft";
+import { TronNetworkBase } from "../networks/tron/network/tron.base.network";
 import { AnySubWalletTransactionProvider } from "./subwallet.provider";
 import { AnyOfflineTransaction, GenericTransaction } from "./transaction.types";
 
@@ -308,6 +310,83 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     }
 
     // TODO: let user know about new NFTs if any (notif)
+
+    // Found new coins - notify user
+    if (newERC20CoinsList.length > 0) {
+      this.sendTokenDiscoveredNotification(newERC20CoinsList);
+    }
+
+    // Emit the new token event for other listeners
+    allNewCoinsList.map(coin => {
+      this.newTokenReceived.next(coin);
+    });
+  }
+
+  /**
+   * Internal method called by providers / subwallet providers when they get an info about discovered tokens.
+   * This method can be called for previously discovered tokens or for new tokens, no need to manually
+   * do a preliminary filter.
+   *
+   * This method will add new coins to the coin list and notify user that new tokens have arrived if needed.
+   *
+   * NOTE: This method must be called only once (per refresh) with all tokens together, because it resets the NFTs list.
+   */
+  public async onTRCTokenInfoFound(tokens: ERCTokenInfo[]) {
+    if (!tokens || (tokens.length === 0)) return;
+
+    let allNewCoinsList: ERCTokenInfo[] = [];
+    let newERC20CoinsList: string[] = [];
+    const timestamp = (new Date()).valueOf();
+
+    let network = <TronNetworkBase>this.networkWallet.network;
+
+    // For each ERC token discovered by the wallet SDK, we check its type and handle it.
+    for (let index = 0; index < tokens.length; index++) {
+      const token = tokens[index];
+      if (token.type === TokenType.TRC_20) {
+        if (token.symbol && token.name) {
+          if (!this.networkWallet.getSubWallet(token.symbol) && !network.isCoinDeleted(token.contractAddress)) {
+            try {
+              // Check if we already know this token globally. If so, we add it as a new subwallet
+              // to this master wallet. Otherwise we add the new token to the global list first then
+              // add a subwallet as well.
+              const erc20Coin = network.getTRC20CoinByContractAddress(token.contractAddress);
+              if (!erc20Coin) {
+                let tokenDecimal;
+                if (!token.decimals) {
+                  // The token has no decimals for fusion network.
+                  tokenDecimal = await TRC20CoinService.instance.getCoinDecimals(network, token.contractAddress);
+                  token.decimals = tokenDecimal.toString();
+                } else {
+                  tokenDecimal = parseInt(token.decimals);
+                }
+                const newCoin = new TRC20Coin(network, token.symbol, token.name, token.contractAddress, tokenDecimal, true, false, timestamp);
+                if (await network.addCustomTRC20Coin(newCoin)) {
+                  // Find new coin.
+                  newERC20CoinsList.push(token.symbol);
+                  allNewCoinsList.push(token);
+                  if (token.hasOutgoTx) {
+                    try {
+                      // Create the sub Wallet (ex: IDChain)
+                      await this.networkWallet.createNonStandardSubWallet(newCoin);
+                    } catch (error) {
+                      Logger.error('wallet', 'onTokenInfoFound createNonStandardSubWallet error: ', error);
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              Logger.log("wallet", 'onTokenInfoFound exception:', e);
+            }
+          }
+        } else {
+          Logger.warn('wallet', 'Token has no name or symbol:', token);
+        }
+      }
+      else {
+        Logger.warn('wallet', 'Unhandled token type:', token);
+      }
+    }
 
     // Found new coins - notify user
     if (newERC20CoinsList.length > 0) {

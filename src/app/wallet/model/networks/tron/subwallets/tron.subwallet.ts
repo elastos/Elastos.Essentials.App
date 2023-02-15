@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
+import { TRC20CoinService } from 'src/app/wallet/services/tvm/trc20coin.service';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
@@ -195,22 +196,26 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     /**
-     * Update balance and transaction list.
+     * Update balance and token list.
      */
     private async updateTronSubWalletInfo() {
-        // Get the latest info.
         let accountInfo = await GlobalTronGridService.instance.account(this.rpcApiUrl, this.tronAddress);
         if (accountInfo) {
             if (accountInfo.balance) {
-                // the unconfirmedBalance is negative for unconfirmed sending transaction.
                 this.balance = new BigNumber(accountInfo.balance);
                 await this.saveBalanceToCache();
             }
+            // TRC20
+            if (accountInfo.trc20.length > 0) {
+                let coinInfos = await TRC20CoinService.instance.getCoinInfos(this.networkWallet.network, accountInfo.trc20);
+                await this.networkWallet.getTransactionDiscoveryProvider().onTRCTokenInfoFound(coinInfos);
+            }
+            // TRC10
         }
     }
 
     async getTransactionDetails(txid: string): Promise<any> {
-        // return await GlobalBTCRPCService.instance.getrawtransaction(this.explorerApiUrl, txid);
+        return null;
     }
 
     public getAvailableEarnProviders(): EarnProvider[] {

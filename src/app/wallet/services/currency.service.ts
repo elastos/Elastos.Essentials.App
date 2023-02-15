@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { ERC20Coin } from '../model/coin';
+import { ERC20Coin, TRC20Coin } from '../model/coin';
 import type { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
@@ -340,7 +340,7 @@ export class CurrencyService {
   }
 
   // ERC20 tokens
-  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
+  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin | TRC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
     if (!network)
       network = this.walletNetworkService.activeNetwork.value;
 
