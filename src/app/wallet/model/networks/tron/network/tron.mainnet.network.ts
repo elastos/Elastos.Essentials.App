@@ -1,5 +1,5 @@
 import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { ERC20Coin } from "../../../coin";
+import { TRC20Coin } from "../../../coin";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
 import { TronAPI, TronApiType } from "./tron.api";
@@ -31,9 +31,9 @@ export class TronMainNetNetwork extends TronNetworkBase {
     return null;
   }
 
-  public getBuiltInERC20Coins(): ERC20Coin[] {
+  public getBuiltInTRC20Coins(): TRC20Coin[] {
     return [
-        new ERC20Coin(this, "USDT", "Tether USD", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", 6, false, true),
+        new TRC20Coin(this, "USDT", "Tether USD", "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t", 6, false, true),
         ];
   }
 }

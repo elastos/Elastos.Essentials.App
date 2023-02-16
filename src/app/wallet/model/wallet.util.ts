@@ -214,9 +214,10 @@ export class WalletUtil {
     return estimateFee;
   }
 
-  public static async getWalletFromSeed(seed: string) {
+  public static async getWalletFromSeed(seed: string, path: string = null) {
     const { Wallet } = await lazyEthersImport();
     const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
-    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(defaultPath));
+    let derivePath = path ? path : defaultPath;
+    return new Wallet(HDNode.fromSeed(Buffer.from(seed, "hex")).derivePath(derivePath));
   }
 }
