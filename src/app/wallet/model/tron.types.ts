@@ -28,9 +28,11 @@ export type AccountResult = {
 export type TronContractData = {
     parameter: {
         value: {
-            amount: number, //1000000,
             owner_address: string, //"410ad689150eb4a3c541b7a37e6c69c1510bcb27a4",
-            to_address: string //"418f723ec92f28a87c0a1d28d83210487b1af86e19"
+            amount?: number, //1000000,
+            to_address?: string, //"418f723ec92f28a87c0a1d28d83210487b1af86e19"
+            contract_address?: string, //"418f723ec92f28a87c0a1d28d83210487b1af86e19"
+            data?: string,
         },
         type_url: string //"type.googleapis.com/protocol.TransferContract"
     },
@@ -85,6 +87,35 @@ export type TronTRC20Transaction = GenericTransaction & {
 
     direction?: TransactionDirection;
 };
+
+// Fees paid by transaction senders/sending addresses:
+// 1. Issue a TRC10 token: 1,024 TRX
+// 2. Apply to be an SR candidate: 9,999 TRX
+// 3. Create a Bancor transaction: 1,024 TRX
+// 4. Update the account permission: 100 TRX
+// 5. Activate the account: 1 TRX
+// 6. Multi-sig transaction: 1 TRX
+// 7. Transaction note: 1 TRX
+export type TronTransactionInfo = {
+    id: string,
+    blockNumber: number,
+    blockTimeStamp: number,
+    contractResult: string[],
+    contract_address?: string, //hex
+    fee?: number, // 1100000: TRX, unit is sun
+    receipt: {
+        energy_fee?: number,
+        energy_usage_total?: number,
+        net_usage?: number, // Bandwidth
+        net_fee?: number, // Bandwidth (0.1 TRX = 100 Bandwidth?)
+        result?: string, // "SUCCESS"
+    },
+    log?: {
+        address: string,
+        topics: string[],
+        data: string
+    }[]
+}
 
 export type SendTransactionResult = {
     result: boolean,

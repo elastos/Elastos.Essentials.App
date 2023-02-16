@@ -17,7 +17,7 @@ import { SwapProvider } from '../../../earn/swapprovider';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
-import { TronTransaction, TronTRC20Transaction } from '../../../tron.types';
+import { TronTransactionInfo, TronTRC20Transaction } from '../../../tron.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
@@ -283,8 +283,8 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         return null;
     }
 
-    public async getTransactionDetails(txid: string): Promise<TronTransaction> {
-        return Promise.resolve(null);
+    public async getTransactionDetails(txid: string): Promise<TronTransactionInfo> {
+        return await GlobalTronGridService.instance.getTransactionInfoById(this.rpcApiUrl, txid);
     }
 
     public async getTransactionInfo(transaction: TronTRC20Transaction): Promise<TransactionInfo> {

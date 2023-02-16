@@ -80,10 +80,28 @@ export class TronSubWalletProvider<SubWalletType extends TronSubWallet> extends 
     private updateTransactionsInfo(transactions: TronTransaction[]) {
         transactions.forEach(tx => {
             if (tx.raw_data.contract[0].parameter.value) {
-                tx.value = tx.raw_data.contract[0].parameter.value.amount.toString();
                 // Hex -> base58 (Txxx)
                 tx.from = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.owner_address);
-                tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.to_address);
+
+                switch (tx.raw_data.contract[0].type) {
+                    case "TransferContract":
+                        tx.value = tx.raw_data.contract[0].parameter.value.amount.toString();
+                        tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.to_address);
+                    break;
+                    case "TriggerSmartContract":
+                        tx.value = '0';
+                        tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.contract_address);
+                        // TODO: token name, amount
+                    break;
+                    case "TransferAssetContract":
+                        tx.value = '0';
+                        tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.contract_address);
+                        // TODO: asset name, amount
+                    break;
+                    default:
+                        Logger.warn('wallet', 'TronSubWalletProvider new transaction type', tx);
+                    break;
+                }
 
                 if (tx.to == this.accountAddress) {
                     tx.direction = TransactionDirection.RECEIVED;

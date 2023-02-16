@@ -93,7 +93,7 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         const direction = transaction.direction;
 
         const transactionInfo: TransactionInfo = {
-            amount: new BigNumber(transaction.raw_data.contract[0].parameter.value.amount).dividedBy(this.tokenAmountMulipleTimes),
+            amount: new BigNumber(transaction.value).dividedBy(this.tokenAmountMulipleTimes),
             confirmStatus: -1, // transaction.confirmations, // To reduce RPC calls, we do not update this value
             datetime,
             direction: direction,

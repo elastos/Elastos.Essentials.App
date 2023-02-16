@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
-import { AccountResult, SendTransactionResult, TronTransaction, TronTRC20Transaction } from '../wallet/model/tron.types';
+import { AccountResult, SendTransactionResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
@@ -102,7 +102,20 @@ export class GlobalTronGridService {
             return await this.httpPost(requestUrl, body);
         }
         catch (err) {
-            Logger.error('GlobalTronGridService', 'getTrc20Transactions: http get error:', err);
+            Logger.error('GlobalTronGridService', 'getTransactionById: http get error:', err);
+            return null;
+        }
+    }
+
+    public async getTransactionInfoById(rpcApiUrl: string, transactionID: string): Promise<TronTransactionInfo> {
+        let requestUrl = rpcApiUrl + '/wallet/gettransactioninfobyid';
+
+        let body = JSON.stringify({value: transactionID})
+        try {
+            return await this.httpPost(requestUrl, body);
+        }
+        catch (err) {
+            Logger.error('GlobalTronGridService', 'getTransactionInfoById: http get error:', err);
             return null;
         }
     }
