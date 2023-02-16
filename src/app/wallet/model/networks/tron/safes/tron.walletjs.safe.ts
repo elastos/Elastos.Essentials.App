@@ -11,6 +11,8 @@ import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { TronSafe } from './tron.safe';
 
+// Tron
+const defaultDerivePath = "m/44'/195'/0'/0/0";
 
 export class TronWalletJSSafe extends Safe implements TronSafe {
     private tronAddress = null;
@@ -68,7 +70,7 @@ export class TronWalletJSSafe extends Safe implements TronSafe {
             let privateKey: string = null;
             let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
             if (seed) {
-                let jsWallet = await WalletUtil.getWalletFromSeed(seed);
+                let jsWallet = await WalletUtil.getWalletFromSeed(seed, defaultDerivePath);
                 privateKey = jsWallet.privateKey;
             }
             else {
