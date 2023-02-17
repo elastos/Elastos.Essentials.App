@@ -43,7 +43,6 @@ export class TronSubWalletTokenProvider<SubWalletType extends TronSubWallet> ext
 
         try {
             let transactions = await GlobalTronGridService.instance.getTrc20Transactions(this.rpcApiUrl, this.accountAddress, contractAddress, MAX_RESULTS_PER_FETCH, max_timestamp);
-            Logger.warn('wallet', 'TronSubWalletTokenProvider transactions:', transactions)
             if (!(transactions instanceof Array)) {
                 Logger.warn('wallet', 'TronSubWalletTokenProvider fetchTransactions invalid transactions:', transactions)
                 return null;
@@ -54,11 +53,28 @@ export class TronSubWalletTokenProvider<SubWalletType extends TronSubWallet> ext
                 this.canFetchMore = false;
             }
 
-            // this.updateTransactionsInfo(transactions);
+            this.updateTransactionsInfo(transactions);
             await this.saveTransactions(transactions);
         } catch (e) {
             Logger.error('wallet', 'TronSubWalletTokenProvider fetchTransactions error:', e)
         }
         return null;
+    }
+
+    private updateTransactionsInfo(transactions: TronTRC20Transaction[]) {
+        transactions.forEach(tx => {
+            if (this.isTransferFromZeroTransfer(tx)) {
+                tx.hide = true;
+            }
+        })
+    }
+
+    // https://slowmist.medium.com/slowmist-be-wary-of-the-transferfrom-zero-transfer-scam-c64ba0e3bc4d
+    isTransferFromZeroTransfer(tx: TronTRC20Transaction) {
+        // TODO: Check this transaction is a call to the function TransferFrom?
+        if ((tx.type == "Transfer") && (tx.value == '0')) {
+            return true;
+        }
+        return false;
     }
 }

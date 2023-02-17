@@ -86,6 +86,7 @@ export type TronTRC20Transaction = GenericTransaction & {
     value: string,
 
     direction?: TransactionDirection;
+    hide?: boolean;
 };
 
 // Fees paid by transaction senders/sending addresses:

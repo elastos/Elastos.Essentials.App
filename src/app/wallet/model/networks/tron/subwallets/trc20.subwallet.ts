@@ -288,6 +288,8 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
     }
 
     public async getTransactionInfo(transaction: TronTRC20Transaction): Promise<TransactionInfo> {
+        if (transaction.hide) return null;
+
         const timestamp = transaction.block_timestamp;
         const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
 
