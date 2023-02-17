@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
@@ -31,8 +30,6 @@ type TokenToShow = {
   styleUrls: ['./token-chooser.component.scss'],
 })
 export class TokenChooserComponent implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-
   public activeNetwork: AnyNetwork = null;
   private nativeTokenWallet: MainCoinEVMSubWallet<any> = null;
   public tokens: TokenToShow[] = [];

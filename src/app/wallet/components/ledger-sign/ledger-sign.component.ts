@@ -1,9 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams, Platform } from '@ionic/angular';
 import { DisconnectedDeviceDuringOperation } from '@ledgerhq/errors';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BLECentralPluginBridge } from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BLECentralPluginBridge';
 import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
 import { Logger } from 'src/app/logger';
@@ -25,8 +24,6 @@ export type LedgerSignComponentOptions = {
   styleUrls: ['./ledger-sign.component.scss'],
 })
 export class LedgerSignComponent implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-
   private bleManager: BLECentralPluginBridge = null;
 
   public scanning = false;

@@ -1,7 +1,6 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CoinType } from '../../model/coin';
@@ -22,8 +21,6 @@ export type WalletChooserComponentOptions = {
   styleUrls: ['./transfer-wallet-chooser.component.scss'],
 })
 export class TransferWalletChooserComponent implements OnInit {
-  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
-
   public CoinType = CoinType;
   public options: WalletChooserComponentOptions = null;
   public walletsToShowInList: AnyNetworkWallet[];
