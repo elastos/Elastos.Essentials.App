@@ -743,7 +743,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if ((this.fromSubWallet.type === CoinType.ERC20) || (this.fromSubWallet.type === CoinType.TRC20)) {
             // Balance can cover fee?
             // TODO: 0.0001 works only for Elastos ESC! Rework this.
-            if (!this.networkWallet.getMainEvmSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
+            if (!this.networkWallet.getMainTokenSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
                 const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
                 this.conditionalShowToast(message, showToast, 4000);
                 return false;
