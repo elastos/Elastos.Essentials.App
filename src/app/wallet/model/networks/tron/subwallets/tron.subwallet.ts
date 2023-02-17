@@ -160,7 +160,7 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
 
     /**
      * Check whether the available balance is enough.
-     * @param amount unit is sotoshi
+     * @param amount unit is sun
      */
     public async isAvailableBalanceEnough(amount: BigNumber) {
         return await this.balance.gt(amount);
@@ -172,6 +172,12 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
 
     // Ignore gasPrice, gasLimit and nonce.
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
+        if (amount.eq(-1)) {//-1: send all.
+            // TODO: gas?
+            amount = this.balance;
+        } else {
+            amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
+        }
         return (this.networkWallet.safe as unknown as TronSafe).createTransferTransaction(toAddress, amount.toFixed());
     }
 
@@ -200,13 +206,17 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
      */
     private async updateTronSubWalletInfo() {
         let accountInfo = await GlobalTronGridService.instance.account(this.rpcApiUrl, this.tronAddress);
+        // accountInfo is {} if the account is not activated.
         if (accountInfo) {
             if (accountInfo.balance) {
                 this.balance = new BigNumber(accountInfo.balance);
                 await this.saveBalanceToCache();
+            } else {
+                this.balance = new BigNumber(0);
             }
+
             // TRC20
-            if (accountInfo.trc20.length > 0) {
+            if (accountInfo.trc20?.length > 0) {
                 let coinInfos = await TRC20CoinService.instance.getCoinInfos(this.networkWallet.network, accountInfo.trc20);
                 await this.networkWallet.getTransactionDiscoveryProvider().onTRCTokenInfoFound(coinInfos);
             }

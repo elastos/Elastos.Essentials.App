@@ -42,7 +42,7 @@ export class GlobalTronGridService {
         try {
             let ret = await this.httpGet(requestUrl);
             if (ret && ret.data) {
-                return ret.data[0];
+                return ret.data[0] ? ret.data[0] : {};
             } else return null;
         }
         catch (err) {

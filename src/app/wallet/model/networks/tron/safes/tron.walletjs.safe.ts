@@ -95,9 +95,8 @@ export class TronWalletJSSafe extends Safe implements TronSafe {
 
     async createTransferTransaction(toAddress: string, amount: string): Promise<any> {
         await this.initTronWeb();
-        let amountSun = this.tronWeb.toSun(amount);
         return this.tronWeb.transactionBuilder.sendTrx(
-            toAddress, amountSun, this.tronAddress
+            toAddress, amount, this.tronAddress
         );
     }
 
