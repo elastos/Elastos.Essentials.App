@@ -131,7 +131,7 @@
                         </p>
                     </ion-col>
                     <ion-col offset="2" size="10" class="bottom-col">
-                        <span *ngIf="subWallet.type === CoinType.ERC20" class="secondary-text">{{
+                        <span *ngIf="subWallet.type === CoinType.ERC20 || subWallet.type === CoinType.TRC20" class="secondary-text">{{
                             subWallet.getDisplayableERC20TokenInfo() }}</span>
                     </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>

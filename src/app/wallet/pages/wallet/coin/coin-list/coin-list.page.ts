@@ -270,7 +270,7 @@ export class CoinListPage implements OnInit, OnDestroy {
     }
 
     public goToCoinDetails(item: EditableCoinInfo) {
-        if (item.coin.getType() === CoinType.ERC20) {
+        if ((item.coin.getType() === CoinType.ERC20) || (item.coin.getType() === CoinType.TRC20)) {
             this.native.go('/wallet/coin-erc20-details', { masterWalletId: this.networkWallet.masterWallet.id, coinId: item.coin.getID() });
         }
     }

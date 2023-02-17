@@ -65,7 +65,7 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         public networkWallet: AnyNetworkWallet,
         id: CoinID,
         private rpcApiUrl: string,
-        protected displayableERC20TokenInfo: string // Ex: "HRC20 Token"
+        protected displayableERC20TokenInfo = 'Tron TRC20 Token'
     ) {
         super(networkWallet, id, CoinType.TRC20);
 
