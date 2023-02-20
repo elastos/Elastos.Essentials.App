@@ -101,6 +101,8 @@ export type TransactionInfo = {
   transferAmount?: BigNumber,
   votesContents?: VotesContentInfo[],
   renewalVotesContentInfo?: RenewalVotesContentInfo[],
+
+  resources?: string, // For Tron network.
 };
 
 /**

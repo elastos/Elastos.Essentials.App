@@ -279,6 +279,9 @@ export const zh = {
         "tx-info-type-transferred": "转移",
         "tx-info-token-address": "币种地址",
         "tx-info-erc20-amount": "ERC20转账金额",
+        "tx-info-resource-consumed": "资源消耗",
+        "tx-info-resource-bandwidth": "带宽",
+        "tx-info-resource-energy": "能量",
 
         /***********************************
         * ETH Transaction Component *

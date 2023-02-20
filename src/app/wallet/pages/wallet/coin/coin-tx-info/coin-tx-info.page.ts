@@ -330,6 +330,17 @@ export class CoinTxInfoPage implements OnInit {
                 }
             }
 
+            if (this.transactionInfo.resources) {
+                this.txDetails.unshift(
+                    {
+                        type: 'resources',
+                        title: 'wallet.tx-info-resource-consumed',
+                        value: this.transactionInfo.resources,
+                        show: true,
+                    }
+                );
+            }
+
             if (this.payFee !== null) {
                 let nativeFee = this.payFee + ' ' + this.mainTokenSymbol;
                 let currencyFee = '';

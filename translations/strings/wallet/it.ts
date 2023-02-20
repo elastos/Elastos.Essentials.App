@@ -279,6 +279,9 @@ export const it = {
         "tx-info-type-transferred": "Trasferito",
         "tx-info-token-address": "Indirizzo token ERC20",
         "tx-info-erc20-amount": "Importo token ERC20",
+        "tx-info-resource-consumed": "Resources Consumed",
+        "tx-info-resource-bandwidth": "Bandwidth",
+        "tx-info-resource-energy": "Energy",
 
         /***********************************
         * ETH Transaction Component *

@@ -9,7 +9,7 @@ export type RequestResponse = {
     };
 }
 
-export type AccountTrc20Token = {
+export type AccountTRC20Token = {
     [tokenId: string]: string // "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t": "100000000",
 };
 
@@ -22,7 +22,7 @@ export type AccountResult = {
     address: string,
     balance: number, //TRX, unit : sun
     create_time: number,
-    trc20: AccountTrc20Token[],
+    trc20: AccountTRC20Token[],
 };
 /**
  * Energy:

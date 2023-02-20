@@ -279,6 +279,9 @@ export const fr = {
         "tx-info-type-transferred": "Transféré",
         "tx-info-token-address": "Adresse du jeton ERC20",
         "tx-info-erc20-amount": "Montant du jeton ERC20",
+        "tx-info-resource-consumed": "Resources Consumed",
+        "tx-info-resource-bandwidth": "Bandwidth",
+        "tx-info-resource-energy": "Energy",
 
         /***********************************
         * ETH Transaction Component *

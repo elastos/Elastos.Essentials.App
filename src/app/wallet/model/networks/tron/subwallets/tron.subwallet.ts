@@ -81,6 +81,22 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         }
     }
 
+    private getTransactionResourcesConsumed(transaction: TronTransaction) {
+        let resourcesString = '';
+
+        if (transaction.net_usage) {
+            resourcesString += transaction.net_usage + ' ' + GlobalTranslationService.instance.translateInstant('wallet.tx-info-resource-bandwidth');
+        }
+
+        if (transaction.energy_usage_total) {
+            if (resourcesString.length) resourcesString += ',    ';
+
+            resourcesString += transaction.energy_usage_total + ' ' + GlobalTranslationService.instance.translateInstant('wallet.tx-info-resource-energy')
+        }
+
+        return resourcesString;
+    }
+
     public getAddressCount(internal: boolean): number {
         if (internal) return 0;
         else return 1;
@@ -112,7 +128,8 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             type: null,
             isCrossChain: false,
             isRedPacket: false,
-            subOperations: []
+            subOperations: [],
+            resources: this.getTransactionResourcesConsumed(transaction),
         };
 
         // if (transaction.confirmations > 0) {

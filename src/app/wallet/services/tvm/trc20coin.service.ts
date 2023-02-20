@@ -33,7 +33,7 @@ import { ERCTokenInfo } from '../../model/networks/evms/evm.types';
 import { AnyNetwork } from '../../model/networks/network';
 import { TronNetworkBase } from '../../model/networks/tron/network/tron.base.network';
 import { TimeBasedPersistentCache } from '../../model/timebasedpersistentcache';
-import { AccountTrc20Token } from '../../model/tron.types';
+import { AccountTRC20Token } from '../../model/tron.types';
 import { WalletNetworkService } from '../network.service';
 
 export const trc20CoinsSerializer = new JsonSerializer();
@@ -130,7 +130,7 @@ export class TRC20CoinService {
         });
     }
 
-    public async getCoinInfos(network: AnyNetwork, tokens: AccountTrc20Token[]): Promise<ERCTokenInfo[]> {
+    public async getCoinInfos(network: AnyNetwork, tokens: AccountTRC20Token[]): Promise<ERCTokenInfo[]> {
         let coinInfos : ERCTokenInfo[] = [];
         if (!tokens) return coinInfos;
         for (let i = 0; i < tokens.length; i++) {
