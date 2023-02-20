@@ -24,6 +24,30 @@ export type AccountResult = {
     create_time: number,
     trc20: AccountTrc20Token[],
 };
+/**
+ * Energy:
+ *      currentAccountEnergy = EnergyLimit - EnergyUsed
+ * Bandwidth:
+ *      totalBandwidth = freeNetLimit + NetLimit;
+ *      totalBandwidthUsed = NetUsed + freeNetUsed;
+ *      currentAccountBandwidth = totalBandwidth - totalBandwidthUsed
+ */
+export type AccountResources = {
+    EnergyLimit?: number, // Total energy obtained by staking
+    EnergyUsed?: number, // Energy used
+    freeNetLimit: number, // Total free bandwidth
+    freeNetUsed?: number, // Free bandwidth used
+    NetLimit?: number, // Total bandwidth obtained by staking
+    NetUsed?: number, // Used amount of bandwidth obtained by staking
+    assetNetUsed?: { key: string, value: number }[],
+    assetNetLimit?: { key: string, value: number } [],
+    tronPowerLimit?: number, // TRON Power(vote)
+    tronPowerUsed?: number, // TRON Power(vote) used
+    TotalNetLimit: number, // Total bandwidth can be obtained by staking by the whole network
+    TotalNetWeight: number, // Total TRX staked for bandwidth by the whole network
+    TotalEnergyLimit: number, // Total energy can be obtained by staking by the whole network
+    TotalEnergyWeight: number, // Total TRX staked for energy by the whole network
+}
 
 export type TronContractData = {
     parameter: {

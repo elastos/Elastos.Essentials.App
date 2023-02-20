@@ -166,15 +166,37 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         return await this.balance.gt(amount);
     }
 
-    public async estimateTransferTransactionGas() {
-        throw new Error("Method not implemented.");
+    public async estimateTransferTransactionGas(toAddress: string) {
+        let accountInfo = await GlobalTronGridService.instance.account(this.rpcApiUrl, toAddress);
+        if (accountInfo && !accountInfo.create_time) {
+            // the toAddress is not activated.
+            return 1100000;
+        }
+
+        let usableBandwidth = 0;
+        let res = await GlobalTronGridService.instance.getAccountResource(this.tronAddress);
+        if (!res || !res.freeNetLimit) return usableBandwidth;
+
+        usableBandwidth = res.freeNetLimit + (res.NetLimit ? res.NetLimit : 0)
+                        - (res.NetUsed ? res.NetUsed : 0) - (res.freeNetUsed ? res.freeNetUsed : 0);
+        // 300 is enough.
+        if (usableBandwidth > 300) return 0;
+        else return 30000;
     }
 
-    // Ignore gasPrice, gasLimit and nonce.
+    // Fees paid by transaction senders/sending addresses:
+    // Use tronWeb.trx.getChainParameters();
+    // 1. Issue a TRC10 token: 1,024 TRX
+    // 2. Apply to be an SR candidate: 9,999 TRX
+    // 3. Create a Bancor transaction: 1,024 TRX
+    // 4. Update the account permission: 100 TRX
+    // 5. Activate the account: 1 TRX
+    // 6. Multi-sig transaction: 1 TRX
+    // 7. Transaction note: 1 TRX
     public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
         if (amount.eq(-1)) {//-1: send all.
-            // TODO: gas?
-            amount = this.balance;
+            let fee = await this.estimateTransferTransactionGas(toAddress);
+            amount = this.balance.minus(fee);
         } else {
             amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
         }

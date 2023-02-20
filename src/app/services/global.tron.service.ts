@@ -2,7 +2,9 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
-import { AccountResult, SendTransactionResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
+import { TronNetworkBase } from '../wallet/model/networks/tron/network/tron.base.network';
+import { AccountResources, AccountResult, SendTransactionResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
+import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
@@ -16,6 +18,8 @@ export class GlobalTronGridService {
     private apikey_mainnet = 'e01b9d55-e787-4c0f-8074-8fbe40fddb91';
     private apikey = '';
 
+    private tronWeb = null;
+
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalTronGridService.instance = this;
     }
@@ -27,6 +31,22 @@ export class GlobalTronGridService {
         } else {
             this.apikey = this.apikey_mainnet;
         }
+
+        WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
+            if (activeNetwork instanceof TronNetworkBase) {
+              void this.initTronWeb();
+            }
+        })
+    }
+
+    private async initTronWeb() {
+        if (this.tronWeb) return;
+
+        const TronWeb = await lazyTronWebImport();
+        this.tronWeb = new TronWeb({
+            fullHost: WalletNetworkService.instance.activeNetwork.value.getRPCUrl(),
+            headers: this.apikey ? { "TRON-PRO-API-KEY": this.apikey } : null,
+        })
     }
 
     public getApiKey() {
@@ -47,6 +67,17 @@ export class GlobalTronGridService {
         }
         catch (err) {
             Logger.error('GlobalTronGridService', 'account: http get error:', err);
+            return null;
+        }
+    }
+
+    // return {} if the account is not activated.
+    public async getAccountResource(address: string): Promise<AccountResources> {
+        try {
+            return await this.tronWeb.trx.getAccountResources(address);
+        }
+        catch (err) {
+            Logger.error('GlobalTronGridService', 'getAccountResource exception:', err);
             return null;
         }
     }
@@ -84,13 +115,7 @@ export class GlobalTronGridService {
     }
 
     public async sendrawtransaction(rpcApiUrl: string, signedhex: string): Promise<string> {
-        const TronWeb = await lazyTronWebImport();
-        let tronWeb = new TronWeb({
-            fullHost: rpcApiUrl,
-            headers: this.apikey ? { "TRON-PRO-API-KEY": this.apikey } : null,
-        })
-
-        const receipt: SendTransactionResult = await tronWeb.trx.sendRawTransaction(signedhex);
+        const receipt: SendTransactionResult = await this.tronWeb.trx.sendRawTransaction(signedhex);
         return receipt?.txid;
     }
 
