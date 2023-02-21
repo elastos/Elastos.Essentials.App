@@ -184,7 +184,7 @@ export class TRC20CoinService {
                 return new BigNumber(rawBalance);
             }
         } catch (error) {
-            Logger.log('wallet', 'Failed to retrieve ERC20 token balance', network, tokenAddress, walletAddress, error);
+            Logger.log('wallet', 'Failed to retrieve TRC20 token balance', network, tokenAddress, walletAddress, error);
             return new BigNumber(0);
         }
     }

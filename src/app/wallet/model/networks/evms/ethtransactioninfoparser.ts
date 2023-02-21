@@ -4,10 +4,13 @@ import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.servi
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { ERC1155Service } from "src/app/wallet/services/evm/erc1155.service";
 import { ERC721Service } from "src/app/wallet/services/evm/erc721.service";
+import { TRC20CoinService } from "src/app/wallet/services/tvm/trc20coin.service";
 import type { TransactionReceipt } from "web3-core";
 import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
 import { TransactionType } from "../../tx-providers/transaction.types";
 import type { AnyNetwork } from "../network";
+import { TronNetworkBase } from "../tron/network/tron.base.network";
+import { TronSubWallet } from "../tron/subwallets/tron.subwallet";
 import { EthTransaction } from "./evm.types";
 import { NFTResolvedInfo } from "./nfts/resolvedinfo";
 import { ERC20SubWallet } from "./subwallets/erc20.subwallet";
@@ -64,7 +67,7 @@ export type ETHTransactionInfo = {
  * data (ex: 0x.......).
  */
 export class ETHTransactionInfoParser {
-  constructor(private network: AnyNetwork) { }
+  constructor(private network: AnyNetwork) {}
 
   /**
    * @param txData Transaction data (0x...)
@@ -108,7 +111,7 @@ export class ETHTransactionInfoParser {
     return txInfo;
   }
 
-  private async computeOperation(subWallet: AnyMainCoinEVMSubWallet | ERC20SubWallet, txInfo: ETHTransactionInfo, txData: string, txTo?: string): Promise<void> {
+  public async computeOperation(subWallet: AnyMainCoinEVMSubWallet | ERC20SubWallet | TronSubWallet, txInfo: ETHTransactionInfo, txData: string, txTo?: string): Promise<void> {
     txInfo.type = ETHOperationType.OTHER_CONTRACT_CALL; // Default, if we don't find/want more specific
 
     if (txData === "0x") {
@@ -191,7 +194,7 @@ export class ETHTransactionInfoParser {
 
       case '0xa9059cbb': // ERC20 transfer(address,uint256)
         try {
-          let coinInfo = await ERC20CoinService.instance.getCoinInfo(this.network, txTo); // txTo is the contract address
+          let coinInfo = await this.getERC20TokenInfoOrThrow(txTo);
           if (coinInfo) {
             txInfo.type = ETHOperationType.SEND_ERC20;
             txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol } };
@@ -532,7 +535,12 @@ export class ETHTransactionInfoParser {
   }
 
   private async getERC20TokenInfoOrThrow(contractAddress: string): Promise<ERC20CoinInfo> {
-    let coinInfo = await ERC20CoinService.instance.getCoinInfo(this.network, contractAddress);
+    let coinInfo = null;
+    if (this.network instanceof TronNetworkBase) {
+      coinInfo = await TRC20CoinService.instance.getCoinInfo(this.network, contractAddress); // txTo is the contract address
+    } else {
+      coinInfo = await ERC20CoinService.instance.getCoinInfo(this.network, contractAddress); // txTo is the contract address
+    }
     if (!coinInfo)
       throw new Error("Unable to get ERC20 token info");
 

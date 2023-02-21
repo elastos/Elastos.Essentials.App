@@ -3,7 +3,7 @@ import { Subject } from "rxjs";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService } from "src/app/services/global.networks.service";
 import { LocalStorage } from "src/app/wallet/services/storage.service";
-import { trc20CoinsSerializer } from "src/app/wallet/services/tvm/trc20Coin.service";
+import { trc20CoinsSerializer } from "src/app/wallet/services/tvm/trc20coin.service";
 import { Coin, CoinID, CoinType, TRC20Coin } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";

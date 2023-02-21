@@ -5,7 +5,7 @@ import { GlobalLanguageService } from "src/app/services/global.language.service"
 
 import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
 import { ERC20CoinService } from "../../services/evm/erc20coin.service";
-import { TRC20CoinService } from "../../services/tvm/trc20Coin.service";
+import { TRC20CoinService } from "../../services/tvm/trc20coin.service";
 import { ERC20Coin, StandardCoinName, TokenAddress, TokenType, TRC20Coin } from "../coin";
 import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
 import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";

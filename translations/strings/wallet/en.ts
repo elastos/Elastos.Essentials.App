@@ -169,6 +169,8 @@ export const en = {
         "coin-op-dpos2-node-reward-withdraw": "DPoS Node reward withdraw",
         "coin-op-voting-cancel": "Vote Cancellation",
         "coin-op-coin-base": "Coinbase Transaction",
+        "coin-op-freeze": "Freeze",
+        "coin-op-unfreeze": "Unfreeze",
         "coin-dir-from-mainchain": "From Main Chain",
         "coin-dir-from-idchain": "From EID Sidechain",
         "coin-dir-from-ethsc": "From ESC Sidechain",

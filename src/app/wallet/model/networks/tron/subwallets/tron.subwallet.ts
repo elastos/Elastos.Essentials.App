@@ -12,12 +12,15 @@ import { TransactionDirection, TransactionInfo, TransactionType } from '../../..
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
+import { ETHOperationType, ETHTransactionInfo, ETHTransactionInfoParser } from '../../evms/ethtransactioninfoparser';
 import { TronSafe } from '../safes/tron.safe';
 
 const TRANSACTION_LIMIT = 100;
 
 export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     private tronAddress: string = null;
+
+    private txInfoParser: ETHTransactionInfoParser;
 
     constructor(networkWallet: AnyNetworkWallet, public rpcApiUrl: string) {
         super(networkWallet, StandardCoinName.TRON);
@@ -26,6 +29,8 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals);
 
         this.getRootPaymentAddress();
+
+        this.txInfoParser = new ETHTransactionInfoParser(this.networkWallet.network);
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -69,10 +74,18 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     protected async getTransactionName(transaction: TronTransaction): Promise<string> {
+        // Use extended info is there is some
+        let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.txID);
+        if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
+            return GlobalTranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
+
         switch (transaction.direction) {
             case TransactionDirection.RECEIVED:
                 return await "wallet.coin-op-received-token";
             case TransactionDirection.SENT:
+                if (transaction.raw_data.contract[0].type === 'FreezeBalanceContract') {
+                    return "wallet.coin-op-freeze";
+                }
                 return "wallet.coin-op-sent-token";
             case TransactionDirection.MOVED:
                 return "wallet.coin-op-transfered-token";
@@ -151,11 +164,54 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             transactionInfo.symbol = '';
         }
 
+        if (transaction.raw_data.contract[0].parameter.value.data) {
+            let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.txID);
+            if (!extInfo || !extInfo.evm || !extInfo.evm.txInfo) {
+                let txInfo: ETHTransactionInfo = {
+                    type: null,
+                    operation: null,
+                    events: []
+                };
+                let txData = transaction.raw_data.contract[0].parameter.value.data;
+                await this.txInfoParser.computeOperation(this, txInfo, txData.startsWith('0x') ? txData : '0x'+txData, transaction.to);
+
+                if (!extInfo) {
+                    extInfo = {
+                        evm : null
+                    }
+                }
+
+                extInfo.evm = {
+                    transactionReceipt: null,
+                    txInfo: txInfo
+                }
+
+                await this.networkWallet.saveExtendedTxInfo(transaction.txID, extInfo);
+                transactionInfo.name = await this.getTransactionName(transaction);
+            }
+        }
         return transactionInfo;
     }
 
     // eslint-disable-next-line require-await
     protected async getTransactionIconPath(transaction: TronTransaction): Promise<string> {
+        // Use extended info is there is some
+        let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.txID);
+        if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
+            switch (extInfo.evm.txInfo.type) {
+                case ETHOperationType.ERC20_TOKEN_APPROVE: return '/assets/wallet/tx/approve-token.svg';
+                case ETHOperationType.SEND_NFT: return '/assets/wallet/tx/send-nft.svg';
+                case ETHOperationType.SWAP: return '/assets/wallet/tx/swap-tokens.svg';
+                case ETHOperationType.ADD_LIQUIDITY: return '/assets/wallet/tx/add-liquidity.svg';
+                case ETHOperationType.REMOVE_LIQUIDITY: return '/assets/wallet/tx/remove-liquidity.svg';
+                case ETHOperationType.BRIDGE: return '/assets/wallet/tx/bridge.svg';
+                case ETHOperationType.WITHDRAW: return '/assets/wallet/tx/withdraw.svg';
+                case ETHOperationType.DEPOSIT: return '/assets/wallet/tx/deposit.svg';
+                case ETHOperationType.GET_REWARDS: return '/assets/wallet/tx/get-rewards.svg';
+                case ETHOperationType.STAKE: return '/assets/wallet/tx/stake.svg';
+            }
+        }
+
         switch (transaction.direction) {
             case TransactionDirection.RECEIVED:
                 return './assets/wallet/tx/receive.svg';

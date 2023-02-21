@@ -57,6 +57,12 @@ export type TronContractData = {
             to_address?: string, //"418f723ec92f28a87c0a1d28d83210487b1af86e19"
             contract_address?: string, //"418f723ec92f28a87c0a1d28d83210487b1af86e19"
             data?: string,
+            // FreezeBalanceContract
+            frozen_balance?: number, // Sun
+            frozen_duration?: number, // Day
+            resource?: number, // 0:BANDWIDTH, 1: ENERGY
+            resource_type?: string, // "ENERGY", "BANDWIDTH"
+            resource_value?: number, // 0:BANDWIDTH, 1: ENERGY
         },
         type_url: string //"type.googleapis.com/protocol.TransferContract"
     },
