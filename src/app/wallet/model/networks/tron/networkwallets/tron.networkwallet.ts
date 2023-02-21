@@ -1,8 +1,11 @@
+import { GlobalTronGridService } from "src/app/services/global.tron.service";
 import { StandardCoinName } from "../../../coin";
+import { ExtendedTransactionInfo } from "../../../extendedtxinfo";
 import { MasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletNetworkOptions } from "../../../masterwallets/wallet.types";
 import { Safe } from "../../../safes/safe";
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
+import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { NetworkWallet, WalletAddressInfo } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { MainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
@@ -48,6 +51,22 @@ export abstract class TronNetworkWallet <MasterWalletType extends MasterWallet, 
 
     public getAverageBlocktime(): number {
         return 3;
+    }
+
+    protected async fetchExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {
+        // Fetch transaction receipt
+        let txInfo = await GlobalTronGridService.instance.getTransactionInfoById(this.network.getAPIUrlOfType(NetworkAPIURLType.RPC), txHash);
+        if (!txInfo)
+            return;
+
+        // Save extended info to cache
+        if (txInfo) {
+            await this.saveExtendedTxInfo(txHash, {
+                tvm: {
+                    txInfo: txInfo
+                }
+            });
+        }
     }
 }
 

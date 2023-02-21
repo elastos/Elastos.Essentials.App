@@ -319,11 +319,6 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
             subOperations: []
         };
 
-        // Use Config.WEI: because the gas is TRX.
-        // if (transaction.gasUsed?.length > 0 && transaction.gasPrice?.length > 0) {
-        //     transactionInfo.fee = (new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(Config.WEI)).toFixed();
-        // }
-
         // if (transactionInfo.confirmStatus !== 0) {
         //     transactionInfo.status = TransactionStatus.CONFIRMED;
         //    transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
@@ -344,25 +339,25 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         }
 
         // Not blocking retrieval of extended transaction information
-        // void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
-        //     // Got a partial info, now compute more things (main contract operation type, events...) then save
-        //     if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
-        //     extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
-        //     await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
-        //     transactionInfo.name = await this.getTransactionName(transaction);
-        //     transactionInfo.payStatusIcon = await this.getTransactionIconPath(transaction);
-        //     }
-        // });
+        // Call getTransactionInfoById to get more info for trc20 transaction.
+        void this.networkWallet.getOrFetchExtendedTxInfo(transaction.transaction_id).then(async extInfo => {
+            if (extInfo && extInfo.tvm && extInfo.tvm.txInfo) {
+                if (extInfo.tvm.txInfo.fee) transactionInfo.fee = (new BigNumber(extInfo.tvm.txInfo.fee).dividedBy(this.tokenAmountMulipleTimes)).toFixed(),
+                transactionInfo.resources = this.getTransactionResourcesConsumed(extInfo.tvm.txInfo);
+                transactionInfo.height = extInfo.tvm.txInfo.blockNumber;
+            }
+        });
 
         return transactionInfo;
     }
 
     // TODO: Refine / translate with more detailed info: smart contract run, cross chain transfer or ERC payment, etc
     protected async getTransactionName(transaction: TronTRC20Transaction): Promise<string> {
+        // TODO
         // Use extended info is there is some
-        let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.transaction_id);
-        if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
-            return GlobalTranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
+        // let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.transaction_id);
+        // if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
+        //     return GlobalTranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
 
         const direction = transaction.direction ? transaction.direction : await this.getERC20TransactionDirection(transaction.to);
         switch (direction) {
@@ -373,6 +368,22 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
             default:
                 return "Invalid";
         }
+    }
+
+    private getTransactionResourcesConsumed(transaction: TronTransactionInfo) {
+        let resourcesString = '';
+
+        if (transaction.receipt.net_usage) {
+            resourcesString += transaction.receipt.net_usage + ' ' + GlobalTranslationService.instance.translateInstant('wallet.tx-info-resource-bandwidth');
+        }
+
+        if (transaction.receipt.energy_usage_total) {
+            if (resourcesString.length) resourcesString += ',    ';
+
+            resourcesString += transaction.receipt.energy_usage_total + ' ' + GlobalTranslationService.instance.translateInstant('wallet.tx-info-resource-energy')
+        }
+
+        return resourcesString;
     }
 
     // TODO: Refine with more detailed info: smart contract run, cross chain transfer or ERC payment, etc

@@ -23,7 +23,6 @@ import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwall
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { EthTransaction } from 'src/app/wallet/model/networks/evms/evm.types';
-import { TRC20SubWallet } from 'src/app/wallet/model/networks/tron/subwallets/trc20.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
@@ -272,24 +271,18 @@ export class CoinTxInfoPage implements OnInit {
                     show: false,
                 },
                 {
+                    type: 'blockId',
+                    title: 'wallet.tx-info-block-id',
+                    value: this.height <= 0 ? '0' : this.height.toString(),
+                    show: false,
+                },
+                {
                     type: 'txid',
                     title: 'wallet.tx-info-transaction-id',
                     value: this.transactionInfo.txid,
                     show: false,
                 },
             );
-
-            // Do't show block height for TRC20 token, because we need to get the block height by other api .
-            // Users can view this transaction on the browser by the transaction id.
-            if (!(this.subWallet instanceof TRC20SubWallet)) {
-                this.txDetails.push(
-                    {
-                    type: 'blockId',
-                    title: 'wallet.tx-info-block-id',
-                    value: this.height <= 0 ? '0' : this.height.toString(),
-                    show: false,
-                });
-            }
         }
 
         // Only show receiving address, total cost and fees if tx was not received
