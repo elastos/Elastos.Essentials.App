@@ -442,7 +442,7 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
                 value: toAddress
             }, {
                 type: 'uint256',
-                value: amountWithDecimals.toString()
+                value: amountWithDecimals.toFixed(0)
             }],
             tokenAccountAddress
         );
