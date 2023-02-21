@@ -815,7 +815,7 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
 
     public async saveExtendedTxInfo(txHash: string, info: ExtendedTransactionInfo): Promise<void> {
         // In order to reduce the size of the cache, do not save useless data.
-        if (info.evm && info.evm.transactionReceipt.logsBloom) {
+        if (info.evm && info.evm.transactionReceipt && info.evm.transactionReceipt.logsBloom) {
             info.evm.transactionReceipt.logsBloom = '';
         }
         this.extendedTransactionInfoCache.set(txHash, info);

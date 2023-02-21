@@ -188,7 +188,7 @@ export abstract class TronNetworkBase extends Network<WalletNetworkOptions> {
     let someCoinsWereRemoved = false;
     for (let rawCoin of rawCoinList) {
       // Use the contract address as id.
-      if ((rawCoin.id as string).startsWith('0x')) {
+      if ((rawCoin.id as string).startsWith('T')) {
         let coin = TRC20Coin.fromJson(rawCoin, this);
 
         // Legacy support: we didn't save coins decimals earlier. So we delete custom coins from disk if we don't have the info.
