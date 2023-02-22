@@ -116,7 +116,15 @@ export class GlobalTronGridService {
 
     public async sendrawtransaction(rpcApiUrl: string, signedhex: string): Promise<string> {
         const receipt: SendTransactionResult = await this.tronWeb.trx.sendRawTransaction(signedhex);
-        return receipt?.txid;
+        if (receipt.result) {
+            return receipt.txid;
+        } else {
+            if (receipt.message) {
+                let message = this.tronWeb.toUtf8(receipt.message);
+                throw new Error(message);
+            }
+            return null;
+        }
     }
 
     public async getTransactionById(rpcApiUrl: string, transactionID: string) {

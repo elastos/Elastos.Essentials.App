@@ -75,11 +75,12 @@ export type TronTransactionData = {
     ref_block_hash: string, // "3274bd9cf7bfef36",
     expiration: number,
     timestamp: number, //1675849603707
+    fee_limit?: number,
 }
 
 export type TronTransaction = GenericTransaction & {
     ret: {
-        contractRet: string, //"SUCCESS"
+        contractRet: string, //"SUCCESS", "OUT_OF_ENERGY"
         fee: number, // 1100000
     } [],
     signature: string[],
@@ -148,14 +149,21 @@ export type TronTransactionInfo = {
     }[]
 }
 
+// if bandwith/trx is not enough, return {
+//  code: "BANDWITH_ERROR",
+//  message: "4163636f756e74207265736f7572636520696e73756666696369656e74206572726f722e",
+//  txid: string
+// }
 export type SendTransactionResult = {
-    result: boolean,
+    result?: boolean,
     txid: string,
-    transaction: {
+    transaction?: {
         visible: boolean,
         txID: string,
         raw_data: TronTransactionData,
         raw_data_hex: string,
         signature: string[],
     },
+    code?: string,
+    message?: string, // hex
 };

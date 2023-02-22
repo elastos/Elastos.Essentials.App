@@ -145,14 +145,6 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             resources: this.getTransactionResourcesConsumed(transaction),
         };
 
-        // if (transaction.confirmations > 0) {
-        //     transactionInfo.status = TransactionStatus.CONFIRMED;
-        //     transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
-        // } else {
-        //     transactionInfo.status = TransactionStatus.PENDING;
-        //     transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
-        // }
-
         if (direction === TransactionDirection.RECEIVED) {
             transactionInfo.type = TransactionType.RECEIVED;
             transactionInfo.symbol = '+';
@@ -162,6 +154,14 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         } else if (direction === TransactionDirection.MOVED) {
             transactionInfo.type = TransactionType.TRANSFER;
             transactionInfo.symbol = '';
+        }
+
+        if (transaction.ret[0].contractRet != 'SUCCESS') {
+            transactionInfo.statusName = transaction.ret[0].contractRet;
+            transactionInfo.status = 'incomplete';
+        } else {
+            transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+            transactionInfo.status = 'confirmed';
         }
 
         if (transaction.raw_data.contract[0].parameter.value.data) {
@@ -195,6 +195,10 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
 
     // eslint-disable-next-line require-await
     protected async getTransactionIconPath(transaction: TronTransaction): Promise<string> {
+        if (transaction.ret[0].contractRet != 'SUCCESS') {
+            return './assets/wallet/tx/error.svg';
+        }
+
         // Use extended info is there is some
         let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.txID);
         if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
@@ -282,7 +286,7 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     protected async sendRawTransaction(payload: string) {
-        return GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload)
+        return await  GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload);
     }
 
     // ********************************

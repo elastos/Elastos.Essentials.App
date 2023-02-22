@@ -1,19 +1,20 @@
 import BigNumber from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { lazyTronWebImport } from 'src/app/helpers/import.helper';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { runDelayed, sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { BridgeService } from 'src/app/wallet/services/evm/bridge.service';
 import { EarnService } from 'src/app/wallet/services/evm/earn.service';
 import { SwapService } from 'src/app/wallet/services/evm/swap.service';
-import { TransactionService } from 'src/app/wallet/services/transaction.service';
+import { OutgoingTransactionState, TransactionService } from 'src/app/wallet/services/transaction.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Coin, CoinID, CoinType, TRC20Coin } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
+import { ExtendedTransactionInfo } from '../../../extendedtxinfo';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
@@ -319,14 +320,6 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
             subOperations: []
         };
 
-        // if (transactionInfo.confirmStatus !== 0) {
-        //     transactionInfo.status = TransactionStatus.CONFIRMED;
-        //    transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
-        // } else {
-        //     transactionInfo.status = TransactionStatus.PENDING;
-        //     transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
-        // }
-
         if (direction === TransactionDirection.RECEIVED) {
             transactionInfo.type = TransactionType.RECEIVED;
             transactionInfo.symbol = '+';
@@ -345,6 +338,15 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
                 if (extInfo.tvm.txInfo.fee) transactionInfo.fee = (new BigNumber(extInfo.tvm.txInfo.fee).dividedBy(this.tokenAmountMulipleTimes)).toFixed(),
                 transactionInfo.resources = this.getTransactionResourcesConsumed(extInfo.tvm.txInfo);
                 transactionInfo.height = extInfo.tvm.txInfo.blockNumber;
+
+                if (extInfo.tvm.txInfo.receipt.result != 'SUCCESS') {
+                    transactionInfo.statusName = extInfo.tvm.txInfo.receipt.result;
+                    transactionInfo.status = 'incomplete';
+                    transactionInfo.payStatusIcon = './assets/wallet/tx/error.svg';
+                } else {
+                    transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+                    transactionInfo.status = 'confirmed';
+                }
             }
         });
 
@@ -460,10 +462,45 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
     }
 
     protected async sendRawTransaction(payload: string) {
-        return GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload)
+        return await GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload);
     }
 
     public getSwapInputCurrency(): string {
         return this.coin.getContractAddress();
+    }
+
+    protected async markGenericOutgoingTransactionEnd(txid: string, message: string = '') {
+        if (txid) {
+            await sleep(3000);
+            let extInfo = await this.checkPublicationStatus(txid);
+            if (extInfo && extInfo.tvm && extInfo.tvm.txInfo && extInfo.tvm.txInfo.receipt.result !== 'SUCCESS') {
+                TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.ERRORED, extInfo.tvm.txInfo.receipt.result);
+            } else {
+                TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.PUBLISHED);
+            }
+        }
+        else
+          TransactionService.instance.setOnGoingPublishedTransactionState(OutgoingTransactionState.ERRORED, message);
+    }
+
+    private checkPublicationStatus(txid: string): Promise<ExtendedTransactionInfo> {
+        return new Promise(async (resolve) => {
+            try {
+                for (let i = 0; i < 10; i++) {
+                    let txInfo = await this.networkWallet.getOrFetchExtendedTxInfo(txid);
+                    Logger.log('wallet', 'checkPublicationStatus ', txInfo)
+                    if (txInfo && txInfo.tvm) {
+                        resolve(txInfo);
+                        return;
+                    }
+                    await sleep(1000);
+                }
+                resolve(null);
+            } catch (e) {
+                setTimeout(() => {
+                    resolve(null);
+                }, 5000);
+            }
+        });
     }
 }

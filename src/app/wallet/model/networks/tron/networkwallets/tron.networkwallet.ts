@@ -56,7 +56,8 @@ export abstract class TronNetworkWallet <MasterWalletType extends MasterWallet, 
     protected async fetchExtendedTxInfo(txHash: string): Promise<ExtendedTransactionInfo> {
         // Fetch transaction receipt
         let txInfo = await GlobalTronGridService.instance.getTransactionInfoById(this.network.getAPIUrlOfType(NetworkAPIURLType.RPC), txHash);
-        if (!txInfo)
+        // return {} if the tx isn't on chain.
+        if (!txInfo || !txInfo.blockNumber)
             return;
 
         // Save extended info to cache
