@@ -81,7 +81,7 @@ export class DPoS2RegistrationPage implements OnInit {
         switch (this.dposInfo.state) {
             case 'Unregistered':
                 this.originInfo = null;
-                this.dposInfo.stakeDays = 300;
+                this.dposInfo.stakeDays = 100;
 
                 this.onlyEditStakeUntil = this.dposInfo.identity == "DPoSV1";
                 if (this.dposInfo.identity == "DPoSV1") {
