@@ -206,9 +206,7 @@ export class GlobalTronGridService {
             if (energy) {
                 if (res.EnergyLimit) {
                     let usableEnergy = res.EnergyLimit - (res.EnergyUsed ? res.EnergyUsed : 0)
-                    if (usableEnergy >= energy) {
-                        energyFromBurnedTRX = 0;
-                    }
+                    energyFromBurnedTRX = usableEnergy >= energy ? 0 : energy - usableEnergy;
                 }
             }
         }

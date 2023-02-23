@@ -109,6 +109,7 @@ export type TronTransaction = GenericTransaction & {
     energy_usage_total: number,
     raw_data: TronTransactionData,
     internal_transactions: [],
+    unfreeze_amount?: number,
 
     from?: string, // base58 strin, Txx
     to?: string,
