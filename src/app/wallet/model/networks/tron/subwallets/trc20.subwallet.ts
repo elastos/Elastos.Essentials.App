@@ -406,17 +406,15 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         return Promise.resolve([]);
     }
 
-    /**
-     * IMPORTANT NOTES:
-     * We use a fake amount of 1 token (minimal value after decimals conversion) just to estimate
-     * the transfer cost.
-     * 0 doesn't simulate a transaction creation so the gas estimation is wrong. Must be >0
-     *
-     * We use the real token owner address because cost estimation works only when "from" actually owns
-     * tokens. Otherwise, it simulates a "failed transfer / not enough tokens" call.
-     */
     public async estimateTransferTransactionGas() {
-        throw new Error("Method not implemented.");
+        const tokenAccountAddress = this.getTokenAccountAddress();
+        const contractAddress = this.coin.getContractAddress();
+        let result = await GlobalTronGridService.instance.triggerConstantContract(contractAddress, 100000, tokenAccountAddress);
+
+        let howManyBandwidthNeed = result.transaction["raw_data_hex"].length;
+        howManyBandwidthNeed = Math.round(howManyBandwidthNeed / 2) + 68;
+
+        return await GlobalTronGridService.instance.calculateFee(tokenAccountAddress, howManyBandwidthNeed, result.energy_used);
     }
 
     public async createPaymentTransaction(toAddress: string, amount: BigNumber): Promise<any> {

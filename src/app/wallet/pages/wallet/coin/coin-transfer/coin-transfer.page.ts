@@ -37,6 +37,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
 import { TransferWalletChooserComponent, WalletChooserComponentOptions } from 'src/app/wallet/components/transfer-wallet-chooser/transfer-wallet-chooser.component';
@@ -52,6 +53,7 @@ import { NFTAsset } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
 import { MainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { TRC20SubWallet } from 'src/app/wallet/model/networks/tron/subwallets/trc20.subwallet';
+import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { ERC1155Service } from 'src/app/wallet/services/evm/erc1155.service';
@@ -115,6 +117,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // For BTC
     private feeOfBTC: string = null
+
+    // For Tron
+    private feeOfTRX: string = null
 
     // User can set gas price and limit.
     private gasPrice: string = null;
@@ -347,6 +352,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                             }
                         } else if (this.fromSubWallet instanceof BTCSubWallet) {
                             this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                        } else if (this.fromSubWallet instanceof TRC20SubWallet) {
+                            let feeSun = await this.fromSubWallet.estimateTransferTransactionGas();
+                            this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
                         }
                     }
                     catch (err) {
@@ -682,7 +690,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     async goTransaction() {
-        if (this.checkValuesReady()) {
+        if (await this.checkValuesReady()) {
             await this.startTransaction();
         }
     }
@@ -695,7 +703,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     /**
      * Make sure all parameters are right before sending a transaction or enabling the send button.
      */
-    checkValuesReady(showToast = true): boolean {
+    async checkValuesReady(showToast = true): Promise<boolean> {
+        // Make sure we have a destination address
+        if (!this.toAddress) {
+            this.conditionalShowToast('wallet.not-a-valid-address', showToast);
+            return false;
+        }
+
         // Check amount only when used (eg: no for NFT transfers)
         if (!this.isTransferTypeSendNFT()) {
             let fee = null;
@@ -704,6 +718,14 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             }
             else if (this.feeOfBTC) {
                 fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
+            } else if (this.feeOfTRX) {
+                fee = new BigNumber(this.feeOfTRX);
+            } else if (this.fromSubWallet instanceof TronSubWallet) {
+                // The fee is related to the receiving address.
+                // If the address is not active,  you need to pay 1 TRX fee to activate this address.
+                let feeSun = await this.fromSubWallet.estimateTransferTransactionGas(this.toAddress);
+                this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
+                fee = new BigNumber(this.feeOfTRX);
             }
 
             if (!this.sendMax) {
@@ -732,12 +754,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
             }
-        }
-
-        // Make sure we have a destination address
-        if (!this.toAddress) {
-            this.conditionalShowToast('wallet.not-a-valid-address', showToast);
-            return false;
         }
 
         if ((this.fromSubWallet.type === CoinType.ERC20) || (this.fromSubWallet.type === CoinType.TRC20)) {
@@ -844,6 +860,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             let fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
             let nativeFee = WalletUtil.getAmountWithoutScientificNotation(fee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
             let currencyFee = this.fromSubWallet.getAmountInExternalCurrency(fee).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+            feeString = `${nativeFee} (~ ${currencyFee})`;
+        }
+
+        if (this.feeOfTRX) {
+            let nativeFee = this.feeOfTRX + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+            let mainTokenSubwellet = this.networkWallet.getMainTokenSubWallet();
+            let currencyFee = mainTokenSubwellet.getAmountInExternalCurrency(new BigNumber(this.feeOfTRX)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
             feeString = `${nativeFee} (~ ${currencyFee})`;
         }
 

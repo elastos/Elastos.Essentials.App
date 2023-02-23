@@ -16,13 +16,27 @@ export type AccountTRC20Token = {
 export type AccountResult = {
     latest_opration_time: number,
     owner_permission: any,
-    account_resource: any,
+    account_resource: {
+        frozen_balance_for_energy: {
+            frozen_balance: number,
+            expire_time: number,
+        },
+        latest_consume_time_for_energy: number,
+    },
     active_permission: any[],
+    frozen: {
+        frozen_balance: number, // frozen balance for bandwidth
+        expire_time: number,
+    }[],
     frozenV2: any[],
+    assetV2: any[], // TRC10 tokens
     address: string,
     balance: number, //TRX, unit : sun
     create_time: number,
+    net_usage: number,
+    free_net_usage: number,
     trc20: AccountTRC20Token[],
+    latest_consume_free_time: number,
 };
 /**
  * Energy:
@@ -166,4 +180,20 @@ export type SendTransactionResult = {
     },
     code?: string,
     message?: string, // hex
+};
+
+export type triggerConstantContractResult = {
+    result: {
+        result?: boolean,
+        code?: string,
+        message?: string, // hex
+    },
+    constant_result?: string[],
+    energy_used?: number,
+    transaction?: {
+        visible: boolean,
+        txID: string,
+        raw_data: TronTransactionData,
+        raw_data_hex: string,
+    },
 };

@@ -247,18 +247,11 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         let accountInfo = await GlobalTronGridService.instance.account(this.rpcApiUrl, toAddress);
         if (accountInfo && !accountInfo.create_time) {
             // the toAddress is not activated.
-            return 1100000;
+            return await GlobalTronGridService.instance.getActiveAccountFee();
         }
 
-        let usableBandwidth = 0;
-        let res = await GlobalTronGridService.instance.getAccountResource(this.tronAddress);
-        if (!res || !res.freeNetLimit) return usableBandwidth;
-
-        usableBandwidth = res.freeNetLimit + (res.NetLimit ? res.NetLimit : 0)
-                        - (res.NetUsed ? res.NetUsed : 0) - (res.freeNetUsed ? res.freeNetUsed : 0);
         // 300 is enough.
-        if (usableBandwidth > 300) return 0;
-        else return 30000;
+        return await GlobalTronGridService.instance.calculateFee(this.tronAddress, 300, 0);
     }
 
     // Fees paid by transaction senders/sending addresses:
@@ -286,7 +279,7 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     protected async sendRawTransaction(payload: string) {
-        return await  GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload);
+        return await GlobalTronGridService.instance.sendrawtransaction(this.rpcApiUrl, payload);
     }
 
     // ********************************

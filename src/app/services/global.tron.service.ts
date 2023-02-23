@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { TronNetworkBase } from '../wallet/model/networks/tron/network/tron.base.network';
-import { AccountResources, AccountResult, SendTransactionResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
+import { AccountResources, AccountResult, SendTransactionResult, triggerConstantContractResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
@@ -19,6 +19,7 @@ export class GlobalTronGridService {
     private apikey = '';
 
     private tronWeb = null;
+    private chainParameters : { key: string, value: number}[] = null;
 
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalTronGridService.instance = this;
@@ -151,6 +152,102 @@ export class GlobalTronGridService {
             Logger.error('GlobalTronGridService', 'getTransactionInfoById: http get error:', err);
             return null;
         }
+    }
+
+    // getCreateAccountFee
+    // getCreateNewAccountFeeInSystemContract
+    // getTransactionFee
+    // getEnergyFee
+    // ...
+    async getChainParameters() {
+        if (this.chainParameters) return this.chainParameters;
+
+        this.chainParameters = await this.tronWeb.trx.getChainParameters();
+        return this.chainParameters;
+    }
+
+    // total fee = getCreateAccountFee (100000) + getCreateNewAccountFeeInSystemContract (1000000)
+    async getActiveAccountFee() {
+        let activeAccountFee = 0;
+        try {
+            await this.getChainParameters();
+            let getCreateAccountFee = this.chainParameters.find(p => {
+                return p.key === 'getCreateAccountFee'
+            });
+            let getCreateNewAccountFeeInSystemContract = this.chainParameters.find(p => {
+                return p.key === 'getCreateNewAccountFeeInSystemContract'
+            });
+            activeAccountFee = getCreateAccountFee.value + getCreateNewAccountFeeInSystemContract.value;
+        } catch (e) {
+            Logger.warn('GlobalTronGridService', 'getActiveAccountFee exception:', e)
+        }
+
+        if (!activeAccountFee) {
+            activeAccountFee = 1100000;
+        }
+        return activeAccountFee;
+    }
+
+    async calculateFee(addrss: string, bandwidth: number, energy: number) {
+        let bandwidthFromBurnedTRX = bandwidth;
+        let energyFromBurnedTRX = energy;
+        let res = await GlobalTronGridService.instance.getAccountResource(addrss);
+        if (res) {
+            if (bandwidth) {
+                if (res.freeNetLimit) {
+                    let usableBandwidth = res.freeNetLimit + (res.NetLimit ? res.NetLimit : 0)
+                            - (res.NetUsed ? res.NetUsed : 0) - (res.freeNetUsed ? res.freeNetUsed : 0);
+                    if (usableBandwidth >= bandwidth) {
+                        bandwidthFromBurnedTRX = 0;
+                    }
+                }
+            }
+
+            if (energy) {
+                if (res.EnergyLimit) {
+                    let usableEnergy = res.EnergyLimit - (res.EnergyUsed ? res.EnergyUsed : 0)
+                    if (usableEnergy >= energy) {
+                        energyFromBurnedTRX = 0;
+                    }
+                }
+            }
+        }
+
+        let totalSunForFee;
+        try {
+            await this.getChainParameters();
+            let getTransactionFee = this.chainParameters.find(p => {
+                return p.key === 'getTransactionFee'
+            });
+            let getEnergyFee = this.chainParameters.find(p => {
+                return p.key === 'getEnergyFee'
+            });
+
+            totalSunForFee = bandwidthFromBurnedTRX * getTransactionFee.value + energyFromBurnedTRX * getEnergyFee.value;
+        } catch (e) {
+            Logger.warn('GlobalTronGridService', 'calculateFee exception:', e)
+        }
+
+        if (!totalSunForFee) {
+            totalSunForFee = bandwidthFromBurnedTRX * 1000 + energyFromBurnedTRX * 420;
+        }
+        Logger.log('GlobalTronGridService', 'calculateFee sun', totalSunForFee, ' bandwidth:', bandwidth, ' energy:', energy)
+        return totalSunForFee;
+    }
+
+    async triggerConstantContract(contractAddress: string, value: number, issuerAddress: string): Promise<triggerConstantContractResult> {
+        const parameter1 = [{ type: 'address', value: 'TV3nb5HYFe2xBEmyb3ETe93UGkjAhWyzrs' }, { type: 'uint256', value: value }];
+        return await this.tronWeb.transactionBuilder.triggerConstantContract(contractAddress, "transfer(address,uint256)", {},
+                parameter1, issuerAddress);
+    }
+
+    // 1sun = 0.000001 TRX
+    fromSun(value: string): number {
+        return this.tronWeb.fromSun(value);
+    }
+
+    toSun(value: number): string {
+        return this.tronWeb.toSun(value);
     }
 
     httpGet(url): Promise<any> {
