@@ -42,7 +42,9 @@ export enum ElastosApiUrlType {
     // Block Explorer
     ELA_BLOCK_EXPLORER = 'elaBlockExplorer',
     ESC_BLOCK_EXPLORER = 'escBlockExplorer',
-    EID_BLOCK_EXPLORER = 'eidBlockExplorer'
+    EID_BLOCK_EXPLORER = 'eidBlockExplorer',
+    // widget
+    WIDGETS = 'widgets',
 }
 
 export type ElastosAPIProvider = {
@@ -73,6 +75,8 @@ export type ElastosAPIProvider = {
             elaBlockExplorer: string;
             escBlockExplorer: string;
             eidBlockExplorer: string;
+            // Widgets
+            widgets: string;
         }
     }
 };
@@ -141,6 +145,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         elaBlockExplorer: 'https://blockchain.elastos.io',
                         escBlockExplorer: 'https://esc.elastos.io',
                         eidBlockExplorer: 'https://eid.elastos.io',
+                        widgets: 'https://api.elastos.io/widgets',
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.elastos.io/ela',
@@ -157,6 +162,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         elaBlockExplorer: 'https://blockchain-testnet.elastos.io',
                         escBlockExplorer: 'https://esc-testnet.elastos.io',
                         eidBlockExplorer: 'https://eid-testnet.elastos.io',
+                        widgets: 'https://api-testnet.elastos.io/widgets',
                     },
                     "LRW": {
                         mainChainRPC: 'https://crc1rpc.longrunweather.com:18443',
@@ -173,6 +179,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         elaBlockExplorer: '',
                         escBlockExplorer: '',
                         eidBlockExplorer: '',
+                        widgets: 'https://api.elastos.io/widgets',
                     },
                 }
             },
@@ -196,6 +203,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         elaBlockExplorer: 'https://blockchain.elastos.io',
                         escBlockExplorer: 'https://esc.elastos.io',
                         eidBlockExplorer: 'https://eid.elastos.io',
+                        widgets: 'https://api.trinity-tech.io/widgets',
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.trinity-tech.io/ela',
@@ -212,6 +220,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         elaBlockExplorer: 'https://blockchain-testnet.elastos.io',
                         escBlockExplorer: 'https://esc-testnet.elastos.io',
                         eidBlockExplorer: 'https://eid-testnet.elastos.io',
+                        widgets: 'https://api-testnet.trinity-tech.io/widgets',
                     },
                     "LRW": {
                         mainChainRPC: 'https://crc1rpc.longrunweather.com:18443',
@@ -228,6 +237,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         elaBlockExplorer: '',
                         escBlockExplorer: '',
                         eidBlockExplorer: '',
+                        widgets: 'https://api.trinity-tech.io/widgets',
                     },
                 }
                 /*

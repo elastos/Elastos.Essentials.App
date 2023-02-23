@@ -222,7 +222,8 @@ export class NodesService {
 
     async fetchStats() {
         try {
-            let result = await this.globalJsonRPCService.httpGet('https://api-testnet.elastos.io/widgets');
+            let widgetsApi = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.WIDGETS);
+            let result = await this.globalJsonRPCService.httpGet(widgetsApi);
             if (result) {
                 this.statsFetched = true;
                 this.mainchain = result.mainchain;
