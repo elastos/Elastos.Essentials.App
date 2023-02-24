@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { TronNetworkBase } from '../wallet/model/networks/tron/network/tron.base.network';
-import { AccountResources, AccountResult, SendTransactionResult, triggerConstantContractResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
+import { AccountResources, AccountResult, contractInfo, SendTransactionResult, triggerConstantContractResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
@@ -166,6 +166,19 @@ export class GlobalTronGridService {
         return this.chainParameters;
     }
 
+    async getContractInfo(rpcApiUrl: string, contractAddress: string): Promise<contractInfo> {
+        let requestUrl = rpcApiUrl + '/wallet/getcontractinfo';
+
+        let body = JSON.stringify({value: contractAddress, visible: true})
+        try {
+            return await this.httpPost(requestUrl, body);
+        }
+        catch (err) {
+            Logger.error('GlobalTronGridService', 'getTransactionById: http get error:', err);
+            return null;
+        }
+    }
+
     // total fee = getCreateAccountFee (100000) + getCreateNewAccountFeeInSystemContract (1000000)
     async getActiveAccountFee() {
         let activeAccountFee = 0;
@@ -189,6 +202,8 @@ export class GlobalTronGridService {
     }
 
     async calculateFee(addrss: string, bandwidth: number, energy: number) {
+        Logger.log('GlobalTronGridService', 'calculateFee bandwidth:', bandwidth, ' energy:', energy)
+
         let bandwidthFromBurnedTRX = bandwidth;
         let energyFromBurnedTRX = energy;
         let res = await GlobalTronGridService.instance.getAccountResource(addrss);
@@ -229,7 +244,7 @@ export class GlobalTronGridService {
         if (!totalSunForFee) {
             totalSunForFee = bandwidthFromBurnedTRX * 1000 + energyFromBurnedTRX * 420;
         }
-        Logger.log('GlobalTronGridService', 'calculateFee sun', totalSunForFee, ' bandwidth:', bandwidth, ' energy:', energy)
+        Logger.log('GlobalTronGridService', 'calculateFee sun', totalSunForFee, ' bandwidth:', bandwidthFromBurnedTRX, ' energy:', energyFromBurnedTRX)
         return totalSunForFee;
     }
 

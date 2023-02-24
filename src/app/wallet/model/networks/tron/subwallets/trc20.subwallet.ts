@@ -35,6 +35,7 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
 
     private tronWeb = null;
     private contractHandler = null;
+    private contractEnergyFactor = -1;
 
     protected spvConfigEVMCode: string = null; // Ex: ETHHECO, ETHSC
     private fetchTokenValueTimer: any = null;
@@ -414,7 +415,19 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         let howManyBandwidthNeed = result.transaction["raw_data_hex"].length;
         howManyBandwidthNeed = Math.round(howManyBandwidthNeed / 2) + 68;
 
-        return await GlobalTronGridService.instance.calculateFee(tokenAccountAddress, howManyBandwidthNeed, result.energy_used);
+        if (this.contractEnergyFactor == -1) {
+            let contractInfo = await GlobalTronGridService.instance.getContractInfo(this.rpcApiUrl, contractAddress);
+            if (contractInfo && contractInfo.contract_state) {
+                if (contractInfo.contract_state.energy_factor) {
+                    this.contractEnergyFactor = contractInfo.contract_state.energy_factor / 10000;
+                } else {
+                    this.contractEnergyFactor = 0;
+                }
+            }
+        }
+        let energy = Math.round(result.energy_used * (1 + this.contractEnergyFactor));
+
+        return await GlobalTronGridService.instance.calculateFee(tokenAccountAddress, howManyBandwidthNeed, energy);
     }
 
     public async createPaymentTransaction(toAddress: string, amount: BigNumber): Promise<any> {

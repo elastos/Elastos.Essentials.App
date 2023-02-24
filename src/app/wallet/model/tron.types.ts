@@ -198,3 +198,28 @@ export type triggerConstantContractResult = {
         raw_data_hex: string,
     },
 };
+
+export type contractState = {
+    // the current maintenance period number.
+    update_cycle: number,
+    // the origin energy consumption of the contract in current maintenance period.
+    energy_usage: number,
+    // the penalty factor of the contract in current maintenance period,
+    // the precision is 10000, energy_factor = 1000 means the penalty percentage is 10%.
+    energy_factor: number,
+}
+
+export type contractInfo = {
+    contract_state: contractState,
+    runtimecode: string,
+    smart_contract: {
+        bytecode: string,
+        consume_user_resource_percent: number,
+        name: string,
+        origin_address: string,
+        abi: any,
+        origin_energy_limit: number,
+        contract_address: string,
+        code_hash: string,
+    }
+}
