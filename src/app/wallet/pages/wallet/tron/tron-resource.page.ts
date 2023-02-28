@@ -66,7 +66,7 @@ export class TronResourcePage implements OnDestroy {
     @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
     private subWallet: TronSubWallet = null;
-    private accountResource: AccountResources = null;
+    public accountResource: AccountResources = null;
     private accountInfo: AccountResult = null;
     public freezeBalanceInfo: FreezedBalanceInfo[] = [
             {
