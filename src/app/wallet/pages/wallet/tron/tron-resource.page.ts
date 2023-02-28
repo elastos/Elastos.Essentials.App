@@ -184,9 +184,9 @@ export class TronResourcePage implements OnDestroy {
         if (!this.amount) return;
 
         if (this.resourceType == ResourceType.BANDWIDTH) {
-            return '~ ' + Math.round(this.amount * this.accountResource.TotalNetLimit / this.accountResource.TotalNetWeight)
+            return GlobalTranslationService.instance.translateInstant("wallet.resource-bandwidth-to-obtained") + Math.round(this.amount * this.accountResource.TotalNetLimit / this.accountResource.TotalNetWeight)
         } else {
-            return '~ ' + Math.round(this.amount * this.accountResource.TotalEnergyLimit / this.accountResource.TotalEnergyWeight)
+            return GlobalTranslationService.instance.translateInstant("wallet.resource-energy-to-obtained") + Math.round(this.amount * this.accountResource.TotalEnergyLimit / this.accountResource.TotalEnergyWeight)
         }
     }
 
@@ -226,6 +226,11 @@ export class TronResourcePage implements OnDestroy {
         } else {
             if (!this.freezePeriodExpired) {
                 this.conditionalShowToast(this.unfreezeTime, showToast);
+                return false;
+            }
+            let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
+            if (!this.freezeBalanceInfo[index].frozen_balance_trx) {
+                this.conditionalShowToast(GlobalTranslationService.instance.translateInstant("wallet.resource-no-trx-to-unfreeze"), showToast);
                 return false;
             }
         }

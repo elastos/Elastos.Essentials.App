@@ -15,7 +15,7 @@ export class GlobalTronGridService {
     public static instance: GlobalTronGridService = null;
     // Currently using Trongrid to request, the Shasta/Nile testnet does not need to set an API Key.
     private apikey_testnet = '';
-    private apikey_mainnet = 'e01b9d55-e787-4c0f-8074-8fbe40fddb91';
+    private apikeyList_mainnet = ['e01b9d55-e787-4c0f-8074-8fbe40fddb91', '470282b1-82e6-4417-885b-27b7e340b513'];
     private apikey = '';
 
     private tronWeb = null;
@@ -30,7 +30,7 @@ export class GlobalTronGridService {
         if (network !== MAINNET_TEMPLATE) {
             this.apikey = this.apikey_testnet;
         } else {
-            this.apikey = this.apikey_mainnet;
+            this.apikey = this.apikeyList_mainnet[Math.floor(Math.random() * 2)];;
         }
 
         WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {

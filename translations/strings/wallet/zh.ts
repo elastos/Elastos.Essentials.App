@@ -771,6 +771,9 @@ export const zh = {
         "resource-freeze-note": "注：冻结三天后才可以解冻",
         "resource-to-unfreeze": "待解冻金额：",
         "resource-unfreeze-time": "解冻时间：",
+        "resource-no-trx-to-unfreeze": "没有冻结的 TRX，无需解冻",
+        "resource-bandwidth-to-obtained": "获得的带宽：",
+        "resource-energy-to-obtained": "获得的能量：",
 
         /***************************
         * Migrator *

@@ -771,6 +771,7 @@ export const it = {
         "resource-freeze-note": "Note: It can be unfrozen after three days of freezing",
         "resource-to-unfreeze": "Balance to be unfrozen: ",
         "resource-unfreeze-time": "Time to be unfrozen: ",
+        "resource-no-trx-to-unfreeze": "No frozen TRX, no need to unfreeze",
 
         /***************************
         * Migrator *
