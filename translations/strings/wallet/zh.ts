@@ -756,6 +756,22 @@ export const zh = {
         'ext-tx-info-type-withdraw-to-mainchain': '主链提现',
         'ext-tx-info-type-harvest': '收获',
 
+        /********************************
+        * Tron Resource page *
+        *********************************/
+        'resource': '资源',
+        'resource-title': '资源管理',
+        "resource-type": "资源类型",
+        'resource-bandwith': '带宽',
+        'resource-energy': '能量',
+        'resource-freeze': '冻结',
+        'resource-unfreeze': '解冻',
+        "resource-choose-type": "选择资源类型",
+        "resource-freeze-balance": "冻结金额",
+        "resource-freeze-note": "注：冻结三天后才可以解冻",
+        "resource-to-unfreeze": "待解冻金额：",
+        "resource-unfreeze-time": "解冻时间：",
+
         /***************************
         * Migrator *
         ****************************/

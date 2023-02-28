@@ -136,6 +136,8 @@ export class WalletAssetPage implements OnDestroy {
             for (let j = 0; j < masterWalletList.length && !this.exitPage; j++) {
                 try {
                     let networkWallet = await networks[i].createNetworkWallet(masterWalletList[j], false);
+                    if (!networkWallet) continue;
+
                     let networkWalletIndex = this.findWalletIndex(networkWallet);
 
                     // Staking assets.

@@ -1,5 +1,10 @@
 import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
+export enum ResourceType {
+    BANDWIDTH = 'BANDWIDTH',
+    ENERGY = 'ENERGY',
+  }
+
 export type RequestResponse = {
     data: any;
     success: boolean;

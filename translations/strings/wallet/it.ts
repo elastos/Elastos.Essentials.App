@@ -756,6 +756,22 @@ export const it = {
         'ext-tx-info-type-withdraw-to-mainchain': 'A Main Chain',
         'ext-tx-info-type-harvest': 'Harvest',
 
+        /********************************
+        * Tron Resource page *
+        *********************************/
+        'resource': 'Resource',
+        'resource-title': 'Resource Management',
+        "resource-type": "Resource Type",
+        'resource-bandwith': 'Bandwidth',
+        'resource-energy': 'Energy',
+        'resource-freeze': 'Freeze',
+        'resource-unfreeze': 'Unfreeze',
+        "resource-choose-type": "Choose Resource Type",
+        "resource-freeze-balance": "Freeze amount",
+        "resource-freeze-note": "Note: It can be unfrozen after three days of freezing",
+        "resource-to-unfreeze": "Balance to be unfrozen: ",
+        "resource-unfreeze-time": "Time to be unfrozen: ",
+
         /***************************
         * Migrator *
         ****************************/

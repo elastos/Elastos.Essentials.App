@@ -1,0 +1,157 @@
+@import 'src/app/wallet/root.scss';
+
+.container {
+  min-height: 100%;
+  padding: 10px 10px;
+
+    .title-row {
+        margin-left: 10px;
+        margin-bottom: 10px;
+
+        div {
+            font-size: 20px;
+        }
+    }
+
+    .subwallet-row {
+        padding-left: 10px;
+    }
+
+    .btn-container {
+        margin-top: 25px;
+    }
+
+    .action-title-row {
+        padding-bottom: 10px;
+        padding-top: 20px;
+
+        .title-col {
+            opacity: 0.6;
+
+            h1 {
+                margin: 0;
+                font-weight: 500;
+                font-size: 18px;
+                text-align: center;
+            }
+
+            &.active {
+                opacity: 1;
+            }
+        }
+    }
+
+    .resource-type-row {
+        border-radius: 16px;
+        background-color: var(--essentials-box-color);
+        padding-bottom: 15px;
+        padding-top: 15px;
+        margin-bottom: 15px;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 400;
+
+        p {
+            margin: 7.5px 10px;
+            letter-spacing: 0.7px;
+            text-align: left;
+        }
+
+        .pick-type {
+            text-align: right;
+            padding-right: 20px;
+        }
+    }
+
+    .freeze-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        min-height: 100%;
+        margin: 0;
+
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+
+            .align-right {
+                width: 100%;
+                text-align: right;
+            }
+        }
+
+        .freeze-row {
+            border-radius: 16px;
+            padding: 10px 15px;
+            background-color: var(--essentials-box-color);
+            display: flex;
+            justify-content: space-between;
+            overflow: hidden;
+
+            ion-col {
+                p {
+                    margin: 0;
+                    padding-top: 4px;
+                    font-size: 12px;
+                    font-weight: 400;
+                }
+            }
+
+            .left-col {
+                align-items: flex-start;
+
+                p {
+                    margin-top: 10px;
+                    text-align: left;
+                }
+            }
+
+            .right-col {
+                align-items: flex-end;
+
+                .amount-input,
+                p {
+                    text-align: right;
+                }
+
+                .amount-input {
+                    --padding-end: 0;
+                    --padding-top: 0;
+                    --padding-bottom: 4px;
+                    width: 100%;
+                    margin: 0;
+                    font-size: 19px;
+                    font-weight: 600;
+                    letter-spacing: 0.95px;
+                }
+            }
+        }
+    }
+
+    .unfreeze-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .note {
+            width: 100%;
+
+            .unfreezetime,
+            p {
+                text-align: center;
+            }
+
+            .unfreezetime {
+                color: red;
+            }
+        }
+    }
+}
+
+.darkContainer {
+    ion-input {
+        background-color: #212021;
+        box-shadow: none;
+    }
+}

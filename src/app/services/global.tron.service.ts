@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { TronNetworkBase } from '../wallet/model/networks/tron/network/tron.base.network';
-import { AccountResources, AccountResult, contractInfo, SendTransactionResult, triggerConstantContractResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
+import { AccountResources, AccountResult, contractInfo, ResourceType, SendTransactionResult, triggerConstantContractResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
 import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
@@ -48,10 +48,6 @@ export class GlobalTronGridService {
             fullHost: WalletNetworkService.instance.activeNetwork.value.getRPCUrl(),
             headers: this.apikey ? { "TRON-PRO-API-KEY": this.apikey } : null,
         })
-    }
-
-    public getApiKey() {
-        return this.apikey;
     }
 
     /**
@@ -201,12 +197,12 @@ export class GlobalTronGridService {
         return activeAccountFee;
     }
 
-    async calculateFee(addrss: string, bandwidth: number, energy: number) {
+    async calculateFee(address: string, bandwidth: number, energy: number) {
         Logger.log('GlobalTronGridService', 'calculateFee bandwidth:', bandwidth, ' energy:', energy)
 
         let bandwidthFromBurnedTRX = bandwidth;
         let energyFromBurnedTRX = energy;
-        let res = await GlobalTronGridService.instance.getAccountResource(addrss);
+        let res = await GlobalTronGridService.instance.getAccountResource(address);
         if (res) {
             if (bandwidth) {
                 if (res.freeNetLimit) {
@@ -248,14 +244,43 @@ export class GlobalTronGridService {
         return totalSunForFee;
     }
 
+    /**
+     *
+     * @param contractAddress The smart contract address.
+     * @param value Amount of TRX (in SUN).
+     * @param issuerAddress Address that triggers the contract
+     * @returns
+     */
     async triggerConstantContract(contractAddress: string, value: number, issuerAddress: string): Promise<triggerConstantContractResult> {
         const parameter1 = [{ type: 'address', value: 'TV3nb5HYFe2xBEmyb3ETe93UGkjAhWyzrs' }, { type: 'uint256', value: value }];
         return await this.tronWeb.transactionBuilder.triggerConstantContract(contractAddress, "transfer(address,uint256)", {},
                 parameter1, issuerAddress);
     }
 
+    /**
+     *
+     * @param amount Amount of TRX (in SUN) to stake.
+     * @param days Length in Days to stake TRX for. Minimum of 3 days.
+     * @param resource Resource that you're staking TRX in order to obtain. Must be either "BANDWIDTH" or "ENERGY".
+     * @param address Address of the owner of the TRX to be staked
+     * @returns
+     */
+    async freezeBalance(amount: number, days: number, resource: ResourceType, address: string) : Promise<TronTransaction> {
+        return await this.tronWeb.transactionBuilder.freezeBalance(this.toSun(amount), days, resource, address, address);
+    }
+
+    /**
+     *
+     * @param resource Resource that you're staked TRX. Must be either "BANDWIDTH" or "ENERGY".
+     * @param address Address of the owner of the TRX to be staked
+     * @returns
+     */
+    async unfreezeBalance(resource: ResourceType, address: string) : Promise<TronTransaction> {
+        return await this.tronWeb.transactionBuilder.unfreezeBalance(resource, address, address);
+    }
+
     // 1sun = 0.000001 TRX
-    fromSun(value: string): number {
+    fromSun(value: string | number): number {
         return this.tronWeb.fromSun(value);
     }
 

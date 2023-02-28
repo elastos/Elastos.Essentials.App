@@ -10,6 +10,7 @@ import { Config } from '../../config/Config';
 import { CoinType } from '../../model/coin';
 import { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
 import { WalletUtil } from '../../model/wallet.util';
+import { TransferType } from '../../services/cointransfer.service';
 import { CurrencyService } from '../../services/currency.service';
 import { Native } from '../../services/native.service';
 import { WalletNetworkService } from '../../services/network.service';
@@ -64,12 +65,23 @@ export class TxConfirmComponent implements OnInit {
       }
     }
 
-    if (this.txInfo.type === 1) {
-      this.txHeader = this.translate.instant('wallet.transfer-transaction-type');
-      this.txIcon = '/assets/wallet/tx/transfer.svg';
-    } else {
-      this.txHeader = this.translate.instant('wallet.send-transaction-type');
-      this.txIcon = '/assets/wallet/tx/send.svg';
+    switch (this.txInfo.type) {
+        case TransferType.RECHARGE:
+            this.txHeader = this.translate.instant('wallet.transfer-transaction-type');
+            this.txIcon = '/assets/wallet/tx/transfer.svg';
+        break;
+        case TransferType.FREEZE: // Tron
+            this.txHeader = this.translate.instant('wallet.resource-freeze');
+            this.txIcon = '/assets/wallet/tx/send.svg';
+        break;
+        case TransferType.UNFREEZE: // Tron
+            this.txHeader = this.translate.instant('wallet.resource-unfreeze');
+            this.txIcon = '/assets/wallet/tx/receive.svg';
+        break;
+        default:
+            this.txHeader = this.translate.instant('wallet.send-transaction-type');
+            this.txIcon = '/assets/wallet/tx/send.svg';
+        break;
     }
 
     if (this.txInfo.fee) {

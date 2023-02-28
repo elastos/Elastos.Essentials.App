@@ -1,0 +1,96 @@
+<ion-content class="lightmode" [class.darkmode]="theme.darkMode">
+    <app-titlebar></app-titlebar>
+
+    <ion-grid *ngIf="accountResource" class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+        <ion-row class="title-row ripple ion-activatable">
+            <div>{{ 'wallet.resource' | translate }} </div>
+        </ion-row>
+
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode">
+            <ion-col [size]="5" class="middle-col">
+                <h1>{{ 'wallet.resource-bandwith' | translate }}</h1>
+            </ion-col>
+            <ion-col [size]="7" class="right-col">
+                <h1>{{ getBandwithInfo() }}</h1>
+                <p class="secondary-text">{{ 'wallet.resource-freeze-balance' | translate }}: {{ freezeBalanceInfo[0].frozen_balance_trx }}</p>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+
+        <ion-row class="subwallet-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode">
+            <ion-col [size]="5" class="middle-col">
+                <h1>{{ 'wallet.resource-energy' | translate }}</h1>
+            </ion-col>
+            <ion-col [size]="7" class="right-col">
+                <h1>{{ getEnergyInfo() }}</h1>
+                <p class="secondary-text">{{ 'wallet.resource-freeze-balance' | translate }}: {{ freezeBalanceInfo[1].frozen_balance_trx }}</p>
+            </ion-col>
+            <ion-ripple-effect></ion-ripple-effect>
+        </ion-row>
+
+        <ion-row class="action-title-row">
+            <ion-col class="title-col" [size]="6"
+                [class.active]="transactionType == 0" (click)="setTransactionType(0)">
+                <h1>{{ 'wallet.resource-freeze' | translate }}</h1>
+            </ion-col>
+
+            <ion-col class="title-col" size="6"
+                [class.active]="transactionType == 1" (click)="setTransactionType(1)">
+                <h1>{{ 'wallet.resource-unfreeze' | translate }}</h1>
+            </ion-col>
+        </ion-row>
+
+        <ion-row class="resource-type-row">
+            <ion-col size="7">
+                <p>{{ 'wallet.resource-type' | translate }}</p>
+            </ion-col>
+            <ion-col size="5" (click)="pickAddressType()" class="pick-type flex flex-justify-content-end">
+                {{ getDisplayableResourceType() }}
+                <img src="assets/wallet/icons/right-arrow-alt.svg" />
+            </ion-col>
+        </ion-row>
+
+        <ion-grid *ngIf="transactionType === 0" class="freeze-container ion-no-padding ion-no-margin">
+            <!-- Token balance -->
+            <ion-row class="balance-row">
+                <p class="align-right">{{ 'wallet.balance' | translate }}: <strong>{{
+                        displayBalanceString }}</strong>
+                </p>
+            </ion-row>
+
+            <ion-row class="freeze-row">
+                <ion-col class="left-col" [size]="4">
+                    <p>{{ 'wallet.resource-freeze-balance' | translate }}</p>
+                </ion-col>
+
+                <ion-col class="right-col" size="8">
+                    <ion-input class="amount-input" type="number"
+                            placeholder="0" name="amount" ngDefaultControl [(ngModel)]="amount">
+                    </ion-input>
+                    <p>
+                        {{ estimateResource() }}
+                    </p>
+                </ion-col>
+            </ion-row>
+
+            <div>
+                <p> {{ 'wallet.resource-freeze-note' | translate }} </p>
+            </div>
+        </ion-grid>
+
+        <ion-row class="unfreeze-row" *ngIf="transactionType === 1">
+            <div class="note" *ngIf="transactionType === 1">
+                <p> {{ unfreezeInfo }} </p>
+            </div>
+            <div class="note" *ngIf="!freezePeriodExpired">
+                <p class="unfreezetime"> {{ unfreezeTime }} </p>
+            </div>
+        </ion-row>
+
+
+        <ion-row class="btn-container">
+            <ebutton (clicked)="goTransaction()" [title]="getButtonLabel() | translate">
+            </ebutton>
+        </ion-row>
+    </ion-grid>
+</ion-content>

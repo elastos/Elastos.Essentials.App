@@ -7,7 +7,7 @@ import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
-import { TronTransaction } from '../../../tron.types';
+import { ResourceType, TronTransaction } from '../../../tron.types';
 import { TransactionDirection, TransactionInfo, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
@@ -247,10 +247,12 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     public async estimateTransferTransactionGas(toAddress: string) {
-        let accountInfo = await GlobalTronGridService.instance.account(this.rpcApiUrl, toAddress);
-        if (accountInfo && !accountInfo.create_time) {
-            // the toAddress is not activated.
-            return await GlobalTronGridService.instance.getActiveAccountFee();
+        if (toAddress) {
+            let accountInfo = await GlobalTronGridService.instance.account(this.rpcApiUrl, toAddress);
+            if (accountInfo && !accountInfo.create_time) {
+                // the toAddress is not activated.
+                return await GlobalTronGridService.instance.getActiveAccountFee();
+            }
         }
 
         // 300 is enough.
@@ -266,7 +268,7 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     // 5. Activate the account: 1 TRX
     // 6. Multi-sig transaction: 1 TRX
     // 7. Transaction note: 1 TRX
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<any> {
         if (amount.eq(-1)) {//-1: send all.
             let fee = await this.estimateTransferTransactionGas(toAddress);
             amount = this.balance.minus(fee);
@@ -274,6 +276,14 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
         }
         return (this.networkWallet.safe as unknown as TronSafe).createTransferTransaction(toAddress, amount.toFixed());
+    }
+
+    public async createStakeTransaction(amount: number, resource: ResourceType): Promise<any> {
+        return await GlobalTronGridService.instance.freezeBalance(amount, 3, resource, this.tronAddress);
+    }
+
+    public async createUnStakeTransaction(resource: ResourceType): Promise<any> {
+        return await GlobalTronGridService.instance.unfreezeBalance(resource, this.tronAddress);
     }
 
     public async publishTransaction(transaction: string): Promise<string> {

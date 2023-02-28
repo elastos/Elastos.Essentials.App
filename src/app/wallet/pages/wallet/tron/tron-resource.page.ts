@@ -1,0 +1,368 @@
+/*
+* Copyright (c) 2021 Elastos Foundation
+*
+* Permission is hereby granted, free of charge, to any person obtaining a copy
+* of this software and associated documentation files (the "Software"), to deal
+* in the Software without restriction, including without limitation the rights
+* to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+* copies of the Software, and to permit persons to whom the Software is
+* furnished to do so, subject to the following conditions:
+*
+* The above copyright notice and this permission notice shall be included in all
+* copies or substantial portions of the Software.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+* OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+* SOFTWARE.
+*/
+
+import { Component, OnDestroy, ViewChild } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
+import moment from 'moment';
+import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
+import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { sleep } from 'src/app/helpers/sleep.helper';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
+import { Logger } from 'src/app/logger';
+import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
+import { Util } from 'src/app/model/util';
+import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
+import { GlobalTronGridService } from 'src/app/services/global.tron.service';
+import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { TxConfirmComponent } from 'src/app/wallet/components/tx-confirm/tx-confirm.component';
+import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
+import { AccountResources, AccountResult, ResourceType } from 'src/app/wallet/model/tron.types';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { TransferType } from 'src/app/wallet/services/cointransfer.service';
+import { DefiService } from 'src/app/wallet/services/evm/defi.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { CurrencyService } from '../../../services/currency.service';
+import { Native } from '../../../services/native.service';
+import { PopupProvider } from '../../../services/popup.service';
+import { UiService } from '../../../services/ui.service';
+import { WalletService } from '../../../services/wallet.service';
+
+type FreezedBalanceInfo = {
+    frozen_balance: number, // sun
+    frozen_balance_trx: number, // TRX
+    expire_time: number, // ms
+    display_date_expire_time: string,
+}
+
+@Component({
+    selector: 'app-tron-resource',
+    templateUrl: './tron-resource.page.html',
+    styleUrls: ['./tron-resource.page.scss'],
+})
+export class TronResourcePage implements OnDestroy {
+    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+
+    private subWallet: TronSubWallet = null;
+    private accountResource: AccountResources = null;
+    private accountInfo: AccountResult = null;
+    public freezeBalanceInfo: FreezedBalanceInfo[] = [
+            {
+                frozen_balance:0,
+                frozen_balance_trx: 0,
+                expire_time: 0,
+                display_date_expire_time:''
+            },
+            {
+                frozen_balance:0,
+                frozen_balance_trx: 0,
+                expire_time: 0,
+                display_date_expire_time:''
+            }];
+    public transactionType = 0;
+    public resourceType = ResourceType.BANDWIDTH;
+    public amount = 0;
+
+    // Unfreeze
+    public freezePeriodExpired = false;
+    public unfreezeInfo = '';
+    public unfreezeTime = '';
+
+    public displayBalanceString = '';
+    private feeOfTRX = null;
+
+    // Titlebar
+    private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+
+    constructor(
+        public defiService: DefiService,
+        public native: Native,
+        public popupProvider: PopupProvider,
+        public walletManager: WalletService,
+        public networkService: WalletNetworkService,
+        private translate: TranslateService,
+        public currencyService: CurrencyService,
+        public theme: GlobalThemeService,
+        public uiService: UiService,
+        private globalNativeService: GlobalNativeService,
+    ) {
+    }
+
+    ngOnDestroy() {
+    }
+
+    ionViewWillEnter() {
+        this.titleBar.setTitle(this.translate.instant("wallet.resource-title"));
+        void this.initResource();
+    }
+
+    ionViewWillLeave() {
+        this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
+    async initResource() {
+        let networkWallet = this.walletManager.getActiveNetworkWallet();
+        this.subWallet = <TronSubWallet>networkWallet.getMainTokenSubWallet();
+
+        let address = this.subWallet.getCurrentReceiverAddress();
+
+        this.accountResource = await GlobalTronGridService.instance.getAccountResource(address);
+
+        this.accountInfo = await GlobalTronGridService.instance.account(this.subWallet.rpcApiUrl, address);
+        if (this.accountInfo) {
+            if (this.accountInfo.frozen && this.accountInfo.frozen[0]) {
+                this.freezeBalanceInfo[0].frozen_balance = this.accountInfo.frozen[0].frozen_balance;
+                this.freezeBalanceInfo[0].frozen_balance_trx = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfo[0].frozen_balance);
+                this.freezeBalanceInfo[0].expire_time = this.accountInfo.frozen[0].expire_time;
+                this.freezeBalanceInfo[0].display_date_expire_time = WalletUtil.getDisplayDate(this.freezeBalanceInfo[0].expire_time);
+            }
+            if (this.accountInfo.account_resource && this.accountInfo.account_resource.frozen_balance_for_energy) {
+                this.freezeBalanceInfo[1].frozen_balance = this.accountInfo.account_resource.frozen_balance_for_energy.frozen_balance;
+                this.freezeBalanceInfo[1].frozen_balance_trx = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfo[1].frozen_balance);
+                this.freezeBalanceInfo[1].expire_time = this.accountInfo.account_resource.frozen_balance_for_energy.expire_time;
+                this.freezeBalanceInfo[1].display_date_expire_time = WalletUtil.getDisplayDate(this.freezeBalanceInfo[1].expire_time);
+            }
+        }
+
+        this.displayBalanceString = this.uiService.getFixedBalance(this.subWallet.getDisplayBalance());
+    }
+
+    getBandwithInfo() {
+        if (this.accountResource.freeNetLimit || this.accountResource.NetLimit) {
+            let totalNet = this.accountResource.freeNetLimit + (this.accountResource.NetLimit ? this.accountResource.NetLimit : 0);
+            let usableNet = totalNet
+                            - (this.accountResource.NetUsed ? this.accountResource.NetUsed : 0) - (this.accountResource.freeNetUsed ? this.accountResource.freeNetUsed : 0);
+            return '' + usableNet + ' / ' + totalNet;
+        } else return '0';
+    }
+
+    getEnergyInfo() {
+        if (this.accountResource.EnergyLimit) {
+            let usableEnergy = this.accountResource.EnergyLimit - (this.accountResource.EnergyUsed ? this.accountResource.EnergyUsed : 0);
+            return '' + usableEnergy + ' / ' + this.accountResource.EnergyLimit;
+        } else return '0';
+    }
+
+    setTransactionType(type) {
+        this.transactionType = type;
+        if (this.transactionType == 1)
+            this.showUnfreezeInfo();
+            this.amount = 0;
+    }
+
+    getButtonLabel(): string {
+        if (this.transactionType == 0) {
+            return 'wallet.resource-freeze';
+        } else {
+            return 'wallet.resource-unfreeze';
+        }
+    }
+
+    estimateResource() {
+        if (!this.amount) return;
+
+        if (this.resourceType == ResourceType.BANDWIDTH) {
+            return '~ ' + Math.round(this.amount * this.accountResource.TotalNetLimit / this.accountResource.TotalNetWeight)
+        } else {
+            return '~ ' + Math.round(this.amount * this.accountResource.TotalEnergyLimit / this.accountResource.TotalEnergyWeight)
+        }
+    }
+
+    // Unfreeze only after the freeze expires
+    showUnfreezeInfo() {
+        let currentTimesamp = moment().valueOf();
+        let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
+        this.unfreezeInfo = GlobalTranslationService.instance.translateInstant("wallet.resource-to-unfreeze") + this.freezeBalanceInfo[index].frozen_balance_trx + ' TRX';
+
+        if (currentTimesamp > this.freezeBalanceInfo[index].expire_time) {
+            this.freezePeriodExpired = true;
+            this.unfreezeTime = '';
+        } else {
+            this.freezePeriodExpired = false;
+            this.unfreezeTime = GlobalTranslationService.instance.translateInstant("wallet.resource-unfreeze-time") + this.freezeBalanceInfo[index].display_date_expire_time;
+        }
+    }
+
+    private conditionalShowToast(message: string, showToast: boolean, duration = 4000) {
+        if (showToast)
+            this.native.toast_trans(message, duration);
+    }
+
+    /**
+     * Make sure all parameters are right before sending a transaction or enabling the send button.
+     */
+    async checkValuesReady(showToast = true): Promise<boolean> {
+        let feeSun = await this.subWallet.estimateTransferTransactionGas(null);
+        this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
+        let fee = new BigNumber(this.feeOfTRX);
+
+        if (this.transactionType == 0) {
+            if (Util.isNull(this.amount) || this.amount <= 0) {
+                this.conditionalShowToast('wallet.amount-invalid', showToast);
+                return false;
+            }
+        } else {
+            if (!this.freezePeriodExpired) {
+                this.conditionalShowToast(this.unfreezeTime, showToast);
+                return false;
+            }
+        }
+
+        let amountBigNumber = new BigNumber(this.amount || 0);
+        if (fee) {
+            amountBigNumber = amountBigNumber.plus(fee)
+        }
+
+        if (!this.subWallet.isBalanceEnough(amountBigNumber)) {
+            this.conditionalShowToast('wallet.insufficient-balance', showToast);
+            return false;
+        }
+
+        if (!this.subWallet.isAmountValid(amountBigNumber)) {
+            this.conditionalShowToast('wallet.amount-invalid', showToast);
+            return false;
+        }
+
+        return true;
+    }
+
+    async goTransaction() {
+        if (await this.checkValuesReady())
+            this.showConfirm()
+    }
+
+    async doTransaction() {
+        Logger.log('wallet', 'doTransaction resource type:', ' Action:', this.resourceType, this.transactionType ? 'Unfreeze' : 'freeze');
+        let rawTx = null;
+        try {
+            if (this.transactionType == 0) {
+                rawTx = await this.subWallet.createStakeTransaction(this.amount, this.resourceType);
+            } else {
+                rawTx = await this.subWallet.createUnStakeTransaction(this.resourceType);
+            }
+        } catch (err) {
+            await this.parseException(err);
+        }
+
+        if (rawTx) {
+            GlobalFirebaseService.instance.logEvent("wallet_coin_tron-resource");
+            await this.subWallet.signAndSendRawTransaction(rawTx, null);
+        }
+    }
+
+    private async parseException(err) {
+        Logger.error('wallet', "tron resource transaction error:", err);
+        let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
+        if (reworkedEx instanceof Web3Exception) {
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+        } else {
+            let message = typeof (err) === "string" ? err : err.message;
+            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", message);
+        }
+    }
+
+    /**
+     * Choose an resource type, bandwidth or energy
+     */
+    public pickAddressType() {
+        let menuItems: MenuSheetMenu[] =  [
+            {
+                title: GlobalTranslationService.instance.translateInstant("wallet.resource-bandwith"),
+                routeOrAction: () => {
+                    this.resourceType = ResourceType.BANDWIDTH;
+                    this.showUnfreezeInfo();
+                }
+            },
+            {
+                title: GlobalTranslationService.instance.translateInstant("wallet.resource-energy"),
+                routeOrAction: () => {
+                    this.resourceType = ResourceType.ENERGY;
+                    this.showUnfreezeInfo();
+                }
+            }
+        ]
+
+        let menu: MenuSheetMenu = {
+            title: GlobalTranslationService.instance.translateInstant("wallet.resource-choose-type"),
+            items: menuItems
+        };
+
+        void this.globalNativeService.showGenericBottomSheetMenuChooser(menu);
+    }
+
+    getDisplayableResourceType() {
+        if (this.resourceType == ResourceType.BANDWIDTH) {
+            return GlobalTranslationService.instance.translateInstant("wallet.resource-bandwith");
+        } else {
+            return GlobalTranslationService.instance.translateInstant("wallet.resource-energy");
+        }
+    }
+
+    async showConfirm() {
+        let feeString = null;
+
+        if (this.feeOfTRX) {
+            let nativeFee = this.feeOfTRX + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
+            let currencyFee = this.subWallet.getAmountInExternalCurrency(new BigNumber(this.feeOfTRX)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+            feeString = `${nativeFee} (~ ${currencyFee})`;
+        }
+
+        const txInfo = {
+            type: this.transactionType ? TransferType.UNFREEZE : TransferType.FREEZE,
+            transferFrom: this.subWallet.getCurrentReceiverAddress(),
+            transferTo: this.subWallet.getCurrentReceiverAddress(),
+            toChainId: null,
+            amount: this.amount,
+            sendAll: false,
+            precision: this.subWallet.tokenDecimals,
+            memo: null,
+            tokensymbol: this.subWallet.getDisplayTokenName(),
+            fee: feeString,
+            gasLimit: null,
+            coinType: this.subWallet.type
+        }
+
+        this.native.popup = await this.native.popoverCtrl.create({
+            mode: 'ios',
+            cssClass: 'wallet-tx-component',
+            component: TxConfirmComponent,
+            componentProps: {
+                txInfo: txInfo
+            }
+        });
+        this.native.popup.onWillDismiss().then((params) => {
+            this.native.popup = null;
+            Logger.log('wallet', 'Confirm tx params', params);
+            if (params.data && params.data.confirm) {
+                void this.doTransaction();
+            }
+        });
+
+        // Wait for the keyboard to close if needed, otherwise the popup is not centered.
+        await sleep(500);
+
+        return await this.native.popup.present();
+    }
+}

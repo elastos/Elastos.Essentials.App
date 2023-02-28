@@ -69,7 +69,9 @@ export enum TransferType {
     SEND = 2, // Sending
     PAY = 3, // Pay intent
     WITHDRAW = 4,
-    SEND_NFT = 5 // Send a ERC721 or ERC1155 NFT
+    SEND_NFT = 5, // Send a ERC721 or ERC1155 NFT
+    FREEZE = 6,
+    UNFREEZE = 7
 }
 export class ContractPayloadParam {
     data: string = null;

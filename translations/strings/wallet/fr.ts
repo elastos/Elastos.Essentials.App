@@ -756,6 +756,22 @@ export const fr = {
         'ext-tx-info-type-withdraw-to-mainchain': 'Vers ELA mainchain',
         'ext-tx-info-type-harvest': 'Récolter',
 
+        /********************************
+        * Tron Resource page *
+        *********************************/
+        'resource': 'Resource',
+        'resource-title': 'Resource Management',
+        "resource-type": "Resource Type",
+        'resource-bandwith': 'Bandwidth',
+        'resource-energy': 'Energy',
+        'resource-freeze': 'Freeze',
+        'resource-unfreeze': 'Unfreeze',
+        "resource-choose-type": "Choose Resource Type",
+        "resource-freeze-balance": "Freeze amount",
+        "resource-freeze-note": "Note: It can be unfrozen after three days of freezing",
+        "resource-to-unfreeze": "Balance to be unfrozen: ",
+        "resource-unfreeze-time": "Time to be unfrozen: ",
+
         /***************************
         * Migrator *
         ****************************/

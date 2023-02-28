@@ -37,6 +37,7 @@ const routes: Routes = [
     { path: 'wallet-edit-name', loadChildren: () => import('./pages/wallet/wallet-edit-name/module').then(m => m.WalletEditNameModule) },
     { path: 'wallet-settings', loadChildren: () => import('./pages/wallet/wallet-settings/module').then(m => m.WalletSettingsModule) },
     { path: 'mnemonic', loadChildren: () => import('./pages/wallet/mnemonic/module').then(m => m.MnemonicModule) },
+    { path: 'wallet-tron-resource', loadChildren: () => import('./pages/wallet/tron/module').then(m => m.TronResourceModule) },
 
     // Settings
     { path: 'wallet-color', loadChildren: () => import('./pages/wallet/wallet-color/module').then(m => m.WalletColorModule) },
