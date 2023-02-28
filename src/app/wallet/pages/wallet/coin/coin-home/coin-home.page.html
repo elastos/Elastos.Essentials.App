@@ -172,6 +172,11 @@
                     topicon='assets/launcher/apps/app-icons/staking.svg' [title]="'staking.stake' | translate">
                 </ebutton>
             </ion-col>
+            <ion-col [size]="swapsColumnSize()" *ngIf="canStakeTRX()">
+                <ebutton class="btn-box" [uppercase]="true" (clicked)="goTronResource()"
+                    topicon='assets/launcher/apps/app-icons/staking.svg' [title]="'wallet.resource' | translate">
+                </ebutton>
+            </ion-col>
             <!-- <ion-col size="4" *ngIf="canBridge()">
                 <ebutton class="btn-box" [uppercase]="true" (clicked)="bridge(subWallet)"
                     topicon="assets/wallet/buttons/curcol-bridge.svg" [title]="'wallet.bridge' | translate">

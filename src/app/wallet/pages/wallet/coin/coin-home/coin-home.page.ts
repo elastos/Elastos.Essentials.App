@@ -52,6 +52,7 @@ import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainch
 import { EthContractEvent } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { TransactionListType } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
+import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
@@ -199,7 +200,9 @@ export class CoinHomePage implements OnInit {
             this.subWalletId = navigation.extras.state.subWalletId as StandardCoinName;
 
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
-
+            if (!this.networkWallet) {
+                Logger.warn('wallet', 'coin-home error this.networkWallet = null,', masterWalletId)
+            }
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
             this.coinTransferService.subWalletId = this.subWalletId;
@@ -327,7 +330,7 @@ export class CoinHomePage implements OnInit {
             this.canFetchMore = false;
             return;
         }
-        Logger.log('wallet', "Got all transactions: ", transactions.length);
+        Logger.log('wallet', "Got all transactions: ", transactions.length, this.subWallet.masterWallet.name);
 
         if (this.subWallet.canFetchMoreTransactions()) {
             this.canFetchMore = true;
@@ -345,7 +348,7 @@ export class CoinHomePage implements OnInit {
         for (let transaction of transactions) {
             const transactionInfo = await this.subWallet.getTransactionInfo(transaction);
             if (!transactionInfo) {
-                Logger.warn('wallet', 'Invalid transaction ', transaction);
+                Logger.log('wallet', 'Invalid transaction or transaction that need to be hidden!');
                 continue;
             }
 
@@ -618,6 +621,7 @@ export class CoinHomePage implements OnInit {
         if (this.canSwap()) item++;
         if (this.canEarn()) item++;
         if (this.canStakeELA()) item++;
+        if (this.canStakeTRX()) item++;
 
         switch (item) {
             case 1:
@@ -633,7 +637,7 @@ export class CoinHomePage implements OnInit {
      * Tells if this subwallet can do one of earn, swap or bridge operations
      */
     public canEarnSwapOrBridge(): boolean {
-        return this.canEarn() || this.canSwap() || this.canStakeELA() /* || this.canBridge() */;
+        return this.canEarn() || this.canSwap() || this.canStakeELA()  || this.canStakeTRX()/* || this.canBridge() */;
     }
 
     public canEarn(): boolean {
@@ -651,6 +655,10 @@ export class CoinHomePage implements OnInit {
         } else {
             return false;
         }
+    }
+
+    public canStakeTRX(): boolean {
+        return this.subWallet instanceof TronSubWallet;
     }
 
     // Deprecated
@@ -752,5 +760,9 @@ export class CoinHomePage implements OnInit {
 
     public goStakeApp(s) {
         this.stakingInitService.start()
+    }
+
+    public goTronResource(s) {
+        this.native.go('wallet-tron-resource');
     }
 }
