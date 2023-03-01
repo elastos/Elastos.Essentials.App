@@ -607,7 +607,8 @@ export class WalletService {
         walletName: string,
         signingWalletId: string,
         requiredSigners: number,
-        signersExtPubKeys: string[]
+        signersExtPubKeys: string[],
+        singleAddress: boolean
     ): Promise<MasterWallet> {
         Logger.log('wallet', "Creating a new standard multi-sig master wallet");
 
@@ -617,10 +618,9 @@ export class WalletService {
             name: walletName,
             theme: defaultWalletTheme(),
             networkOptions: [
-                // TODO
                 {
                     network: "elastos",
-                    singleAddress: true
+                    singleAddress: singleAddress
                 } as ElastosMainChainWalletNetworkOptions
             ],
             creator: WalletCreator.USER,

@@ -52,6 +52,29 @@
         }
     }
 
+    .toggle-row {
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 10px;
+
+        ion-col {
+            padding: 0;
+            display: flex;
+        }
+
+        .left-col {
+            justify-content: flex-start;
+        }
+
+        .right-col {
+            justify-content: flex-end;
+
+            ion-toggle {
+                zoom: 0.8;
+            }
+        }
+    }
+
     .cosigner-row {
         align-items: center;
 

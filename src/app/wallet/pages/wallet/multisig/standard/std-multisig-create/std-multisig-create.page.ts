@@ -38,7 +38,7 @@ export class StandardMultiSigCreatePage implements OnInit {
 
     public wallet = {
         name: '',
-        singleAddress: false, // TODO: network options
+        singleAddress: true, // TODO: network options
     };
 
     public useBackNav = false;
@@ -125,7 +125,8 @@ export class StandardMultiSigCreatePage implements OnInit {
                 this.wallet.name,
                 this.signingWallet.id,
                 parseInt(this.requiredSigners),
-                this.getUsableCosigners()
+                this.getUsableCosigners(),
+                this.wallet.singleAddress
             );
             this.native.setRootRouter("/wallet/wallet-home");
 
