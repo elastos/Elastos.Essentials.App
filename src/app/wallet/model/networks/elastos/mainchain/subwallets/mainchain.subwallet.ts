@@ -918,6 +918,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         // Logger.log("wallet", 'getBalanceByRPC totalBalance:', totalBalance.toString());
     }
 
+    /**
+     * Get staked balance, the unit is ELA.
+     */
     public async getStakedBalance() {
         var stakeAddress = this.getOwnerStakeAddress()
         const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);

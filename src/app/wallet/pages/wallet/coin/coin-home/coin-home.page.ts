@@ -90,7 +90,7 @@ export class CoinHomePage implements OnInit {
     public transactionListType = TransactionListType.NORMAL;
     public hasInternalTransactions = false;
 
-    public stakedELA = null; // ELA staked on ELA main chian
+    public stakedBalance = null; // Staked on ELA main chain or Tron
 
     // Total transactions today
     public todaysTransactions = 0;
@@ -209,7 +209,7 @@ export class CoinHomePage implements OnInit {
 
             this.subWallet = this.networkWallet.getSubWallet(this.subWalletId);
 
-            void this.getStakedELA();
+            void this.getStakedBalance();
 
             this.startUpdateInterval();
         }
@@ -277,7 +277,7 @@ export class CoinHomePage implements OnInit {
     async updateWalletInfo() {
         // Update balance and get the latest transactions.
         await this.subWallet.update();
-        await this.getStakedELA();
+        await this.getStakedBalance();
         void this.initData();
     }
 
@@ -740,20 +740,33 @@ export class CoinHomePage implements OnInit {
         return extTxInfo.evm.txInfo.events;
     }
 
-    // Get the ELA amount staked on ELA mian chain.
-    public async getStakedELA() {
+    public getStakeTitle() {
+        if (this.networkWallet) {
+            if (this.networkWallet.network.key === 'tron') {
+                return 'wallet.resource-freeze-balance';
+            }
+        }
+        return 'staking.staked';
+    }
+
+    public async getStakedBalance() {
         // Can't use WalletNetworkService.instance.isActiveNetworkElastosMainchain()
         // We got the activeNetworkWallet event first, but the WalletNetworkService.instance.isActiveNetworkElastosMainchain still return true.
-        if (this.networkWallet && (this.networkWallet.network.key === 'elastos')) {
-            let subwallet = this.networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
-            if (subwallet) {
-                this.stakedELA = await subwallet.getStakedBalance();
+        if (this.networkWallet) {
+            if (this.networkWallet.network.key === 'elastos') {
+                if (this.subWallet instanceof MainChainSubWallet) {
+                    this.stakedBalance = await this.subWallet.getStakedBalance();
+                }
+            } else if (this.networkWallet.network.key === 'tron') {
+                if (this.subWallet instanceof TronSubWallet) {
+                    this.stakedBalance = await this.subWallet.getFrozenBalance();
+                }
             }
         }
     }
 
-    public getStakedELABalanceInCurrency() {
-        let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedELA),
+    public getStakedBalanceInCurrency() {
+        let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedBalance),
             this.networkWallet.network, this.currencyService.selectedCurrency.symbol);
         return WalletUtil.getFriendlyBalance(balance);
     }

@@ -19,6 +19,7 @@ const TRANSACTION_LIMIT = 100;
 
 export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     private tronAddress: string = null;
+    private frozenBalance: number = 0;
 
     private txInfoParser: ETHTransactionInfoParser;
 
@@ -89,6 +90,9 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
                 if (transaction.raw_data.contract[0].type === 'FreezeBalanceContract') {
                     return "wallet.coin-op-freeze";
                 }
+                //AssetIssueContract
+                //TransferAssetContract
+                //TriggerSmartContract
                 return "wallet.coin-op-sent-token";
             case TransactionDirection.MOVED:
                 return "wallet.coin-op-transfered-token";
@@ -237,6 +241,10 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         await this.getBalanceByRPC();
     }
 
+    // Get staked balance, the unit is TRX.
+    public async getFrozenBalance() {
+        return this.frozenBalance;
+    }
 
     /**
      * Check whether the available balance is enough.
@@ -319,6 +327,18 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             } else {
                 this.balance = new BigNumber(0);
             }
+
+            // Frozen balance
+            let frozenBalance = 0;
+            if (accountInfo.frozen && accountInfo.frozen[0]) {
+                frozenBalance += accountInfo.frozen[0].frozen_balance;
+            }
+            if (accountInfo.account_resource && accountInfo.account_resource.frozen_balance_for_energy) {
+                frozenBalance += accountInfo.account_resource.frozen_balance_for_energy.frozen_balance;
+            }
+            if (frozenBalance) {
+                this.frozenBalance = GlobalTronGridService.instance.fromSun(frozenBalance);
+            } else this.frozenBalance = 0;
 
             // TRC20
             if (accountInfo.trc20?.length > 0) {
