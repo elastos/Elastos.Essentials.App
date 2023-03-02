@@ -8,6 +8,7 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AuthService } from '../../../../services/auth.service';
 import { IntentTransfer } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -38,6 +39,7 @@ export class MnemonicExportPage implements OnInit {
     public walletname = "";
     public hasMnemonic = true;
     public evmPrivateKey = '';
+    public tronPrivateKey = ''; // Only for tron network.
     public intentTransfer: IntentTransfer;
 
     constructor(
@@ -51,7 +53,8 @@ export class MnemonicExportPage implements OnInit {
         private authService: AuthService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
-        private walletAccessService: WalletAccessService
+        private walletAccessService: WalletAccessService,
+        public networkService: WalletNetworkService,
     ) {
         this.init();
     }
@@ -151,6 +154,9 @@ export class MnemonicExportPage implements OnInit {
 
         if (!this.hasMnemonic) {
             this.titleBar.setTitle(this.translate.instant('wallet.privatekey'));
+        } else {
+            if (this.networkService.activeNetwork.value.key === 'tron')
+                this.tronPrivateKey = await this.masterWallet.getTronPrivateKey(this.payPassword);
         }
     }
 
@@ -161,8 +167,8 @@ export class MnemonicExportPage implements OnInit {
         );
     }
 
-    copyPrivateKey() {
-        void this.native.copyClipboard(this.evmPrivateKey);
+    copyPrivateKey(value) {
+        void this.native.copyClipboard(value);
         this.native.toast(this.translate.instant("common.copied-to-clipboard"));
     }
 }

@@ -624,6 +624,7 @@ export const fr = {
         "help:import-password": "Le mot de passe du mnémonique est un mot de votre choix qui est fortement associé à votre mnémonique. Ne tenez pas compte de cette option si vous n\'avez pas utilisé de mot de passe de mnémonique lors de la création de votre portefeuille.",
         "privatekey-tap-to-copy": "Toucher la clé privée pour copier",
         "export-private-key-intro": "Vous pouvez aussi choisir d'utiliser la clé privée suivante dans certaines applications. Touchez pour copier.",
+        "export-tron-private-key-intro": "Clé privée du réseau Tron",
         "import-paste-from-keypad": "Note: vous pouvez coller une clé papier en entier depuis le clavier",
 
         /***********************

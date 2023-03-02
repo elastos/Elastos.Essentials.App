@@ -244,17 +244,30 @@ export class StandardMasterWallet extends MasterWallet {
             return AESDecrypt(this.getSafe().privateKey, decryptedWithPayPassword);
     }
 
+    /**
+     * Returns the private key for Tron network.
+     */
+    public async getTronPrivateKey(decryptedWithPayPassword?: string): Promise<string> {
+        if (!this.getSafe().mnemonic)
+            return null;
+
+        const TronDerivePath = "m/44'/195'/0'/0/0";
+
+        let seed = await this.getSeed(decryptedWithPayPassword);
+        return await this.getEVMPrivateKeyFromSeed(seed, TronDerivePath);
+    }
+
     private getSafe(): StandardWalletSafe {
         return SafeService.instance.getStandardWalletSafe(this.id);
     }
 
-    private async getEVMPrivateKeyFromSeed(seed: string) {
+    private async getEVMPrivateKeyFromSeed(seed: string, path: string = null) {
         const { Wallet } = await lazyEthersImport();
         const { HDNode, defaultPath } = await lazyEthersLibUtilImport();
 
         const seedByte = Buffer.from(seed, 'hex');
-
-        let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(defaultPath));
+        let derivePath = path ? path : defaultPath;
+        let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(derivePath));
         return hdWalelt.privateKey;
     }
 }
