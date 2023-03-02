@@ -7,7 +7,7 @@ export class CeloMainNetNetwork extends CeloBaseNetwork {
   constructor() {
     super(
       "celo",
-      "Celo Mainnet",
+      "Celo",
       "CELO",
       "assets/wallet/networks/celo.svg",
       "CELO",
