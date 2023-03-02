@@ -233,7 +233,9 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
 
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl, this.subWallet.networkWallet.network.key);
-      return result.result as EthTokenTransaction[];
+      if (result.result instanceof Array) {
+        return result.result as EthTokenTransaction[];
+      } else return [];
     } catch (e) {
       Logger.error('wallet', 'getTokenTransferEventsByAction error:', e)
       return [];
@@ -253,7 +255,9 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
 
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl, this.subWallet.networkWallet.network.key);
-      return result.result as EthTokenTransaction[];
+      if (result.result instanceof Array) {
+        return result.result as EthTokenTransaction[];
+      } else return [];
     } catch (e) {
       Logger.error('wallet', 'getTokenTransferEventsByContractAddress error:', e)
       return [];

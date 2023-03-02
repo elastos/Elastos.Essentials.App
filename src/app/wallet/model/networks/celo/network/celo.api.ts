@@ -13,7 +13,7 @@ export class CeloAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case CeloApiType.RPC: return 'https://forno.celo.org';
-          case CeloApiType.ETHERSCAN_API: return 'https://celoscan.io/api';
+          case CeloApiType.ETHERSCAN_API: return 'https://api.celoscan.io/api';
           case CeloApiType.BLOCK_EXPLORER: return 'https://celoscan.io';
           default:
             throw new Error("Celo API - Unknown api type " + type);
