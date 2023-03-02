@@ -94,7 +94,9 @@ export class TRC20CoinService {
         return coinDecimals;
     }
 
-    public getCoinInfo(network: AnyNetwork, address: string): Promise<TRC20CoinInfo> {
+    public async getCoinInfo(network: AnyNetwork, address: string): Promise<TRC20CoinInfo> {
+        await this.initTronWeb()
+
         // Fetch only one token at a time
         return this.fetchTRC20OpsQueue.add(async () => {
             // Try to find in cache
