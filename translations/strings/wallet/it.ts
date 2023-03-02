@@ -624,6 +624,7 @@ export const it = {
         // "help:mnemonic-password": 'This is an optional password bound to your mnemonic words, to give your wallet extra security. Save it carefully, it is NOT recoverable if lost.',
         "privatekey-tap-to-copy": "Tocca la Chiave Privata per copiarla",
         "export-private-key-intro": "Puoi anche scegliere di utilizzare la seguente Chiave Privata in alcune applicazioni. Tocca per copiare.",
+        "export-tron-private-key-intro": "Tron network private key",
         "import-paste-from-keypad": "Note: you can paste a whole mnemonic sentence from the keypad",
 
         /***********************
