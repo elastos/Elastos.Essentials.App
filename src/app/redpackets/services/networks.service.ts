@@ -46,7 +46,7 @@ export class NetworksService {
   /**
    * Tells is the currently active network is supported for red packets or not.
    */
-  public isActiveNetworkSupported(): boolean {
+  public async isActiveNetworkSupported(): Promise<boolean> {
     let activeNetwork = this.walletNetworkService.activeNetwork.value;
     if (!activeNetwork || !(activeNetwork instanceof EVMNetwork))
       return false; // Should not happen
@@ -54,6 +54,10 @@ export class NetworksService {
     if (!activeNetwork.getMainChainID())
       return false; // No EVM in this network
 
+    // Possibly due to network and other reasons, we cann't get the list before.
+    if (this.supportedNetworks.length == 0) {
+        await this.fetchSupportedNetworks();
+    }
     return !!this.supportedNetworks.find(network => network.chainId === (<EVMNetwork>activeNetwork).getMainChainID());
   }
 }
