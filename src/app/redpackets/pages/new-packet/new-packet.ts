@@ -288,13 +288,13 @@ export class NewPacketPage {
   /**
    * After a network change, refresh the title bar and the screen content
    */
-  private refreshNetwork() {
+  private async refreshNetwork() {
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
       key: "network",
       iconPath: this.walletNetworkService.activeNetwork.value.logo
     });
 
-    this.unsupportedNetwork = !this.networksService.isActiveNetworkSupported();
+    this.unsupportedNetwork = !(await this.networksService.isActiveNetworkSupported());
 
     // Reset values that don't make sense any more after swtiching a network (need to be re-entered by user)
     this.tokenSubwallet = this.walletService.activeNetworkWallet.value.getMainEvmSubWallet();
