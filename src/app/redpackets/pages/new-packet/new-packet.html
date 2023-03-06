@@ -7,7 +7,7 @@
 
   <!-- Supported network and subwallet is set -->
 
-  <ion-grid class="container ion-padding footer-margin" *ngIf="tokenSubwallet && !unsupportedNetwork">
+  <ion-grid class="container ion-padding footer-margin" *ngIf="!unsupportedNetwork">
 
     <div class="redpacket-container new-packet-section-container">
 
@@ -58,7 +58,7 @@
       </div>
     </div>
 
-    <div class="redpacket-container new-packet-section-container">
+    <div *ngIf="tokenSubwallet" class="redpacket-container new-packet-section-container">
 
       <ion-row class="form-flex-col">
         <div class="form-flex-col-label">
