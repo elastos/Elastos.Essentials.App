@@ -11,6 +11,7 @@ import { SwapProvider } from "../../earn/swapprovider";
 import { PrivateKeyType, WalletNetworkOptions } from "../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../base/networkapiurltype";
 import { AnyNetwork, Network } from "../network";
+import { DexScreenerCurrencyProvider } from "./dexscreener.currencyprovider";
 import { EVMNetworkWallet } from "./networkwallets/evm.networkwallet";
 import { ERC1155Provider } from "./nfts/erc1155.provider";
 import { ERC721Provider } from "./nfts/erc721.provider";
@@ -259,6 +260,13 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
    * won't be able to get a USD pricing.
    */
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {
+    return null;
+  }
+
+  /**
+   * To be overriden by each network. By default, no provider is returned.
+   */
+  public getDexScreenerCurrencyProvider(): DexScreenerCurrencyProvider {
     return null;
   }
 

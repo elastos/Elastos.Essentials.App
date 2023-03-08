@@ -9,6 +9,7 @@ import { ERC20Coin, TRC20Coin } from '../model/coin';
 import type { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
 import { TimeBasedPersistentCache } from '../model/timebasedpersistentcache';
+import { DexScreenerCurrencyService } from './evm/dexscreener.currency.service';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
@@ -106,7 +107,8 @@ export class CurrencyService {
     private storage: LocalStorage,
     private globalStorage: GlobalStorageService,
     private walletNetworkService: WalletNetworkService,
-    private uniswapCurrencyService: UniswapCurrencyService
+    private uniswapCurrencyService: UniswapCurrencyService,
+    private dexScreenerCurrencyService: DexScreenerCurrencyService
   ) {
     CurrencyService.instance = this;
   }
@@ -319,16 +321,20 @@ export class CurrencyService {
     }
     else {
       Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
-      if (network.isEVMNetwork() && (<EVMNetwork>network).getUniswapCurrencyProvider()) {
-        // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
-        let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, (<EVMNetwork>network).getUniswapCurrencyProvider().getWrappedNativeCoin());
-        if (usdValue) {
-          this.pricesCache.set(cacheKey, {
-            usdValue
-          }, currentTime);
-          priceUpdated = true;
+      if (network.isEVMNetwork()) {
+        if ((<EVMNetwork>network).getUniswapCurrencyProvider()) {
+            // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
+            let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, (<EVMNetwork>network).getUniswapCurrencyProvider().getWrappedNativeCoin());
+            if (usdValue) {
+                this.pricesCache.set(cacheKey, {
+                    usdValue
+                }, currentTime);
+                priceUpdated = true;
+            } else {
+                Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
+            }
         } else {
-          Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
+            this.dexScreenerTokenFetch(cacheKey, <EVMNetwork>network, (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin());
         }
       }
       else {
@@ -366,7 +372,11 @@ export class CurrencyService {
 
   public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: EVMNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
     let cacheKey = network.key + coin.getContractAddress();
-    this.queueUniswapTokenFetch(cacheKey, network, coin);
+    if ((<EVMNetwork>network).getUniswapCurrencyProvider()) {
+        this.queueUniswapTokenFetch(cacheKey, network, coin);
+    } else {
+        this.dexScreenerTokenFetch(cacheKey, network, coin);
+    }
     return;
   }
 
@@ -415,6 +425,17 @@ export class CurrencyService {
           this.checkFetchNextUniswapToken();
         });
       }
+    }
+  }
+
+  private async dexScreenerTokenFetch(cacheKey: string, network: EVMNetwork, coin: ERC20Coin) {
+    let price = await this.dexScreenerCurrencyService.getTokenUSDValue(<EVMNetwork>network, coin);
+    // Logger.log('wallet', 'dexScreenerTokenFetch got price:', price, coin);
+    if (price) {
+        let currentTime = Date.now() / 1000;
+        this.pricesCache.set(cacheKey, {
+            usdValue: price
+        }, currentTime);
     }
   }
 
