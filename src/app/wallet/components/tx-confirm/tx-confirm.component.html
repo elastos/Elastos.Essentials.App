@@ -14,6 +14,9 @@
   <h3 *ngIf="displayAmount">{{ 'wallet.amount' | translate }}:</h3>
   <h4 *ngIf="displayAmount">{{ displayAmount }} {{ txInfo.tokensymbol }}</h4>
 
+  <h3 *ngIf="unFreezeBalance">{{ 'wallet.resource-to-unfreeze' | translate }}</h3>
+  <h4 *ngIf="unFreezeBalance">{{ unFreezeBalance }} {{ txInfo.tokensymbol }}</h4>
+
   <h3 *ngIf="fee">{{ 'wallet.esctransaction-fees' | translate }}</h3>
 
   <ion-row class="item-row ripple ion-activatable" *ngIf="fee">

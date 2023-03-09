@@ -31,15 +31,19 @@ export class TxConfirmComponent implements OnInit {
 
   public fee : string = null;
 
+  // evm
   public gasPrice: string = null;
   public gasLimit: string = null;
   private evmNativeFee = null;
   private mainTokenSubWallet: AnyMainCoinEVMSubWallet = null;
 
   public gasPriceGwei = '';
+  public showEditGasPrice = false;
+
   public feeDisplay = ''; // ELA
 
-  public showEditGasPrice = false;
+  // tron
+  public unFreezeBalance = 0;
 
   public isIOS = false;
   private rootContent: any;
@@ -77,6 +81,8 @@ export class TxConfirmComponent implements OnInit {
         case TransferType.UNFREEZE: // Tron
             this.txHeader = this.translate.instant('wallet.resource-unfreeze');
             this.txIcon = '/assets/wallet/tx/receive.svg';
+
+            this.unFreezeBalance = this.txInfo.unfreezeBalance;
         break;
         default:
             this.txHeader = this.translate.instant('wallet.send-transaction-type');

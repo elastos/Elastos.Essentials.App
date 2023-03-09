@@ -42,7 +42,6 @@ import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tro
 import { AccountResources, AccountResult, ResourceType } from 'src/app/wallet/model/tron.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { TransferType } from 'src/app/wallet/services/cointransfer.service';
-import { DefiService } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
@@ -97,7 +96,6 @@ export class TronResourcePage implements OnDestroy {
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
-        public defiService: DefiService,
         public native: Native,
         public popupProvider: PopupProvider,
         public walletManager: WalletService,
@@ -334,19 +332,19 @@ export class TronResourcePage implements OnDestroy {
             feeString = `${nativeFee} (~ ${currencyFee})`;
         }
 
+        let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
+
         const txInfo = {
             type: this.transactionType ? TransferType.UNFREEZE : TransferType.FREEZE,
             transferFrom: this.subWallet.getCurrentReceiverAddress(),
             transferTo: this.subWallet.getCurrentReceiverAddress(),
-            toChainId: null,
-            amount: this.amount,
+            amount: this.transactionType ? undefined : this.amount,
+            unfreezeBalance: this.freezeBalanceInfo[index].frozen_balance_trx,
             sendAll: false,
             precision: this.subWallet.tokenDecimals,
-            memo: null,
             tokensymbol: this.subWallet.getDisplayTokenName(),
             fee: feeString,
-            gasLimit: null,
-            coinType: this.subWallet.type
+            coinType: this.subWallet.type,
         }
 
         this.native.popup = await this.native.popoverCtrl.create({
