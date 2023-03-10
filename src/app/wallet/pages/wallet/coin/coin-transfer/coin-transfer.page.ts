@@ -734,6 +734,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
 
+                let amountString = this.amount.toString();
+                let dotIndex = amountString.indexOf('.');
+                if ((dotIndex > -1) && (amountString.split(".")[1].length > this.fromSubWallet.tokenDecimals)) {
+                    this.amount = parseFloat(amountString.substring(0, dotIndex + this.fromSubWallet.tokenDecimals + 1));
+                }
+
                 let amountBigNumber = new BigNumber(this.amount || 0);
                 if (fee) {
                     amountBigNumber = amountBigNumber.plus(fee)
