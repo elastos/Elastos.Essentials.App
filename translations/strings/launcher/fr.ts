@@ -86,7 +86,7 @@ export const fr = {
         'elastos-staking': 'Elastos Staking',
         'app-elastos-staking': 'ELA Staking',
         'app-elastos-staking-description': 'Déposez vos ELA pour ensuite pouvoir voter et être récompensé',
-        'app-dpos2-voting': 'Votes DPoS 2.0',
+        'app-dpos2-voting': 'Votes BPoS',
         'app-dpos2-description': 'Votez pour les Supernodes Elastos',
 
         /******** Widgets *********/

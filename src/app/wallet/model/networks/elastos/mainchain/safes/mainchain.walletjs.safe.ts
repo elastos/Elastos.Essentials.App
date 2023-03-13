@@ -307,7 +307,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
       url,
       IPAddress,
       location.toString(),
-      stakeUntil, // stakeUntil:The block height when your staking expires. It is required in DPoS 2.0 version.
+      stakeUntil, // stakeUntil:The block height when your staking expires. It is required in BPoS version.
       payPasswd,
     );
   }
@@ -397,7 +397,7 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     );
   }
 
-  //Dpos 2.0
+  // BPoS
   public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx {
     return (<MainchainSubWallet>this.sdkSubWallet).createStakeTransaction(inputs, payload, lockAddress, amount, fee, memo);
   }

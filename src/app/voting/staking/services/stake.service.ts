@@ -205,11 +205,11 @@ export class StakeService {
                     }
 
                     this.votesRight.voteInfos = [];
-                    this.votesRight.voteInfos.push({ index: 0, title: "DPoS 1.0", list: result[0].usedvotesinfo.useddposvotes });
+                    this.votesRight.voteInfos.push({ index: 0, title: "DPoS", list: result[0].usedvotesinfo.useddposvotes });
                     this.votesRight.voteInfos.push({ index: 1, title: "staking.cr-council", list: result[0].usedvotesinfo.usedcrvotes });
                     this.votesRight.voteInfos.push({ index: 2, title: "staking.cr-proposal", list: result[0].usedvotesinfo.usedcrcproposalvotes });
                     this.votesRight.voteInfos.push({ index: 3, title: "staking.cr-impeachment", list: result[0].usedvotesinfo.usdedcrimpeachmentvotes });
-                    this.votesRight.voteInfos.push({ index: 4, title: "DPoS 2.0", list: dpos2List });
+                    this.votesRight.voteInfos.push({ index: 4, title: "BPoS", list: dpos2List });
                     for (let i in this.votesRight.voteInfos) {
                         if (this.votesRight.voteInfos[i].list.length == 0) {
                             this.votesRight.votes[i] = 0;

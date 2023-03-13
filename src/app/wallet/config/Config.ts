@@ -73,7 +73,7 @@ export class Config {
     public static ETHDID_CONTRACT_ADDRESS_LRW = '0xdE51B8a094C4c135b47570E627331A830A3Be662';
 
 
-    // dpos 2.0
+    // BPoS
     public static ELA_STAKED_LOCK_ADDRESS = 'STAKEPooLXXXXXXXXXXXXXXXXXXXpP1PQ2';
 
     // define in spvsdk

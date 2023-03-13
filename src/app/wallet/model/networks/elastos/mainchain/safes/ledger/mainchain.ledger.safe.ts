@@ -357,7 +357,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  //Dpos 2.0
+  // BPoS
   public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx {
     // TODO: Do not support.
     return null;

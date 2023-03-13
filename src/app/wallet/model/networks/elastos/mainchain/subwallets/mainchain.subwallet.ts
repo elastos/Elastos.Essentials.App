@@ -216,7 +216,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let transactionName = "wallet.coin-op-sent-token";
         let transferAmount = null;
         let votesContents: VotesContentInfo[] = null;
-        // Update DPoS 2 voting.
+        // Update BPoS voting.
         let renewalVotesContentInfo: RenewalVotesContentInfo[] = null;
 
         try {
@@ -1684,7 +1684,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         );
     }
 
-    //Dpos 2.0
+    // BPoS
     // amount: sela
     public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
         // Use the first external address.

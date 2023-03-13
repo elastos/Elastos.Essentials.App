@@ -405,7 +405,7 @@ export class CoinTxInfoPage implements OnInit {
             this.txDetails.unshift(
                 {
                     type: 'votes',
-                    title: 'DPoS 2.0',
+                    title: 'BPoS',
                     value: this.dpos2Votes,
                     show: false,
                 })

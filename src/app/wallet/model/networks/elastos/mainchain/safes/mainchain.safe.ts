@@ -90,7 +90,7 @@ export interface ElastosMainChainSafe {
   createRetrieveCRDepositTransaction(inputs: UTXOInput[], amount: string, fee: string, memo: string): Promise<any>;
   createCRCouncilMemberClaimNodeTransaction(version: number, inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string): Promise<any>;
 
-  //Dpos 2.0
+  // BPoS
   createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx;
   createDPoSV2VoteTransaction(inputs: UTXOInput[], payload: VotingInfo, fee: string, memo: string): EncodedTx;
   getDPoSV2ClaimRewardDigest(payload: DPoSV2ClaimRewardInfo): string;

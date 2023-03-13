@@ -115,7 +115,7 @@ export class StakingHomePage implements OnInit {
         this.voteItems = [];
         if (this.stakeService.votesRight.totalVotesRight > 0) {
             this.voteItems.push({
-                title: "DPoS 2.0",
+                title: "BPoS",
                 type: VoteType.DPoSV2,
                 votes: this.uxService.toThousands(this.stakeService.votesRight.votes[VoteType.DPoSV2]),
                 ratio: this.uxService.getPercentage(this.stakeService.votesRight.votes[VoteType.DPoSV2], this.stakeService.votesRight.totalVotesRight),

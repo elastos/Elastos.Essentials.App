@@ -345,7 +345,7 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return null;
   }
 
-  //Dpos 2.0
+  // BPoS
   public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx {
     return this.elaSubWallet.createStakeTransaction(inputs, payload, lockAddress, amount, fee, memo);
   }

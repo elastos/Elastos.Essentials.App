@@ -86,7 +86,7 @@ export const zh = {
         'elastos-staking': 'Elastos 质押',
         'app-elastos-staking': 'ELA 质押',
         'app-elastos-staking-description': '存入您的 ELA 代币，稍后投票并赚取奖励',
-        'app-dpos2-voting': 'DPoS 2.0 超级节点投票',
+        'app-dpos2-voting': 'BPoS 超级节点投票',
         'app-dpos2-description': '为亦来云超级节点投票',
 
         /******** Widgets *********/

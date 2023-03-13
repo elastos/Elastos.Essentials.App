@@ -817,7 +817,7 @@ export class GlobalElastosAPIService extends GlobalService {
         return null;
     }
 
-    // dpos 2.0
+    // BPoS
     public async getVoteRights(stakeAddresses: string): Promise<StakeInfo[]> {
         Logger.log('elastosapi', 'Get Vote Rights..');
         const param = {

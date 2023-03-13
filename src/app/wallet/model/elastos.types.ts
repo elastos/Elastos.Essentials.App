@@ -59,7 +59,7 @@ export type VoteContent = {
 };
 
 
-// dpos 2.0
+// BPoS
 export type VoteDetail = {
     candidates: string,
     votes: string,

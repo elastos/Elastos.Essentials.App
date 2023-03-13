@@ -94,7 +94,7 @@ export class StakePage {
             const rawTx = await this.voteService.sourceSubwallet.createStakeTransaction(
                 payload,
                 stakeAmount,
-                'DPoS 2.0 stake transaction', //memo
+                'BPoS stake transaction', //memo
             );
             await this.globalNative.hideLoading();
 
