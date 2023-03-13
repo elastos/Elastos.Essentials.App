@@ -2,9 +2,11 @@
   <app-titlebar title="text-vote-crcouncil"></app-titlebar>
   <ion-grid class="container" [class.dark-container]="theme.darkMode">
     <ion-card>
-      <div class="img" inlineSVG="assets/shared/curcol-icons/fingerprint.svg"></div>
-      <ion-card-title>{{ 'wallet.didtransaction-publish-identity' | translate }}</ion-card-title>
-      <ion-card-subtitle>{{ 'wallet.didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
+      <ion-card-header>
+        <div class="img" inlineSVG="assets/shared/curcol-icons/fingerprint.svg"></div>
+        <ion-card-title>{{ 'wallet.didtransaction-publish-identity' | translate }}</ion-card-title>
+        <ion-card-subtitle>{{ 'wallet.didtransaction-transaction-fee' | translate }}</ion-card-subtitle>
+      </ion-card-header>
     </ion-card>
     <div class="msg-container" *ngIf="networkWallet">
       <p>{{ 'wallet.didtransaction-intro' | translate }}</p>

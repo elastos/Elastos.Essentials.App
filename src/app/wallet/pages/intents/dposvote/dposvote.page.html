@@ -2,9 +2,11 @@
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
         <ion-card>
-            <img [src]="!theme.darkMode ? 'assets/wallet/intents/dpos.svg' : 'assets/wallet/intents/darkmode/dpos.svg'">
-            <ion-card-title>{{ 'wallet.vote-you-are-voting' | translate }}</ion-card-title>
-            <ion-card-subtitle>{{ 'wallet.vote-transaction-fees' | translate }}</ion-card-subtitle>
+            <ion-card-header>
+                <img [src]="!theme.darkMode ? 'assets/wallet/intents/dpos.svg' : 'assets/wallet/intents/darkmode/dpos.svg'">
+                <ion-card-title>{{ 'wallet.vote-you-are-voting' | translate }}</ion-card-title>
+                <ion-card-subtitle>{{ 'wallet.vote-transaction-fees' | translate }}</ion-card-subtitle>
+            </ion-card-header>
         </ion-card>
         <div class="msg-container">
             <p>{{ 'wallet.dposvote-voting-for' | translate }}</p>

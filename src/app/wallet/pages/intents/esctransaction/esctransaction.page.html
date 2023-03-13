@@ -8,13 +8,15 @@
     <!-- CARD HEADER -->
     <div [ngSwitch]="transactionInfo.type">
       <ion-card *ngSwitchCase="'erc20_token_approve'">
-        <div class="img" inlineSVG="assets/wallet/intents/curcol-smartcontracts.svg"></div>
-        <ion-card-title>{{ 'wallet.esctransaction-approve-token' | translate
-          }}<br /><b>{{transactionInfo.symbol}}</b></ion-card-title>
-        <ion-card-subtitle>
-          {{ 'wallet.esctransaction-approve-token-intro' | translate: { token:
-          getApproveTokenNameWithSymbol(transactionInfo) } }}
-        </ion-card-subtitle>
+        <ion-card-header>
+          <div class="img" inlineSVG="assets/wallet/intents/curcol-smartcontracts.svg"></div>
+          <ion-card-title>{{ 'wallet.esctransaction-approve-token' | translate
+            }}<br /><b>{{transactionInfo.symbol}}</b></ion-card-title>
+          <ion-card-subtitle>
+            {{ 'wallet.esctransaction-approve-token-intro' | translate: { token:
+            getApproveTokenNameWithSymbol(transactionInfo) } }}
+          </ion-card-subtitle>
+        </ion-card-header>
       </ion-card>
       <ion-card *ngSwitchDefault>
         <div class="img" inlineSVG="assets/wallet/intents/curcol-smartcontracts.svg"></div>

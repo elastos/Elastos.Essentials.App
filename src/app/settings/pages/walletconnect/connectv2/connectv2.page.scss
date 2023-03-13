@@ -5,41 +5,43 @@
     padding: 20px 10px;
 
     ion-card {
-        position: relative;
-        margin: 30px 10px;
-        background: var(--essentials-box-color);
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-radius: 15px;
-        padding: 25px 15px 30px;
-        overflow: visible;
-        box-shadow: none;
+        ion-card-header {
+            position: relative;
+            margin: 30px 10px;
+            background: var(--essentials-box-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 15px;
+            padding: 25px 15px 30px;
+            overflow: visible;
+            box-shadow: none;
 
-        img {
-            width: 105px;
-            height: 105px;
-            position: absolute;
-            z-index: 10;
-            top: -52.5px;
-            object-fit: contain;
-        }
+            img {
+                width: 105px;
+                height: 105px;
+                position: absolute;
+                z-index: 10;
+                top: -52.5px;
+                object-fit: contain;
+            }
 
-        ion-card-title {
-            font-size: 21px;
-            font-weight: 600;
-            line-height: 1.29;
-            margin: 40px 15px 10px;
-        }
+            ion-card-title {
+                font-size: 21px;
+                font-weight: 600;
+                line-height: 1.29;
+                margin: 40px 15px 10px;
+            }
 
-        ion-card-subtitle {
-            text-align: center;
-            text-transform: none;
-            font-size: 16px;
-            font-weight: 300;
-            margin: 0 15px;
-            color: var(--ion-text-color);
+            ion-card-subtitle {
+                text-align: center;
+                text-transform: none;
+                font-size: 16px;
+                font-weight: 300;
+                margin: 0 15px;
+                color: var(--ion-text-color);
+            }
         }
     }
 
