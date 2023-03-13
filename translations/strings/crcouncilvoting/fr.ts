@@ -57,7 +57,7 @@ export const fr = {
                 'member-url': 'URL du membre',
                 'member-profile': 'Profil du membre',
                 'update': 'MàJ',
-                'claim-dpos-node': 'Demander le noeud DPoS',
+                'claim-dpos-node': 'Demander le noeud',
 
                 'no-member-info': 'Can not get the member info',
                 'no-members': 'Can not get the CR members',
@@ -74,7 +74,7 @@ export const fr = {
                 /********** CRNode **********/
                 'enter-node-publickey': 'Clé publique du noeud',
                 'edit-node-publickey': 'Modifier la clé publique de votre noeud',
-                'text-public-key-dont-modify': 'The DPoS Public Key do not modify.',
+                'text-public-key-dont-modify': 'La clé publique du noeud n\'est pas modifiée.',
 
                 /********** Candidate **********/
                 'candidate-profile': 'Profil du candidat',

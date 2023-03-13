@@ -58,7 +58,7 @@ export const en = {
         'member-url': 'Council Member URL',
         'member-profile': 'Council Member Profile',
         'update': 'Update',
-        'claim-dpos-node': 'Claim DPoS Node',
+        'claim-dpos-node': 'Claim Node',
 
         'no-member-info': 'Can not get the member info',
         'no-members': 'Can not get the CR members',
@@ -75,7 +75,7 @@ export const en = {
         /********** CRNode **********/
         'enter-node-publickey': 'Enter public key of your node',
         'edit-node-publickey': 'Edit public key of your node',
-        'text-public-key-dont-modify': 'The DPoS Public Key do not modify.',
+        'text-public-key-dont-modify': 'The Node Public Key do not modify.',
 
         /********** Candidate **********/
         'candidate-profile': 'Candidate Profile',

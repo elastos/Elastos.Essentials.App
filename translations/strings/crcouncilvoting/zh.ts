@@ -58,7 +58,7 @@ export const zh = {
         'member-url': '委员会成员URL',
         'member-profile': '委员会成员简介',
         'update': '更新',
-        'claim-dpos-node': '绑定DPoS节点',
+        'claim-dpos-node': '绑定节点',
 
         'no-member-info': '获取委员信息失败',
         'no-members': '获取CR委员列表失败',

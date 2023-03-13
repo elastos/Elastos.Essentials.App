@@ -58,7 +58,7 @@ export const it = {
         'member-url': 'URL del Membro del Consiglio',
         'member-profile': 'Profilo del Membro del CRC',
         'update': 'Aggiorna',
-        'claim-dpos-node': 'Richiedi Nodo DPoS',
+        'claim-dpos-node': 'Richiedi Nodo',
 
         'no-member-info': 'Can not get the member info',
         'no-members': 'Can not get the CR members',
@@ -75,7 +75,7 @@ export const it = {
         /********** CRNode **********/
         'enter-node-publickey': 'Inserisci la chiave pubblica del nodo',
         'edit-node-publickey': 'Modifica la chiave pubblica del nodo',
-        'text-public-key-dont-modify': 'The DPoS Public Key do not modify.',
+        'text-public-key-dont-modify': 'The Node Public Key do not modify.',
 
         /********** Candidate **********/
         'candidate-profile': 'Candidate Profile',
