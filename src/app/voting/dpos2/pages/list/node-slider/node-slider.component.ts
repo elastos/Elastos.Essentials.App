@@ -2,8 +2,8 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { UXService } from 'src/app/voting/services/ux.service';
 import { DPoS2Node } from '../../../model/nodes.model';
-import { DPoS2Service } from '../../../services/dpos2.service';
 
 @Component({
   selector: 'app-node-slider-list',
@@ -29,7 +29,7 @@ export class NodeSliderComponent implements OnInit {
   };
 
   constructor(
-    public dpos2Service: DPoS2Service,
+    public uxService: UXService,
     public theme: GlobalThemeService
   ) {
   }

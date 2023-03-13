@@ -20,7 +20,7 @@
           </ion-row>
           <ion-row class="detail-container">
             <p>{{ 'dposvoting.current-vote-rights' | translate }}</p>
-            <h3>{{ dpos2Service.getVotes(node.dposv2votes) }}</h3>
+            <h3>{{ uxService.toThousands(node.dposv2votes) }}</h3>
           </ion-row>
           <ion-row class="detail-container">
             <p>{{ 'dposvoting.slider-rewards' | translate }}</p>
@@ -36,7 +36,7 @@
           </ion-row>
           <ion-row class="website">
             <p>{{ 'common.website' | translate }}</p>
-            <h3 (click)="dpos2Service.openLink(node.url)">{{ node.url }}</h3>
+            <h3 (click)="uxService.openLink(node.url)">{{ node.url }}</h3>
           </ion-row>
         </ion-card-content>
       </ion-grid>
