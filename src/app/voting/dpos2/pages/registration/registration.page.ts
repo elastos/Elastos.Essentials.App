@@ -5,6 +5,7 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { areaList } from 'src/app/model/area.list';
 import { Util } from 'src/app/model/util';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -224,7 +225,7 @@ export class DPoS2RegistrationPage implements OnInit {
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-            let currentHeight = await this.voteService.getCurrentHeight();
+            let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let stakeUntil = currentHeight + this.dposInfo.inputStakeDays * 720;
 
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
@@ -258,7 +259,7 @@ export class DPoS2RegistrationPage implements OnInit {
             return;
         }
         try {
-            let currentHeight = await this.voteService.getCurrentHeight();
+            let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let stakeUntil = currentHeight + this.dposInfo.inputStakeDays * 720;
             const payload = await this.voteService.sourceSubwallet.generateProducerPayload(
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);

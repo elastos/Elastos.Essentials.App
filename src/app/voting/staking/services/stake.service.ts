@@ -1,4 +1,5 @@
 import { Injectable, NgZone } from '@angular/core';
+import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -262,8 +263,9 @@ export class StakeService {
 
     async getStakeUntil(stakeUntil: number, currentHeight?: number, currentBlockTimestamp?: number): Promise<any> {
         if (!currentHeight) {
-            currentHeight = await this.voteService.getCurrentHeight();
-            currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+            currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+            // currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+            currentBlockTimestamp = moment().valueOf() / 1000;
         }
         var until = stakeUntil - currentHeight;
         if (until > 720 * 7) { //more than 7 days

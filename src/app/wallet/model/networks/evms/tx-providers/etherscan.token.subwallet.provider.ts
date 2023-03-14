@@ -98,7 +98,7 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
         '?module=account&action=tokenlist&address=' + address;
 
       try {
-        let result = await GlobalJsonRPCService.instance.httpGet(tokenListUrl);
+        let result = await GlobalJsonRPCService.instance.httpGet(tokenListUrl, this.subWallet.networkWallet.network.key);
         let rawResults: ERCTokenInfo[] = result.result;
 
         // From here, we got a list of contract address / type / balance (erc 20, 721, 1155) but NO token IDs for NFTs,,,

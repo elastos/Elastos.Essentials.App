@@ -225,6 +225,11 @@
                     --background-checked: transparent !important;
                     --checkmark-color: var(--ion-text-color) !important;
                 }
+
+                .disabled {
+                    pointer-events: none;
+                    opacity: 0.4;
+                }
             }
 
             h4,

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { lazyElastosHiveSDKImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
@@ -100,6 +101,9 @@ export class GlobalElastosAPIService extends GlobalService {
     public activeProvider: BehaviorSubject<ElastosAPIProvider> = new BehaviorSubject(null);
 
     private languageSubscription: Subscription = null;
+
+    private blockHeightCache = 0;
+    private blockHeightTimestamp = 0;
 
     constructor(
         public translate: TranslateService,
@@ -728,6 +732,12 @@ export class GlobalElastosAPIService extends GlobalService {
     }
 
     public async getCurrentHeight() {
+        if (this.blockHeightCache) {
+            let current = moment().valueOf();
+            if ((current - this.blockHeightTimestamp) < 30000) { // 30s
+                return this.blockHeightCache
+            }
+        }
         const param = {
             method: 'getcurrentheight',
         };
@@ -737,14 +747,17 @@ export class GlobalElastosAPIService extends GlobalService {
             return 0;
         }
 
-        let blockHeight = 0;
         try {
-            const blockHeightStr = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-            blockHeight = parseInt(blockHeightStr, 10);
+            let blockHeight = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            if (blockHeight) {
+                this.blockHeightTimestamp = moment().valueOf();
+                this.blockHeightCache = blockHeight;
+                return blockHeight;
+            }
         } catch (e) {
             Logger.warn("elastosapi", "getCurrentHeight exception", e);
         }
-        return blockHeight;
+        return 0;
     }
 
     public async getELABlockHash(blockHeight: number) {

@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
@@ -54,7 +55,7 @@ export class NodeSliderComponent implements OnInit {
     async ngOnInit() {
         this.displayedNodes = this._nodes.slice(0, this.nodeIndex + 2);
         this.slideOpts.initialSlide = this.displayedNodes.indexOf(this.node);
-        this.currentHeight = await this.voteService.getCurrentHeight();
+        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
     }
 
     //// Increment nodes array when sliding forward ////
@@ -81,7 +82,7 @@ export class NodeSliderComponent implements OnInit {
             return;
         }
 
-        this.currentHeight = await this.voteService.getCurrentHeight();
+        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
         let locktime = this.currentHeight + node.inputStakeDays * 720;
         if (locktime > node.stakeuntil) {
             this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');

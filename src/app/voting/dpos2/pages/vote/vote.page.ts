@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -93,7 +94,7 @@ export class VotePage implements OnInit, OnDestroy {
         Logger.log(App.DPOS2, 'My votes', this.selectedNodes);
 
         this.getVotedCount();
-        this.currentHeight = await this.voteService.getCurrentHeight();
+        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
 
         //console.log("this.nodeVotes", this.nodeVotes)
 
@@ -130,7 +131,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     /****************** Cast Votes *******************/
     async cast() {
-        this.currentHeight = await this.voteService.getCurrentHeight();
+        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
         let votedCandidates = [];
         for (const node of this.selectedNodes) {
             if (node.userVotes > 0) {

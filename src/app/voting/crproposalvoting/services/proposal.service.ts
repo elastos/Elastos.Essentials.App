@@ -227,37 +227,13 @@ export class ProposalService {
         return ret;
     }
 
-    async getCurrentHeight(): Promise<number> {
-        Logger.log(App.CRPROPOSAL_VOTING, 'Get Current Height...');
-
-        const param = {
-            method: 'getcurrentheight',
-            params: {
-            },
-        };
-
-        try {
-            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
-            Logger.log(App.CRPROPOSAL_VOTING, 'getCurrentHeight', result);
-            if (result) {
-                return result;
-            }
-        }
-        catch (err) {
-            Logger.error(App.CRCOUNCIL_VOTING, 'getCurrentHeight error', err);
-        }
-
-        return 0;
-    }
-
-
     async getRemainingTime(proposal: ProposalDetails): Promise<string> {
         var ret;
         var remainingTime = -1;
         if (proposal.status == "registered" || proposal.status == "cragreed") {
             let state = await this.getCrProposalState(proposal.proposalHash);
             if (state && state.registerheight) {
-                let currentHeight = await this.getCurrentHeight();
+                let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
                 if (currentHeight >= state.registerheight) {
                     if (proposal.status == "registered") {
                         remainingTime = (720 * 7 - (currentHeight - state.registerheight)) * 2;

@@ -430,7 +430,7 @@ export class CRCouncilService {
             this.isVoting = result.invoting || false;
             this.inClaiming = result.inClaiming || false;
 
-            // let currentHeight = await this.voteService.getCurrentHeight();
+            // let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             // var block_remain = 0;
             // if (this.isVoting && result.votingendheight > currentHeight) {
             //     block_remain = result.votingendheight - currentHeight;
@@ -474,7 +474,7 @@ export class CRCouncilService {
 
         let result = await this.getCRRelatedStage();
         if (result && result.invoting) {
-            let currentHeight = await this.voteService.getCurrentHeight();
+            let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
 
             if (result.votingendheight > currentHeight) {
                 let block_remain = result.votingendheight - currentHeight;

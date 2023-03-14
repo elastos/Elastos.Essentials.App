@@ -1,5 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
@@ -206,8 +207,9 @@ export class DPoS2Service {
 
     async fetchNodes() {
         var ownerPublicKey = '';
-        let currentHeight = await this.voteService.getCurrentHeight();
-        let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+        let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+        // let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+        let currentBlockTimestamp = moment().valueOf() / 1000;
         await this.stakeService.getVoteRights();
 
         //The wallet imported by private key has no ELA subwallet.
@@ -351,8 +353,9 @@ export class DPoS2Service {
     async geMyVoteds(): Promise<any[]> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS2, 'getOwnerStakeAddress', stakeAddress);
-        let currentHeight = await this.voteService.getCurrentHeight();
-        let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+        let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+        // let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
+        let currentBlockTimestamp = moment().valueOf() / 1000;
 
         const param = {
             method: 'getalldetaileddposv2votes',
