@@ -91,7 +91,7 @@
     "@walletconnect/client": "^1.8.0",
     "@walletconnect/legacy-types": "^2.0.0-rc.0",
     "@walletconnect/sign-client": "^2.1.3",
-    "@walletconnect/utils": "^2.1.3",
+    "@walletconnect/utils": "^2.4.10",
     "abi-decoder": "^2.4.0",
     "agent-base": "^6.0.2",
     "angularx-qrcode": "^13.0.15",
