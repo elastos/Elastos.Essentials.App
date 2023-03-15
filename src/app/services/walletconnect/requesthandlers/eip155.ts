@@ -196,7 +196,9 @@ export class EIP155RequestHandler {
    * Legacy eth_sign. Can receive either a raw hex buffer (unsafe), or a prefixed utf8 string (safe)
    */
   public static async handleEthSignRequest(params: any): Promise<EIP155ResultOrError<string>> {
-    const buffer = this.messageToBuffer(params[0]);
+    // params[0], 20 Bytes - address.
+    // params[1], N Bytes - message to sign.
+    const buffer = this.messageToBuffer(params[1]);
     const hex = this.bufferToHex(buffer);
 
     /**
@@ -231,7 +233,7 @@ export class EIP155RequestHandler {
   }
 
   /**
-   * 
+   *
    * @param chainId Optional target chain id, base10 number
    */
   public static async handleSendTransactionRequest(params: any, chainId?: number): Promise<EIP155ResultOrError<string>> {
