@@ -907,5 +907,6 @@ export const zh = {
         'txPublished-66': '交易费不足',
         'txPublished-67': '检查点错误',
         'did-oversize': 'DID数据过大',
+        'transaction-same-account': '无法将TRX转入同一帐户',
     },
 };

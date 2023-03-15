@@ -878,5 +878,6 @@ export const fr = {
         'Error-32000': 'Invalid Ethereum address',
 
         'did-oversize': 'DID Over Size',
+        'transaction-same-account': 'Cannot transfer TRX to the same account',
     },
 };

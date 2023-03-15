@@ -839,7 +839,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (reworkedEx instanceof Web3Exception) {
             await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
-            let message = typeof (err) === "string" ? err : err.message;
+            let message: string = typeof (err) === "string" ? err : err.message;
+            if (message.includes('Cannot transfer TRX to the same account')) {
+                message = "wallet.transaction-same-account";
+            }
             await PopupProvider.instance.ionicAlert("wallet.transaction-fail", message);
         }
     }
