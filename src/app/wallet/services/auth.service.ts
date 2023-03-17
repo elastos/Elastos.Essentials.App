@@ -1,6 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { Logger } from 'src/app/logger';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPasswordService } from 'src/app/services/global.password.service';
 
 @Injectable({
@@ -71,7 +72,11 @@ export class AuthService {
             }
             catch (e) {
                 Logger.error('wallet', 'getWalletPassword error ', e);
-                // TODO: better handle various kind of errors
+                if (e && e.message) {
+                    if (!e.message.includes('MasterPasswordCancellation') && !e.message.includes('BIOMETRIC_PIN_OR_PATTERN_DISMISSED')) {
+                        GlobalNativeService.instance.genericToast(e.message, 3000);
+                    }
+                }
                 resolve(null);
             }
         });
