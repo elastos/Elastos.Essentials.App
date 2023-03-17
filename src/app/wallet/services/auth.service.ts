@@ -73,7 +73,10 @@ export class AuthService {
             catch (e) {
                 Logger.error('wallet', 'getWalletPassword error ', e);
                 if (e && e.message) {
-                    if (!e.message.includes('MasterPasswordCancellation') && !e.message.includes('BIOMETRIC_PIN_OR_PATTERN_DISMISSED')) {
+                    // MasterPasswordCancellation, BIOMETRIC_DISMISSED, BIOMETRIC_PIN_OR_PATTERN_DISMISSED
+                    if (!e.message.includes('MasterPasswordCancellation')
+                            && !e.message.includes('BIOMETRIC_DISMISSED')
+                            && !e.message.includes('BIOMETRIC_PIN_OR_PATTERN_DISMISSED')) {
                         GlobalNativeService.instance.genericToast(e.message, 3000);
                     }
                 }

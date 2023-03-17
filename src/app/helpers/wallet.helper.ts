@@ -66,7 +66,8 @@ export class WalletExceptionHelper {
      */
      static reworkedPasswordException(e: any) {
         if (e && e.message) {
-            if (e.message.includes("MasterPasswordCancellation")) {
+            if (e.message.includes("MasterPasswordCancellation") || e.message.includes('BIOMETRIC_DISMISSED')
+                    || e.message.includes('BIOMETRIC_PIN_OR_PATTERN_DISMISSED')) {
                 return new PasswordManagerCancellationException();
             }
 

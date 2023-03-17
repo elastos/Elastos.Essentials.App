@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { PasswordManagerCancellationException } from 'src/app/model/exceptions/passwordmanagercancellationexception';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPasswordService } from 'src/app/services/global.password.service';
 import { DIDService } from './did.service';
 import { PopupProvider } from './popup';
@@ -65,7 +66,12 @@ export class AuthService {
                     resolve();
                 }
                 else {
-                    reject(reworkedError);
+                    if (e && e.message) {
+                        GlobalNativeService.instance.genericToast(e.message, 3000);
+                    }
+                    onCancelled();
+                    resolve();
+                    // reject(reworkedError);
                 }
             }
         });

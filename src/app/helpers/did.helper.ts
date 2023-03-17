@@ -42,7 +42,8 @@ export class DIDHelper {
       }
 
       if (e.message) {
-        if (e.message.includes("MasterPasswordCancellation")) {
+        if (e.message.includes("MasterPasswordCancellation") || e.message.includes('BIOMETRIC_DISMISSED')
+                || e.message.includes('BIOMETRIC_PIN_OR_PATTERN_DISMISSED')) {
           return new PasswordManagerCancellationException();
         }
 
@@ -50,7 +51,7 @@ export class DIDHelper {
           return new PasswordManagerCancellationException();
         }
 
-        if (e.message.includes("BIOMETRIC_AUTHENTICATION_FAILED")) {
+        if (e.message.includes("BIOMETRIC_AUTHENTICATION_FAILED") || e.message.includes("Authentication failed")) {
           return new BiometricAuthenticationFailedException();
         }
 
