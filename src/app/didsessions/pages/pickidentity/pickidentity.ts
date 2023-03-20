@@ -146,6 +146,9 @@ export class PickIdentityPage {
       await this.identityService.signIn(identityEntry, true);
     } catch (e) {
       Logger.error('didsessions', "Sign exception:", e);
+      if (e && e.message) {
+        GlobalNativeService.instance.genericToast(e.message, 3000);
+      }
     }
     Logger.log('didsessions', "Sign in complete");
     await this.nativeService.hideLoading();
