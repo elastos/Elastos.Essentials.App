@@ -158,7 +158,7 @@ export class EIP155RequestHandler {
     };
     let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signtypeddata", rawData);
 
-    if (response && response.result)
+    if (response && response.result && response.result.signedData)
       return { result: response.result.signedData };
     else {
       return {
@@ -179,7 +179,7 @@ export class EIP155RequestHandler {
     };
     let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/personalsign", rawData);
 
-    if (response && response.result) {
+    if (response && response.result && response.result.signedData) {
       return { result: response.result.signedData };
     }
     else {
@@ -218,7 +218,7 @@ export class EIP155RequestHandler {
       };
       let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/insecureethsign", rawData);
 
-      if (response && response.result) {
+      if (response && response.result && response.result.signedData) {
         return { result: response.result.signedData };
       }
       else {
@@ -251,7 +251,7 @@ export class EIP155RequestHandler {
       });
       Logger.log("walletconnecteip155", "Got esctransaction intent response", response);
 
-      if (response && response.result.status === "published") {
+      if (response && response.result && response.result.status === "published") {
         // Approve Call Request
         return { result: response.result.txid };
       }
