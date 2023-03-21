@@ -413,16 +413,8 @@ export class VoteService implements GlobalService {
     }
 
     async getConfirmCount(txid: string): Promise<number> {
-        const param = {
-            method: 'getrawtransaction',
-            params: {
-                txid: txid,
-                verbose: true
-            },
-        };
-
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
+        //Get ower dpos info
+        const result = await await GlobalElastosAPIService.instance.getRawTransaction(txid);
         if (result && result.confirmations) {
             return result.confirmations;
         }

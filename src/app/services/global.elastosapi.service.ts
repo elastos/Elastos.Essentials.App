@@ -15,7 +15,7 @@ import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model'
 import { StandardCoinName } from '../wallet/model/coin';
 import { StakeInfo } from '../wallet/model/elastos.types';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
-import { ElastosPaginatedTransactions, UtxoType } from '../wallet/model/tx-providers/transaction.types';
+import { ElastosPaginatedTransactions, TransactionDetail, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalLanguageService } from './global.language.service';
 import { GlobalNetworksService } from './global.networks.service';
@@ -581,6 +581,31 @@ export class GlobalElastosAPIService extends GlobalService {
         return '';
     }
 
+    async getRawTransaction(txid: string, elastosChainCode = StandardCoinName.ELA): Promise<TransactionDetail> {
+        const param = {
+            method: 'getrawtransaction',
+            params: {
+                txid: txid,
+                verbose: true
+            },
+        };
+
+        let apiurltype = this.getApiUrlTypeForRpc(elastosChainCode);
+        const rpcApiUrl = this.getApiUrl(apiurltype);
+        if (rpcApiUrl === null) {
+            return null;
+        }
+
+        let rawtransaction = null;
+        try {
+            rawtransaction = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+            Logger.warn("elastosapi", "getRawTransaction exception", e);
+        }
+
+        return rawtransaction;
+    }
+
     public async getTransactionsByAddress(elastosChainCode: StandardCoinName, addressArray: string[], limit: number, skip = 0, timestamp = 0): Promise<{ result: ElastosPaginatedTransactions }[]> {
         const paramArray = [];
         let index = 0;
@@ -633,9 +658,10 @@ export class GlobalElastosAPIService extends GlobalService {
 
         try {
             let result = await this.globalJsonRPCService.httpGet(ethscgetTokenTxsUrl);
-            let resultItems = result.result as EthTokenTransaction[];
-
-            return resultItems;
+            if (result) {
+                let resultItems = result.result as EthTokenTransaction[];
+                return resultItems;
+            } else return [];
         } catch (e) {
             Logger.warn("elastosapi", "getERC20TokenTransactions exception", e);
             return [];
@@ -649,7 +675,9 @@ export class GlobalElastosAPIService extends GlobalService {
 
         try {
             let result = await this.globalJsonRPCService.httpGet(ethscgetTokenListUrl);
-            return result.result as ERCTokenInfo[];
+            if (result) {
+                return result.result as ERCTokenInfo[];
+            } else return [];
         } catch (e) {
             Logger.warn("elastosapi", "getERC20TokenList exception", e);
             return [];

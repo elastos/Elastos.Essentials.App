@@ -330,16 +330,7 @@ export class NodesService {
 
     async getConfirmCount(txid: string): Promise<number> {
         //Get ower dpos info
-        const param = {
-            method: 'getrawtransaction',
-            params: {
-                txid: txid,
-                verbose: true
-            },
-        };
-
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await await GlobalElastosAPIService.instance.getRawTransaction(txid);
         if (result && result.confirmations) {
             return result.confirmations;
         }
