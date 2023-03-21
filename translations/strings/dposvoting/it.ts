@@ -62,6 +62,7 @@ export const it = {
         'registration': 'Registrazione',
         'register-header': 'Registra il tuo nodo BPoS',
         'update-header': 'Aggiorna il tuo nodo BPoS',
+        'node-upgrade-toast': 'Upgrade node',
         'register': 'Registrati',
         'unregister': 'Annulla la registrazione',
         'update': 'Aggiorna',
