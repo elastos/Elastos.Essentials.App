@@ -34,7 +34,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { ApproveERC20Operation, ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
+import { ApproveERC20Operation, ETHOperationType, ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
@@ -194,13 +194,22 @@ export class EscTransactionPage implements OnInit {
 
     Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
 
-    // Extract information about the specific transaction type we are handling
-    let transactionInfoParser = new ETHTransactionInfoParser(
-      this.evmSubWallet.networkWallet.network
-    )
-    this.transactionInfo = await transactionInfoParser.computeFromTxData(
-      this.coinTransferService.payloadParam.data,
-      this.coinTransferService.payloadParam.to);
+    if (this.coinTransferService.payloadParam.data) {
+        // Extract information about the specific transaction type we are handling
+        let transactionInfoParser = new ETHTransactionInfoParser(
+          this.evmSubWallet.networkWallet.network
+        )
+        this.transactionInfo = await transactionInfoParser.computeFromTxData(
+          this.coinTransferService.payloadParam.data,
+          this.coinTransferService.payloadParam.to);
+
+    } else {
+        this.transactionInfo = {
+            type: ETHOperationType.SEND_ERC20,
+            operation: null,
+            events: []
+        }
+    }
     Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
