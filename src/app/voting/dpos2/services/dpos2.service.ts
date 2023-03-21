@@ -192,7 +192,8 @@ export class DPoS2Service {
 
     async fetchStats() {
         try {
-            let result = await this.globalJsonRPCService.httpGet('https://api-testnet.elastos.io/widgets');
+            let widgetsApi = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.WIDGETS);
+            let result = await this.globalJsonRPCService.httpGet(widgetsApi);
             if (result) {
                 this.statsFetched = true;
                 this.mainchain = result.mainchain;
@@ -333,16 +334,7 @@ export class DPoS2Service {
 
     async getConfirmCount(txid: string): Promise<number> {
         //Get ower dpos info
-        const param = {
-            method: 'getrawtransaction',
-            params: {
-                txid: txid,
-                verbose: true
-            },
-        };
-
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await await GlobalElastosAPIService.instance.getRawTransaction(txid);
         if (result && result.confirmations) {
             return result.confirmations;
         }
