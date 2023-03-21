@@ -93,7 +93,7 @@ export class UnstakePage {
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.STAKING, '/staking/staking-home');
             if (ret) {
-                this.voteService.toastSuccessfully('staking.stake');
+                this.voteService.toastSuccessfully('staking.unstake');
             }
         }
         catch(e) {
