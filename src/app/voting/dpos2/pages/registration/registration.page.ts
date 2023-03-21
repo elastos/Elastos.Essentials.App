@@ -270,7 +270,7 @@ export class DPoS2RegistrationPage implements OnInit {
             await this.globalNative.hideLoading();
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
-                this.voteService.toastSuccessfully('dposvoting.update-header');
+                this.voteService.toastSuccessfully('dposvoting.node-upgrade-toast');
             }
         } catch (e) {
             await this.globalNative.hideLoading();

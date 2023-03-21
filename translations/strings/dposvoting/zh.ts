@@ -62,6 +62,7 @@ export const zh = {
         'registration': '报名参选',
         'register-header': '注册BPoS节点',
         'update-header': '更新BPoS节点',
+        'node-upgrade-toast': '节点升级',
         'register': '注册',
         'unregister': '注销',
         'update': '更新',
