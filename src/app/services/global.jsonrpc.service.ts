@@ -84,6 +84,8 @@ export class GlobalJsonRPCService {
 
         let limitator = this.getLimitator(limitatorName);
 
+        timeout = timeout != -1 ? timeout / 1000 : undefined; // http plugin timeout is in seconds
+
         let promiseResult = limitator.queue.add(() => {
             return new Promise((resolve, reject) => {
                 const options = {
@@ -95,7 +97,9 @@ export class GlobalJsonRPCService {
                         "Content-Type": "application/json"
                     },
                     responseType: "text", // Force text response, we want to parse manually
-                    timeout: timeout != -1 ? timeout / 1000 : undefined, // http plugin timeout is in seconds
+                    timeout: timeout,
+                    connectTimeout: timeout,
+                    readTimeout: timeout,
                     followRedirect: true
                 };
 
@@ -153,8 +157,9 @@ export class GlobalJsonRPCService {
         return promiseResult;
     }
 
-    httpGet(url: string, limitatorName = "default"): Promise<any> {
+    httpGet(url: string, limitatorName = "default", timeout = 10000): Promise<any> {
         let limitator = this.getLimitator(limitatorName);
+        timeout = timeout != -1 ? timeout / 1000 : undefined; // http plugin timeout is in seconds
 
         let promiseResult = limitator.queue.add(() => {
             return new Promise((resolve, reject) => {
@@ -166,7 +171,10 @@ export class GlobalJsonRPCService {
                         "Content-Type": "application/json"
                     },
                     responseType: "json",
-                    followRedirect: true
+                    followRedirect: true,
+                    timeout: timeout,
+                    connectTimeout: timeout,
+                    readTimeout: timeout,
                 };
 
                 this.http.sendRequest(url, <any>options).then((res) => {
