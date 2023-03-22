@@ -698,10 +698,11 @@ export class CoinTxInfoPage implements OnInit {
 
         for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
             const proposalDetail = await GlobalElastosAPIService.instance.fetchProposalDetails(voteContentInfo.VotesInfo[i].Candidate);
-
-            let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
-            let title = "#" + proposalDetail.id + ' ' + proposalDetail.title;
-            voteList.push({ Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: title });
+            if (proposalDetail) {
+                let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
+                let title = "#" + proposalDetail.id + ' ' + proposalDetail.title;
+                voteList.push({ Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: title });
+            }
         }
 
         Logger.log('wallet', 'getCRProposalVoteInfo ', voteList);
@@ -715,8 +716,10 @@ export class CoinTxInfoPage implements OnInit {
 
         for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
             let crcouncil = await GlobalElastosAPIService.instance.getCRMember(voteContentInfo.VotesInfo[i].Candidate);
-            let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
-            voteList.push({ Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: crcouncil.nickname });
+            if (crcouncil) {
+                let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
+                voteList.push({ Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: crcouncil.nickname });
+            }
         }
 
         Logger.log('wallet', 'getCRImpeachmentVoteInfo ', voteList);
@@ -731,9 +734,11 @@ export class CoinTxInfoPage implements OnInit {
         const candidateList = await GlobalElastosAPIService.instance.getCRCandidates();
         if (candidateList) {
             for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
-                let candidate = candidateList.find(c => c.cid == voteContentInfo.VotesInfo[i].Candidate)
-                let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
-                voteList.push({ Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: candidate.nickname });
+                let candidate = candidateList.find(c => c.cid == voteContentInfo.VotesInfo[i].Candidate);
+                if (candidate) {
+                    let votes = WalletUtil.getFriendlyBalance(new BigNumber(voteContentInfo.VotesInfo[i].Votes).dividedBy(Config.SELA));
+                    voteList.push({ Candidate: voteContentInfo.VotesInfo[i].Candidate, LockDate: null, Votes: votes, Title: candidate.nickname });
+                }
             }
         }
 

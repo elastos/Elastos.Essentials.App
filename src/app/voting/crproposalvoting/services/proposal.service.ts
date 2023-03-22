@@ -52,8 +52,6 @@ export class ProposalService {
         return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
     }
 
-
-
     public async fetchProposals(status: ProposalStatus, page: number, results = 10): Promise<ProposalSearchResult[]> {
         try {
             var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?status=' + status + '&page=' + page + '&results=' + results;
@@ -72,6 +70,7 @@ export class ProposalService {
         }
         catch (err) {
             Logger.error(App.CRPROPOSAL_VOTING, 'fetchProposals error:', err);
+            return [];
         }
     }
 

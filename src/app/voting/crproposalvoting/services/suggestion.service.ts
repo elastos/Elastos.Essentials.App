@@ -83,6 +83,7 @@ export class SuggestionService {
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSuggestions error:', err);
+            return [];
         }
     }
 
