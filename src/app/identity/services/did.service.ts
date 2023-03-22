@@ -53,7 +53,9 @@ export class DIDService extends GlobalService {
   }
 
   handleNull() {
-    return this.native.setRootRouter("/notsignedin");
+    // in case of
+    this.native.toast_trans('common.something-went-wrong', 5000);
+    GlobalDIDSessionsService.instance.signOut();
   }
 
   public displayDefaultScreen() {
@@ -70,7 +72,7 @@ export class DIDService extends GlobalService {
     let signedInIdentity = await GlobalDIDSessionsService.instance.getSignedInIdentity();
     if (!signedInIdentity) {
       if (!noRouting)
-        await this.native.setRootRouter("/identity/notsignedin");
+        await this.handleNull();
       return false;
     } else {
       // Activate the DID store, and the DID
