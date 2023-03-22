@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from 'src/app/wallet/components/components.module';
+import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { WalletSettingsPage } from './wallet-settings.page';
 
 @NgModule({
@@ -17,6 +18,7 @@ import { WalletSettingsPage } from './wallet-settings.page';
         IonicModule,
         TranslateModule,
         ComponentsModule,
+        StdTransactionComponentModule,
         RouterModule.forChild([{ path: '', component: WalletSettingsPage }])
     ],
     exports: [RouterModule],

@@ -7,7 +7,6 @@ import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { TxSuccessComponent } from 'src/app/wallet/components/tx-success/tx-success.component';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
@@ -242,26 +241,12 @@ export class WalletSettingsPage implements OnInit {
                         intentId: null
                     });
 
-                    const result = await mainChainSubwallet.signAndSendRawTransaction(rawTx, transfer);
-                    if (result.published)
-                        void this.showSuccess();
+                    await mainChainSubwallet.signAndSendRawTransaction(rawTx, transfer);
                 }
             }
         } else {
             this.globalNative.genericToast('wallet.wallet-settings-consolidate-no-need')
         }
-    }
-
-    async showSuccess() {
-        this.native.popup = await this.native.popoverCtrl.create({
-            mode: 'ios',
-            cssClass: 'wallet-tx-component',
-            component: TxSuccessComponent,
-        });
-        this.native.popup.onWillDismiss().then(() => {
-            this.native.popup = null;
-        });
-        return await this.native.popup.present();
     }
 
     async showDeletePrompt() {
