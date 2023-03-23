@@ -147,7 +147,7 @@ export const en = {
         "coin-op-producer-register": "BPoS Node Registration",
         "coin-op-producer-cancel": "BPoS Node Cancellation",
         "coin-op-producer-update": "BPoS Node Update",
-        "coin-op-producer-return": "BPoS Node Registration",
+        "coin-op-producer-return": "BPoS Node Deposit Retrieve",
         "coin-op-cr-register": "CR Registration",
         "coin-op-cr-cancel": "CR Cancellation",
         "coin-op-cr-update": "CR Update",
