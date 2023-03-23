@@ -100,9 +100,9 @@ export const fr = {
         'dpos-deposit-warning': 'Souhaitez-vous enregistrer votre noeud BPoS? Un dépôt de 2000 ELA ainsi que des frais de transaction mineurs seront payés pour l\'enregistrement',
         'text-dpos-name-already-used': 'Ce nom est déjà utilisé par un autre noeud',
         'dpos-unregister-warning': 'Souhaitez-vous désenregistrer votre noeud BPoS?',
-        'text-dpos-info-dont-modify': 'This BPoS node info isn\'t modified.',
-        'text-registration-no-confirm': "The last registration isn't confirmed, please wait.",
-        'text-update-no-confirm': "The last update isn't confirmed, please wait.",
+        'text-dpos-info-dont-modify': 'This BPoS node info is not modified.',
+        'text-registration-no-confirm': "The last registration is not confirmed, please wait.",
+        'text-update-no-confirm': "The last update is not confirmed, please wait.",
 
         //BPoS
         'stake': 'Stake',
