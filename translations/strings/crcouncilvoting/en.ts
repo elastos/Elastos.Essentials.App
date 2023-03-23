@@ -135,8 +135,8 @@ export const en = {
         'candidate-withdraw-warning-pre': 'Do you want to withdraw your deposit: ',
         'candidate-withdraw-warning-suf': ' ELA?',
         'text-candidate-info-dont-modify': 'This candidate info do not modify.',
-        'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
-        'text-update-no-confirm': "Last time update don't confirm, please wait.",
+        'text-registration-no-confirm': "The last registration isn't confirmed, please wait.",
+        'text-update-no-confirm': "The last update isn't confirmed, please wait.",
 
         /********** UnRegistration **********/
         'candidate-details': 'Candidate Details',
