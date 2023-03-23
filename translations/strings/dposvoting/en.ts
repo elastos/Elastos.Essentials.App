@@ -98,11 +98,11 @@ export const en = {
 
         'reg-dpos-balance-not-enough': '2000 ELA deposit and a minor transaction fee are required for BPoS node registration',
         'dpos-deposit-warning': 'Do you want to register your BPoS node? 2000 ELA deposit and a minor transaction fee are paid for BPoS node registration',
-        'text-dpos-name-already-used': 'This BPoS node name is already in use',
+        'text-dpos-name-already-used': 'This BPoS node name is already exists',
         'dpos-unregister-warning': 'Do you want to unregister your BPoS node?',
-        'text-dpos-info-dont-modify': 'This BPoS node info do not modify.',
-        'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
-        'text-update-no-confirm': "Last time update don't confirm, please wait.",
+        'text-dpos-info-dont-modify': 'This BPoS node info isn\'t modified.',
+        'text-registration-no-confirm': "The last registration isn't confirmed, please wait.",
+        'text-update-no-confirm': "The last update isn't confirmed, please wait.",
 
         //BPoS
         'stake': 'Stake',
@@ -118,7 +118,7 @@ export const en = {
         'vote-exprie-message': 'Your votes for BPoS are about to expire in {{ time }}. Please click to update your votes.',
         'vote-about-exprie': 'Your votes for BPoS are about to expire. Please click to update your votes.',
         'dpos1-update-warning': 'Do you want to upgrade to a BPoS node? A minor transaction fee is paid for the DPoS node upgrade.',
-        'dpos1-withdraw-warning': 'Do you want to dithdraw BPoS node deposit?',
+        'dpos1-withdraw-warning': 'Do you want to withdraw BPoS node deposit?',
 
         'dpos2-node-info': 'BPoS Node Info',
         'node2-details': 'BPoS Node Details',

@@ -42,8 +42,8 @@ export const fr = {
         'dpos-deposit-warning': 'Souhaitez-vous enregistrer votre noeud DPoS? Un dépôt de 5000 ELA ainsi que des frais de transaction mineurs seront payés pour l\'enregistrement',
         'text-dpos-name-already-used': 'Ce nom est déjà utilisé par un autre noeud',
         'dpos-unregister-warning': 'Souhaitez-vous désenregistrer votre noeud DPoS?',
-        'text-dpos-info-dont-modify': 'This DPoS node info do not modify.',
-        'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
-        'text-update-no-confirm': "Last time update don't confirm, please wait.",
+        'text-dpos-info-dont-modify': 'This DPoS node info isn\'t modified.',
+        'text-registration-no-confirm': "The last registration isn't confirmed, please wait.",
+        'text-update-no-confirm': "The last update isn't confirmed, please wait.",
     }
 };

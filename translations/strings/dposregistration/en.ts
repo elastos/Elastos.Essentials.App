@@ -41,11 +41,11 @@ export const en = {
 
         'reg-dpos-balance-not-enough': '5000 ELA deposit and a minor transaction fee are required for DPoS node registration',
         'dpos-deposit-warning': 'Do you want to register your DPoS node? 5000 ELA deposit and a minor transaction fee are paid for DPoS node registration',
-        'text-dpos-name-already-used': 'This DPoS node name is already in use',
+        'text-dpos-name-already-used': 'This DPoS node name is already exists',
         'dpos-unregister-warning': 'Do you want to unregister your DPoS node?',
-        'text-dpos-info-dont-modify': 'This DPoS node info do not modify.',
-        'text-registration-no-confirm': "Last time registration don't confirm, please wait.",
-        'text-update-no-confirm': "Last time update don't confirm, please wait.",
+        'text-dpos-info-dont-modify': 'This DPoS node info isn\'t modified.',
+        'text-registration-no-confirm': "The last registration isn't confirmed, please wait.",
+        'text-update-no-confirm': "The last update isn't confirmed, please wait.",
     }
 
 };
