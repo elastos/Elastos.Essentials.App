@@ -100,9 +100,9 @@ export const en = {
         'dpos-deposit-warning': 'Do you want to register your BPoS node? 2000 ELA deposit and a minor transaction fee are paid for BPoS node registration',
         'text-dpos-name-already-used': 'This BPoS node name is already exists',
         'dpos-unregister-warning': 'Do you want to unregister your BPoS node?',
-        'text-dpos-info-dont-modify': 'This BPoS node info isn\'t modified.',
-        'text-registration-no-confirm': "The last registration isn't confirmed, please wait.",
-        'text-update-no-confirm': "The last update isn't confirmed, please wait.",
+        'text-dpos-info-dont-modify': 'This BPoS node info is not modified.',
+        'text-registration-no-confirm': "The last registration is not confirmed, please wait.",
+        'text-update-no-confirm': "The last update is not confirmed, please wait.",
 
         //BPoS
         'stake': 'Stake',
