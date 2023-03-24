@@ -27,7 +27,7 @@ export const en = {
         'advanced-options': 'Advanced options',
         'send-to': 'Send to',
         'reciever-address': 'Reciever address',
-        'withdraw-node-reward': "Withdraw the node’s reward",
+        'withdraw-node-reward': "Withdraw the node reward",
         'no-reward': 'No reward',
         'no-stake': 'No stake',
 

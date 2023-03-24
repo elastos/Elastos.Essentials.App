@@ -30,6 +30,7 @@ export const en = {
         "reset-confirmation-content": "Make sure to reset the current transfer only if your current one seems to be stuck. On going swap will continue but you won't be able to monitor the progress.",
 
         // Cannot Execute Reason
+        "unsupported-chain": "Unsupported chain for swap",
         "unsupported-tokens": "Unsupported tokens for swap",
         "no-route": "No way to directly route tokens. Please manually swap to intermediate tokens",
         "amount-too-low": "Amount is too low to cover transaction fees, please set a higher amount",

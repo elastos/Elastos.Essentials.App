@@ -1,7 +1,7 @@
 import type Chainge from "@chainge/sdk";
 import { lazyChaingeImport } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
-import { ActionType, AggregateQuote, AmountTooLowException, ChaingeException, CrossChainQuote, ErrorCode, FeeToInfo, NoRouteException, Order, Response, SubmitOrderCallback, SubmitOrderCallbackResult, SupportedChain, SupportedToken, TrackOrderCallback, UnspecifiedException, UnsupportedTokenOrChainException } from 'src/app/multiswap/model/chainge.types';
+import { ActionType, AggregateQuote, AmountTooLowException, ChaingeException, CrossChainQuote, ErrorCode, FeeToInfo, NoRouteException, Order, Response, SubmitOrderCallback, SubmitOrderCallbackResult, SupportedChain, SupportedToken, TrackOrderCallback, UnspecifiedException, UnsupportedChainException, UnsupportedTokenOrChainException } from 'src/app/multiswap/model/chainge.types';
 import { ChaingeWeb3Provider } from 'src/app/multiswap/model/chaingeweb3provider';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 
@@ -277,6 +277,7 @@ export class ChaingeSwap {
     private apiResponseToException(response: Response<any>): Error {
         switch (response.code) {
             case ErrorCode.NO_ROUTE: return new NoRouteException();
+            case ErrorCode.CHAIN_NOT_SUPPORTED: return new UnsupportedChainException();
             case ErrorCode.TOKEN_CHAIN_NOT_SUPPORTED: return new UnsupportedTokenOrChainException();
             case ErrorCode.AGGREGATE_AMOUNT_TOO_LOW:
             case ErrorCode.CROSS_CHAIN_AMOUNT_TOO_LOW:

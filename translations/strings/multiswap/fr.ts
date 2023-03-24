@@ -30,6 +30,7 @@ export const fr = {
         "reset-confirmation-content": "Assurez-vous de ne remettre a zéro le transfert que si le transfert actuel semble bloqué. L'échange en cours continuera mais vous n'en verrez plus la progression.",
 
         // Cannot Execute Reason
+        "unsupported-chain": "Unsupported chain for swap",
         "unsupported-tokens": "Jetons non supportés.",
         "no-route": "Aucun chemin trouvé pour échanger directement ces jetons. Veuillez essayer de passer par un jeton intermédiaire.",
         "amount-too-low": "Le montant saisi est trop bas pour couvrir les frais. Veuillez augmenter le montant.",

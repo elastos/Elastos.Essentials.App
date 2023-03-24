@@ -30,6 +30,7 @@ export const zh = {
         "reset-confirmation-content": "确保仅在当前交易似乎被卡住时才执行重置。正在进行的兑换会继续，但您无法查看进度。",
 
         // Cannot Execute Reason
+        "unsupported-chain": "此链暂不支持兑换代币",
         "unsupported-tokens": "暂不支持兑换此代币",
         "no-route": "无法直接兑换此代币，请先兑换到其它代币",
         "amount-too-low": "金额太低，无法支付交易费用，请设置更高的金额",

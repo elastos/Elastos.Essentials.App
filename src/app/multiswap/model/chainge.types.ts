@@ -13,6 +13,7 @@ export enum OrderType {
 export enum ErrorCode {
     SUCCESS = 200,
     VALIDATION_FAILED = 31010, // msg: "Validation failed!"
+    CHAIN_NOT_SUPPORTED = 31005, // msg: "Not support this chain!"
     TOKEN_CHAIN_NOT_SUPPORTED = 31006, // msg: "Not support this chain and token!"
     NO_ROUTE = 31037, // msg: "Get aggregate quote error! Error msg !" (according to chainge team, this happens when no DEX is available to route tokens)
     AGGREGATE_AMOUNT_TOO_LOW = 31031, // msg: "Get aggregate quote error! Amount can't cover gas and fee!"
@@ -195,6 +196,7 @@ export type TrackOrderCallback = (result: TrackOrderCallbackResult) => void;
 
 export class ChaingeException extends Error { }
 export class UnspecifiedException extends ChaingeException { }
+export class UnsupportedChainException extends ChaingeException { }
 export class UnsupportedTokenOrChainException extends ChaingeException { }
 export class AmountTooLowException extends ChaingeException { }
 export class NoRouteException extends ChaingeException { }

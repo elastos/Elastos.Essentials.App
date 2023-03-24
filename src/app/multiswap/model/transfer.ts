@@ -15,7 +15,7 @@ import { AuthService } from "src/app/wallet/services/auth.service";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { ChaingeSwapService } from "../services/chaingeswap.service";
-import { AmountTooLowException, NoRouteException, OrderStatus, UnsupportedTokenOrChainException } from "./chainge.types";
+import { AmountTooLowException, NoRouteException, OrderStatus, UnsupportedChainException, UnsupportedTokenOrChainException } from "./chainge.types";
 
 export enum TransferStep {
   NEW = "new",
@@ -254,6 +254,8 @@ export class Transfer {
       this.canExecute = false;
       if (e instanceof UnsupportedTokenOrChainException)
         this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.unsupported-tokens')
+      else if (e instanceof UnsupportedChainException)
+        this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.unsupported-chain')
       else if (e instanceof NoRouteException)
         this.cannotExecuteReason = GlobalTranslationService.instance.translateInstant('multiswap.no-route')
       else if (e instanceof AmountTooLowException)
