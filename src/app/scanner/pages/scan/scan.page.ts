@@ -41,7 +41,7 @@ export class ScanPage {
     loader: any = null;
     alert: any = null;
 
-    alreadySentIntentResponce = false;
+    alreadySentIntentResponse = false;
 
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -85,7 +85,7 @@ export class ScanPage {
      */
     ionViewWillLeave() {
         // Must send intent response for intent when click back key.
-        if (this.fromIntentRequest && !this.alreadySentIntentResponce) {
+        if (this.fromIntentRequest && !this.alreadySentIntentResponse) {
             void this.returnScannedContentToIntentRequester('', false);
         }
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
@@ -275,7 +275,7 @@ export class ScanPage {
     }
 
     async returnScannedContentToIntentRequester(scannedContent: string, navigateBack = true) {
-        this.alreadySentIntentResponce = true;
+        this.alreadySentIntentResponse = true;
         await this.intentService.sendScanQRCodeIntentResponse(scannedContent, navigateBack);
     }
 

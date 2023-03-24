@@ -38,6 +38,8 @@ export class EditCustomNetworkPage implements OnInit {
   public intentMode = false;
   public intentId: number;
 
+  private alreadySentIntentResponse = false;
+
   constructor(
     public theme: GlobalThemeService,
     public translate: TranslateService,
@@ -55,6 +57,15 @@ export class EditCustomNetworkPage implements OnInit {
 
   ngOnInit() {
     this.init();
+  }
+
+  ngOnDestroy() {
+    if (this.intentMode && !this.alreadySentIntentResponse) {
+        let result: EditCustomNetworkIntentResult = {
+            networkAdded: false
+        };
+        void this.globalIntentService.sendIntentResponse(result, this.intentId);
+    }
   }
 
   private init() {
@@ -120,6 +131,7 @@ export class EditCustomNetworkPage implements OnInit {
       let result: EditCustomNetworkIntentResult = {
         networkAdded: false
       };
+      this.alreadySentIntentResponse = true;
       void this.globalIntentService.sendIntentResponse(result, this.intentId);
     }
     else {
@@ -210,6 +222,7 @@ export class EditCustomNetworkPage implements OnInit {
         networkAdded: true,
         networkKey: this.editedNetworkEntry.key
       };
+      this.alreadySentIntentResponse = true;
       void this.globalIntentService.sendIntentResponse(result, this.intentId);
     }
     else {

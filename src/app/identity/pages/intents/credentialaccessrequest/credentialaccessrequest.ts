@@ -107,7 +107,7 @@ export class CredentialAccessRequestPage {
   public requestDappName: string = null;
   public requestDappColor = '#565bdb';
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   public profile = new Profile(); // Empty profile waiting to get the real one.
   public credentials: VerifiableCredential[] = [];
@@ -211,7 +211,7 @@ export class CredentialAccessRequestPage {
   }
 
   ngOnDestroy() {
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -544,7 +544,7 @@ export class CredentialAccessRequestPage {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 

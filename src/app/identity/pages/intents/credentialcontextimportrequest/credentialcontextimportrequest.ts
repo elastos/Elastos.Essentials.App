@@ -50,7 +50,7 @@ export class CredentialContextImportRequestPage {
   public requestDappName: string = null;
   public requestDappColor = '#565bdb';
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   public accepting = false;
   public popup: HTMLIonPopoverElement = null;
@@ -95,7 +95,7 @@ export class CredentialContextImportRequestPage {
   }
 
   ngOnDestroy() {
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -262,7 +262,7 @@ export class CredentialContextImportRequestPage {
   private async sendIntentResponse(result, intentId, navigateBack = true) {
     this.intentService.clearOnGoingIntentId();
 
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 

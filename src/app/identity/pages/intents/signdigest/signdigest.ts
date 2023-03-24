@@ -33,7 +33,7 @@ export class SignDigestPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     public receivedIntent: SignDigestIntent = null;
-    private alreadySentIntentResponce = false;
+    private alreadySentIntentResponse = false;
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -64,7 +64,7 @@ export class SignDigestPage {
     }
 
     ngOnDestroy() {
-        if (!this.alreadySentIntentResponce) {
+        if (!this.alreadySentIntentResponse) {
             void this.rejectRequest(false);
         }
     }
@@ -119,7 +119,7 @@ export class SignDigestPage {
     }
 
     private async sendIntentResponse(result, intentId, navigateBack = true) {
-        this.alreadySentIntentResponce = true;
+        this.alreadySentIntentResponse = true;
         await this.appServices.sendIntentResponse(result, intentId, navigateBack);
     }
 }

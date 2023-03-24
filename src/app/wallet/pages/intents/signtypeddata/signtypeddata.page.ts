@@ -60,7 +60,7 @@ export class SignTypedDataPage implements OnInit {
   private payloadToBeSigned: string;
   private useV4: boolean;
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   public currentNetworkName = ''
 
@@ -116,7 +116,7 @@ export class SignTypedDataPage implements OnInit {
   }
 
   ngOnDestroy() {
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.cancelOperation(false);
     }
   }
@@ -148,7 +148,7 @@ export class SignTypedDataPage implements OnInit {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
   }
 

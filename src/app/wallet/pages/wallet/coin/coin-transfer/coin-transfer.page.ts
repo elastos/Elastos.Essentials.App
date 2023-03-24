@@ -129,6 +129,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Intent
     private action = null;
     private intentId = null;
+    private alreadySentIntentResponse = false;
 
     // NFT
     public nft: NFT = null;
@@ -222,6 +223,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (this.publicationStatusSub) this.publicationStatusSub.unsubscribe();
         if (this.ethTransactionSpeedupSub) this.ethTransactionSpeedupSub.unsubscribe();
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+        if (this.intentId) {
+            if (!this.alreadySentIntentResponse) {
+                this.cancelPayment();
+            }
+        }
     }
 
     setContactsKeyVisibility(showKey: boolean) {
@@ -255,6 +261,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                                 txid: status.txId,
                                 status: 'published'
                             }
+                            this.alreadySentIntentResponse = true;
                             await this.globalIntentService.sendIntentResponse(result, this.intentId);
                         }
                         this.events.publish('wallet:transactionsent', { subwalletid: this.subWalletId, txid: status.txId });
@@ -266,6 +273,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                                 txid: null,
                                 status: 'cancelled'
                             }
+                            this.alreadySentIntentResponse = true;
                             await this.globalIntentService.sendIntentResponse(result, this.intentId);
                         }
                         break;
@@ -610,10 +618,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             const result = await this.fromSubWallet.signAndSendRawTransaction(rawTx, transfer);
 
             if (transfer.intentId) {
+                this.alreadySentIntentResponse = true;
                 await this.globalIntentService.sendIntentResponse(result, transfer.intentId);
             }
         } else {
             if (this.intentId) {
+                this.alreadySentIntentResponse = true;
                 await this.globalIntentService.sendIntentResponse(
                     { txid: null, status: 'error' },
                     this.intentId
@@ -932,6 +942,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // Pay intent
     async cancelPayment() {
+        this.alreadySentIntentResponse = true;
         await this.globalIntentService.sendIntentResponse(
             { txid: null, status: 'cancelled' },
             this.coinTransferService.intentTransfer.intentId

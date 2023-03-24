@@ -53,7 +53,7 @@ export class RegisterApplicationProfileRequestPage {
 
   public receivedIntent: RegAppProfileIdentityIntent = null;
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   credentials: DIDPlugin.VerifiableCredential[] = [];
   denyReason = '';
@@ -90,7 +90,7 @@ export class RegisterApplicationProfileRequestPage {
       this.publishresultSubscription.unsubscribe();
       this.publishresultSubscription = null;
     }
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -134,7 +134,7 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   async sendIntentResponse() {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     // Send the intent response as everything is completed
     await this.appServices.sendIntentResponse({}, this.receivedIntent.intentId);
   }
@@ -201,7 +201,7 @@ export class RegisterApplicationProfileRequestPage {
   }
 
   async rejectRequest(navigateBack = true) {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.appServices.sendIntentResponse({ status: 'cancelled' }, this.receivedIntent.intentId, navigateBack);
   }
 }

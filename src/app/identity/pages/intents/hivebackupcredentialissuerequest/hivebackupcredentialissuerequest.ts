@@ -30,6 +30,8 @@ export class HiveBackupCredentialIssueRequestPage {
     public requestingAppName = null;
     public requestingAppIconUrl = null; // Base64 data url displayable in an <img> element, after being fetched
 
+    private alreadySentIntentResponse = false;
+
     constructor(
         private zone: NgZone,
         public didService: DIDService,
@@ -64,6 +66,12 @@ export class HiveBackupCredentialIssueRequestPage {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
+    ngOnDestroy() {
+        if (!this.alreadySentIntentResponse) {
+            this.rejectRequest();
+        }
     }
 
     private async fetchApplicationDidInfo(): Promise<void> {
@@ -135,7 +143,7 @@ export class HiveBackupCredentialIssueRequestPage {
             let issuedCredential = await this.generateHiveBackupCredential();
             Logger.log('identity', "Sending hivebackupcredissue intent response for intent id " + this.receivedIntent.intentId)
             let credentialAsString = await issuedCredential.toString();
-
+            this.alreadySentIntentResponse = true;
             await this.uxService.sendIntentResponse({
                 credential: credentialAsString
             }, this.receivedIntent.intentId);
@@ -146,6 +154,7 @@ export class HiveBackupCredentialIssueRequestPage {
     }
 
     async rejectRequest() {
+        this.alreadySentIntentResponse = true;
         await this.uxService.sendIntentResponse({}, this.receivedIntent.intentId);
     }
 

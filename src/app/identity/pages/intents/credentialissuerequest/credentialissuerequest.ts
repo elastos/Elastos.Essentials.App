@@ -57,7 +57,7 @@ export class CredentialIssueRequestPage {
   public displayableCredential: IssuedCredential = null; // Displayable reworked material
   public preliminaryChecksCompleted = false;
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   public showIdentifier = false;
   public showReceiver = true;
@@ -91,7 +91,7 @@ export class CredentialIssueRequestPage {
   }
 
   ngOnDestroy() {
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -187,7 +187,7 @@ export class CredentialIssueRequestPage {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 }

@@ -30,7 +30,7 @@ export class SignRequestPage {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   public receivedIntent: SignIdentityIntent = null;
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   constructor(
     private didService: DIDService,
@@ -51,7 +51,7 @@ export class SignRequestPage {
   }
 
   ngOnDestroy() {
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -113,7 +113,7 @@ export class SignRequestPage {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 }

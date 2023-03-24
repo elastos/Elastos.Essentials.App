@@ -41,6 +41,7 @@ export class MnemonicExportPage implements OnInit {
     public evmPrivateKey = '';
     public tronPrivateKey = ''; // Only for tron network.
     public intentTransfer: IntentTransfer;
+    private alreadySentIntentResponse = false;
 
     constructor(
         public router: Router,
@@ -65,6 +66,15 @@ export class MnemonicExportPage implements OnInit {
             this.titleBar.setNavigationMode(null);
         }
     }
+
+    ngOnDestroy(): void {
+        if (!this.alreadySentIntentResponse) {
+            void this.globalIntentService.sendIntentResponse(
+                { txid: null, status: 'cancelled' },
+                this.intentTransfer.intentId
+            );
+        }
+      }
 
     ionViewWillEnter() {
         if (this.hasMnemonic) {
@@ -125,6 +135,7 @@ export class MnemonicExportPage implements OnInit {
         } else {
             // User cancel
             Logger.log('wallet', 'MnemonicExportPage user cancel');
+            this.alreadySentIntentResponse = true;
             await this.globalIntentService.sendIntentResponse(
                 { txid: null, status: 'cancelled' },
                 this.intentTransfer.intentId
@@ -161,6 +172,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     async onShare() {
+        this.alreadySentIntentResponse = true;
         await this.globalIntentService.sendIntentResponse(
             { mnemonic: this.mnemonicStr },
             this.intentTransfer.intentId

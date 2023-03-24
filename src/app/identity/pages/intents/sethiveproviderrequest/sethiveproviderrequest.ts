@@ -27,7 +27,7 @@ export class SetHiveProviderRequestPage {
   public receivedIntent: SetHiveProviderIdentityIntent = null;
   private publishresultSubscription: Subscription = null;
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -51,7 +51,7 @@ export class SetHiveProviderRequestPage {
       this.publishresultSubscription.unsubscribe();
       this.publishresultSubscription = null;
     }
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -108,7 +108,7 @@ export class SetHiveProviderRequestPage {
 
     await this.native.hideLoading();
 
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     // Send the intent response as everything is completed
     await this.appServices.sendIntentResponse({ status: status }, this.receivedIntent.intentId, navigateBack);
   }

@@ -123,7 +123,7 @@ export class RequestCredentialsPage {
 
   public sendingResponse = false;
 
-  private alreadySentIntentResponce = false;
+  private alreadySentIntentResponse = false;
 
   public popup: HTMLIonPopoverElement = null;
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -211,7 +211,7 @@ export class RequestCredentialsPage {
   }
 
   ngOnDestroy() {
-    if (!this.alreadySentIntentResponce) {
+    if (!this.alreadySentIntentResponse) {
       void this.rejectRequest(false);
     }
   }
@@ -638,7 +638,7 @@ export class RequestCredentialsPage {
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
-    this.alreadySentIntentResponce = true;
+    this.alreadySentIntentResponse = true;
     await this.appServices.sendIntentResponse(result, intentId, navigateBack);
   }
 

@@ -42,7 +42,7 @@ export class AccessPage implements OnInit {
     public showReason = false;
     private rootPage = false;
 
-    private alreadySentIntentResponce = false;
+    private alreadySentIntentResponse = false;
 
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -84,7 +84,7 @@ export class AccessPage implements OnInit {
     }
 
     ngOnDestroy() {
-        if (!this.alreadySentIntentResponce) {
+        if (!this.alreadySentIntentResponse) {
             void this.cancelOperation(false);
         }
     }
@@ -199,7 +199,7 @@ export class AccessPage implements OnInit {
     }
 
     private async sendIntentResponse(result, intentId, navigateBack = true) {
-        this.alreadySentIntentResponce = true;
+        this.alreadySentIntentResponse = true;
         await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     }
 

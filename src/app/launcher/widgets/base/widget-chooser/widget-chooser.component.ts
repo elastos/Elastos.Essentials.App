@@ -97,6 +97,9 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       this.pluginsListSub.unsubscribe();
       this.pluginsListSub = null;
     }
+    if (!this.alreadySentIntentResponse) {
+        this.dismiss(null);
+    }
   }
 
   ionViewWillEnter() {
