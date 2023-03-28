@@ -3,7 +3,6 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { QRScanner, QRScannerStatus } from '@ionic-native/qr-scanner/ngx';
 import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import { isObject } from 'lodash-es';
 import QrScanner from 'qr-scanner';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -59,13 +58,23 @@ export class ScanPage {
         private globalNav: GlobalNavService,
         private translate: TranslateService,
     ) {
-        const navigation = this.router.getCurrentNavigation();
-        if (isObject(navigation.extras.state)) {
-            this.fromIntentRequest = navigation.extras.state.fromIntent;
-        }
+        // If this page is not destroyed, start this page again through intent, the constructor will not be executed,
+        // so we can't set the fromIntentRequest.
+        // const navigation = this.router.getCurrentNavigation();
+        // if (isObject(navigation.extras.state)) {
+        //     this.fromIntentRequest = navigation.extras.state.fromIntent;
+        // }
     }
 
     ionViewWillEnter() {
+        // If this page is not destroyed, start this page again through intent, the constructor will not be executed,
+        // so we get the state by history.state on ionViewWillEnter.
+        if (history.state && history.state.fromIntent) {
+            this.fromIntentRequest = history.state.fromIntent;
+        } else {
+            this.fromIntentRequest = false;
+        }
+
         this.titleBar.setTitle(this.translate.instant('launcher.app-scanner'));
         this.showGalleryTitlebarKey(true);
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (clickedItem) => {
