@@ -99,7 +99,7 @@ export class CurrencyService {
 
   public selectedCurrency: DisplayableCurrency;
 
-  private trinityPriceUrl = 'https://assist.trinity-feeds.app/feeds/api/v1/price';
+  private trinityPriceUrl = 'https://assist.pasarprotocol.io/api/v1/price';
   private usdExchangeRateUrl = 'https://currencies.trinity-tech.io/latest?from=USD';
 
   constructor(

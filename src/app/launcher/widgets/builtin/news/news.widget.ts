@@ -225,7 +225,7 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
 
   public tryFeeds() {
     void this.globalIntentService.sendIntent('openurl', {
-      url: 'https://feeds.trinity-feeds.app/nav/?page=home'
+      url: 'https://feeds.feedsnetwork.io/'
     });
   }
 }

@@ -13,7 +13,7 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     icon: '/assets/browser/dapps/feeds.png',
     title: 'Feeds',
     description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
-    url: 'https://feeds.trinity-feeds.app/nav/?page=home',
+    url: 'https://feeds.feedsnetwork.io/',
     useExternalBrowser: true,
     walletConnectSupported: true,
     networks: ["elastossmartchain"]
