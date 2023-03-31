@@ -3,8 +3,8 @@ import { FeedsChannel } from "../../services/feedsnews.service";
 import { NewsSource } from "../../services/news.service";
 import { WidgetPluginsService } from "../../services/plugin.service";
 
-const FEEDS_DEEPLINK_CHANNEL_BASEURL = 'https://feeds.trinity-feeds.app/v3channel';
-const FEEDS_DEEPLINK_POST_BASEURL = 'https://feeds.trinity-feeds.app/v3post';
+const FEEDS_DEEPLINK_CHANNEL_BASEURL = 'https://feeds.feedsnetwork.io/v3channel';
+const FEEDS_DEEPLINK_POST_BASEURL = 'https://feeds.feedsnetwork.io/v3post';
 
 /**
  * Mix of raw news source config with real news content.
