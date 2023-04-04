@@ -546,11 +546,14 @@ export class CoinTxInfoPage implements OnInit {
             case 'txid':
                 if (network.key == 'tron') {
                     action = '/#/transaction/';
+                } else if (network.key == 'atom') {
+                    action = '/transactions/';
                 } else action = '/tx/';
                 break;
             case 'blockId':
                 // TODO: use '/block/' after the eid explorer is upgraded.
                 switch (network.key) {
+                    case 'atom':
                     case 'elastosidchain':
                         action = '/blocks/';
                         break;

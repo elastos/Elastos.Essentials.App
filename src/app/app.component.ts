@@ -13,6 +13,7 @@ import { GlobalCredentialToolboxService } from './services/credential-toolbox/gl
 import { GlobalCredentialTypesService } from './services/credential-types/global.credential.types.service';
 import { GlobalAppBackgroundService } from './services/global.appbackground.service';
 import { GlobalBTCRPCService } from './services/global.btc.service';
+import { GlobalCosmosService } from './services/global.cosmos.service';
 import { GlobalDIDSessionsService } from './services/global.didsessions.service';
 import { GlobalELAUtxoService } from './services/global.ela.utxo.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
@@ -72,6 +73,7 @@ export class AppComponent {
     public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalTronGridService: GlobalTronGridService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
+    public globalCosmosService: GlobalCosmosService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private voteService: VoteService,
     private credentialTypesService: GlobalCredentialTypesService,
     private credentialToolboxService: GlobalCredentialToolboxService,
@@ -130,6 +132,7 @@ export class AppComponent {
       // Init after globalNetworksService.init()
       void this.globalBTCService.init();
       void this.globalTronGridService.init();
+      void this.globalCosmosService.init();
 
       await this.widgetsService.init();
 
