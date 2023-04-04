@@ -1,11 +1,10 @@
 import { Slip10, Slip10Curve, stringToPath } from '@cosmjs/crypto';
-import { DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
+import { coins, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
 import { GasPrice, SearchTxFilter, SigningStargateClient } from '@cosmjs/stargate';
-import type { json } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { EVMService } from "src/app/wallet/services/evm/evm.service";
+import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
@@ -95,17 +94,11 @@ export class CosmosWalletJSSafe extends Safe implements CosmosSafe {
         return await this.signingStargateClient.getAllBalances(this.cosmosAddress);
     }
 
-    public createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
-        return EVMService.instance.createUnsignedTransferTransaction(toAddress, amount, gasPrice, gasLimit, nonce);
+    public createTransferTransaction(toAddress: string, amount: string): Promise<any> {
+        return Promise.resolve({ to: toAddress, value: amount, type: 'transfer'});
     }
 
-    public createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
-        return EVMService.instance.createUnsignedContractTransaction(contractAddress, amount, gasPrice, gasLimit, nonce, data);
-    }
-
-    public async signTransaction(subWallet: AnySubWallet, rawTransaction: json, transfer: Transfer, forcePasswordPrompt = true, visualFeedback = true): Promise<SignTransactionResult> {
-        Logger.log('wallet', ' signTransaction rawTransaction', rawTransaction)
-
+    public async signTransaction(subWallet: AnySubWallet, rawTransaction: any, transfer: Transfer, forcePasswordPrompt = true): Promise<SignTransactionResult> {
         let payPassword: string;
         if (forcePasswordPrompt) {
             payPassword = await WalletService.instance.openPayModal(transfer);
@@ -115,15 +108,20 @@ export class CosmosWalletJSSafe extends Safe implements CosmosSafe {
         }
 
         let signedTx = null;
-        // if (!payPassword)
-        // return { signedTransaction: signedTx };
+        if (!payPassword)
+            return { signedTransaction: signedTx };
 
-        // await this.initJSWallet();
+        await this.initJSWallet();
 
-        // if (this.account) {
-        // let signdTransaction = await this.account.signTransaction(rawTransaction)
-        // signedTx = signdTransaction.rawTransaction;
-        // }
+        // should not be here, move out?
+        await TransactionService.instance.displayGenericPublicationLoader();
+
+        if (this.signingStargateClient) {
+            let result = await this.signingStargateClient.sendTokens(
+                    this.cosmosAddress, rawTransaction.to, coins(rawTransaction.value, "uatom"), 'auto');
+            signedTx = result.transactionHash;
+        }
+        // TODO: Not tx, just to stay consistent with other subwallets.
         return { signedTransaction: signedTx };
     }
 

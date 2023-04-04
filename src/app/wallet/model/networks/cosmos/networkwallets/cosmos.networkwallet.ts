@@ -1,6 +1,5 @@
 import { MasterWallet } from '../../../masterwallets/masterwallet';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
-import { AddressUsage } from '../../../safes/addressusage';
 import { Safe } from '../../../safes/safe';
 import { NetworkWallet, WalletAddressInfo } from '../../base/networkwallets/networkwallet';
 import { AnySubWallet } from '../../base/subwallets/subwallet';
@@ -37,17 +36,6 @@ export abstract class CosmosNetworkWallet<MasterWalletType extends MasterWallet,
                 address: this.mainTokenSubWallet.getAccountAddress()
             }
         ];
-    }
-
-    /**
-     * Converts a given address to the target usage format. Most of the time, this method does nothing
-     * and should not be overriden (same address format used everywhere). Though for some networks such as
-     * IoTeX who can deal with 2 different formats, addresses have to be converted from one format to another,
-     * for example when sending coins, users use ioXX formats, but internal implementations require EVM native
-     * address formats with 0x.
-     */
-    public async convertAddressForUsage(address: string, usage: AddressUsage): Promise<string> {
-        return await (address.startsWith('0x') ? address : '0x' + address);
     }
 
     public getMainEvmSubWallet(): MainCoinEVMSubWallet<any> {
