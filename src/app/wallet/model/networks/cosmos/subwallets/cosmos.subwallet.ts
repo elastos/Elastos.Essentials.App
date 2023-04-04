@@ -1,3 +1,4 @@
+import { fromBech32 } from '@cosmjs/encoding';
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -16,7 +17,7 @@ import { CosmosSafe } from '../safes/cosmos.safe';
  * Specialized sub wallet for cosmos compatible chains main coins
  */
 export class MainCoinCosmosSubWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends MainCoinSubWallet<GenericTransaction, WalletNetworkOptionsType> {
-  protected ethscAddress: string = null;
+  protected address: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
 
@@ -65,14 +66,19 @@ export class MainCoinCosmosSubWallet<WalletNetworkOptionsType extends WalletNetw
   }
 
   public isAddressValid(address: string): Promise<boolean> {
-    return WalletUtil.isEVMAddress(address);
+    try {
+        fromBech32(address);
+        return Promise.resolve(true);
+    } catch (e) {
+        return Promise.resolve(false);
+    }
   }
 
   public getAccountAddress(usage: (AddressUsage | string) = AddressUsage.EVM_CALL): string {
-    if (!this.ethscAddress) {
-      this.ethscAddress = this.getCurrentReceiverAddress(usage)?.toLowerCase();
+    if (!this.address) {
+      this.address = this.getCurrentReceiverAddress(usage)?.toLowerCase();
     }
-    return this.ethscAddress;
+    return this.address;
   }
 
   protected getNetwork(): CosmosNetwork {
@@ -224,27 +230,25 @@ export class MainCoinCosmosSubWallet<WalletNetworkOptionsType extends WalletNetw
   }
 
   public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<string> {
-    toAddress = await this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
-
-    return null;
     // if (amount.eq(-1)) {//-1: send all.
     //   let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice))
     //   amount = this.balance.minus(fee);
     //   if (amount.lte(0))
     //     return null;
     // } else {
-    //   amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
+      amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
     // }
 
-    // return (this.networkWallet.safe as unknown as CosmosSafe).createTransferTransaction(toAddress, amount.toFixed(), gasPrice, gasLimit, nonce);
+    return (this.networkWallet.safe as unknown as CosmosSafe).createTransferTransaction(toAddress, amount.toFixed());
   }
 
   public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
     return Promise.resolve([]);
   }
 
-  public async publishTransaction(signedTransaction: string, visualFeedback = true): Promise<string> {
-    return await 'todo';
+  public async publishTransaction(signedTransaction: any, visualFeedback = true): Promise<string> {
+    // Do nothing.
+    return Promise.resolve(signedTransaction);
   }
 
   public async estimateGas(tx): Promise<number> {
