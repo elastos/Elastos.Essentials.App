@@ -4,6 +4,7 @@ import BigNumber from 'bignumber.js';
 import { BehaviorSubject } from 'rxjs';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
+import { GlobalCosmosService } from 'src/app/services/global.cosmos.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin, TRC20Coin } from '../model/coin';
 import type { EVMNetwork } from '../model/networks/evms/evm.network';
@@ -125,9 +126,11 @@ export class CurrencyService {
     // Don't block the init, run asynchronously
     runDelayed(async () => {
       await this.computeExchangeRatesFromCurrenciesService();
+      await this.fetchTokenStatsFromCosmosService();
       await this.fetchTokenStatsFromPriceService();
 
       this.updateInterval = setInterval(() => {
+        void this.fetchTokenStatsFromCosmosService();
         void this.fetchTokenStatsFromPriceService();
       }, 30000);// 30s
     }, 10000);
@@ -226,9 +229,10 @@ export class CurrencyService {
             let tokenStats = res[tokenSymbol];
             if (tokenStats) {
               this.networkMainTokenPrice[tokenSymbol] = tokenStats;
-            } else {
-              this.networkMainTokenPrice[tokenSymbol] = null;
             }
+            // else {
+            //   this.networkMainTokenPrice[tokenSymbol] = null;
+            // }
           }
           // Set exchange for BTC => USD
           this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
@@ -249,6 +253,18 @@ export class CurrencyService {
       });
     })
   }
+
+  private async fetchTokenStatsFromCosmosService() {
+    if (this.walletNetworkService.activeNetwork.value.key == 'atom') {
+        let usdValue = await GlobalCosmosService.instance.getAtomPrice();
+        if (usdValue) {
+            this.networkMainTokenPrice['ATOM'] = usdValue;
+        } else {
+            this.networkMainTokenPrice['ATOM'] = null;
+        }
+    }
+  }
+
 
   // Saves user's choice about which display currency to use: USD, CNY, BTC...
   async saveCurrency(currency: DisplayableCurrency): Promise<void> {
@@ -338,8 +354,7 @@ export class CurrencyService {
         } else if ((<EVMNetwork>network).getDexScreenerCurrencyProvider()) {
             this.dexScreenerTokenFetch(cacheKey, <EVMNetwork>network, (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin());
         }
-      }
-      else {
+      } else {
         this.pricesCache.remove(cacheKey);
       }
     }
