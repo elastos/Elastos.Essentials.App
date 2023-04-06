@@ -55,24 +55,6 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     networks: ["elastossmartchain"]
   },
   {
-    icon: '/assets/browser/dapps/elab.png',
-    title: 'E-Lab',
-    description: 'Cyber Republic community-driven grant program that supports developers wanting to build using Elastos Web3 technology',
-    url: 'https://e-lab.io/',
-    useExternalBrowser: false,
-    walletConnectSupported: true,
-    networks: ["elastossmartchain"]
-  },
-  {
-    icon: '/assets/browser/dapps/kycme.png',
-    title: 'KYC-me',
-    description: 'Get DID credentials from your real identity here, to get access to more dApps such as ELAB.',
-    url: 'https://kyc-me.io?theme=' + (darkMode ? "dark" : "light"),
-    useExternalBrowser: false,
-    walletConnectSupported: true,
-    networks: ["elastossmartchain"]
-  },
-  {
     icon: '/assets/browser/dapps/cyberrepublic.svg',
     title: 'Cyber Republic',
     description: 'Cyber Republic (CR) is the community that has naturally formed around Elastos.',
