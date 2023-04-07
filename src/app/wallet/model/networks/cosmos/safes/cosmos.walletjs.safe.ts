@@ -1,5 +1,6 @@
 import { Slip10, Slip10Curve, stringToPath } from '@cosmjs/crypto';
-import { coins, DirectSecp256k1Wallet } from "@cosmjs/proto-signing";
+import { fromHex } from '@cosmjs/encoding';
+import { DirectSecp256k1Wallet, coins } from "@cosmjs/proto-signing";
 import { GasPrice, SearchTxFilter, SigningStargateClient } from '@cosmjs/stargate';
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
@@ -75,7 +76,8 @@ export class CosmosWalletJSSafe extends Safe implements CosmosSafe {
             }
             else {
                 // No mnemonic - check if we have a private key instead
-                privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+                let privateKeyHex = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+                privateKey = fromHex(privateKeyHex);
             }
 
             return privateKey;
