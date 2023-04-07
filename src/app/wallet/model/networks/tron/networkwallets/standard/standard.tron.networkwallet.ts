@@ -1,3 +1,4 @@
+import { GlobalTronGridService } from "src/app/services/global.tron.service";
 import { StandardCoinName } from "src/app/wallet/model/coin";
 import { WalletNetworkOptions } from "src/app/wallet/model/masterwallets/wallet.types";
 import { StandardMasterWallet } from "../../../../masterwallets/masterwallet";
@@ -24,5 +25,8 @@ export class StandardTronNetworkWallet<WalletNetworkOptionsType extends WalletNe
         this.mainTokenSubWallet = new TronSubWallet(this, this.network.getRPCUrl());
         await this.mainTokenSubWallet.initialize();
         this.subWallets[StandardCoinName.TRON] = this.mainTokenSubWallet;
+
+        // If the current network is not tron and you enter the wallet asset page, you need to initialize this.
+        await GlobalTronGridService.instance.initTronWeb();
     }
 }

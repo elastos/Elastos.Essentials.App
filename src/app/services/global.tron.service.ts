@@ -40,7 +40,7 @@ export class GlobalTronGridService {
         })
     }
 
-    private async initTronWeb() {
+    public async initTronWeb() {
         if (this.tronWeb) return;
 
         const TronWeb = await lazyTronWebImport();
