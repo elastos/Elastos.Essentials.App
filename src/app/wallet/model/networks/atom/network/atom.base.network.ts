@@ -26,8 +26,6 @@ export class AtomBaseNetwork extends CosmosNetwork {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return AtomAPI.getApiUrl(AtomApiType.RPC, this.networkTemplate);
-    else if (type === NetworkAPIURLType.ETHERSCAN)
-      return AtomAPI.getApiUrl(AtomApiType.ETHERSCAN_API, this.networkTemplate);
     else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
       return AtomAPI.getApiUrl(AtomApiType.BLOCK_EXPLORER, this.networkTemplate);
     else
@@ -37,7 +35,6 @@ export class AtomBaseNetwork extends CosmosNetwork {
 
 
   public getMainColor(): string {
-    // return "222438";
     return "141629";
   }
 }
