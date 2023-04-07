@@ -68,7 +68,7 @@ export class MnemonicExportPage implements OnInit {
     }
 
     ngOnDestroy(): void {
-        if (!this.alreadySentIntentResponse) {
+        if (this.isFromIntent && !this.alreadySentIntentResponse) {
             void this.globalIntentService.sendIntentResponse(
                 { txid: null, status: 'cancelled' },
                 this.intentTransfer.intentId
