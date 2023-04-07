@@ -6,6 +6,7 @@ import { StandardCoinName } from "src/app/wallet/model/coin";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { MasterWallet, StandardMasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 import { WalletNetworkOptions, WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
+import { TransactionInfoType } from "src/app/wallet/model/tx-providers/transaction.types";
 import { NetworkAPIURLType } from "../../../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../../../base/networkwallets/networkwallet";
 import { ElastosEVMNetwork } from "../../../network/elastos.evm.network";
@@ -23,6 +24,29 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosEVMNetwork<
         Logger.warn('wallet', 'Elastos Identity Chain does not support ', masterWallet.type);
         return null;
     }
+  }
+
+
+  /**
+   * User can view information directly on an external browser.
+   */
+  public getBrowserUrlByType(type: TransactionInfoType, value: string): string {
+    let browserUrl = this.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+    switch (type) {
+        case TransactionInfoType.ADDRESS:
+            browserUrl += '/address/'
+        break;
+        case TransactionInfoType.BLOCKID:
+            browserUrl += '/blocks/'
+        break;
+        case TransactionInfoType.TXID:
+            browserUrl += '/tx/'
+        break;
+        default:
+            Logger.warn("wallet", "getBrowserUrlByType: not support ", type);
+        break;
+    }
+    return browserUrl + value;
   }
 
   public getEVMSPVConfigName(): string {

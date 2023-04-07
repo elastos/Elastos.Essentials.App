@@ -18,7 +18,6 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { VoteType } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
-import { NetworkAPIURLType } from 'src/app/wallet/model/networks/base/networkapiurltype';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
@@ -31,7 +30,7 @@ import { OfflineTransactionsService } from 'src/app/wallet/services/offlinetrans
 import { StandardCoinName } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { ElastosEVMSubWallet } from '../../../../model/networks/elastos/evms/subwallets/standard/elastos.evm.subwallet';
-import { AnyOfflineTransaction, TransactionDirection, TransactionInfo, TransactionType } from '../../../../model/tx-providers/transaction.types';
+import { AnyOfflineTransaction, TransactionDirection, TransactionInfo, TransactionInfoType, TransactionType } from '../../../../model/tx-providers/transaction.types';
 import { Native } from '../../../../services/native.service';
 import { WalletService } from '../../../../services/wallet.service';
 
@@ -43,7 +42,7 @@ export type CoinTxInfoParams = {
 }
 
 class TransactionDetail {
-    type: string;
+    type: TransactionInfoType;
     title: string;
     value: any = null;
     show: boolean;
@@ -250,7 +249,7 @@ export class CoinTxInfoPage implements OnInit {
         if (!this.offlineTransaction) {
             this.txDetails.push(
                 {
-                    type: 'time',
+                    type: TransactionInfoType.TIME,
                     title: 'wallet.tx-info-transaction-time',
                     value:
                         this.transactionInfo.timestamp === 0 ?
@@ -259,25 +258,25 @@ export class CoinTxInfoPage implements OnInit {
                     show: true,
                 },
                 {
-                    type: 'memo',
+                    type: TransactionInfoType.MEMO,
                     title: 'wallet.tx-info-memo',
                     value: this.memo,
                     show: true,
                 },
                 {
-                    type: 'confirmations',
+                    type: TransactionInfoType.CONFIRMATIONS,
                     title: 'wallet.tx-info-confirmations',
                     value: this.transactionInfo.confirmStatus === -1 ? '' : this.transactionInfo.confirmStatus,
                     show: false,
                 },
                 {
-                    type: 'blockId',
+                    type: TransactionInfoType.BLOCKID,
                     title: 'wallet.tx-info-block-id',
                     value: this.height <= 0 ? '0' : this.height.toString(),
                     show: false,
                 },
                 {
-                    type: 'txid',
+                    type: TransactionInfoType.TXID,
                     title: 'wallet.tx-info-transaction-id',
                     value: this.transactionInfo.txid,
                     show: false,
@@ -292,7 +291,7 @@ export class CoinTxInfoPage implements OnInit {
                 if (this.transactionInfo.erc20TokenValue) {
                     this.txDetails.unshift(
                         {
-                            type: 'tokenAmount',
+                            type: TransactionInfoType.AMOUNT,
                             title: 'wallet.tx-info-erc20-amount',
                             value: this.transactionInfo.erc20TokenValue,
                             show: true,
@@ -303,7 +302,7 @@ export class CoinTxInfoPage implements OnInit {
                 if (this.transactionInfo.erc20TokenSymbol) {
                     this.txDetails.unshift(
                         {
-                            type: 'tokenSymbol',
+                            type: TransactionInfoType.TOKENSYMBOL,
                             title: 'wallet.erc-20-token',
                             value: this.transactionInfo.erc20TokenSymbol,
                             show: true,
@@ -314,7 +313,7 @@ export class CoinTxInfoPage implements OnInit {
                 if (this.transactionInfo.erc20TokenContractAddress) {
                     this.txDetails.unshift(
                         {
-                            type: 'contractAddress',
+                            type: TransactionInfoType.CONTRACTADDRESS,
                             title: 'wallet.tx-info-token-address',
                             value: await this.networkWallet.convertAddressForUsage(this.transactionInfo.erc20TokenContractAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                             show: true,
@@ -326,7 +325,7 @@ export class CoinTxInfoPage implements OnInit {
             if (this.transactionInfo.resources) {
                 this.txDetails.unshift(
                     {
-                        type: 'resources',
+                        type: TransactionInfoType.RESOURCES,
                         title: 'wallet.tx-info-resource-consumed',
                         value: this.transactionInfo.resources,
                         show: true,
@@ -343,7 +342,7 @@ export class CoinTxInfoPage implements OnInit {
 
                 this.txDetails.unshift(
                     {
-                        type: 'fees',
+                        type: TransactionInfoType.FEES,
                         title: 'wallet.tx-info-transaction-fees',
                         value: currencyFee ? `${nativeFee} (~ ${currencyFee})` : nativeFee,
                         show: true,
@@ -354,7 +353,7 @@ export class CoinTxInfoPage implements OnInit {
             if (this.targetAddress !== null) {
                 this.txDetails.unshift(
                     {
-                        type: 'address',
+                        type: TransactionInfoType.ADDRESS,
                         title: 'wallet.tx-info-receiver-address',
                         value: this.transactionInfo.isCrossChain ? this.targetAddress : await this.networkWallet.convertAddressForUsage(this.targetAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                         show: true,
@@ -369,7 +368,7 @@ export class CoinTxInfoPage implements OnInit {
                 // TODO: We should show all the inputs and outputs for ELA main chain.
                 this.txDetails.unshift(
                     {
-                        type: 'address',
+                        type: TransactionInfoType.ADDRESS,
                         title: 'wallet.tx-info-sender-address',
                         value: await this.networkWallet.convertAddressForUsage(this.fromAddress, AddressUsage.DISPLAY_TRANSACTIONS),
                         show: true,
@@ -382,7 +381,7 @@ export class CoinTxInfoPage implements OnInit {
                 if (this.subWallet.id === StandardCoinName.ELA && !elastosMainChainStandardNetworkWallet.getNetworkOptions().singleAddress) {
                     this.txDetails.unshift(
                         {
-                            type: 'address',
+                            type: TransactionInfoType.ADDRESS,
                             title: 'wallet.tx-info-receiver-address',
                             value: this.targetAddress,
                             show: true,
@@ -394,7 +393,7 @@ export class CoinTxInfoPage implements OnInit {
         if (this.transferAmount) {
             this.txDetails.unshift(
                 {
-                    type: 'amount',
+                    type: TransactionInfoType.AMOUNT,
                     title: this.getTransactionTitle(),
                     value: this.transferAmount,
                     show: true,
@@ -404,7 +403,7 @@ export class CoinTxInfoPage implements OnInit {
         if (this.dpos2Votes.length > 0) {
             this.txDetails.unshift(
                 {
-                    type: 'votes',
+                    type: TransactionInfoType.VOTES,
                     title: 'BPoS',
                     value: this.dpos2Votes,
                     show: false,
@@ -414,7 +413,7 @@ export class CoinTxInfoPage implements OnInit {
         if (this.dpos2UpdateVotes.length > 0) {
             this.txDetails.unshift(
                 {
-                    type: 'votes',
+                    type: TransactionInfoType.VOTES,
                     title: 'wallet.coin-op-dpos2-voting-update',
                     value: this.dpos2UpdateVotes,
                     show: false,
@@ -424,7 +423,7 @@ export class CoinTxInfoPage implements OnInit {
         if (this.crProposalVotes.length > 0) {
             this.txDetails.unshift(
                 {
-                    type: 'votes',
+                    type: TransactionInfoType.VOTES,
                     title: 'wallet.coin-op-cr-proposal-against',
                     value: this.crProposalVotes,
                     show: false,
@@ -434,7 +433,7 @@ export class CoinTxInfoPage implements OnInit {
         if (this.crcImpeachmentVotes.length > 0) {
             this.txDetails.unshift(
                 {
-                    type: 'votes',
+                    type: TransactionInfoType.VOTES,
                     title: 'wallet.coin-op-crc-impeachment',
                     value: this.crcImpeachmentVotes,
                     show: false,
@@ -444,7 +443,7 @@ export class CoinTxInfoPage implements OnInit {
         if (this.crCouncilVotes.length > 0) {
             this.txDetails.unshift(
                 {
-                    type: 'votes',
+                    type: TransactionInfoType.VOTES,
                     title: 'wallet.coin-op-crc-vote',
                     value: this.crCouncilVotes,
                     show: false,
@@ -522,71 +521,50 @@ export class CoinTxInfoPage implements OnInit {
     }
 
     worthCopying(item: TransactionDetail) {
-        if (item.type === 'blockId' || item.type === 'txid' || item.type === 'address' ||
-            item.type === 'contractAddress' || item.type === 'memo') {
-            return true;
-        } else {
-            return false;
+        switch (item.type) {
+            case TransactionInfoType.BLOCKID:
+            case TransactionInfoType.TXID:
+            case TransactionInfoType.ADDRESS:
+            case TransactionInfoType.CONTRACTADDRESS:
+            case TransactionInfoType.MEMO:
+                return true;
+            default:
+                return false;
         }
     }
 
     worthOpenForBrowser(item: TransactionDetail) {
-        if (item.type === 'blockId' || item.type === 'txid' || item.type === 'address') {
-            return true;
-        } else {
-            return false;
+        switch (item.type) {
+            case TransactionInfoType.BLOCKID:
+            case TransactionInfoType.TXID:
+            case TransactionInfoType.ADDRESS:
+                return true;
+            default:
+                return false;
         }
     }
 
     async openForBrowseMode(item: TransactionDetail) {
-        let action = ''
         let value = item.value;
         let network = WalletNetworkService.instance.activeNetwork.value;
         switch (item.type) {
-            case 'txid':
-                if (network.key == 'tron') {
-                    action = '/#/transaction/';
-                } else if (network.key == 'atom') {
-                    action = '/transactions/';
-                } else action = '/tx/';
-                break;
             case 'blockId':
-                // TODO: use '/block/' after the eid explorer is upgraded.
-                switch (network.key) {
-                    case 'atom':
-                    case 'elastosidchain':
-                        action = '/blocks/';
-                        break;
-                    case 'tron':
-                        action = '/#/block/';
-                        break;
-                    default:
-                        action = '/block/';
-                        break;
-                }
                 if (this.subWallet.id === StandardCoinName.ELA) {
                     value = await GlobalElastosAPIService.instance.getELABlockHash(item.value)
                 }
                 break;
             case 'address':
-                if (network.key == 'tron') {
-                    action = '/#/address/';
-                } else if (network.key == 'atom') {
-                    action = '/accounts/';
-                } else action = '/address/';
-
                 if (this.transactionInfo.isCrossChain && this.crossChainNetworkKey) {
                     network = WalletNetworkService.instance.getNetworkByKey(this.crossChainNetworkKey);
                 }
                 break;
             default:
-                return;
+                break;
         }
 
-        let browserUrl = network.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+        let browserUrl = network.getBrowserUrlByType(item.type, value);
         if (browserUrl) {
-            let url = browserUrl + action + value;
-            void this.dappbrowserService.openForBrowseMode(url, "");
+            void this.dappbrowserService.openForBrowseMode(browserUrl, "");
         }
     }
 

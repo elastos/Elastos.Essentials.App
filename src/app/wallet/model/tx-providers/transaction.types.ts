@@ -22,6 +22,21 @@ export enum TransactionType {
   TRANSFER = 3
 }
 
+export enum TransactionInfoType {
+    ADDRESS = 'address',
+    AMOUNT = 'amount',
+    BLOCKID = 'blockId',
+    CONFIRMATIONS = 'confirmations',
+    CONTRACTADDRESS = 'contractAddress',
+    FEES = 'fees',
+    MEMO = 'memo',
+    RESOURCES = 'resources',
+    TIME = 'time',
+    TOKENSYMBOL = 'tokenSymbol',
+    TXID = 'txId',
+    VOTES = 'votes',
+  }
+
 export enum ContractType {
   Create = 1,
   Call = 2,
