@@ -6,6 +6,7 @@ import { EarnProvider } from "../earn/earnprovider";
 import type { SwapProvider } from "../earn/swapprovider";
 import type { MasterWallet } from "../masterwallets/masterwallet";
 import type { PrivateKeyType, WalletNetworkOptions } from "../masterwallets/wallet.types";
+import { TransactionInfoType } from "../tx-providers/transaction.types";
 import { NetworkAPIURLType } from "./base/networkapiurltype";
 import type { AnyNetworkWallet } from "./base/networkwallets/networkwallet";
 import type { ERC1155Provider } from "./evms/nfts/erc1155.provider";
@@ -84,6 +85,28 @@ export abstract class Network<WalletNetworkOptionsType extends WalletNetworkOpti
 
   public getRPCUrl(): string {
     return this.getAPIUrlOfType(NetworkAPIURLType.RPC);
+  }
+
+  /**
+   * User can view information directly on an external browser.
+   */
+  public getBrowserUrlByType(type: TransactionInfoType, value: string): string {
+    let browserUrl = this.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+    switch (type) {
+        case TransactionInfoType.ADDRESS:
+            browserUrl += '/address/'
+        break;
+        case TransactionInfoType.BLOCKID:
+            browserUrl += '/block/'
+        break;
+        case TransactionInfoType.TXID:
+            browserUrl += '/tx/'
+        break;
+        default:
+            Logger.warn("wallet", "getBrowserUrlByType: not support ", type);
+        break;
+    }
+    return browserUrl + value;
   }
 
   public abstract getMainTokenSymbol(): string;

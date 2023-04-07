@@ -10,6 +10,7 @@ import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
+import { TransactionInfoType } from "../../../tx-providers/transaction.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnyNetwork, Network } from "../../network";
@@ -243,6 +244,28 @@ export abstract class TronNetworkBase extends Network<WalletNetworkOptions> {
       void subWallet.startBackgroundUpdates();
 
     return subWallet;
+  }
+
+  /**
+   * User can view information directly on an external browser.
+   */
+  public getBrowserUrlByType(type: TransactionInfoType, value: string): string {
+    let browserUrl = this.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
+    switch (type) {
+        case TransactionInfoType.ADDRESS:
+            browserUrl += '/#/address/'
+        break;
+        case TransactionInfoType.BLOCKID:
+            browserUrl += '/#/block/'
+        break;
+        case TransactionInfoType.TXID:
+            browserUrl += '/#/transaction/'
+        break;
+        default:
+            Logger.warn("wallet", "getBrowserUrlByType: not support ", type);
+        break;
+    }
+    return browserUrl + value;
   }
 
   public getMainEvmAccountApiUrl(): string {
