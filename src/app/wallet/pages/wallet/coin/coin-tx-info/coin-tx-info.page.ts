@@ -571,6 +571,8 @@ export class CoinTxInfoPage implements OnInit {
             case 'address':
                 if (network.key == 'tron') {
                     action = '/#/address/';
+                } else if (network.key == 'atom') {
+                    action = '/accounts/';
                 } else action = '/address/';
 
                 if (this.transactionInfo.isCrossChain && this.crossChainNetworkKey) {
