@@ -442,6 +442,25 @@ export class ETHTransactionInfoParser {
         txInfo.operation = { description: "wallet.ext-tx-info-type-harvest" };
         break;
 
+      case '0x259ca365': // buyItem(address _nftAddress, uint256 _tokenId, address _owner)
+        try {
+            let params = await this.extractTransactionParamValues(["function buyItem(address _nftAddress, uint256 _tokenId, address _owner) public returns (bool success)"], txData);
+            // let nftAddress = this.stringTransactionParamAt(params, 0);
+            // let coinInfo = await this.getERC721TokenInfoOrThrow(nftAddress);
+            // let tokenId = this.bigNumberTransactionParamAt(params, 1).toString()
+            let ownerAddress = this.stringTransactionParamAt(params, 2).toLowerCase();
+
+            if (subWallet.getCurrentReceiverAddress().toLowerCase() == ownerAddress) {
+                txInfo.operation = { description: "wallet.ext-tx-info-type-sell-nft" };
+            } else {
+                txInfo.operation = { description: "wallet.ext-tx-info-type-buy-nft" };
+            }
+          }
+          catch (e) {
+            txInfo.operation = { description: "wallet.ext-tx-info-type-nft-tx" };
+          }
+        break;
+
       // Known signatures but no clear way to display information about them = consider as generic contract call
       case '0xe9fad8ee': // exit()
       case '0x5b27052e': // upgrade(uint256,bool,bool,bool,bool,bool)

@@ -6,8 +6,8 @@ import { lazyElastosHiveSDKImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { IdentityEntry } from '../model/didsessions/identityentry';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
-import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
+import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
 import { Candidate } from '../voting/crcouncilvoting/model/candidates.model';
 import { CRMemberInfo } from '../voting/crcouncilvoting/services/crcouncil.service';
 import { ProposalDetails } from '../voting/crproposalvoting/model/proposal-details';
@@ -169,7 +169,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         widgets: 'https://api-testnet.elastos.io/widgets',
                     },
                     "LRW": {
-                        mainChainRPC: 'https://crc1rpc.longrunweather.com:18443',
+                        mainChainRPC: 'https://dpos2.cpolar.top',
                         idChainRPC: 'https://did1rpc.longrunweather.com:18443',
                         eidChainRPC: 'https://eid02.longrunweather.com:18443',
                         eidMiscRPC: '',
@@ -202,7 +202,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escRPC: 'https://api.trinity-tech.io/esc',
                         escOracleRPC: 'https://api.trinity-tech.io/esc-oracle',
                         escMiscRPC: 'https://api.trinity-tech.io/esc-misc',
-                        escBrowserRPC: 'https://esc.trinity-tech.cn/api', // no esc.trinity-tech.io
+                        escBrowserRPC: 'https://esc.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org',
                         elaBlockExplorer: 'https://blockchain.elastos.io',
                         escBlockExplorer: 'https://esc.elastos.io',

@@ -165,6 +165,11 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     let isCrossChain = this.isCrossChain(transaction);
 
+    // internal tx
+    if (!transaction.hash && transaction.transactionHash) {
+        transaction.hash = transaction.transactionHash;
+    }
+
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1),
       confirmStatus: parseInt(transaction.confirmations),

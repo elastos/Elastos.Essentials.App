@@ -756,6 +756,9 @@ export const it = {
         'ext-tx-info-type-claim-tokens': 'Claim tokens',
         'ext-tx-info-type-withdraw-to-mainchain': 'A Main Chain',
         'ext-tx-info-type-harvest': 'Harvest',
+        'ext-tx-info-type-buy-nft': 'Buy NFT',
+        'ext-tx-info-type-sell-nft': 'Sell NFT',
+        'ext-tx-info-type-nft-tx': 'NFT transaction',
 
         /********************************
         * Tron Resource page *

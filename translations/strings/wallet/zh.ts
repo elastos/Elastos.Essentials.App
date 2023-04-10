@@ -756,6 +756,9 @@ export const zh = {
         'ext-tx-info-type-claim-tokens': '申请代币',
         'ext-tx-info-type-withdraw-to-mainchain': '主链提现',
         'ext-tx-info-type-harvest': '收获',
+        'ext-tx-info-type-buy-nft': '购买 NFT',
+        'ext-tx-info-type-sell-nft': '出售 NFT',
+        'ext-tx-info-type-nft-tx': 'NFT 交易',
 
         /********************************
         * Tron Resource page *
