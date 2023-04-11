@@ -24,7 +24,7 @@
     </ion-card>
 
     <ion-list>
-      <ion-row class="section-row" [class.removeBorder]="section === sections[sections.length - 1]"
+      <ion-row class="section-row"
         *ngFor="let section of sections">
         <ion-col size="12">
           <ion-label>{{ section.type | translate }}</ion-label>
@@ -33,6 +33,17 @@
           <h4>{{ item.title | translate }}</h4>
           <hr>
           <p (click)="openLink(item)">{{ item.link }}</p>
+        </ion-col>
+      </ion-row>
+
+      <ion-row class="share-row">
+        <ion-col size="12">
+          <ion-label>{{ 'common.share' | translate }}</ion-label>
+        </ion-col>
+        <ion-col class="bottom-col" size="12" (click)="shareApp()">
+          <span>{{ 'settings.share-description' | translate }} </span>
+          <div class="inline-svg" inlineSVG="/assets/identity/svg/share.svg"></div>
+          <ion-ripple-effect></ion-ripple-effect>
         </ion-col>
       </ion-row>
     </ion-list>

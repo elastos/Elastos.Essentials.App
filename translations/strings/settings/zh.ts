@@ -50,6 +50,8 @@ export const zh = {
           'version-up-to-date': '已是最新版本',
           'check-version-error': '无法获取最新版本信息，请稍后再试',
           'new-version-available': '发现新版本 v{{ version }}，点击更新',
+          'share-description': '分享Essentials',
+          'share-title': 'Essentials下载链接:',
 
           /********** Developer Page **********/
           'developer-options': '开发者选项',

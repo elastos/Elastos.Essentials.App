@@ -82,4 +82,11 @@ export class AboutPage implements OnInit {
     // Open in external browser
     void this.globalIntentService.sendIntent('openurl', { url: "https://edownload.web3essentials.io" });
   }
+
+    async shareApp() {
+        await this.globalIntentService.sendIntent("share", {
+          title: this.translate.instant("settings.share-title"),
+          url: 'https://edownload.web3essentials.io',
+        });
+    }
 }

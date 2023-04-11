@@ -50,6 +50,8 @@ export const en = {
                 'version-up-to-date': 'Your version is up to date.',
                 'check-version-error': 'Failed to get latest version info. Please try again later.',
                 'new-version-available': 'v{{ version }} available, touch to update.',
+                'share-description': 'Share Essentials with others',
+                'share-title': 'Here is Essentials link:',
 
                 /********** Developer Page **********/
                 'developer-options': 'Developer Options',

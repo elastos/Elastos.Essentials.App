@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IonicModule, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { SettingsWarningComponent } from './components/warning/warning.component';
@@ -44,6 +45,7 @@ import { SettingsRoutingModule } from './routing';
     HttpClientModule,
     FormsModule,
     SettingsRoutingModule,
+    InlineSVGModule,
     IonicModule,
     IonicStorageModule,
     SharedComponentsModule,
