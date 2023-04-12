@@ -86,7 +86,7 @@ export class AboutPage implements OnInit {
     async shareApp() {
         await this.globalIntentService.sendIntent("share", {
           title: this.translate.instant("settings.share-title"),
-          url: 'https://edownload.web3essentials.io',
+          url: 'https://d.web3essentials.io/',
         });
     }
 }
