@@ -720,24 +720,26 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             return false;
         }
 
+        let fee = null;
+        if (this.feeOfELA) {
+            fee = new BigNumber(this.feeOfELA);
+        } else if (this.feeOfBTC) {
+            fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
+        } else if (this.feeOfTRX) {
+            fee = new BigNumber(this.feeOfTRX);
+        } else if (this.fromSubWallet instanceof TronSubWallet) {
+            // The fee is related to the receiving address.
+            // If the address is not active,  you need to pay 1 TRX fee to activate this address.
+            let feeSun = await this.fromSubWallet.estimateTransferTransactionGas(this.toAddress);
+            this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
+            fee = new BigNumber(this.feeOfTRX);
+        } else {
+            // TODO: 0.0001 works only for Elastos ESC! Rework this.
+            fee = new BigNumber(0.0001);
+        }
+
         // Check amount only when used (eg: no for NFT transfers)
         if (!this.isTransferTypeSendNFT()) {
-            let fee = null;
-            if (this.feeOfELA) {
-                fee = new BigNumber(this.feeOfELA);
-            }
-            else if (this.feeOfBTC) {
-                fee = new BigNumber(this.feeOfBTC).dividedBy(this.fromSubWallet.tokenAmountMulipleTimes);
-            } else if (this.feeOfTRX) {
-                fee = new BigNumber(this.feeOfTRX);
-            } else if (this.fromSubWallet instanceof TronSubWallet) {
-                // The fee is related to the receiving address.
-                // If the address is not active,  you need to pay 1 TRX fee to activate this address.
-                let feeSun = await this.fromSubWallet.estimateTransferTransactionGas(this.toAddress);
-                this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
-                fee = new BigNumber(this.feeOfTRX);
-            }
-
             if (!this.sendMax) {
                 if (Util.isNull(this.amount) || this.amount <= 0) {
                     this.conditionalShowToast('wallet.amount-invalid', showToast);
@@ -751,7 +753,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 }
 
                 let amountBigNumber = new BigNumber(this.amount || 0);
-                if (fee) {
+                if ((this.fromSubWallet instanceof MainCoinSubWallet) && fee) {
                     amountBigNumber = amountBigNumber.plus(fee)
                 }
 
@@ -765,17 +767,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
             } else {
-                if (fee && !this.networkWallet.subWallets[this.subWalletId].isBalanceEnough(fee)) {
+                // the fee is main token
+                if (fee && !this.networkWallet.getMainTokenSubWallet().isBalanceEnough(fee)) {
                     this.conditionalShowToast('wallet.insufficient-balance', showToast);
                     return false;
                 }
             }
         }
 
-        if ((this.fromSubWallet.type === CoinType.ERC20) || (this.fromSubWallet.type === CoinType.TRC20)) {
+        if (!(this.fromSubWallet instanceof MainCoinSubWallet)) {
             // Balance can cover fee?
-            // TODO: 0.0001 works only for Elastos ESC! Rework this.
-            if (!this.networkWallet.getMainTokenSubWallet().isBalanceEnough(new BigNumber(0.0001))) {
+            if (!this.networkWallet.getMainTokenSubWallet().isBalanceEnough(fee)) {
                 const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
                 this.conditionalShowToast(message, showToast, 4000);
                 return false;

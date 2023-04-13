@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import moment from 'moment';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
+import { AnyNetwork } from '../wallet/model/networks/network';
 import { TronNetworkBase } from '../wallet/model/networks/tron/network/tron.base.network';
 import { AccountResources, AccountResult, contractInfo, ResourceType, SendTransactionResult, triggerConstantContractResult, TronTransaction, TronTransactionInfo, TronTRC20Transaction } from '../wallet/model/tron.types';
 import { WalletNetworkService } from '../wallet/services/network.service';
@@ -35,17 +37,22 @@ export class GlobalTronGridService {
 
         WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
             if (activeNetwork instanceof TronNetworkBase) {
-              void this.initTronWeb();
+              void this.initTronWeb(activeNetwork);
             }
         })
     }
 
-    public async initTronWeb() {
+    public async initTronWeb(network: AnyNetwork = null) {
         if (this.tronWeb) return;
+
+        if (!network && WalletNetworkService.instance.activeNetwork.value.key != 'tron') {
+            Logger.warn('wallet', 'initTronWeb wrong network:', WalletNetworkService.instance.activeNetwork.value.key)
+            return;
+        }
 
         const TronWeb = await lazyTronWebImport();
         this.tronWeb = new TronWeb({
-            fullHost: WalletNetworkService.instance.activeNetwork.value.getRPCUrl(),
+            fullHost: (network ? network : WalletNetworkService.instance.activeNetwork.value).getRPCUrl(),
             headers: this.apikey ? { "TRON-PRO-API-KEY": this.apikey } : null,
         })
     }
@@ -279,8 +286,41 @@ export class GlobalTronGridService {
         return await this.tronWeb.transactionBuilder.unfreezeBalance(resource, address, address);
     }
 
+    //*******************
+    // TRC10
+    //*******************
+
+    // For Test
+    async createAsset(name: string, address: string) : Promise<TronTransaction> {
+        let currentTimesamp = moment().valueOf();
+        const trc_options = {
+            name : name,
+            abbreviation : "tt",
+            description : "TRC10 Test Token",
+            url : "www.baidu.com",
+            totalSupply : 10000000000, // sun
+            trxRatio : 1,
+            tokenRatio : 1,
+            saleStart : currentTimesamp + 10000,
+            saleEnd : currentTimesamp + 100000,
+            freeBandwidth : 0,
+            freeBandwidthLimit : 0,
+            frozenAmount : 0,
+            frozenDuration : 0,
+            precision : 6
+        }
+        return await this.tronWeb.transactionBuilder.createAsset(trc_options, address);
+    }
+
+    async sendToken(toAddress: string, amount: string, tokenId: string, fromAddress: string) {
+        Logger.log('GlobalTronGridService', 'sendToken toAddress:', toAddress, ' amount:', amount, ' tokenId:', tokenId)
+        let result = await this.tronWeb.transactionBuilder.sendToken(toAddress, amount, tokenId, fromAddress);
+        Logger.log('GlobalTronGridService', 'sendToken:', result)
+        return result;
+    }
+
     // 1sun = 0.000001 TRX
-    fromSun(value: string | number): number {
+    fromSun(value: string | number) {
         return this.tronWeb.fromSun(value);
     }
 

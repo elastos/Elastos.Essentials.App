@@ -27,6 +27,6 @@ export class StandardTronNetworkWallet<WalletNetworkOptionsType extends WalletNe
         this.subWallets[StandardCoinName.TRON] = this.mainTokenSubWallet;
 
         // If the current network is not tron and you enter the wallet asset page, you need to initialize this.
-        await GlobalTronGridService.instance.initTronWeb();
+        await GlobalTronGridService.instance.initTronWeb(this.network);
     }
 }
