@@ -775,7 +775,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             } else {
                 // the fee is main token
                 if (fee && !this.networkWallet.getMainTokenSubWallet().isBalanceEnough(fee)) {
-                    this.conditionalShowToast('wallet.insufficient-balance', showToast);
+                    const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
+                    this.conditionalShowToast(message, showToast, 4000);
                     return false;
                 }
             }
