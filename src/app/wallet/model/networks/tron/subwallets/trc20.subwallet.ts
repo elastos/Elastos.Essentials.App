@@ -18,7 +18,7 @@ import { ExtendedTransactionInfo } from '../../../extendedtxinfo';
 import type { MasterWallet } from '../../../masterwallets/masterwallet';
 import type { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
-import { TronTransactionInfo, TronTRC20Transaction } from '../../../tron.types';
+import { TronTRC20Transaction, TronTransactionInfo } from '../../../tron.types';
 import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
@@ -430,13 +430,16 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         return await GlobalTronGridService.instance.calculateFee(tokenAccountAddress, howManyBandwidthNeed, energy);
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber): Promise<any> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, feeLimit: number = null): Promise<any> {
         toAddress = await this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
 
         const tokenAccountAddress = this.getTokenAccountAddress();
         const contractAddress = this.coin.getContractAddress();
 
-        Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount);
+        let realFeeLimit = 100000000;
+        if (feeLimit && feeLimit > realFeeLimit) realFeeLimit = feeLimit;
+
+        Logger.log('wallet', 'createPaymentTransaction toAddress:', toAddress, ' amount:', amount.toString(), ' feeLimit:', realFeeLimit);
         // Convert the Token amount (ex: 20 TTECH) to contract amount (=token amount (20) * 10^decimals)
         let amountWithDecimals: BigNumber;
         if (amount.eq(-1)) {//-1: send all.
@@ -447,7 +450,7 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
 
         let result = await this.tronWeb.transactionBuilder.triggerSmartContract(
             contractAddress, 'transfer(address,uint256)', {
-                feeLimit: 10000000,
+                feeLimit: realFeeLimit,
                 callValue: 0
             },
             [{

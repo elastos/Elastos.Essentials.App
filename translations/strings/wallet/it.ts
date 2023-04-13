@@ -37,7 +37,7 @@ export const it = {
         'text-did-balance-not-enough': 'La registrazione di informazioni sulla catena d\'identità richiede piccole quantità di ELA per pagare le commisssioni della transazione. Trasferisci prima alcuni ELA (es: 0.1 ELA) dal tuo portafoglio principale alla Identity Chain!',
         'amount-null': "Si prega di inserire un importo",
         "amount-invalid": "Si prega di inserire l'importo corretto",
-        'eth-insuff-balance': 'Non hai abbastanza {{coinName}} per pagare le commissioni di questa transazione token ERC20',
+        'eth-insuff-balance': 'Non hai abbastanza {{coinName}} per pagare le commissioni di questa transazione token',
         "sync-completed": "Sincronizzazione completata",
         "not-a-valid-address": "Non è un indirizzo valido",
         "transaction-pending": "C'è già una transazione in corso. Attendi la conferma della transazione.",

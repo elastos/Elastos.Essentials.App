@@ -126,6 +126,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private gasLimit: string = null;
     private nonce = -1;
 
+    // Tron
+    private feeLimitOfTRX: number = null;
+
     // Intent
     private action = null;
     private intentId = null;
@@ -362,6 +365,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                             this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         } else if (this.fromSubWallet instanceof TRC20SubWallet) {
                             let feeSun = await this.fromSubWallet.estimateTransferTransactionGas();
+                            this.feeLimitOfTRX = Util.ceil(feeSun, 10000000);
                             this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
                         }
                     }
@@ -498,6 +502,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 rawTx = await this.fromSubWallet.createPaymentTransaction(
                     this.toAddress, // User input address
                     new BigNumber(this.amount), // User input amount
+                    this.feeLimitOfTRX
                 );
             }
             else {
@@ -731,6 +736,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             // The fee is related to the receiving address.
             // If the address is not active,  you need to pay 1 TRX fee to activate this address.
             let feeSun = await this.fromSubWallet.estimateTransferTransactionGas(this.toAddress);
+            this.feeLimitOfTRX = Util.ceil(feeSun, 10000000);
             this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
             fee = new BigNumber(this.feeOfTRX);
         } else {
