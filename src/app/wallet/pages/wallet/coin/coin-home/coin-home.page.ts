@@ -52,6 +52,7 @@ import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainch
 import { EthContractEvent } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { TransactionListType } from 'src/app/wallet/model/networks/evms/evm.types';
 import { ERC20SubWallet } from 'src/app/wallet/model/networks/evms/subwallets/erc20.subwallet';
+import { TRC20SubWallet } from 'src/app/wallet/model/networks/tron/subwallets/trc20.subwallet';
 import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -316,7 +317,7 @@ export class CoinHomePage implements OnInit {
     }
 
     chainIsERC20(): boolean {
-        return this.subWallet instanceof ERC20SubWallet;
+        return (this.subWallet instanceof ERC20SubWallet) || (this.subWallet instanceof TRC20SubWallet);
     }
 
     private async getOfflineTransactions() {
