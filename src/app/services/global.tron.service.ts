@@ -278,6 +278,18 @@ export class GlobalTronGridService {
 
     /**
      *
+     * @param amount Amount of TRX (in SUN) to stake.
+     * @param resource Resource that you're staking TRX in order to obtain. Must be either "BANDWIDTH" or "ENERGY".
+     * @param address Address of the owner of the TRX to be staked
+     * @param option Address of the owner of the TRX to be staked
+     * @returns
+     */
+    async freezeBalanceV2(amount: number, resource: ResourceType, address: string) : Promise<TronTransaction> {
+      return await this.tronWeb.transactionBuilder.freezeBalanceV2(this.toSun(amount), resource, address);
+  }
+
+    /**
+     *
      * @param resource Resource that you're staked TRX. Must be either "BANDWIDTH" or "ENERGY".
      * @param address Address of the owner of the TRX to be staked
      * @returns
@@ -285,6 +297,17 @@ export class GlobalTronGridService {
     async unfreezeBalance(resource: ResourceType, address: string) : Promise<TronTransaction> {
         return await this.tronWeb.transactionBuilder.unfreezeBalance(resource, address, address);
     }
+
+    /**
+     *
+     * @param amount Amount of TRX (in SUN) to unstake.
+     * @param resource Resource that you're staked TRX. Must be either "BANDWIDTH" or "ENERGY".
+     * @param address Address of the owner of the TRX to be staked
+     * @returns
+     */
+    async unfreezeBalanceV2(amount: number, resource: ResourceType, address: string) : Promise<TronTransaction> {
+      return await this.tronWeb.transactionBuilder.unfreezeBalanceV2(this.toSun(amount), resource, address);
+  }
 
     //*******************
     // TRC10

@@ -12,7 +12,7 @@
             </ion-col>
             <ion-col [size]="7" class="right-col">
                 <h1>{{ getBandwithInfo() }}</h1>
-                <p class="secondary-text">{{ 'wallet.resource-freeze-balance' | translate }}: {{ freezeBalanceInfo[0].frozen_balance_trx }}</p>
+                <p class="secondary-text">{{ 'wallet.resource-freeze-balance' | translate }}: {{ totalFreezeBalance[0] }}</p>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
@@ -23,7 +23,7 @@
             </ion-col>
             <ion-col [size]="7" class="right-col">
                 <h1>{{ getEnergyInfo() }}</h1>
-                <p class="secondary-text">{{ 'wallet.resource-freeze-balance' | translate }}: {{ freezeBalanceInfo[1].frozen_balance_trx }}</p>
+                <p class="secondary-text">{{ 'wallet.resource-freeze-balance' | translate }}: {{ totalFreezeBalance[1] }}</p>
             </ion-col>
             <ion-ripple-effect></ion-ripple-effect>
         </ion-row>
@@ -72,21 +72,37 @@
                     </p>
                 </ion-col>
             </ion-row>
-
-            <div>
-                <p> {{ 'wallet.resource-freeze-note' | translate }} </p>
-            </div>
         </ion-grid>
 
-        <ion-row class="unfreeze-row" *ngIf="transactionType === 1">
+        <ion-grid *ngIf="transactionType === 1" class="freeze-container ion-no-padding ion-no-margin">
+          <!-- Token balance -->
+          <ion-row class="balance-row">
+              <p class="align-right">{{ 'wallet.resource-to-unfreeze' | translate }} <strong>{{
+                  getUnfreezeResourceBalance() }}</strong>
+              </p>
+          </ion-row>
+
+          <ion-row class="freeze-row">
+              <ion-col class="left-col" [size]="4">
+                  <p>{{ 'wallet.resource-unfreeze-balance' | translate }}</p>
+              </ion-col>
+
+              <ion-col class="right-col" size="8">
+                  <ion-input [disabled]="hasStakeV1Resource()" class="amount-input" type="number"
+                          placeholder="0" name="unfreezeAmount" ngDefaultControl [(ngModel)]="unfreezeAmount">
+                  </ion-input>
+              </ion-col>
+          </ion-row>
+
+          <ion-row class="unfreeze-stakeV1-row" *ngIf="hasStakeV1Resource()">
             <div class="note" *ngIf="transactionType === 1">
                 <p> {{ unfreezeInfo }} </p>
             </div>
             <div class="note" *ngIf="!freezePeriodExpired">
                 <p class="unfreezetime"> {{ unfreezeTime }} </p>
             </div>
-        </ion-row>
-
+          </ion-row>
+        </ion-grid>
 
         <ion-row class="btn-container">
             <ebutton (clicked)="goTransaction()" [title]="getButtonLabel() | translate">

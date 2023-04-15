@@ -67,19 +67,36 @@ export class TronResourcePage implements OnDestroy {
     private subWallet: TronSubWallet = null;
     public accountResource: AccountResources = null;
     private accountInfo: AccountResult = null;
-    public freezeBalanceInfo: FreezedBalanceInfo[] = [
-            {
-                frozen_balance:0,
-                frozen_balance_trx: 0,
-                expire_time: 0,
-                display_date_expire_time:''
-            },
-            {
-                frozen_balance:0,
-                frozen_balance_trx: 0,
-                expire_time: 0,
-                display_date_expire_time:''
-            }];
+    // Stake v1
+    public freezeBalanceInfoV1: FreezedBalanceInfo[] = [
+        {
+            frozen_balance:0,
+            frozen_balance_trx: 0,
+            expire_time: 0,
+            display_date_expire_time:''
+        },
+        {
+            frozen_balance:0,
+            frozen_balance_trx: 0,
+            expire_time: 0,
+            display_date_expire_time:''
+        }];
+    // Stake v2
+    public freezeBalanceInfoV2: FreezedBalanceInfo[] = [
+        {
+            frozen_balance:0,
+            frozen_balance_trx: 0,
+            expire_time: 0,
+            display_date_expire_time:''
+        },
+        {
+            frozen_balance:0,
+            frozen_balance_trx: 0,
+            expire_time: 0,
+            display_date_expire_time:''
+        }];
+    public totalFreezeBalance = ['0', '0'];
+
     public transactionType = 0;
     public resourceType = ResourceType.BANDWIDTH;
     public amount = 0;
@@ -88,6 +105,7 @@ export class TronResourcePage implements OnDestroy {
     public freezePeriodExpired = false;
     public unfreezeInfo = '';
     public unfreezeTime = '';
+    public unfreezeAmount = 0;
 
     public displayBalanceString = '';
     private feeOfTRX = null;
@@ -127,21 +145,40 @@ export class TronResourcePage implements OnDestroy {
         let address = this.subWallet.getCurrentReceiverAddress();
 
         this.accountResource = await GlobalTronGridService.instance.getAccountResource(address);
-
         this.accountInfo = await GlobalTronGridService.instance.account(this.subWallet.rpcApiUrl, address);
         if (this.accountInfo) {
+            // Stake V1
             if (this.accountInfo.frozen && this.accountInfo.frozen[0]) {
-                this.freezeBalanceInfo[0].frozen_balance = this.accountInfo.frozen[0].frozen_balance;
-                this.freezeBalanceInfo[0].frozen_balance_trx = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfo[0].frozen_balance);
-                this.freezeBalanceInfo[0].expire_time = this.accountInfo.frozen[0].expire_time;
-                this.freezeBalanceInfo[0].display_date_expire_time = WalletUtil.getDisplayDate(this.freezeBalanceInfo[0].expire_time);
+                this.freezeBalanceInfoV1[0].frozen_balance = this.accountInfo.frozen[0].frozen_balance;
+                this.freezeBalanceInfoV1[0].frozen_balance_trx = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfoV1[0].frozen_balance);
+                this.freezeBalanceInfoV1[0].expire_time = this.accountInfo.frozen[0].expire_time;
+                this.freezeBalanceInfoV1[0].display_date_expire_time = WalletUtil.getDisplayDate(this.freezeBalanceInfoV1[0].expire_time);
             }
             if (this.accountInfo.account_resource && this.accountInfo.account_resource.frozen_balance_for_energy) {
-                this.freezeBalanceInfo[1].frozen_balance = this.accountInfo.account_resource.frozen_balance_for_energy.frozen_balance;
-                this.freezeBalanceInfo[1].frozen_balance_trx = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfo[1].frozen_balance);
-                this.freezeBalanceInfo[1].expire_time = this.accountInfo.account_resource.frozen_balance_for_energy.expire_time;
-                this.freezeBalanceInfo[1].display_date_expire_time = WalletUtil.getDisplayDate(this.freezeBalanceInfo[1].expire_time);
+                this.freezeBalanceInfoV1[1].frozen_balance = this.accountInfo.account_resource.frozen_balance_for_energy.frozen_balance;
+                this.freezeBalanceInfoV1[1].frozen_balance_trx = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfoV1[1].frozen_balance);
+                this.freezeBalanceInfoV1[1].expire_time = this.accountInfo.account_resource.frozen_balance_for_energy.expire_time;
+                this.freezeBalanceInfoV1[1].display_date_expire_time = WalletUtil.getDisplayDate(this.freezeBalanceInfoV1[1].expire_time);
             }
+
+            // Stake V2
+            if (this.accountInfo.frozenV2) {
+                this.accountInfo.frozenV2.forEach( f => {
+                    let index = -1;
+                    if (!f.type && f.amount) {
+                        index = 0;// bandwidth
+                    } else if (f.type == 'ENERGY' && f.amount) {
+                        index = 1;
+                    }
+                    if (index != -1) {
+                        this.freezeBalanceInfoV2[index].frozen_balance = f.amount;
+                        this.freezeBalanceInfoV2[index].frozen_balance_trx = GlobalTronGridService.instance.fromSun(f.amount);
+                    }
+                })
+            }
+
+            this.totalFreezeBalance[0] = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfoV1[0].frozen_balance + this.freezeBalanceInfoV2[0].frozen_balance);
+            this.totalFreezeBalance[1] = GlobalTronGridService.instance.fromSun(this.freezeBalanceInfoV1[1].frozen_balance + this.freezeBalanceInfoV2[1].frozen_balance);
         }
 
         this.displayBalanceString = this.uiService.getFixedBalance(this.subWallet.getDisplayBalance());
@@ -192,15 +229,16 @@ export class TronResourcePage implements OnDestroy {
     showUnfreezeInfo() {
         let currentTimesamp = moment().valueOf();
         let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
-        this.unfreezeInfo = GlobalTranslationService.instance.translateInstant("wallet.resource-to-unfreeze") + this.freezeBalanceInfo[index].frozen_balance_trx + ' TRX';
 
-        if (currentTimesamp > this.freezeBalanceInfo[index].expire_time) {
+        if (currentTimesamp > this.freezeBalanceInfoV1[index].expire_time) {
             this.freezePeriodExpired = true;
             this.unfreezeTime = '';
         } else {
             this.freezePeriodExpired = false;
-            this.unfreezeTime = GlobalTranslationService.instance.translateInstant("wallet.resource-unfreeze-time") + this.freezeBalanceInfo[index].display_date_expire_time;
+            this.unfreezeTime = GlobalTranslationService.instance.translateInstant("wallet.resource-unfreeze-time") + this.freezeBalanceInfoV1[index].display_date_expire_time;
         }
+
+        this.unfreezeInfo = GlobalTranslationService.instance.translateInstant("wallet.resource-to-unfreeze-stakev1") + this.freezeBalanceInfoV1[index].frozen_balance_trx + ' TRX';
     }
 
     private conditionalShowToast(message: string, showToast: boolean, duration = 4000) {
@@ -222,14 +260,27 @@ export class TronResourcePage implements OnDestroy {
                 return false;
             }
         } else {
-            if (!this.freezePeriodExpired) {
-                this.conditionalShowToast(this.unfreezeTime, showToast);
-                return false;
-            }
-            let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
-            if (!this.freezeBalanceInfo[index].frozen_balance_trx) {
-                this.conditionalShowToast(GlobalTranslationService.instance.translateInstant("wallet.resource-no-trx-to-unfreeze"), showToast);
-                return false;
+            if (this.hasStakeV1Resource()) { // Stake V1
+              if (!this.freezePeriodExpired) {
+                  this.conditionalShowToast(this.unfreezeTime, showToast);
+                  return false;
+              }
+              let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
+              if (!this.freezeBalanceInfoV1[index].frozen_balance_trx) {
+                  this.conditionalShowToast(GlobalTranslationService.instance.translateInstant("wallet.resource-no-trx-to-unfreeze"), showToast);
+                  return false;
+              }
+            } else {  // stake v2
+                if (Util.isNull(this.unfreezeAmount) || this.unfreezeAmount <= 0) {
+                    this.conditionalShowToast('wallet.amount-invalid', showToast);
+                    return false;
+                }
+
+                let unfreezeAmount = this.getUnfreezeResourceBalance();
+                if (this.unfreezeAmount > Number(unfreezeAmount)) {
+                    this.conditionalShowToast('wallet.amount-invalid', showToast);
+                    return false;
+                }
             }
         }
 
@@ -263,7 +314,11 @@ export class TronResourcePage implements OnDestroy {
             if (this.transactionType == 0) {
                 rawTx = await this.subWallet.createStakeTransaction(this.amount, this.resourceType);
             } else {
-                rawTx = await this.subWallet.createUnStakeTransaction(this.resourceType);
+                if (this.unfreezeAmount > 0) {
+                    rawTx = await this.subWallet.createUnStakeTransaction(this.unfreezeAmount, this.resourceType);
+                } else {
+                    rawTx = await this.subWallet.createUnStakeV1Transaction(this.resourceType);
+                }
             }
         } catch (err) {
             await this.parseException(err);
@@ -323,6 +378,22 @@ export class TronResourcePage implements OnDestroy {
         }
     }
 
+    getUnfreezeResourceBalance() {
+        if (this.resourceType == ResourceType.BANDWIDTH) {
+            return this.totalFreezeBalance[0];
+        } else {
+            return this.totalFreezeBalance[1];
+        }
+    }
+
+    hasStakeV1Resource() {
+        if (this.resourceType == ResourceType.BANDWIDTH) {
+            return this.freezeBalanceInfoV1[0].frozen_balance > 0;
+        } else {
+            return this.freezeBalanceInfoV1[1].frozen_balance > 0;
+        }
+    }
+
     async showConfirm() {
         let feeString = null;
 
@@ -339,7 +410,7 @@ export class TronResourcePage implements OnDestroy {
             transferFrom: this.subWallet.getCurrentReceiverAddress(),
             transferTo: this.subWallet.getCurrentReceiverAddress(),
             amount: this.transactionType ? undefined : this.amount,
-            unfreezeBalance: this.freezeBalanceInfo[index].frozen_balance_trx,
+            unfreezeBalance: this.hasStakeV1Resource() ? this.freezeBalanceInfoV1[index].frozen_balance_trx : this.unfreezeAmount,
             sendAll: false,
             precision: this.subWallet.tokenDecimals,
             tokensymbol: this.subWallet.getDisplayTokenName(),

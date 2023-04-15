@@ -33,7 +33,10 @@ export type AccountResult = {
         frozen_balance: number, // frozen balance for bandwidth
         expire_time: number,
     }[],
-    frozenV2: any[],
+    frozenV2: {
+      amount?: number, // sun
+      type?: string,
+    }[],
     assetV2: any[], // TRC10 tokens
     address: string,
     balance: number, //TRX, unit : sun

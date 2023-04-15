@@ -773,12 +773,13 @@ export const en = {
         'resource-unfreeze': 'Unfreeze',
         "resource-choose-type": "Choose Resource Type",
         "resource-freeze-balance": "Freeze amount",
-        "resource-freeze-note": "Note: It can be unfrozen after three days of freezing",
+        "resource-unfreeze-balance": "Unfreeze amount",
         "resource-to-unfreeze": "Balance to be unfrozen: ",
         "resource-unfreeze-time": "Time to be unfrozen: ",
         "resource-no-trx-to-unfreeze": "No frozen TRX, no need to unfreeze",
         "resource-bandwidth-to-obtained": "Bandwidth to be obtained:",
         "resource-energy-to-obtained": "Energy to be obtained:",
+        "resource-to-unfreeze-stakev1": "Please unfreeze Stack V1 resources first：",
 
         /***************************
         * Migrator *

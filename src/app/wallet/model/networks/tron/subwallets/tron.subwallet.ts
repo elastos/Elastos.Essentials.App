@@ -287,11 +287,16 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     public async createStakeTransaction(amount: number, resource: ResourceType): Promise<any> {
-        return await GlobalTronGridService.instance.freezeBalance(amount, 3, resource, this.tronAddress);
+        return await GlobalTronGridService.instance.freezeBalanceV2(amount, resource, this.tronAddress);
     }
 
-    public async createUnStakeTransaction(resource: ResourceType): Promise<any> {
+    // the staked TRX can be redeemed using the unstaking method of Stake 1.0.
+    public async createUnStakeV1Transaction(resource: ResourceType): Promise<any> {
         return await GlobalTronGridService.instance.unfreezeBalance(resource, this.tronAddress);
+    }
+
+    public async createUnStakeTransaction(amount: number, resource: ResourceType): Promise<any> {
+        return await GlobalTronGridService.instance.unfreezeBalanceV2(amount, resource, this.tronAddress);
     }
 
     public async publishTransaction(transaction: string): Promise<string> {

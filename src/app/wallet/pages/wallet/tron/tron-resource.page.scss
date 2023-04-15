@@ -18,7 +18,7 @@
     }
 
     .btn-container {
-        margin-top: 25px;
+        margin-top: 20px;
     }
 
     .action-title-row {
@@ -127,25 +127,21 @@
                 }
             }
         }
-    }
 
-    .unfreeze-row {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
+        .unfreeze-stakeV1-row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-top: 20px;
 
-        .note {
-            width: 100%;
+          .note {
+              width: 100%;
 
-            .unfreezetime,
-            p {
-                text-align: center;
-            }
-
-            .unfreezetime {
-                color: red;
-            }
-        }
+              p {
+                  text-align: center;
+              }
+          }
+      }
     }
 }
 
