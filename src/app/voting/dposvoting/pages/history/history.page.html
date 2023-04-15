@@ -29,8 +29,8 @@
     </ion-row>
   </ion-grid>
 
-  <ion-grid *ngIf="!nodesService._nodes.length" class="container ion-no-padding" [class.dark-container]="theme.darkMode">
-    <ion-list [class.loading-list]="!theme.darkMode">
+  <ion-grid *ngIf="!nodesService._nodes.length" class="container ion-no-padding">
+    <ion-list [class.loading-list-dark]="theme.darkMode" [class.loading-list]="!theme.darkMode">
       <ion-item *ngFor="let empty of nodesService.emptyList">
         <ion-grid class="ion-padding-horizontal">
           <ion-row>

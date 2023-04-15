@@ -44,7 +44,7 @@
 
     <ng-template #loadingList>
         <ion-grid class="container ion-no-padding">
-            <ion-list class="node-list" [class.darkContainer]="theme.darkMode" [class.loading-list]="!theme.darkMode">
+            <ion-list class="node-list" [class.loading-list-dark]="theme.darkMode" [class.loading-list]="!theme.darkMode">
                 <ion-item lines="none" *ngFor='let empty of nodesService.emptyList'>
                     <ion-grid class="ion-no-padding">
                         <ion-row class="ion-no-padding">

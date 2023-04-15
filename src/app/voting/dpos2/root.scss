@@ -281,6 +281,20 @@
     }
 }
 
+.loading-list-dark {
+  ion-item {
+      ion-grid {
+          ion-row {
+              ion-col {
+                  ion-skeleton-text {
+                      --background-rgb: 255, 255, 255;
+                  }
+              }
+          }
+      }
+  }
+}
+
 .message-container {
     margin: 24px;
 }
