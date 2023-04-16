@@ -165,10 +165,8 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     let isCrossChain = this.isCrossChain(transaction);
 
-    let internalTx = false;
     if (!transaction.hash && transaction.transactionHash) {
         transaction.hash = transaction.transactionHash;
-        internalTx = true;
     }
 
     const transactionInfo: TransactionInfo = {
@@ -197,7 +195,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       subOperations: []
     };
 
-    transactionInfo.amount = await this.getTransactionAmount(transaction, internalTx);
+    transactionInfo.amount = await this.getTransactionAmount(transaction);
 
     // There is no gasUsed and gasPrice, only gas (fee) on fusion network.
     // There is only gasUesd, no gasPride for some internal transactions.
@@ -248,18 +246,16 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return transactionInfo;
   }
 
-  protected async getTransactionAmount(transaction: EthTransaction, internalTx: boolean): Promise<BigNumber> {
-    // TODO: how to get the right amount for internal tx?
-    if (!internalTx) {
-      // Use extended info is there is some
-      let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
-      if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
-        if (extInfo.evm.txInfo.type === ETHOperationType.SWAP) {
-          let operation = extInfo.evm.txInfo.operation as SwapExactTokensOperation;
-          if (operation.type === TransactionType.RECEIVED) {
-            // Get the amount from extended info.
-            return new BigNumber(operation.amountOut).dividedBy(this.tokenAmountMulipleTimes);
-          }
+  protected async getTransactionAmount(transaction: EthTransaction): Promise<BigNumber> {
+    // Use extended info is there is some
+    let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+    if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
+      if (extInfo.evm.txInfo.type === ETHOperationType.SWAP) {
+        let operation = extInfo.evm.txInfo.operation as SwapExactTokensOperation;
+        if (operation.type === TransactionType.RECEIVED) {
+          // TODO: amountOut is not actual received amount.
+          // Get the amount from extended info.
+          return new BigNumber(operation.amountOut).dividedBy(this.tokenAmountMulipleTimes);
         }
       }
     }
