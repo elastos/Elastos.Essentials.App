@@ -11,6 +11,10 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { CurrencyService } from 'src/app/wallet/services/currency.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { StakeService, VoteType } from '../../services/stake.service';
 
 
@@ -37,6 +41,10 @@ export class StakingHomePage implements OnInit {
     public signingAndTransacting = false;
     public showArrow = true;
 
+    // Helper
+    public WalletUtil = WalletUtil;
+    public networkWallet: AnyNetworkWallet = null;
+
     constructor(
         public uxService: UXService,
         public translate: TranslateService,
@@ -46,6 +54,7 @@ export class StakingHomePage implements OnInit {
         private globalNative: GlobalNativeService,
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
+        public currencyService: CurrencyService,
     ) {
     }
 
@@ -54,6 +63,8 @@ export class StakingHomePage implements OnInit {
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-elastos-staking'));
         this.dataFetched = false;
+        this.networkWallet = WalletService.instance.activeNetworkWallet.value;
+
         await this.stakeService.initData();
         this.addShowItems();
         this.addButtonList();

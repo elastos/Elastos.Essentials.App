@@ -1,5 +1,53 @@
 @import "../../root.scss";
 
+.wallet-row {
+  border-radius: 17px;
+  padding: 5px 10px;
+  margin-bottom: 32px;
+  background-color: var(--essentials-box-color);
+  border: 1px solid var(--essentials-border-separator-color);
+
+  ion-col {
+    display: flex;
+    align-items: center;
+  }
+
+  .color-col {
+    justify-content: center;
+
+    .inline-svg {
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .left-col {
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: flex-start;
+
+    img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .wallet-name {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: 0.7px;
+    }
+
+    .wallet-amount {
+      h4 {
+        font-size: 13px;
+        font-weight: 300;
+        margin: 0;
+        margin-top: 5px;
+      }
+    }
+  }
+}
+
 .card-row {
     position: relative;
     height: 85px;
