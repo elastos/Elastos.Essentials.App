@@ -142,5 +142,15 @@ export const fr = {
         'stakedays-placeholder': 'no less than {{ days }} days',
         'stakedays-input-err': 'The pledge time of the tokens shall not be less than {{ days }} days.',
         'no-voting': 'No voting data',
+
+        /********** Sort **********/
+        'sort-votes-dec': 'Number of votes ↓',
+        'sort-votes-inc': 'Number of votes ↑',
+        'sort-creation-date-dec': 'Creation date ↓',
+        'sort-creation-date-inc': 'Creation date ↑',
+        'sort-name-inc': 'Name ↑',
+        'sort-name-dec': 'Name ↓',
+        'sort-stake-until-inc': 'Stake until ↑',
+        'sort-stake-until-dec': 'Stake until ↓',
     }
 };

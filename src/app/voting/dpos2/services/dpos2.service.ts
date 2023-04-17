@@ -302,8 +302,10 @@ export class DPoS2Service {
                         //     node.myVotesPrecentage = this.uxService.getPercentage(votes, this.stakeService.votesRight.totalVotesRight);
                         // }
 
+                        node.dposv2votesNumber = parseFloat(node.dposv2votes);
+
                         //get node precentage
-                        node.votesPrecentage = this.uxService.getPercentage(node.dposv2votes, this.totalVotes);
+                        node.votesPrecentage = this.uxService.getPercentage(node.dposv2votesNumber, this.totalVotes);
 
                         node.checkDisabled = node.state === 'Inactive' || until < this.minStakeDays * 720;
 

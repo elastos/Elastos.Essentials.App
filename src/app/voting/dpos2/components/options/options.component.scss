@@ -1,0 +1,25 @@
+ion-grid {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+
+  .row {
+    overflow: hidden;
+    position: relative;
+    padding: 10px 10px 10px 12px;
+    display: flex;
+
+    ion-label {
+      margin-top: 3px;
+      margin-left: 5px;
+      font-size: 14px;
+      font-weight: 500;
+    }
+  }
+}
+
+.darkContainer {
+  background: var(--essentials-box-color)
+}
+

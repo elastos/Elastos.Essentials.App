@@ -25,11 +25,11 @@
             </div>
 
             <app-node-slider-list *ngIf="showNode" [nodeIndex]="nodeIndex" [node]="node"
-                [totalVotes]="dpos2Service.totalVotes" [_nodes]="dpos2Service.dposList">
+                [totalVotes]="dpos2Service.totalVotes" [_nodes]="dposListSorted">
             </app-node-slider-list>
 
             <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
-                <ion-item *ngFor="let node of dpos2Service.dposList">
+                <ion-item *ngFor="let node of dposListSorted">
                     <ion-grid class="ion-no-padding">
                         <ion-row class="ion-no-padding row-list">
                             <ion-col size="1" class="rank-container ion-no-padding"

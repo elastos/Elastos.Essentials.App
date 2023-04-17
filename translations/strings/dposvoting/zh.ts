@@ -143,6 +143,16 @@ export const zh = {
         'stakedays-placeholder': '不小于{{ days }}天',
         'stakedays-input-err': '质押时间不能小于{{ days }}天。',
         'no-voting': '没有投票数据',
+
+        /********** Sort **********/
+        'sort-votes-dec': '按选票排序 ↓',
+        'sort-votes-inc': '按选票排序 ↑',
+        'sort-creation-date-dec': '按创建时间排序 ↓',
+        'sort-creation-date-inc': '按创建时间排序 ↑',
+        'sort-name-inc': '按名称排序 ↑',
+        'sort-name-dec': '按名称排序 ↓',
+        'sort-stake-until-inc': '按质押期排序 ↑',
+        'sort-stake-until-dec': '按质押期排序 ↓',
     }
 
 };

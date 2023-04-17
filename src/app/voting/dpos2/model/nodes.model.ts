@@ -26,6 +26,7 @@ export type DPoS2Node = {
     stakeuntilAboutExpire: string;
     userVotes: number;
     userStakeDays: number;
+    dposv2votesNumber: number;
 }
 
 export type ProducersSearchResponse = {
