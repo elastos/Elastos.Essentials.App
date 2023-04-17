@@ -219,12 +219,12 @@ export class ListPage implements OnInit {
         break;
         case NodesSortType.StakeUntilInc:
           this.dposListSorted = this.dpos2Service.dposList.sort((a, b) => {
-            return a.stakeuntil > b.stakeuntil ? 1 : -1;
+            return a.stakeuntil <= b.stakeuntil ? 1 : -1;
           });
         break;
         case NodesSortType.StakeUntilDec:
           this.dposListSorted = this.dpos2Service.dposList.sort((a, b) => {
-            return a.stakeuntil < b.stakeuntil ? 1 : -1;
+            return a.stakeuntil >= b.stakeuntil ? 1 : -1;
           });
         break;
         default:

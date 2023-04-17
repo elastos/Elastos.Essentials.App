@@ -23,7 +23,7 @@ export const en = {
 
         'enter-amount': 'Enter amount',
         'available': 'Available',
-        'available-memo': "Memo: Available is the balance of the first receiving address of the wallet",
+        'available-memo': "Note: your wallet is multi-address. Currently, only ELA from the first receiving address can be staked. If you want, you can manually go to your wallet (ELA coin), enter the receive page, find the first address of the list and send your ELA to yourself, before coming back to stake more ELA.",
         'advanced-options': 'Advanced options',
         'send-to': 'Send to',
         'reciever-address': 'Reciever address',
