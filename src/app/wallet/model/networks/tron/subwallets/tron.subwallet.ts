@@ -335,12 +335,28 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
 
             // Frozen balance
             let frozenBalance = 0;
+            // Stake V1
             if (accountInfo.frozen && accountInfo.frozen[0]) {
                 frozenBalance += accountInfo.frozen[0].frozen_balance;
             }
             if (accountInfo.account_resource && accountInfo.account_resource.frozen_balance_for_energy) {
                 frozenBalance += accountInfo.account_resource.frozen_balance_for_energy.frozen_balance;
             }
+            // Stake V2
+            if (accountInfo.frozenV2) {
+                accountInfo.frozenV2.forEach( f => {
+                    let index = -1;
+                    if (!f.type && f.amount) {
+                        index = 0;// bandwidth
+                    } else if (f.type == 'ENERGY' && f.amount) {
+                        index = 1;
+                    }
+                    if (index != -1) {
+                        frozenBalance += f.amount;
+                    }
+                })
+            }
+
             if (frozenBalance) {
                 this.frozenBalance = GlobalTronGridService.instance.fromSun(frozenBalance);
             } else this.frozenBalance = 0;
