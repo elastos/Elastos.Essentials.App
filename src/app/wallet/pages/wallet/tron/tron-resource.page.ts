@@ -202,9 +202,12 @@ export class TronResourcePage implements OnDestroy {
 
     setTransactionType(type) {
         this.transactionType = type;
-        if (this.transactionType == 1)
-            this.showUnfreezeInfo();
-            this.amount = 0;
+        if (this.transactionType == 1) {
+          this.showUnfreezeInfo();
+          this.amount = 0;
+        } else {
+          this.unfreezeAmount = 0;
+        }
     }
 
     getButtonLabel(): string {
@@ -350,6 +353,7 @@ export class TronResourcePage implements OnDestroy {
                 title: GlobalTranslationService.instance.translateInstant("wallet.resource-bandwith"),
                 routeOrAction: () => {
                     this.resourceType = ResourceType.BANDWIDTH;
+                    this.unfreezeAmount = 0;
                     this.showUnfreezeInfo();
                 }
             },
@@ -357,6 +361,7 @@ export class TronResourcePage implements OnDestroy {
                 title: GlobalTranslationService.instance.translateInstant("wallet.resource-energy"),
                 routeOrAction: () => {
                     this.resourceType = ResourceType.ENERGY;
+                    this.unfreezeAmount = 0;
                     this.showUnfreezeInfo();
                 }
             }
