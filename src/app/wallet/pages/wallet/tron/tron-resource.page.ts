@@ -66,7 +66,7 @@ export class TronResourcePage implements OnDestroy {
 
     private subWallet: TronSubWallet = null;
     public accountResource: AccountResources = null;
-    private accountInfo: AccountResult = null;
+    public accountInfo: AccountResult = null;
     // Stake v1
     public freezeBalanceInfoV1: FreezedBalanceInfo[] = [
         {
