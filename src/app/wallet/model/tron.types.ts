@@ -14,6 +14,11 @@ export type RequestResponse = {
     };
 }
 
+export type UnfrozenV2 = {
+    unfreeze_amount: number,
+    unfreeze_expire_time: number,
+}
+
 export type AccountTRC20Token = {
     [tokenId: string]: string // "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t": "100000000",
 };
@@ -44,6 +49,7 @@ export type AccountResult = {
     net_usage: number,
     free_net_usage: number,
     trc20: AccountTRC20Token[],
+    unfrozenV2?: UnfrozenV2[],
     latest_consume_free_time: number,
 };
 /**

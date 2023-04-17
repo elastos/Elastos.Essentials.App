@@ -782,6 +782,8 @@ export const zh = {
         "resource-freeze-note": "完成TRX质押后可随时解冻，解冻后需要等待14天，才可以将解冻的本金提取到自己的账户中",
         "resource-unfreeze-note": "解冻后需要等待14天，才可以将解冻的本金提取到自己的账户中",
         "resource-withdraw": "提现",
+        "resource-to-withdraw": "可提现金额：",
+        "resource-withdraw-time": "下一次可提现时间：",
 
         /***************************
         * Migrator *

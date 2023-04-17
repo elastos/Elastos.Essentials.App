@@ -1,7 +1,7 @@
 <ion-content class="lightmode" [class.darkmode]="theme.darkMode">
     <app-titlebar></app-titlebar>
 
-    <ion-grid *ngIf="accountResource" class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+    <ion-grid *ngIf="accountInfo" class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
         <ion-row class="title-row ripple ion-activatable">
             <div>{{ 'wallet.resource' | translate }} </div>
         </ion-row>
@@ -29,23 +29,23 @@
         </ion-row>
 
         <ion-row class="action-title-row">
-            <ion-col class="title-col" [size]="6"
+            <ion-col class="title-col" [size]="columnSize()"
                 [class.active]="transactionType == 0" (click)="setTransactionType(0)">
                 <h1>{{ 'wallet.resource-freeze' | translate }}</h1>
             </ion-col>
 
-            <ion-col class="title-col" size="6"
+            <ion-col class="title-col" [size]="columnSize()"
                 [class.active]="transactionType == 1" (click)="setTransactionType(1)">
                 <h1>{{ 'wallet.resource-unfreeze' | translate }}</h1>
             </ion-col>
 
-            <!-- <ion-col class="title-col" size="4"
+            <ion-col class="title-col" [size]="columnSize()" *ngIf="hasUnfrozen()"
                 [class.active]="transactionType == 2" (click)="setTransactionType(2)">
                 <h1>{{ 'wallet.resource-withdraw' | translate }}</h1>
-            </ion-col> -->
+            </ion-col>
         </ion-row>
 
-        <ion-row class="resource-type-row">
+        <ion-row class="resource-type-row" *ngIf="transactionType != 2">
             <ion-col size="7">
                 <p>{{ 'wallet.resource-type' | translate }}</p>
             </ion-col>
@@ -115,6 +115,20 @@
           <div class="note" *ngIf="!hasStakeV1Resource()">
             <p> {{ 'wallet.resource-unfreeze-note' | translate }} </p>
           </div>
+        </ion-grid>
+
+        <ion-grid *ngIf="transactionType === 2" class="freeze-container ion-no-padding ion-no-margin">
+          <ion-row class="unfreeze-row">
+            <div class="note">
+                <p> {{ withdrawInfo }} </p>
+            </div>
+          </ion-row>
+
+          <ion-row class="unfreeze-row" *ngIf="withdrawTime">
+            <div class="note">
+                <p class="unfreezetime"> {{ withdrawTime }} </p>
+            </div>
+          </ion-row>
         </ion-grid>
 
         <ion-row class="btn-container">

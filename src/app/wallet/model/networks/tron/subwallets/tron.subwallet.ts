@@ -301,6 +301,10 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         return await GlobalTronGridService.instance.unfreezeBalanceV2(amount, resource, this.tronAddress);
     }
 
+    public async createWithdrawExpireUnfreezeTransaction(): Promise<any> {
+      return await GlobalTronGridService.instance.withdrawExpireUnfreeze(this.tronAddress);
+  }
+
     public async publishTransaction(transaction: string): Promise<string> {
         await TransactionService.instance.displayGenericPublicationLoader();
         return await this.sendRawTransaction(transaction);

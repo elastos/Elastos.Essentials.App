@@ -780,6 +780,8 @@ export const fr = {
         "resource-freeze-note": "After completing the TRX staking, you can unstake at any time. After unstaking, you need to wait for 14 days before you can withdraw the unstaked TRX into your account.",
         "resource-unfreeze-note": "After unstaking, you need to wait for 14 days before you can withdraw the unstaked TRX into your account.",
         "resource-withdraw": "Withdraw",
+        "resource-to-withdraw": "Balance to be withdrawn: ",
+        "resource-withdraw-time": "Time to be withdrawn: ",
 
         /***************************
         * Migrator *

@@ -39,7 +39,7 @@ import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { TxConfirmComponent } from 'src/app/wallet/components/tx-confirm/tx-confirm.component';
 import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
-import { AccountResources, AccountResult, ResourceType } from 'src/app/wallet/model/tron.types';
+import { AccountResources, AccountResult, ResourceType, UnfrozenV2 } from 'src/app/wallet/model/tron.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { TransferType } from 'src/app/wallet/services/cointransfer.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -106,6 +106,14 @@ export class TronResourcePage implements OnDestroy {
     public unfreezeInfo = '';
     public unfreezeTime = '';
     public unfreezeAmount = 0;
+
+    // withdraw
+    public unfrozenV2: UnfrozenV2[] = [];
+    public withdrawAmountSun = 0;
+    public withdrawAmount = '';
+    public withdrawInfo = '';
+    public withdrawTime = '';
+
 
     public displayBalanceString = '';
     private feeOfTRX = null;
@@ -205,7 +213,13 @@ export class TronResourcePage implements OnDestroy {
         if (this.transactionType == 1) {
           this.showUnfreezeInfo();
           this.amount = 0;
-        } else {
+          this.withdrawAmountSun = 0;
+        } else if (this.transactionType == 0) {
+          this.unfreezeAmount = 0;
+          this.withdrawAmountSun = 0;
+        } else { // withdraw
+          this.showwithdrawInfo();
+          this.amount = 0;
           this.unfreezeAmount = 0;
         }
     }
@@ -213,8 +227,10 @@ export class TronResourcePage implements OnDestroy {
     getButtonLabel(): string {
         if (this.transactionType == 0) {
             return 'wallet.resource-freeze';
-        } else {
+        } else if (this.transactionType == 1) {
             return 'wallet.resource-unfreeze';
+        } else {
+            return 'wallet.resource-withdraw';
         }
     }
 
@@ -228,7 +244,7 @@ export class TronResourcePage implements OnDestroy {
         }
     }
 
-    // Unfreeze only after the freeze expires
+    // Unfreeze only after the freeze expires (stake v1)
     showUnfreezeInfo() {
         let currentTimesamp = moment().valueOf();
         let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
@@ -244,6 +260,30 @@ export class TronResourcePage implements OnDestroy {
         this.unfreezeInfo = GlobalTranslationService.instance.translateInstant("wallet.resource-to-unfreeze-stakev1") + this.freezeBalanceInfoV1[index].frozen_balance_trx + ' TRX';
     }
 
+    // withdraw only after the expires
+    showwithdrawInfo() {
+      if (!this.accountInfo.unfrozenV2) return;
+
+      let currentTimesamp = moment().valueOf();
+
+      this.withdrawAmountSun = 0;
+      this.withdrawTime = null;
+      let latestWithdrawalTime = 0;
+      this.accountInfo.unfrozenV2.forEach( f => {
+        if (currentTimesamp > f.unfreeze_expire_time) {
+          this.withdrawAmountSun += f.unfreeze_amount;
+        } else if (latestWithdrawalTime < f.unfreeze_expire_time) {
+          latestWithdrawalTime = f.unfreeze_expire_time;
+          this.withdrawTime = GlobalTranslationService.instance.translateInstant("wallet.resource-withdraw-time") + WalletUtil.getDisplayDate(f.unfreeze_expire_time)
+              + '  ( ' + GlobalTronGridService.instance.fromSun(f.unfreeze_amount).toString() + ' TRX)';
+        }
+      })
+
+      this.withdrawAmount = GlobalTronGridService.instance.fromSun(this.withdrawAmountSun);
+
+      this.withdrawInfo = GlobalTranslationService.instance.translateInstant("wallet.resource-to-withdraw") + this.withdrawAmount + ' TRX';
+  }
+
     private conditionalShowToast(message: string, showToast: boolean, duration = 4000) {
         if (showToast)
             this.native.toast_trans(message, duration);
@@ -257,12 +297,12 @@ export class TronResourcePage implements OnDestroy {
         this.feeOfTRX = GlobalTronGridService.instance.fromSun(feeSun.toString()).toString();
         let fee = new BigNumber(this.feeOfTRX);
 
-        if (this.transactionType == 0) {
+        if (this.transactionType == 0) { // freeze
             if (Util.isNull(this.amount) || this.amount <= 0) {
                 this.conditionalShowToast('wallet.amount-invalid', showToast);
                 return false;
             }
-        } else {
+        } else if (this.transactionType == 1) { // unfreeze
             if (this.hasStakeV1Resource()) { // Stake V1
               if (!this.freezePeriodExpired) {
                   this.conditionalShowToast(this.unfreezeTime, showToast);
@@ -285,6 +325,11 @@ export class TronResourcePage implements OnDestroy {
                     return false;
                 }
             }
+        } else { // withdraw
+          if (!this.withdrawAmountSun) {
+            this.conditionalShowToast(this.withdrawInfo, showToast);
+            return false;
+          }
         }
 
         let amountBigNumber = new BigNumber(this.amount || 0);
@@ -314,14 +359,16 @@ export class TronResourcePage implements OnDestroy {
         Logger.log('wallet', 'doTransaction resource type:', ' Action:', this.resourceType, this.transactionType ? 'Unfreeze' : 'freeze');
         let rawTx = null;
         try {
-            if (this.transactionType == 0) {
+            if (this.transactionType == 0) { // freeze
                 rawTx = await this.subWallet.createStakeTransaction(this.amount, this.resourceType);
-            } else {
+            } else if (this.transactionType == 1) { // unfreeze
                 if (this.unfreezeAmount > 0) {
                     rawTx = await this.subWallet.createUnStakeTransaction(this.unfreezeAmount, this.resourceType);
                 } else {
                     rawTx = await this.subWallet.createUnStakeV1Transaction(this.resourceType);
                 }
+            } else { // withdraw
+                rawTx = await this.subWallet.createWithdrawExpireUnfreezeTransaction();
             }
         } catch (err) {
             await this.parseException(err);
@@ -409,12 +456,27 @@ export class TronResourcePage implements OnDestroy {
         }
 
         let index = this.resourceType == ResourceType.BANDWIDTH ? 0 : 1;
+        let type, amount;
+        switch (this.transactionType) {
+          case 0:
+            type = TransferType.FREEZE;
+            amount = this.amount;
+          break;
+          case 1:
+            type = TransferType.UNFREEZE;
+            amount = undefined; //this.unfreezeAmount ? this.unfreezeAmount : undefined;
+          break;
+          case 2:
+            type = TransferType.TRONWITHDRAW;
+            amount = undefined; // this.withdrawAmount;
+          break;
+        }
 
         const txInfo = {
-            type: this.transactionType ? TransferType.UNFREEZE : TransferType.FREEZE,
+            type: type,
             transferFrom: this.subWallet.getCurrentReceiverAddress(),
             transferTo: this.subWallet.getCurrentReceiverAddress(),
-            amount: this.transactionType ? undefined : this.amount,
+            amount: amount,
             unfreezeBalance: this.hasStakeV1Resource() ? this.freezeBalanceInfoV1[index].frozen_balance_trx : this.unfreezeAmount,
             sendAll: false,
             precision: this.subWallet.tokenDecimals,
@@ -443,5 +505,15 @@ export class TronResourcePage implements OnDestroy {
         await sleep(500);
 
         return await this.native.popup.present();
+    }
+
+    public columnSize(): number {
+      if (this.accountInfo.unfrozenV2) {
+        return 4;
+      } else return 6;
+    }
+
+    public hasUnfrozen() {
+      return this.accountInfo.unfrozenV2;
     }
 }
