@@ -21,11 +21,27 @@
     }
 }
 
-.subwallet-row {
+.address-row {
+    border-radius: 17px;
+    padding: 7.5px 10px 7.5px 0;
+    margin-bottom: 7.5px;
+    background: var(--essentials-box-color);
+
     p {
         font-weight: 500;
-        padding: 0 !important;
+        padding: 0;
     }
+
+    ion-col {
+      display: flex;
+      align-items: flex-start;
+      padding-left: 10px;
+    }
+
+    .middle-col {
+      padding-left: 0px;
+    }
+
 }
 
 .dark-container {

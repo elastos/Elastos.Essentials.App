@@ -27,12 +27,12 @@
             </ion-col>
         </ion-row>
         <ion-row
-            class="subwallet-row ripple ion-activatable"
-            [class.dark-subwallet-row]="theme.darkMode"
+            class="address-row ripple ion-activatable"
+            [class.dark-address-row]="theme.darkMode"
             *ngFor="let address of addressList; let i = index"
             (click)="selectAddress(address)"
         >
-            <ion-col size="1" class="left-col">
+            <ion-col size="1">
                 <p>{{ i + 1 }}</p>
             </ion-col>
             <ion-col size="11" class="middle-col">

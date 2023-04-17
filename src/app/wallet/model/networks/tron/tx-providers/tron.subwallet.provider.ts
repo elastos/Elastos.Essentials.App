@@ -99,11 +99,16 @@ export class TronSubWalletProvider<SubWalletType extends TronSubWallet> extends 
                         // TODO: asset name, amount
                     break;
                     case "FreezeBalanceContract":
+                    case "FreezeBalanceV2Contract":
                         tx.value = tx.raw_data.contract[0].parameter.value.frozen_balance.toString();;
                         tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.contract_address);
                     break;
                     case "UnfreezeBalanceContract":
                         tx.value = tx.unfreeze_amount.toString();;
+                        tx.to = this.accountAddress;
+                    break;
+                    case "UnfreezeBalanceV2Contract":
+                        tx.value = tx.raw_data.contract[0].parameter.value.unfreeze_balance.toString();;
                         tx.to = this.accountAddress;
                     break;
                     default:

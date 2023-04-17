@@ -85,6 +85,7 @@ export type TronContractData = {
             resource?: number, // 0:BANDWIDTH, 1: ENERGY
             resource_type?: string, // "ENERGY", "BANDWIDTH"
             resource_value?: number, // 0:BANDWIDTH, 1: ENERGY
+            unfreeze_balance?: number, // stake v2
         },
         type_url: string //"type.googleapis.com/protocol.TransferContract"
     },

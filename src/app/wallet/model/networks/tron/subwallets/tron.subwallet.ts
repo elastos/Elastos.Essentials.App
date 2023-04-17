@@ -82,12 +82,14 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
 
         switch (transaction.direction) {
             case TransactionDirection.RECEIVED:
-                if (transaction.raw_data.contract[0].type === 'UnfreezeBalanceContract') {
+                if ((transaction.raw_data.contract[0].type === 'UnfreezeBalanceContract')
+                    || (transaction.raw_data.contract[0].type === 'UnfreezeBalanceV2Contract')) {
                     return "wallet.coin-op-unfreeze";
                 }
                 return await "wallet.coin-op-received-token";
             case TransactionDirection.SENT:
-                if (transaction.raw_data.contract[0].type === 'FreezeBalanceContract') {
+                if ((transaction.raw_data.contract[0].type === 'FreezeBalanceContract')
+                    || (transaction.raw_data.contract[0].type === 'FreezeBalanceV2Contract')) {
                     return "wallet.coin-op-freeze";
                 }
                 //AssetIssueContract
