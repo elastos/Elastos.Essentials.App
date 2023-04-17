@@ -1,7 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <ion-grid class="container ion-no-padding" *ngIf="nodesService._nodes.length; else loadingList">
+    <ion-grid class="container ion-no-padding" *ngIf="nodesService.dposList.length; else loadingList">
 
         <app-node-slider-vote *ngIf="showNode" [nodeIndex]="nodeIndex" [node]="node"
             [totalVotes]="nodesService.totalVotes" [_nodes]="nodesService.dposList">
