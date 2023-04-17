@@ -778,7 +778,10 @@ export const zh = {
         "resource-no-trx-to-unfreeze": "没有冻结的 TRX，无需解冻",
         "resource-bandwidth-to-obtained": "获得的带宽：",
         "resource-energy-to-obtained": "获得的能量：",
-        "resource-to-unfreeze-stakev1": "请先解冻 Stake V1资源：",
+        "resource-to-unfreeze-stakev1": "请先解冻 Stake V1 资源：",
+        "resource-freeze-note": "完成TRX质押后可随时解冻，解冻后需要等待14天，才可以将解冻的本金提取到自己的账户中",
+        "resource-unfreeze-note": "解冻后需要等待14天，才可以将解冻的本金提取到自己的账户中",
+        "resource-withdraw": "提现",
 
         /***************************
         * Migrator *

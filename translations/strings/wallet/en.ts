@@ -780,6 +780,9 @@ export const en = {
         "resource-bandwidth-to-obtained": "Bandwidth to be obtained:",
         "resource-energy-to-obtained": "Energy to be obtained:",
         "resource-to-unfreeze-stakev1": "Please unfreeze Stack V1 resources first：",
+        "resource-freeze-note": "After completing the TRX staking, you can unstake at any time. After unstaking, you need to wait for 14 days before you can withdraw the unstaked TRX into your account.",
+        "resource-unfreeze-note": "After unstaking, you need to wait for 14 days before you can withdraw the unstaked TRX into your account.",
+        "resource-withdraw": "Withdraw",
 
         /***************************
         * Migrator *

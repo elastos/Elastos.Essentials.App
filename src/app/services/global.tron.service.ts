@@ -286,7 +286,7 @@ export class GlobalTronGridService {
      */
     async freezeBalanceV2(amount: number, resource: ResourceType, address: string) : Promise<TronTransaction> {
       return await this.tronWeb.transactionBuilder.freezeBalanceV2(this.toSun(amount), resource, address);
-  }
+    }
 
     /**
      *
@@ -307,7 +307,16 @@ export class GlobalTronGridService {
      */
     async unfreezeBalanceV2(amount: number, resource: ResourceType, address: string) : Promise<TronTransaction> {
       return await this.tronWeb.transactionBuilder.unfreezeBalanceV2(this.toSun(amount), resource, address);
-  }
+    }
+
+    /**
+     *
+     * @param address Address of the owner of the TRX to be staked
+     * @returns
+     */
+    async withdrawExpireUnfreeze(address: string) : Promise<TronTransaction> {
+      return await this.tronWeb.transactionBuilder.withdrawExpireUnfreeze(address);
+    }
 
     //*******************
     // TRC10

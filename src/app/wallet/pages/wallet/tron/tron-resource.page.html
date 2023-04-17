@@ -38,6 +38,11 @@
                 [class.active]="transactionType == 1" (click)="setTransactionType(1)">
                 <h1>{{ 'wallet.resource-unfreeze' | translate }}</h1>
             </ion-col>
+
+            <!-- <ion-col class="title-col" size="4"
+                [class.active]="transactionType == 2" (click)="setTransactionType(2)">
+                <h1>{{ 'wallet.resource-withdraw' | translate }}</h1>
+            </ion-col> -->
         </ion-row>
 
         <ion-row class="resource-type-row">
@@ -72,6 +77,10 @@
                     </p>
                 </ion-col>
             </ion-row>
+
+            <div class="note">
+              <p> {{ 'wallet.resource-freeze-note' | translate }} </p>
+            </div>
         </ion-grid>
 
         <ion-grid *ngIf="transactionType === 1" class="freeze-container ion-no-padding ion-no-margin">
@@ -102,6 +111,10 @@
                 <p class="unfreezetime"> {{ unfreezeTime }} </p>
             </div>
           </ion-row>
+
+          <div class="note" *ngIf="!hasStakeV1Resource()">
+            <p> {{ 'wallet.resource-unfreeze-note' | translate }} </p>
+          </div>
         </ion-grid>
 
         <ion-row class="btn-container">
