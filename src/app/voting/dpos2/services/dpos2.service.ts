@@ -471,6 +471,18 @@ export class DPoS2Service {
                 node.imageUrl = this.logoUrl + 'Sunny_Feng_Han_min.png';
                 node.Location = 'United States';
                 break;
+            case 'Enter Elastos':
+                node.imageUrl = 'assets/dposvoting/supernodes/enterelastos.png';
+                node.Location = 'Germany';
+                break;
+            case 'EverlastingOS':
+                node.imageUrl = 'assets/dposvoting/supernodes/everlastingos.png';
+                node.Location = 'Netherlands';
+                break;
+            case 'SmartWeb_Nenchy/能奇':
+                node.imageUrl = 'assets/dposvoting/supernodes/nenchy.jpeg';
+                node.Location = 'Slovenia';
+                break;
             case 'Elephant Wallet':
                 node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
                 node.Location = 'Singapore';
