@@ -483,6 +483,14 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/nenchy.jpeg';
                 node.Location = 'Slovenia';
                 break;
+            case "MButcho's Guard":
+                node.imageUrl = 'assets/dposvoting/supernodes/mbutchos-guard.jpg';
+                node.Location = 'Slovenia';
+                break;
+            case "Elastos Digerati - 亦来云视角":
+                node.imageUrl = 'assets/dposvoting/supernodes/digerati.png';
+                node.Location = 'Philippines';
+                break;
             case 'Elephant Wallet':
                 node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
                 node.Location = 'Singapore';
