@@ -422,6 +422,12 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     return (<MainchainSubWallet>this.sdkSubWallet).createUnstakeTransaction(inputs, payload, fee, memo);
   }
 
+  public createMintNFTTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, fee: string): EncodedTx {
+    // TODO: Do not support.
+    return null;
+    // return (<MainchainSubWallet>this.sdkSubWallet).createMintNFTTransaction(inputs, payload, fee);
+  }
+
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: json, transfer: Transfer): Promise<SignTransactionResult> {
     let txResult = await super.signTransaction(subWallet, rawTransaction, transfer);
 
