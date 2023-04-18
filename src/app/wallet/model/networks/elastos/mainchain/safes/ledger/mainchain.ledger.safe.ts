@@ -1,8 +1,8 @@
 import type {
-    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-    CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
-    EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
-    ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
+  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CreateNFTInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
+  EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
+  ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
 import { ELATransactionCoder } from "src/app/helpers/ela/ela.transaction.coder";
 import { ELATransactionFactory } from "src/app/helpers/ela/ela.transaction.factory";
@@ -384,6 +384,11 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
   }
 
   public createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx {
+    // TODO: Do not support.
+    return null;
+  }
+
+  public createMintNFTTransaction(inputs: UTXOInput[], payload: CreateNFTInfo, fee: string, memo: string): EncodedTx {
     // TODO: Do not support.
     return null;
   }

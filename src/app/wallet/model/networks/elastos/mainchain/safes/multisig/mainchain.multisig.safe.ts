@@ -3,6 +3,7 @@ import type {
   CRCouncilMemberClaimNodeInfo,
   CRInfoJson,
   CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo,
+  CreateNFTInfo,
   DPoSV2ClaimRewardInfo, EncodedTx,
   NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo,
   RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
@@ -379,6 +380,10 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
 
   public createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx {
     return this.elaSubWallet.createUnstakeTransaction(inputs, payload, fee, memo);
+  }
+
+  public createMintNFTTransaction(inputs: UTXOInput[], payload: CreateNFTInfo, fee: string, memo: string): EncodedTx {
+    return this.elaSubWallet.createMintNFTTransaction(inputs, payload, fee, memo);
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTx: JSONObject, transfer: Transfer): Promise<SignTransactionResult> {

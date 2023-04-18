@@ -86,6 +86,10 @@ export class TxConfirmComponent implements OnInit {
 
             this.unFreezeBalance = this.txInfo.unfreezeBalance;
         break;
+        case TransferType.CLAIM_NFT:
+            this.txHeader = this.translate.instant('wallet.claim-bpos-nft-transaction-type');
+            this.txIcon = '/assets/wallet/tx/transfer.svg';
+        break;
         default:
             this.txHeader = this.translate.instant('wallet.send-transaction-type');
             this.txIcon = '/assets/wallet/tx/send.svg';

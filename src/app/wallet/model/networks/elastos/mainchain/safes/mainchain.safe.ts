@@ -1,6 +1,6 @@
 import type {
   CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson,
+  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CreateNFTInfo, CRInfoJson,
   CRInfoPayload, DPoSV2ClaimRewardInfo, EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
   ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnregisterCRPayload, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
@@ -99,4 +99,6 @@ export interface ElastosMainChainSafe {
 
   // Consolidate: If there are too many utxos, the transaction may fail to be sent.
   getMaxUtxoConsolidateCount(): number;
+  // BPoS NFT
+  createMintNFTTransaction(inputs: UTXOInput[], payload: CreateNFTInfo, fee: string, memo: string): EncodedTx;
 }

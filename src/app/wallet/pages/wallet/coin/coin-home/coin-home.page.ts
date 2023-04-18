@@ -354,7 +354,7 @@ export class CoinHomePage implements OnInit {
             this.canFetchMore = false;
             return;
         }
-        Logger.log('wallet', "Got all transactions: ", transactions.length, this.subWallet.masterWallet.name);
+        Logger.log('wallet', "Got all transactions: ", transactions.length, transactions, this.subWallet.masterWallet.name);
 
         if (this.subWallet.canFetchMoreTransactions()) {
             this.canFetchMore = true;

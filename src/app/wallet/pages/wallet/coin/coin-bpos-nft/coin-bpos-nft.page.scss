@@ -1,0 +1,41 @@
+@import "src/app/wallet/root.scss";
+
+.row-list {
+  margin: 10px;
+
+  border-bottom: 1px solid var(--essentials-border-separator-color);
+
+  .index {
+    display: flex;
+    align-items: center;
+  }
+}
+
+.update-btn {
+  height: 100%;
+  font-size: 13px;
+  font-weight: 400;
+  padding-right: 10px;
+
+  display: flex;
+  text-align: right;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-container {
+  margin-top: 66%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  p {
+      opacity: 0.7;
+      margin: 0;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.38;
+      letter-spacing: 1.6px;
+  }
+}

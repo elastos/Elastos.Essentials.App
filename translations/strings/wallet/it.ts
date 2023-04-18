@@ -253,6 +253,7 @@ export const it = {
         "confirm-transaction-title": "Conferma transazione",
         "transfer-transaction-type": "Trasferimento di denaro",
         "send-transaction-type": "Invia denaro",
+        "bpos-nft-title-transaction-type": "Claim BPoS NFT",
 
         /***********************************
         * Transaction Successful Component *
@@ -396,6 +397,8 @@ export const it = {
         "wallet-settings-multisig-extended-public-keys-title": "Multi-signature wallet extension public key information",
         "wallet-settings-multisig-extended-public-keys-subtitle": "Display extension public keys for all signers",
         "wallet-settings-switch-address-type-title": "Switch address type",
+        "wallet-settings-bpos-nft": "BPoS NFT",
+        "wallet-settings-bpos-nft-subtitle": "Check if there are any BPoS NFTs that can be claimed",
 
         /************************
         * Wallet Edit Name Page *
@@ -496,6 +499,13 @@ export const it = {
         'nft-no-properties-yet': 'La visualizzazione delle proprietà sarà presto disponibile.',
         'nft-assets-owned': 'NFT posseduti',
         'nft-attributes': 'Attributes',
+
+        /************
+        * Claim BPoS NFT pages *
+        *************/
+        'bpos-nft-title': 'Claim BPoS NFT',
+        'bpos-nft-claim': 'Claim',
+        'bpos-nft-no-nft': 'No BPoS NFT available to claim',
 
         /********************************************** Intent Screens ***********************************************/
 

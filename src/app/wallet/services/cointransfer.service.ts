@@ -73,6 +73,7 @@ export enum TransferType {
     FREEZE = 6,
     UNFREEZE = 7,
     TRONWITHDRAW = 8,
+    CLAIM_NFT = 9
 }
 export class ContractPayloadParam {
     data: string = null;

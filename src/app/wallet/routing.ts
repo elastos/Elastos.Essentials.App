@@ -58,6 +58,7 @@ const routes: Routes = [
     { path: 'coin-earn', loadChildren: () => import('./pages/wallet/coin/coin-earn/module').then(m => m.CoinEarnModule) },
     { path: 'coin-swap', loadChildren: () => import('./pages/wallet/coin/coin-swap/module').then(m => m.CoinSwapModule) },
     { path: 'coin-bridge', loadChildren: () => import('./pages/wallet/coin/coin-bridge/module').then(m => m.CoinBridgeModule) },
+    { path: 'coin-bpos-nft', loadChildren: () => import('./pages/wallet/coin/coin-bpos-nft/module').then(m => m.CoinBPoSNFTModule) },
 
     // Intents
     { path: 'intents', loadChildren: () => import('./pages/intents/module').then(m => m.IntentsModule) },

@@ -1,6 +1,6 @@
 import type {
   CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
+  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CreateNFTInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
   EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
   ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnregisterCRPayload, UnstakeInfo, UTXOInput, VoteContentInfo,
   VotesContentInfo,
@@ -1831,11 +1831,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     // BPoS NFT
-    // public async createMintNFTTransaction(payload: PayloadStakeInfo): Promise<EncodedTx> {
-    //     let au = await this.getAvailableUtxo(20000);
-    //     if (!au.utxo) await this.throwUtxoNotEnoughError();
+    public async createMintNFTTransaction(payload: CreateNFTInfo, memo = ""): Promise<EncodedTx> {
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
 
-    //     return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000');
-    // }
-
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000', 'MintNFT');
+    }
 }
