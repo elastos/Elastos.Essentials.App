@@ -309,6 +309,6 @@
     align-items: center;
     justify-content: center;
 
-    color: white;
-    background-color: #007bff;
+    color: var(--ion-text-color);
+    background-color: var(--essentials-box-color)
 }
