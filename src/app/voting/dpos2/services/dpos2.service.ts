@@ -500,6 +500,10 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/wildstrawberryatlas.jpg';
                 node.Location = 'United States';
                 break;
+            case "Godzilla_Germany":
+                node.imageUrl = 'assets/dposvoting/supernodes/godzilla-germany.jpg';
+                node.Location = 'Germany';
+                break;
             case 'Elephant Wallet':
                 node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
                 node.Location = 'Singapore';
