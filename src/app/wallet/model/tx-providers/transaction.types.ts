@@ -186,6 +186,8 @@ export type ElastosTransaction = GenericTransaction & {
   type: TransactionDirection;
   value: string;
   votecategory: VoteCategory;
+
+  createtime?: number; // Set creation time for pending tx, remove it from cache if it is not confirmed for more than an hour.
 }
 
 export type PaginatedTransactions<T extends GenericTransaction> = {

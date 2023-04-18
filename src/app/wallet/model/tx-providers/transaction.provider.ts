@@ -185,6 +185,10 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     return this.getSubWalletTransactionProvider(subWallet).saveTransactions(transactons);
   }
 
+  public removeTransactionsFromCache(subWallet: AnySubWallet, transactons: TransactionType[]) {
+    return this.getSubWalletTransactionProvider(subWallet).removeTransactionsFromCache(transactons);
+  }
+
   /**
    * Subject that informs listeners whenever the transactions list gets updated.
    */

@@ -1,10 +1,10 @@
 import type {
-    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-    CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
-    EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
-    ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnregisterCRPayload, UnstakeInfo, UTXOInput, VoteContentInfo,
-    VotesContentInfo,
-    VotingInfo
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
+  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
+  EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
+  ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnregisterCRPayload, UnstakeInfo, UTXOInput, VoteContentInfo,
+  VotesContentInfo,
+  VotingInfo
 } from '@elastosfoundation/wallet-js-sdk';
 import { RenewalVotesContentInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/Voting';
 import { TranslateService } from '@ngx-translate/core';
@@ -619,6 +619,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         let transaction = await this.networkWallet.getTransactionDiscoveryProvider().getTransactions(this);
         let pendingTransactions = [];
+        let invalidPendingTransactions = [];
+        let currentTime = moment().unix();
+
         for (let i = 0, len = transaction.length; i < len; i++) {
             if (transaction[i].Status !== TransactionStatus.CONFIRMED) {
                 pendingTransactions.push(transaction[i]);
@@ -644,6 +647,22 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 tx.Status = TransactionStatus.CONFIRMED;
                 needUpdate = true;
             }
+        }
+
+        let onehour = 3600;
+        for (let i = pendingTransactions.length - 1; i >= 0; i--) {
+          if (pendingTransactions[i].Status !== TransactionStatus.CONFIRMED) {
+              // Not been confirmed for more than an hour
+              if (!pendingTransactions[i].createtime || ((pendingTransactions[i].createtime + onehour) < currentTime)) {
+                invalidPendingTransactions.push(pendingTransactions[i]);
+                pendingTransactions.splice(i)
+              }
+          }
+        }
+
+        if (invalidPendingTransactions.length > 0) {
+            Logger.log('wallet', 'remove invalid pending transaction:', invalidPendingTransactions)
+            await this.networkWallet.getTransactionDiscoveryProvider().removeTransactionsFromCache(this, invalidPendingTransactions);
         }
 
         if (needUpdate) {
@@ -1736,4 +1755,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnstakeTransaction(au.utxo, payload, '10000', memo);
     }
+
+    // BPoS NFT
+    // public async createMintNFTTransaction(payload: PayloadStakeInfo): Promise<EncodedTx> {
+    //     let au = await this.getAvailableUtxo(20000);
+    //     if (!au.utxo) return;
+
+    //     return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000');
+    // }
 }

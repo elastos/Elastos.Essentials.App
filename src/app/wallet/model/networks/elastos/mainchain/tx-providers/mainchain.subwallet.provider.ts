@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Logger } from "src/app/logger";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { StandardMultiSigMasterWallet } from "src/app/wallet/model/masterwallets/standard.multisig.masterwallet";
@@ -258,6 +259,13 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
 
     // Cleanup offline transactions that are found on chain
     await this.cleanupOfflineTransactions(transactions);
+
+    // Set creation time, remove it from cache if it is not confirmed for more than an hour.
+    transactions.forEach ( t => {
+        if (t.Status != TransactionStatus.CONFIRMED) {
+            t.createtime = moment().unix();
+        }
+    })
 
     await this.saveTransactions(transactions);
   }
