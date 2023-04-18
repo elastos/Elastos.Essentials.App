@@ -485,7 +485,7 @@ export class DPoS2Service {
                 node.Location = 'Slovenia';
                 break;
             case "MButcho's Guard":
-                node.imageUrl = 'assets/dposvoting/supernodes/mbutchos-guard.jpg';
+                node.imageUrl = 'assets/dposvoting/supernodes/mbutchos-guard.png';
                 node.Location = 'Slovenia';
                 break;
             case "Elastos Digerati - 亦来云视角":
