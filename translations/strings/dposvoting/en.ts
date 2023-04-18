@@ -107,6 +107,7 @@ export const en = {
         //BPoS
         'stake': 'Stake',
         'stake-until': 'Stake until',
+        'stake-days': 'Max pledge duration: {{ days }} days',
         'expired-in': 'Expired in {{ time }}',
         'about-to-expire': 'About to expire',
         'my-votes': 'My votes',

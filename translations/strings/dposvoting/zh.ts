@@ -107,6 +107,7 @@ export const zh = {
         //BPoS
         'stake': '质押',
         'stake-until': '质押至',
+        'stake-days': '质押期限： {{ days }} 天',
         'expired-in': '将在{{ time }}后过期',
         'about-to-expire': '即将过期',
         'my-votes': '我的投票',

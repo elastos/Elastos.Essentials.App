@@ -58,8 +58,8 @@
                                             | translate }}</p>
                                     </ion-col>
                                 </ion-row>
-                                <p *ngIf="node.stakeuntilDate">
-                                    {{ 'dposvoting.stake-until' | translate }}: {{ node.stakeuntilDate }}
+                                <p *ngIf="node.stakeDays">
+                                    {{ 'dposvoting.stake-days' | translate : { days: node.stakeDays } }}
                                 </p>
                                 <p *ngIf="node.stakeuntilExpiredIn" class="expired-in">
                                     {{ 'dposvoting.expired-in' | translate : { time: node.stakeuntilExpiredIn } }}
