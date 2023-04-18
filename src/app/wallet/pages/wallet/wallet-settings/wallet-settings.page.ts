@@ -16,6 +16,7 @@ import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { StandardMultiSigMasterWallet } from 'src/app/wallet/model/masterwallets/standard.multisig.masterwallet';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { StandardBTCNetworkWallet } from 'src/app/wallet/model/networks/btc/networkwallets/standard/standard.btc.networkwallet';
+import { ElastosSmartChainNetworkBase } from 'src/app/wallet/model/networks/elastos/evms/esc/network/esc.networks';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { Utxo } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -221,6 +222,21 @@ export class WalletSettingsPage implements OnInit {
                 subtitle: this.translate.instant("wallet.wallet-settings-consolidate-utxos-subtitle"),
                 icon: '/assets/wallet/settings/consolidate.svg',
                 iconDarkmode: '/assets/wallet/settings/darkmode/consolidate.svg'
+            });
+        }
+
+        if (this.networkWallet && (this.networkWallet.network.key === ElastosSmartChainNetworkBase.NETWORK_KEY)) {
+            this.settings.push({
+                type: 'wallet-bpos-nft',
+                navCallback: () => {
+                    this.native.go("/wallet/coin-bpos-nft", {
+                        masterWalletId: this.masterWalletId
+                    });
+                },
+                title: this.translate.instant("wallet.wallet-settings-bpos-nft"),
+                subtitle: this.translate.instant("wallet.wallet-settings-bpos-nft-subtitle"),
+                icon: '/assets/wallet/tx/send-nft.svg',
+                iconDarkmode: '/assets/wallet/tx/send-nft.svg',
             });
         }
     }

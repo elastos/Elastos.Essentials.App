@@ -23,6 +23,7 @@ import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { ElastosStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/networkwallets/standard/elastos.networkwallet';
+import { RawTransactionPublishResult } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { StandardCoinName } from '../../wallet/model/coin';
 import { WalletService } from '../../wallet/services/wallet.service';
@@ -206,7 +207,7 @@ export class VoteService implements GlobalService {
         this.clearRoute();
     }
 
-    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<boolean> {
+    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<RawTransactionPublishResult> {
         Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
 
         if (!rawTx) {
@@ -237,9 +238,9 @@ export class VoteService implements GlobalService {
             else {
                 void this.nav.navigateBack();
             }
-            return true;
+            return result;
         }
-        return false;
+        return null;
     }
 
     public toastSuccessfully(subject: string) {

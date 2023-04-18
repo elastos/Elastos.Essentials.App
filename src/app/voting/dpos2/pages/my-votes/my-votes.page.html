@@ -15,13 +15,13 @@
                 <ion-item *ngFor="let node of votes; index as i">
                     <ion-grid class="ion-no-padding">
                         <ion-row class="ion-no-padding row-list">
-                            <ion-col size="1" class="rank-container ion-no-padding">
+                            <ion-col size="0.5" class="rank-container ion-no-padding">
                                 {{ i + 1 }}
                             </ion-col>
                             <ion-col size="2" class="img-container">
                                 <img-svg-fallback class="img" [src]="node.imageUrl" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                                                         </ion-col>
-                            <ion-col size="7" class="label-col">
+                            <ion-col size="6" class="label-col">
                                 <h4>{{ node.nickname }}</h4>
                                 <p>
                                     <!-- <span [class.inactive]="node.state !== 'Active'">
@@ -40,8 +40,11 @@
                                     {{ node.stakeuntilAboutExpire }}
                                 </p>
                             </ion-col>
-                            <ion-col size="2" (click)="showUpdateNode(i, node)">
+                            <ion-col size="1.75" (click)="showUpdateNode(i, node)">
                                 <ebutton class="update-btn" [disabled]='(node.locktime - node.blockheight) >= 720000' [title]="'common.update' | translate"></ebutton>
+                            </ion-col>
+                            <ion-col size="1.75" (click)="mintBPosNFT(i, node)">
+                                <ebutton class="update-btn" [title]="'Mint' | translate"></ebutton>
                             </ion-col>
                         </ion-row>
                     </ion-grid>
