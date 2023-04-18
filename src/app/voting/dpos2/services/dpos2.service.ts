@@ -506,6 +506,10 @@ export class DPoS2Service {
                 break;
             case "tyro":
                 node.imageUrl = 'assets/dposvoting/supernodes/tyro.jpg';
+                node.Location = 'China';
+                break;
+            case "Plutela":
+                node.imageUrl = 'assets/dposvoting/supernodes/plutela.jpg';
                 node.Location = 'Germany';
                 break;
             case 'Elephant Wallet':
