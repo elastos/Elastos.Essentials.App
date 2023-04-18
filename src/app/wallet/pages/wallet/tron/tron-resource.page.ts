@@ -272,7 +272,7 @@ export class TronResourcePage implements OnDestroy {
       this.accountInfo.unfrozenV2.forEach( f => {
         if (currentTimesamp > f.unfreeze_expire_time) {
           this.withdrawAmountSun += f.unfreeze_amount;
-        } else if (latestWithdrawalTime < f.unfreeze_expire_time) {
+        } else if ((0 == latestWithdrawalTime) || (latestWithdrawalTime > f.unfreeze_expire_time)) {
           latestWithdrawalTime = f.unfreeze_expire_time;
           this.withdrawTime = GlobalTranslationService.instance.translateInstant("wallet.resource-withdraw-time") + WalletUtil.getDisplayDate(f.unfreeze_expire_time)
               + '  ( ' + GlobalTronGridService.instance.fromSun(f.unfreeze_amount).toString() + ' TRX)';
