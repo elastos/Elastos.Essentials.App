@@ -1,0 +1,20 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+
+    <ion-row class="ion-no-padding row-list" *ngFor="let node of nfts; index as i">
+        <ion-col size="0.5" class="index">
+            <p>{{ i + 1 }}</p>
+        </ion-col>
+        <ion-col size="8.5">
+            <p>{{ node }}</p>
+        </ion-col>
+        <ion-col size="3" (click)="claimBPosNFT(i, node)">
+            <ebutton class="update-btn" [disabled]='isExecuting' [title]="'wallet.bpos-nft-claim' | translate"></ebutton>
+        </ion-col>
+    </ion-row>
+
+    <ion-row class="empty-container" *ngIf="nfts.length == 0">
+        <p> {{ 'wallet.bpos-nft-no-nft' | translate }}</p>
+    </ion-row>
+
+</ion-content>
