@@ -98,6 +98,26 @@ export abstract class SubWalletTransactionProvider<SubWalletType extends AnySubW
     }
   }
 
+  public async removeTransactionsFromCache(transactions: TransactionType[]): Promise<void> {
+    if (!transactions)
+      return;
+
+    let modifiedCaches: Map<string, TimeBasedPersistentCache<any>> = new Map();
+
+    for (let i = 0; i < transactions.length; i++) {
+      let providerTransactionInfo = this.getProviderTransactionInfo(transactions[i]);
+
+      let cache = await this.getCache(providerTransactionInfo.cacheKey);
+      cache.remove(providerTransactionInfo.cacheEntryKey);
+
+      modifiedCaches.set(providerTransactionInfo.cacheKey, cache); // Same key, same cache, but we want to save each cache only once
+    }
+
+    for (let cache of modifiedCaches.values()) {
+      await cache.save();
+    }
+  }
+
   /**
    * Tells whether there are more transactions to fetch after the ones that we already
    * have in the cache right now.
