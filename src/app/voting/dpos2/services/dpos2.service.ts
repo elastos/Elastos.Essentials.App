@@ -466,6 +466,7 @@ export class DPoS2Service {
     }
 
     getNodeIcon(node: DPoS2Node) {
+        // Logger.warn(App.DPOS2, 'Node', node);
         switch (node.nickname) {
             case '韩锋/SunnyFengHan':
                 node.imageUrl = this.logoUrl + 'Sunny_Feng_Han_min.png';
@@ -494,6 +495,10 @@ export class DPoS2Service {
             case "sheepshaun":
                 node.imageUrl = 'assets/dposvoting/supernodes/shaun.jpg';
                 node.Location = 'Germany';
+                break;
+            case "Wild Strawberry Atlas":
+                node.imageUrl = 'assets/dposvoting/supernodes/wildstrawberryatlas.jpg';
+                node.Location = 'United States';
                 break;
             case 'Elephant Wallet':
                 node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
