@@ -289,8 +289,8 @@ export class DPoS2Service {
                             }
                         }
 
-                        // //get votes precentage
-                        // node.myVotesPrecentage = 0;
+                        // //get votes percentage
+                        // node.myVotesPercentage = 0;
                         // if (this.stakeService.votesRight.totalVotesRight > 0) {
                         //     let list = this.stakeService.votesRight.voteInfos[VoteType.DPoSV2].list;
                         //     let votes = 0;
@@ -299,13 +299,13 @@ export class DPoS2Service {
                         //             votes += parseFloat(list[i].votes);
                         //         }
                         //     }
-                        //     node.myVotesPrecentage = this.uxService.getPercentage(votes, this.stakeService.votesRight.totalVotesRight);
+                        //     node.myVotesPercentage = this.uxService.getPercentage(votes, this.stakeService.votesRight.totalVotesRight);
                         // }
 
                         node.dposv2votesNumber = parseFloat(node.dposv2votes);
 
-                        //get node precentage
-                        node.votesPrecentage = this.uxService.getPercentage(node.dposv2votesNumber, this.totalVotes);
+                        //get node percentage
+                        node.votesPercentage = this.uxService.getPercentage(node.dposv2votesNumber, this.totalVotes);
 
                         node.checkDisabled = node.state === 'Inactive' || until < this.minStakeDays * 720;
 
@@ -502,6 +502,10 @@ export class DPoS2Service {
                 break;
             case "Godzilla_Germany":
                 node.imageUrl = 'assets/dposvoting/supernodes/godzilla-germany.jpg';
+                node.Location = 'Germany';
+                break;
+            case "tyro":
+                node.imageUrl = 'assets/dposvoting/supernodes/tyro.jpg';
                 node.Location = 'Germany';
                 break;
             case 'Elephant Wallet':

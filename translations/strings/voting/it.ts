@@ -14,6 +14,7 @@ export const it = {
         'vote': 'Vote',
         'votes': 'Votes',
         'of-votes': 'of Votes',
+        'vote-rights': 'vote rights',
         'voting-ends-in': 'Voting ends in',
         'vote-going': 'Vote is on going!',
         'vote-invalid': "Votes is invalid",
