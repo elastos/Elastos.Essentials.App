@@ -298,6 +298,10 @@ export class ListPage implements OnInit {
             event.target.complete();
         }, 500);
     }
+
+    showIntegerPart(value: number) {
+        return Math.ceil(value);
+    }
 }
 
 

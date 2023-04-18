@@ -73,4 +73,8 @@ export class SearchPage implements OnInit {
     return() {
         this.showNode = false;
     }
+
+    showIntegerPart(value: number) {
+        return Math.ceil(value);
+    }
 }

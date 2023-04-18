@@ -23,7 +23,7 @@
                         <p>
                             <!-- <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
                             node.location | translate }} •  -->
-                            <span class="votes">{{ getVotesPercentage(node) }}%</span> {{ 'voting.of-votes' | translate }}
+                            <span class="votes">{{ showIntegerPart(node.dposv2votesNumber) }}</span> {{ 'voting.vote-rights' | translate }}  ({{ showIntegerPart(node.votesPercentage) }}%)
                         </p>
                         <p class="stake-until">{{ 'dposvoting.stake' | translate }}</p>
                         <ion-row>

@@ -317,4 +317,8 @@ export class VotePage implements OnInit, OnDestroy {
     stakeMore() {
         void this.globalNav.navigateTo(App.STAKING, "/staking/stake");
     }
+
+    showIntegerPart(value: number) {
+        return Math.ceil(value);
+    }
 }
