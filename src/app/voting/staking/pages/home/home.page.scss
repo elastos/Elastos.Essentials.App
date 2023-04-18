@@ -5,7 +5,6 @@
   padding: 5px 10px;
   margin-bottom: 32px;
   background-color: var(--essentials-box-color);
-  border: 1px solid var(--essentials-border-separator-color);
 
   ion-col {
     display: flex;
@@ -55,12 +54,12 @@
     margin-bottom: 32px;
     padding: 20px 13px;
     overflow: hidden;
-    background-color: #436dda;
+    background: linear-gradient(15deg, var(--essentials-box-color) 40%, var(--ion-text-color) 200%);
     // background-image: url("/assets/staking/images/bg.svg");
     // background-repeat: no-repeat;
     // background-position: 206px 0;
     // background-size: 160px 63px;
-    color: white;
+    color: var(--ion-text-color);
 
     #bg-img {
         position: absolute;
@@ -68,7 +67,7 @@
         right: 0;
         width: 160px;
         height: 63px;
-        opacity: 0.5;
+        opacity: 0.3;
     }
 
     .card-title-row {
