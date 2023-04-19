@@ -492,12 +492,24 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/digerati.png';
                 node.Location = 'Philippines';
                 break;
+            case "Elastos SVK":
+                node.imageUrl = 'assets/dposvoting/supernodes/elastos-svk.jpg';
+                node.Location = 'Germany';
+                break;
             case "sheepshaun":
                 node.imageUrl = 'assets/dposvoting/supernodes/shaun.jpg';
                 node.Location = 'Germany';
                 break;
             case "Wild Strawberry Atlas":
                 node.imageUrl = 'assets/dposvoting/supernodes/wildstrawberryatlas.jpg';
+                node.Location = 'United States';
+                break;
+            case "Wild Strawberry Calypso":
+                node.imageUrl = 'assets/dposvoting/supernodes/calipso.jpg';
+                node.Location = 'United States';
+                break;
+            case "Wild Strawberry Apollo":
+                node.imageUrl = 'assets/dposvoting/supernodes/apollo.jpg';
                 node.Location = 'United States';
                 break;
             case "Godzilla_Germany":
