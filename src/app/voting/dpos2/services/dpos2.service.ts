@@ -492,9 +492,17 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/digerati.png';
                 node.Location = 'Philippines';
                 break;
+            case "Elastos Scotland":
+                node.imageUrl = 'assets/dposvoting/supernodes/elastos-scotland.jpg';
+                node.Location = 'Scotland';
+                break;
             case "Elastos SVK":
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos-svk.jpg';
                 node.Location = 'Germany';
+                break;
+            case "RealWeb3":
+                node.imageUrl = 'assets/dposvoting/supernodes/RealWeb3.jpg';
+                node.Location = 'Scotland';
                 break;
             case "sheepshaun":
                 node.imageUrl = 'assets/dposvoting/supernodes/shaun.jpg';
@@ -522,6 +530,10 @@ export class DPoS2Service {
                 break;
             case "Plutela":
                 node.imageUrl = 'assets/dposvoting/supernodes/plutela.jpg';
+                node.Location = 'Germany';
+                break;
+            case "相信ELASTOS":
+                node.imageUrl = 'assets/dposvoting/supernodes/elastos.jpg';
                 node.Location = 'Germany';
                 break;
             case 'Elephant Wallet':
