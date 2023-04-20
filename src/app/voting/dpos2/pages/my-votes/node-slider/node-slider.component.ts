@@ -82,21 +82,21 @@ export class NodeSliderComponent implements OnInit {
             return;
         }
 
-        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-        let locktime = this.currentHeight + node.inputStakeDays * 720;
-        if (locktime > node.stakeuntil) {
-            this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
-            return;
-        }
-
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
-
         this.signingAndTransacting = true;
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
         try {
+            this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+            let locktime = this.currentHeight + node.inputStakeDays * 720;
+            if (locktime > node.stakeuntil) {
+                this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
+                return;
+            }
+
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                return;
+            }
+
             let votes = Util.accMul(parseFloat(node.votes), Config.SELA).toString();
             let voteContentInfo: RenewalVotesContentInfo = {
                 ReferKey: node.referkey,
@@ -118,9 +118,8 @@ export class NodeSliderComponent implements OnInit {
                 payload,
                 '', //memo
             );
-
+            // Logger.log(App.DPOS2, "rawTx:", rawTx);
             await this.globalNative.hideLoading();
-            Logger.log(App.DPOS2, "rawTx:", rawTx);
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
             if (ret) {
@@ -128,14 +127,14 @@ export class NodeSliderComponent implements OnInit {
                 this.voteService.toastSuccessfully('dposvoting.update-vote');
                 this.buttonClick.emit(node.index);
             }
-
         }
         catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-        this.signingAndTransacting = false;
-
+        finally {
+            await this.globalNative.hideLoading();
+            this.signingAndTransacting = false;
+        }
     }
 
     public checkInputDays(node: any): boolean {
