@@ -500,6 +500,10 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos-svk.jpg';
                 node.Location = 'Germany';
                 break;
+            case "ELA巅峰见":
+                node.imageUrl = 'assets/dposvoting/supernodes/ela-peak.png';
+                node.Location = 'China';
+                break;
             case "RealWeb3":
                 node.imageUrl = 'assets/dposvoting/supernodes/RealWeb3.jpg';
                 node.Location = 'Scotland';
@@ -535,6 +539,10 @@ export class DPoS2Service {
             case "相信ELASTOS":
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos.jpg';
                 node.Location = 'Germany';
+                break;
+            case "ZCO.CO":
+                node.imageUrl = 'assets/dposvoting/supernodes/ZCO.CO.png';
+                node.Location = 'Hong Kong';
                 break;
             case 'Elephant Wallet':
                 node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';

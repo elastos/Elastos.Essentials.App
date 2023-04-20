@@ -188,6 +188,8 @@
                     height: 40px;
                     object-fit: cover;
                     overflow: hidden;
+                    display: flex;
+                    align-items: center;
                 }
 
                 ion-avatar {
