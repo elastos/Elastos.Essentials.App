@@ -70,8 +70,6 @@ export class VotePage implements OnInit, OnDestroy {
     async ionViewWillEnter() {
         this.dataFetched = false;
 
-        //this.titleBar.setBackgroundColor("#732CCE");
-        //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('dposvoting.dpos2-voting'));
         if (this.stakeService.votesRight.totalVotesRight > 0) {
             this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
@@ -95,8 +93,6 @@ export class VotePage implements OnInit, OnDestroy {
 
         this.getVotedCount();
         this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-
-        //console.log("this.nodeVotes", this.nodeVotes)
 
         Logger.log(App.DPOS2, 'Total stake remain ELA', this.totalEla);
 
@@ -131,53 +127,63 @@ export class VotePage implements OnInit, OnDestroy {
 
     /****************** Cast Votes *******************/
     async cast() {
-        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-        let votedCandidates = [];
-        for (const node of this.selectedNodes) {
-            if (node.userVotes > 0) {
-                if (node.userStakeDays < 10) {
-                    this.globalNative.genericToast('dposvoting.stake-days-less-than-10');
-                    return;
-                }
+        this.signingAndTransacting = true;
 
-                var userStakeDays = node.userStakeDays;
-                if (this.voteService.isMuiltWallet()) {
-                    userStakeDays++;
-                }
-                let locktime = this.currentHeight + userStakeDays * 720 + 5; // Add 10 minutes for time buffer
-                if (locktime > node.stakeuntil) {
-                    this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
-                    return;
-                }
+        try {
+            this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+            let votedCandidates = [];
+            for (const node of this.selectedNodes) {
+                if (node.userVotes > 0) {
+                    if (node.userStakeDays < 10) {
+                        this.globalNative.genericToast('dposvoting.stake-days-less-than-10');
+                        return;
+                    }
 
-                // let userVotes = node.userVotes * 100000000;
-                let userVotes = Util.accMul(node.userVotes, Config.SELA);
-                var userStakeDays = node.userStakeDays;
-                if (this.voteService.isMuiltWallet()) {
-                    userStakeDays++;
+                    var userStakeDays = node.userStakeDays;
+                    if (this.voteService.isMuiltWallet()) {
+                        userStakeDays++;
+                    }
+                    let locktime = this.currentHeight + userStakeDays * 720 + 5; // Add 10 minutes for time buffer
+                    if (locktime > node.stakeuntil) {
+                        this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
+                        return;
+                    }
+
+                    // let userVotes = node.userVotes * 100000000;
+                    let userVotes = Util.accMul(node.userVotes, Config.SELA);
+                    var userStakeDays = node.userStakeDays;
+                    if (this.voteService.isMuiltWallet()) {
+                        userStakeDays++;
+                    }
+                    let _vote = {
+                        Candidate: node.ownerpublickey,
+                        Votes: userVotes,
+                        Locktime: locktime };
+                    votedCandidates.push(_vote);
                 }
-                let _vote = {
-                    Candidate: node.ownerpublickey,
-                    Votes: userVotes,
-                    Locktime: locktime };
-                votedCandidates.push(_vote);
+                else {
+                    node.userVotes = 0;
+                }
+            };
+
+            if (Object.keys(votedCandidates).length === 0) {
+                void this.globalNative.genericToast('dposvoting.pledge-some-votes-to-nodes');
+            }
+            else if (this.votedEla > this.totalEla) {
+                void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
             }
             else {
-                node.userVotes = 0;
+                Logger.log(App.DPOS2, votedCandidates);
+                await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.selectedNodes);
+                this.votesCasted = false;
+                await this.createVoteCRTransaction(votedCandidates);
             }
-        };
-
-        if (Object.keys(votedCandidates).length === 0) {
-            void this.globalNative.genericToast('dposvoting.pledge-some-votes-to-nodes');
         }
-        else if (this.votedEla > this.totalEla) {
-            void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
+        catch (e) {
+            Logger.warn(App.DPOS2, 'Vote exception:', e)
         }
-        else {
-            Logger.log(App.DPOS2, votedCandidates);
-            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.selectedNodes);
-            this.votesCasted = false;
-            await this.createVoteCRTransaction(votedCandidates);
+        finally {
+            this.signingAndTransacting = false;
         }
     }
 
@@ -265,12 +271,10 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     async createVoteCRTransaction(votes: any) {
-
         if (!await this.voteService.checkWalletAvailableForVote()) {
             return;
         }
 
-        this.signingAndTransacting = true;
         Logger.log('wallet', 'Creating vote transaction with votes', votes);
 
         let voteContentInfo: VotesContentInfo = {
@@ -284,13 +288,11 @@ export class VotePage implements OnInit, OnDestroy {
         };
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
-            Logger.log('wallet', "rawTx:", rawTx);
+            // Logger.log('wallet', "rawTx:", rawTx);
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/list");
             if (ret) {
@@ -298,11 +300,8 @@ export class VotePage implements OnInit, OnDestroy {
             }
         }
         catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-
-        this.signingAndTransacting = false;
     }
 
     public getVotedCount() {

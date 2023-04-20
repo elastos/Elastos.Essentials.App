@@ -116,8 +116,8 @@ export const zh = {
         'update-to-2.0': '升级为BPoS',
         'node-exprie-message': '节点将在{{ time }}后过期。请点击更新节点。',
         'node-about-exprie': '节点即将过期。请点击更新节点。',
-        'vote-exprie-message': '您的 BPoS于{{ time }}后过期。请点击更新投票。',
-        'vote-about-exprie': '您的 BPoS 投票即将过期。请点击更新投票。',
+        'vote-exprie-message': '您的 BPoS 投票{{ time }}后过期，请点击更新投票。',
+        'vote-about-exprie': '您的 BPoS 投票即将过期，请点击更新投票。',
         'dpos1-update-warning': '您是否想升级为BPoS节点？升级交易需要花费少量的交易费。',
         'dpos1-withdraw-warning': '您要取回BPoS 节点的押金吗?',
 
@@ -137,8 +137,8 @@ export const zh = {
         'input-days': '天',
         'input-votes': '票',
         'pledge-some-votes-to-nodes': '请分配一些选票给您的候选节点',
-        'stake-days-less-than-10': '投票的质押时间不应少于10。',
-        'stake-days-more-than-stakeuntil': "投票的质押时间不应大于节点的质押时间。",
+        'stake-days-less-than-10': '投票的质押时间不能少于10。',
+        'stake-days-more-than-stakeuntil': "投票的质押时间不能大于节点的质押时间。",
 
         'update-vote': '更新投票',
         'stakedays-placeholder': '不小于{{ days }}天',
