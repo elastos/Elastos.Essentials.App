@@ -8,7 +8,7 @@
     </div>
   </div>
 
-  <ion-grid class="container ion-no-padding" *ngIf="dpos2Service._nodes.length; else loadingList">
+  <ion-grid class="container ion-no-padding" *ngIf="dpos2Service.dposList.length; else loadingList">
 
     <app-node-slider-search *ngIf="showNode" [nodeIndex]="nodeIndex" [totalVotes]="dpos2Service.totalVotes"
       [_nodes]="filteredNodes" [node]="node">

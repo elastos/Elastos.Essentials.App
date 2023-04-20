@@ -10,7 +10,7 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
@@ -651,7 +651,7 @@ export class CoinTxInfoPage implements OnInit {
         let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight()
         let currentBlock = await GlobalElastosAPIService.instance.getBlockByHeight(currentHeight)
 
-        const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', 'v2');
+        const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
         if (result) {
             let dpos2Nodes = result.producers.filter(node => node.identity && node.identity !== 'DPoSV1')
             for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
@@ -672,7 +672,7 @@ export class CoinTxInfoPage implements OnInit {
         let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight()
         let currentBlock = await GlobalElastosAPIService.instance.getBlockByHeight(currentHeight)
 
-        const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', 'v2');
+        const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
         if (result) {
             let dpos2Nodes = result.producers.filter(node => node.identity && node.identity !== 'DPoSV1')
             let dpos2Node = dpos2Nodes.find(node => node.ownerpublickey === voteContentInfo.VoteInfo.Candidate);

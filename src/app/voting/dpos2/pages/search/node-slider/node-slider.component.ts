@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { DPoS2Node } from '../../../model/nodes.model';
@@ -43,8 +42,8 @@ export class NodeSliderComponent implements OnInit {
     if (nextNodeIndex) {
       this.displayedArr.push(this._nodes[nextNodeIndex]);
     }
-    Logger.log('dposvoting', 'last node', lastNode);
-    Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
+    // Logger.log('dposvoting', 'last node', lastNode);
+    // Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
   }
 
   getVotePercent(votes: string): string {

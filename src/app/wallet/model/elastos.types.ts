@@ -58,6 +58,33 @@ export type VoteContent = {
     Candidates: Candidates,
 };
 
+// Node
+export type ELANode = {
+  active: boolean;
+  cancelheight: number;
+  dposv2votes: string;
+  identity: string;
+  illegalheight: number;
+  inactiveheight: number;
+  index: number;
+  location: number;
+  nickname: string;
+  nodepublickey: string;
+  onduty: string; //'Valid', 'Candidate'
+  ownerpublickey: string;
+  registerheight: number;
+  stakeuntil: number;
+  state: string;
+  url: string;
+  votes: string;
+}
+
+export type ProducersSearchResponse = {
+    producers: ELANode[],
+    totaldposv2votes: string,
+    totalvotes: string,
+    totalcounts: number,
+}
 
 // BPoS
 export type VoteDetail = {

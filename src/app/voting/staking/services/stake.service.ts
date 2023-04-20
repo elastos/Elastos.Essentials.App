@@ -3,7 +3,7 @@ import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -283,16 +283,8 @@ export class StakeService {
             return false;
         }
 
-        const param = {
-            method: 'listproducers',
-            params: {
-                state: "all"
-            },
-        };
-
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
-            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
 
             if (result && !Util.isEmptyObject(result.producers)) {
                 for (const node of result.producers) {

@@ -4,7 +4,7 @@ import { TitleBarForegroundMode } from 'src/app/components/titlebar/titlebar.typ
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -29,7 +29,7 @@ export type DPoSRegistrationInfo = {
     nickname?: string;
     nodepublickey?: string;
     ownerpublickey?: string;
-    registerheight?: 113;
+    registerheight?: number;
     state: string;
     url?: string;
     votes?: string;
@@ -252,14 +252,6 @@ export class NodesService {
             ownerpublickey: ownerPublicKey,
         };
 
-        //Get ower dpos info
-        const param = {
-            method: 'listproducers',
-            params: {
-                state: "all"
-            },
-        };
-
         this.activeNodes = [];
         this.dposList = [];
         var vote: Vote = null;
@@ -267,15 +259,14 @@ export class NodesService {
             vote = this._votes[0];
         }
 
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
-            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.DPoS);
 
             if (result && !Util.isEmptyObject(result.producers)) {
                 Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
-                this.totalVotes = result.totalvotes;
-                this._nodes = result.producers;
-                for (const node of result.producers) {
+                this.totalVotes = parseFloat(result.totalvotes);
+                this._nodes = result.producers as DPosNode[];;
+                for (const node of this._nodes) {
                     if (node.identity && node.identity == "DPoSV2") {
                         continue;
                     }

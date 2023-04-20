@@ -1,31 +1,11 @@
-// data for ELA mainchain api provider nodes
-export type DPosNode = {
-    active: boolean;
-    cancelheight: number;
-    dposv2votes: string;
-    identity: string;
-    inactiveheight: number;
-    illegalheight: number;
-    index: number;
-    location: number;
+import { ELANode } from "src/app/wallet/model/elastos.types";
+
+export type DPosNode = ELANode & {
     Location: string;
-    nickname: string;
-    nodepublickey: string;
-    ownerpublickey: string;
-    registerheight: number;
-    state: string;
-    url: string;
-    votes: string;
     Reward: string;
     EstRewardPerYear: string;
     imageUrl: string;
     isChecked: boolean;
-}
-
-export type ProducersSearchResponse = {
-  producers: DPosNode[],
-  totalvotes: string,
-  totalcounts: number,
 }
 
 // data for https://node1.elaphant.app/api/

@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -227,14 +227,6 @@ export class DPoS2Service {
             ownerpublickey: ownerPublicKey,
         };
 
-        //Get ower dpos info
-        const param = {
-            method: 'listproducers',
-            params: {
-                state: "all"
-            },
-        };
-
         this.activeNodes = [];
         this.dposList = [];
         this.voteStakeExpired30 = null;
@@ -245,16 +237,15 @@ export class DPoS2Service {
             this.lastVotes = [];
         }
 
-        let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         try {
-            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
             Logger.log(App.DPOS2, "result:", result);
 
             if (result && !Util.isEmptyObject(result.producers)) {
-                this.totalVotes = result.totaldposv2votes;
-                this._nodes = result.producers;
+                this.totalVotes = parseFloat(result.totaldposv2votes);
+                this._nodes = result.producers as DPoS2Node[];
 
-                for (const node of result.producers) {
+                for (const node of this._nodes) {
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
                     }

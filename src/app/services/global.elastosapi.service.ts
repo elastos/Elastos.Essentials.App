@@ -11,9 +11,8 @@ import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProp
 import { Candidate } from '../voting/crcouncilvoting/model/candidates.model';
 import { CRMemberInfo } from '../voting/crcouncilvoting/services/crcouncil.service';
 import { ProposalDetails } from '../voting/crproposalvoting/model/proposal-details';
-import { ProducersSearchResponse } from '../voting/dposvoting/model/nodes.model';
 import { StandardCoinName } from '../wallet/model/coin';
-import { StakeInfo } from '../wallet/model/elastos.types';
+import { ProducersSearchResponse, StakeInfo } from '../wallet/model/elastos.types';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
 import { ElastosPaginatedTransactions, TransactionDetail, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
@@ -81,6 +80,12 @@ export type ElastosAPIProvider = {
         }
     }
 };
+
+export enum NodeType {
+  DPoS = 'v1',
+  BPoS = 'v2',
+  ALL = 'all'
+}
 
 /**
  * Service reponsible for switching between different API providers for elastos features,
@@ -837,7 +842,7 @@ export class GlobalElastosAPIService extends GlobalService {
     // v1: identity == DPoSV1V2 or identity == DPoSV1
     // v2: identity == DPoSV1V2 or identity == DPoSV2
     // all: return all nodes.
-    public async fetchDposNodes(state, identity = 'all'): Promise<ProducersSearchResponse> {
+    public async fetchDposNodes(state, identity = NodeType.ALL): Promise<ProducersSearchResponse> {
         Logger.log('elastosapi', 'Fetching Dpos Nodes..');
         const param = {
             method: 'listproducers',

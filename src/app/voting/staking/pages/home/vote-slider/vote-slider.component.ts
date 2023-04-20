@@ -3,7 +3,7 @@ import { IonSlides } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
@@ -72,17 +72,8 @@ export class VoteSliderComponent implements OnInit {
 
     async getDPoSV1Data() {
         if (this.voteInfos[VoteType.DPoSV1].list.length > 0) {
-            const param = {
-                method: 'listproducers',
-                params: {
-                    state: "all"
-                },
-            };
-
-
-            let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
             try {
-                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+                const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.DPoS);
 
                 if (result && !Util.isEmptyObject(result.producers)) {
                     Logger.log(App.STAKING, "dposlist:", result.producers);
