@@ -35,7 +35,7 @@ export class NodeSliderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.displayedNodes = this._nodes.slice(0, this.nodeIndex + 2);
+    this.displayedNodes = this._nodes.slice(this.nodeIndex > 0 ? this.nodeIndex - 1 : 0, this.nodeIndex + 2);
     this.slideOpts.initialSlide = this.displayedNodes.indexOf(this.node);
   }
 
@@ -50,6 +50,15 @@ export class NodeSliderComponent implements OnInit {
     }
     Logger.log('dposvoting', 'last node', lastNode);
     Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
+  }
+
+  loadPrev() {
+    let firstNode: DPosNode = this.displayedNodes[0];
+    let prevNodeIndex: number = this._nodes.indexOf(firstNode) - 1;
+    if (this._nodes[prevNodeIndex]) {
+      this.displayedNodes.unshift(this._nodes[prevNodeIndex]);
+      void this.slider.slideTo(1, 0);
+    }
   }
 
   //// Define Values ////

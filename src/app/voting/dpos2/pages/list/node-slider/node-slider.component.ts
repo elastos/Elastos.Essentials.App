@@ -1,6 +1,5 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { IonSlides } from '@ionic/angular';
-import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { DPoS2Node } from '../../../model/nodes.model';
@@ -35,7 +34,7 @@ export class NodeSliderComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.displayedNodes = this._nodes.slice(0, this.nodeIndex + 2);
+    this.displayedNodes = this._nodes.slice(this.nodeIndex > 0 ? this.nodeIndex - 1 : 0, this.nodeIndex + 2);
     this.slideOpts.initialSlide = this.displayedNodes.indexOf(this.node);
   }
 
@@ -45,11 +44,16 @@ export class NodeSliderComponent implements OnInit {
     let nextNodeIndex: number = this._nodes.indexOf(lastNode) + 1;
     if (this._nodes[nextNodeIndex]) {
       this.displayedNodes.push(this._nodes[nextNodeIndex]);
-    } else {
-      return;
     }
-    Logger.log('dposvoting', 'last node', lastNode);
-    Logger.log('dposvoting', 'next node', this._nodes[nextNodeIndex]);
+  }
+
+  loadPrev() {
+    let firstNode: DPoS2Node = this.displayedNodes[0];
+    let prevNodeIndex: number = this._nodes.indexOf(firstNode) - 1;
+    if (this._nodes[prevNodeIndex]) {
+      this.displayedNodes.unshift(this._nodes[prevNodeIndex]);
+      void this.slider.slideTo(1, 0);
+    }
   }
 
   getRewards(yearlyRewards: string): string {
