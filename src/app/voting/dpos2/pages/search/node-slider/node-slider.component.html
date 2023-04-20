@@ -22,7 +22,7 @@
             <p>{{ 'dposvoting.slider-votes' | translate }}</p>
             <h3>{{ uxService.toThousands(node.dposv2votes) }}</h3>
           </ion-row>
-          <ion-row class="detail-container">
+          <ion-row class="detail-container" *ngIf="node.EstRewardPerYear">
             <p>{{ 'dposvoting.slider-rewards' | translate }}</p>
             <h3>{{ getRewards(node.EstRewardPerYear) }}</h3>
           </ion-row>

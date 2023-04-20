@@ -462,26 +462,26 @@ export class VoteService implements GlobalService {
     getRemainingTimeString(remainingTime: number): Promise<string> {
         var ret;
         if (remainingTime >= (720 * 2)) { //more 2 days
-            ret = Math.floor(remainingTime / 720) + " " + this.translate.instant('voting.days');
+            ret = " " + Math.floor(remainingTime / 720) + " " + this.translate.instant('voting.days');
         }
         else if (remainingTime > 720) {
-            ret = "1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingTime % 720) / 30) + " " + this.translate.instant('voting.hours');
+            ret = " 1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingTime % 720) / 30) + " " + this.translate.instant('voting.hours');
         }
         else if (remainingTime == 720) {
-            ret = "1 " + this.translate.instant('voting.day');
+            ret = " 1 " + this.translate.instant('voting.day');
         }
         else if (remainingTime > 60) {
-            ret = Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours');
+            ret = " " + Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours');
         }
         else if (remainingTime > 30) {
-            ret = Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours') + " "
+            ret = " " + Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours') + " "
                 + Math.floor(remainingTime % 30) * 2 + " " + this.translate.instant('voting.minutes');
         }
         else if (remainingTime == 30) {
-            ret = "1 " + this.translate.instant('voting.hours');
+            ret = " 1 " + this.translate.instant('voting.hours');
         }
         else {
-            ret = remainingTime * 2 + " " + this.translate.instant('voting.minutes');
+            ret = " " + remainingTime * 2 + " " + this.translate.instant('voting.minutes');
         }
         return ret;
     }

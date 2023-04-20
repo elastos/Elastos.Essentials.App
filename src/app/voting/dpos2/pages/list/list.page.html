@@ -29,18 +29,18 @@
             </app-node-slider-list>
 
             <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
-                <ion-item *ngFor="let node of dposListSorted">
+                <ion-item *ngFor="let node of dposListSorted; index as i">
                     <ion-grid class="ion-no-padding">
                         <ion-row class="ion-no-padding row-list">
                             <ion-col size="1" class="rank-container ion-no-padding"
-                                (click)="_showNode(dpos2Service.dposList.indexOf(node), node)">
-                                {{ dpos2Service.dposList.indexOf(node) + 1 }}
+                                (click)="_showNode(i, node)">
+                                {{ i + 1 }}
                             </ion-col>
                             <ion-col size="2" class="img-container"
-                                (click)="_showNode(dpos2Service.dposList.indexOf(node), node)">
+                                (click)="_showNode(i, node)">
                                 <img-svg-fallback class="img" [src]="node.imageUrl" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                             </ion-col>
-                            <ion-col size="7.5" (click)="_showNode(dpos2Service.dposList.indexOf(node), node)"
+                            <ion-col size="7.5" (click)="_showNode(i, node)"
                                 class="label-col">
                                 <h4>{{ node.nickname }}</h4>
                                 <ion-row class="row-no-padding">

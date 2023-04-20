@@ -48,6 +48,7 @@ export class SearchPage implements OnInit {
 
     //// Search ////
     filterNodes(search: string): any {
+        this.showNode = false;
         this.filteredNodes = this.dpos2Service.dposList.filter((node) => {
             if (!search) {
                 return;

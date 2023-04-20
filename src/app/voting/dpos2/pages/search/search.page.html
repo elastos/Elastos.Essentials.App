@@ -16,17 +16,17 @@
 
     <ion-list lines="none" [class.blur]="showNode" class="node-list" [class.darkContainer]="theme.darkMode">
       <ion-virtual-scroll [items]="filteredNodes" approxItemHeight="240px">
-        <ion-item *virtualItem="let node">
+        <ion-item *virtualItem="let node; index as i">
           <ion-grid class="ion-no-padding">
             <ion-row class="ion-no-padding row-list">
               <ion-col size="1" class="rank-container ion-no-padding"
-                (click)="_showNode(filteredNodes.indexOf(node), node)">
+                (click)="_showNode(i, node)">
                 {{ node.index }}
               </ion-col>
-              <ion-col size="2" class="img-container" (click)="_showNode(filteredNodes.indexOf(node), node)">
+              <ion-col size="2" class="img-container" (click)="_showNode(i, node)">
                 <img-svg-fallback class="img" [src]="node.imageUrl" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
               </ion-col>
-              <ion-col size="7.5" class="label-col" (click)="_showNode(filteredNodes.indexOf(node), node)">
+              <ion-col size="7.5" class="label-col" (click)="_showNode(i, node)">
                 <h4>{{ node.nickname }}</h4>
                 <p>
                   <!-- <span [class.inactive]="node.state !== 'Active'">
