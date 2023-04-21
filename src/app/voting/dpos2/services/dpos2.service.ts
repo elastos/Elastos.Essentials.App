@@ -463,6 +463,10 @@ export class DPoS2Service {
                 node.imageUrl = this.logoUrl + 'Sunny_Feng_Han_min.png';
                 node.Location = 'United States';
                 break;
+            case 'blockchain.vip':
+                node.imageUrl = 'assets/dposvoting/supernodes/blockchainvip.png';
+                node.Location = 'Germany';
+                break;
             case 'Enter Elastos':
                 node.imageUrl = 'assets/dposvoting/supernodes/enterelastos.png';
                 node.Location = 'Germany';
@@ -476,7 +480,7 @@ export class DPoS2Service {
                 node.Location = 'Slovenia';
                 break;
             case "MButcho's Guard":
-                node.imageUrl = 'assets/dposvoting/supernodes/mbutchos-guard.png';
+                node.imageUrl = 'assets/dposvoting/supernodes/mbutcho-guard.png';
                 node.Location = 'Slovenia';
                 break;
             case "Elastos Digerati - 亦来云视角":
@@ -494,6 +498,10 @@ export class DPoS2Service {
             case "ELA巅峰见":
                 node.imageUrl = 'assets/dposvoting/supernodes/ela-peak.png';
                 node.Location = 'China';
+                break;
+            case "Freedom":
+                node.imageUrl = 'assets/dposvoting/supernodes/freedom.png';
+                node.Location = 'Germany';
                 break;
             case "RealWeb3":
                 node.imageUrl = 'assets/dposvoting/supernodes/RealWeb3.jpg';
@@ -531,10 +539,21 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos.jpg';
                 node.Location = 'Germany';
                 break;
+            case "XPool":
+                node.imageUrl = 'assets/dposvoting/supernodes/xpool.png';
+                node.Location = 'China';
+                break;
             case "ZCO.CO":
                 node.imageUrl = 'assets/dposvoting/supernodes/ZCO.CO.png';
                 node.Location = 'Hong Kong';
                 break;
+            case "ⓗwΞdini 2.0":
+            case "ⓗwΞdini 2822":
+                node.imageUrl = 'assets/dposvoting/supernodes/dini.png';
+                node.Location = 'Germany';
+                break;
+
+            // Dpos 1.0
             case 'Elephant Wallet':
                 node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
                 node.Location = 'Singapore';
