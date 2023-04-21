@@ -528,6 +528,7 @@ export class DPoS2Service {
                 node.Location = 'Germany';
                 break;
             case "tyro":
+            case "Tyro-2nd ":
                 node.imageUrl = 'assets/dposvoting/supernodes/tyro.jpg';
                 node.Location = 'China';
                 break;
@@ -547,6 +548,7 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/ZCO.CO.png';
                 node.Location = 'Hong Kong';
                 break;
+            case "ⓗwΞdini # 1":
             case "ⓗwΞdini 2.0":
             case "ⓗwΞdini 2822":
                 node.imageUrl = 'assets/dposvoting/supernodes/dini.png';
