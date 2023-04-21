@@ -24,17 +24,14 @@ h5 {
 
 #max-button {
     margin-top: 5px;
-    padding: 0;
+    padding-top: 2px;
     width: 100%;
 
-    color: #8052FF;
+    background: var(--essentials-button-background-color);
+    color: var(--essentials-button-text-color);
+    border-radius: 10px;
+
     font-size: 13px;
     font-style: Bold;
-    text-align: right;
-}
-
-.darkContainer {
-    #reset-buttons {
-        color: #C5B0FF;
-    }
+    text-align: center;
 }

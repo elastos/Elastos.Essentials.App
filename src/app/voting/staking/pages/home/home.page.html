@@ -97,8 +97,7 @@
                                             translate }}: {{ item.stakeuntilExpiredIn }}</p>
                                     </ion-col>
                                     <ion-col size="2" class="right-col" (click)="clickDetails($event, item.type)">
-                                        <div class="details-btn align-right"> {{ 'staking.details' | translate }}
-                                        </div>
+                                          <ebutton class="details-btn align-right" [title]="'staking.details' | translate"></ebutton>
                                     </ion-col>
                                 </ion-row>
                             </div>

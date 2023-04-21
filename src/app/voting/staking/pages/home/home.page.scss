@@ -100,7 +100,7 @@
         padding-top: 0;
 
         .item {
-            margin-bottom: 15px;
+            margin-bottom: 5px;
             width: 100%;
         }
 
@@ -123,10 +123,10 @@
         }
 
         .details-btn {
-            // height: 100%;
             font-size: 12px;
             font-weight: 400;
-            color: #8530f1;
+            min-height: 20px;
+            padding: 0px;
         }
     }
 }
