@@ -300,11 +300,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             });
         }
 
+        let network = null;
         switch (this.transferType) {
             // For Recharge Transfer
             case TransferType.RECHARGE:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: this.coinTransferService.toSubWalletId }));
+                network = this.getELANetworkByID(this.coinTransferService.toSubWalletId as StandardCoinName);
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-recharge-title", { coinName: network.shortName }));
                 this.toSubWallet = await this.getELASubwalletByID(this.coinTransferService.toSubWalletId as StandardCoinName);
                 if (this.toSubWallet) {
                     this.toAddress = this.toSubWallet.getCurrentReceiverAddress();
@@ -324,7 +326,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 break;
             case TransferType.WITHDRAW:
                 // Setup page display
-                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: this.subWalletId }));
+                network = this.getELANetworkByID(this.coinTransferService.toSubWalletId as StandardCoinName);
+                this.titleBar.setTitle(this.translate.instant("wallet.coin-transfer-withdraw-title", { coinName: network.shortName }));
 
                 // Setup params for withdraw transaction
                 // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -1172,20 +1175,24 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     }
 
     // for elastos cross chain transaction.
-    async getELASubwalletByID(id: StandardCoinName) {
-        let networkKey = 'elastos';
-        switch (id) {
-            case StandardCoinName.ETHDID:
-                networkKey = 'elastosidchain';
-                break;
-            case StandardCoinName.ETHSC:
-                networkKey = 'elastossmartchain';
-                break;
-            default:
-                break;
-        }
+    getELANetworkByID(id: StandardCoinName) {
+      let networkKey = 'elastos';
+      switch (id) {
+          case StandardCoinName.ETHDID:
+              networkKey = 'elastosidchain';
+              break;
+          case StandardCoinName.ETHSC:
+              networkKey = 'elastossmartchain';
+              break;
+          default:
+              break;
+      }
 
-        let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
+      return WalletNetworkService.instance.getNetworkByKey(networkKey);
+    }
+
+    async getELASubwalletByID(id: StandardCoinName) {
+        let network = this.getELANetworkByID(id);
         let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
         return networkWallet?.getSubWallet(id);
     }
