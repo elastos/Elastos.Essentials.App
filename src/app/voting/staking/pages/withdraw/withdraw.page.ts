@@ -73,22 +73,32 @@ export class WithdrawPage {
             return;
         }
 
-        // Request the wallet to publish our vote.
-        if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
-            return false;
-        }
-        else if (this.amount > this.available) {
-            await this.popupProvider.ionicAlert('staking.withdraw', 'crproposalvoting.greater-than-max-votes');
-            return false;
-        }
-        else if (this.amount <= 0) {
-            await this.popupProvider.ionicAlert('staking.withdraw', 'crproposalvoting.less-than-equal-zero-votes');
-            return false;
-        }
+        this.signingAndTransacting = true;
 
-        const stakeAmount = Util.accMul(this.amount, Config.SELA);
-        await this.createWithdrawTransaction(stakeAmount.toString());
+        try {
+            // Request the wallet to publish our vote.
+            if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
+                await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+                return false;
+            }
+            else if (this.amount > this.available) {
+                await this.popupProvider.ionicAlert('staking.withdraw', 'crproposalvoting.greater-than-max-votes');
+                return false;
+            }
+            else if (this.amount <= 0) {
+                await this.popupProvider.ionicAlert('staking.withdraw', 'crproposalvoting.less-than-equal-zero-votes');
+                return false;
+            }
+
+            const stakeAmount = Util.accMul(this.amount, Config.SELA);
+            await this.createWithdrawTransaction(stakeAmount.toString());
+        }
+        catch (e) {
+            Logger.warn(App.STAKING, 'withdraw exception:', e)
+        }
+        finally {
+            this.signingAndTransacting = false;
+        }
 
         return true;
     }
@@ -98,10 +108,7 @@ export class WithdrawPage {
             return;
         }
 
-        this.signingAndTransacting = true;
-
         try {
-
             var payload = {
                 Value: stakeAmount,
                 ToAddress:  this.address
@@ -117,12 +124,10 @@ export class WithdrawPage {
 
             Logger.log(App.STAKING, 'Creating withdraw transaction with payload', payload);
 
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2ClaimRewardTransaction(
                 payload,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.STAKING, '/staking/staking-home');
             if (ret) {
@@ -131,11 +136,8 @@ export class WithdrawPage {
         }
         catch(e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-
-        this.signingAndTransacting = false;
     }
 
     onRewardChange(event) {

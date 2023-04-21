@@ -1,4 +1,4 @@
-<ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents [class.blur]="signingAndTransacting">
+<ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents>
     <app-titlebar></app-titlebar>
 
     <div *ngIf="!dataFetched">
@@ -65,7 +65,7 @@
                             [title]="'dposvoting.stake-more' | translate"> </ebutton>
                     </ion-col>
                     <ion-col class="right-col">
-                        <ebutton class="btn-container" (clicked)="cast()" [attr.disabled]="overflow || less_than_10_days"
+                        <ebutton class="btn-container" (clicked)="cast()" [disabled]="overflow || less_than_10_days"
                             [title]="'crcouncilvoting.cast-votes' | translate"> </ebutton>
                     </ion-col>
                 </ion-row>

@@ -47,22 +47,32 @@ export class UnstakePage {
     }
 
     async unstake() {
-        // Request the wallet to publish our vote.
-        if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
-            return false;
-        }
-        else if (this.amount > this.maxStake) {
-            await this.popupProvider.ionicAlert('staking.unstake', 'crproposalvoting.greater-than-max-votes');
-            return false;
-        }
-        else if (this.amount <= 0) {
-            await this.popupProvider.ionicAlert('staking.unstake', 'crproposalvoting.less-than-equal-zero-votes');
-            return false;
-        }
+        this.signingAndTransacting = true;
 
-        const unstakeAmount = Util.accMul(this.amount, Config.SELA);
-        await this.createUnstakeTransaction(unstakeAmount);
+        try {
+            // Request the wallet to publish our vote.
+            if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
+                await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+                return false;
+            }
+            else if (this.amount > this.maxStake) {
+                await this.popupProvider.ionicAlert('staking.unstake', 'crproposalvoting.greater-than-max-votes');
+                return false;
+            }
+            else if (this.amount <= 0) {
+                await this.popupProvider.ionicAlert('staking.unstake', 'crproposalvoting.less-than-equal-zero-votes');
+                return false;
+            }
+
+            const unstakeAmount = Util.accMul(this.amount, Config.SELA);
+            await this.createUnstakeTransaction(unstakeAmount);
+        }
+        catch (e) {
+            Logger.warn(App.STAKING, 'unstake exception:', e)
+        }
+        finally {
+            this.signingAndTransacting = false;
+        }
         return true;
     }
 
@@ -71,7 +81,6 @@ export class UnstakePage {
             return;
         }
 
-        this.signingAndTransacting = true;
         Logger.log(App.STAKING, 'Creating stake transaction with amount', unstakeAmount);
 
         const payload: UnstakeInfo = {
@@ -83,13 +92,10 @@ export class UnstakePage {
 
         try {
 
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-
             const rawTx = await this.voteService.sourceSubwallet.createUnstakeTransaction(
                 payload,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.STAKING, '/staking/staking-home');
             if (ret) {
@@ -98,11 +104,8 @@ export class UnstakePage {
         }
         catch(e) {
             // Something wrong happened while signing the JWT. Just tell the end user that we can't complete the operation for now.
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-
-        this.signingAndTransacting = false;
     }
 
     clickMax() {

@@ -118,12 +118,16 @@
         </div>
     </div>
 
+    <div *ngIf="signingAndTransacting">
+      <ion-spinner></ion-spinner>
+    </div>
+
     <div *ngIf="dataFetched">
         <div class="footer-space"></div>
         <ion-footer>
             <div id="button-list">
                 <ebutton *ngFor="let button of buttonList" [topicon]="button.icon" [title]="button.label"
-                    (clicked)="clickButton(button.url)"></ebutton>
+                    (clicked)="clickButton(button.url)" [disabled]="signingAndTransacting"></ebutton>
             </div>
         </ion-footer>
     </div>

@@ -1615,6 +1615,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createRetrieveDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
+
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
@@ -1682,6 +1685,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createRetrieveCRDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
+        let au = await this.getAvailableUtxo(20000);
+        if (!au.utxo) return;
+
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
@@ -1709,7 +1715,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         // Use the first external address.
         let firstExternalAddress = this.getCurrentReceiverAddress();
 
-        let au = await this.getAvailableUtxo(amount, firstExternalAddress);
+        let au = await this.getAvailableUtxo(amount + 20000, firstExternalAddress);
         if (!au.utxo) return;
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(

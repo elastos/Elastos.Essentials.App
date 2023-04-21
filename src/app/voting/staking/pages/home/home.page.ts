@@ -184,12 +184,10 @@ export class StakingHomePage implements OnInit {
         Logger.log(App.STAKING, 'unvote payload', payload);
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
             Logger.log(App.STAKING, "rawTx:", rawTx);
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
@@ -197,11 +195,11 @@ export class StakingHomePage implements OnInit {
             }
         }
         catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-
-         this.signingAndTransacting = false;
+        finally {
+            this.signingAndTransacting = false;
+        }
     }
 
     clickDetails(event: Event, type: VoteType) {
