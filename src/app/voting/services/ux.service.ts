@@ -94,7 +94,7 @@ export class UXService {
         return ret;
     }
 
-    toThousands(val): string {
+    toThousands(val, precision = 8): string {
         if (Util.isString(val)) {
             val = parseFloat(val);
         }
@@ -103,7 +103,16 @@ export class UXService {
             return "NaN";
         }
 
-        var fixedNumber = val.toFixed(8);
+        if (precision == -1) {
+            precision = 2;
+            if (val < 1) {
+                precision = 8;
+            } else if (val < 100) {
+                precision = 4;
+            }
+        }
+
+        var fixedNumber = val.toFixed(precision);
         while (fixedNumber.indexOf('.') > -1) {
             let length = fixedNumber.length - 1;
             let char = fixedNumber[length];
@@ -118,7 +127,4 @@ export class UXService {
         var reg = fixedNumber.indexOf(".") > -1 ? /(\d)(?=(\d{3})+\.)/g : /(\d)(?=(?:\d{3})+$)/g;
         return fixedNumber.replace(reg, "$1,");
     }
-
-
-
 }
