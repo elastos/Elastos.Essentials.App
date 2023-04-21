@@ -119,6 +119,9 @@ export class WithdrawPage {
 
                 const digest = this.voteService.sourceSubwallet.getDPoSV2ClaimRewardDigest(payload);
                 const password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId, true, true);
+                if (password === null) {// cancelled by user
+                    return;
+                }
                 payload.Signature = await this.voteService.sourceSubwallet.signDigestWithOwnerKey(digest, password);
             }
 
