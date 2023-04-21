@@ -30,6 +30,8 @@ export const it = {
         'withdraw-node-reward': "Withdraw the node reward",
         'no-reward': 'No reward',
         'no-stake': 'No stake',
+        'no-remain-stake': 'The staked ELA has been fully used for voting and cannot be retrieved',
+        'no-cancellable-votes': 'No cancellable votes (BPoS votes cannot be cancelled)',
 
         'unvote-message': 'Are you sure to cancel the four votes of DPoS 1.0, CR election, CR member impeachment, and CR proposal opposition vote?',
     }

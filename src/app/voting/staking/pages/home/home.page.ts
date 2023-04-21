@@ -166,7 +166,7 @@ export class StakingHomePage implements OnInit {
         }
 
         if (voteContents.length == 0) {
-            this.globalNative.genericToast('dposvoting.no-voting');
+            this.globalNative.genericToast('staking.no-cancellable-votes');
             return;
         }
 
@@ -219,7 +219,11 @@ export class StakingHomePage implements OnInit {
             await this.unvote();
         }
         else if (url == "/staking/unstake" && this.stakeService.votesRight.minRemainVoteRight == 0) {
-            this.globalNative.genericToast('staking.no-stake');
+            if (this.stakeService.votesRight.totalVotesRight != 0) {
+                this.globalNative.genericToast('staking.no-remain-stake');
+            } else {
+                this.globalNative.genericToast('staking.no-stake');
+            }
         }
         else if (url == "/staking/withdraw" && this.stakeService.totalRewardInfo.claimable == 0) {
             this.globalNative.genericToast('staking.no-reward');

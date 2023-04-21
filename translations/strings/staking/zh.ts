@@ -30,6 +30,8 @@ export const zh = {
         'withdraw-node-reward': '领取节点收益',
         'no-reward': '暂无收益',
         'no-stake': '暂无质押',
+        'no-remain-stake': '质押的ELA已全部用于投票，暂时不能取回',
+        'no-cancellable-votes': '没有可取消的投票（BPoS 投票无法取消）',
 
         'unvote-message': '确定取消DPoS 1.0、CR选举、CR委员弹劾、CR提案反对票这四种投票吗?',
     }
