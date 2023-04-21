@@ -47,11 +47,9 @@
         </ion-grid>
 
         <!-- Spinner Container - Reveal if suggestions are being fetched -->
-        <ion-grid *ngIf="!suggestionsFetched" class="spinner-container">
-            <div class="spinner">
-                <ion-spinner name="crescent"></ion-spinner>
-            </div>
-        </ion-grid>
+        <div *ngIf="!suggestionsFetched">
+          <ion-spinner></ion-spinner>
+        </div>
 
         <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreSuggestions($event)">
             <ion-infinite-scroll-content class="ion-padding-top" loadingSpinner="crescent">

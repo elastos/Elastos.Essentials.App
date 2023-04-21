@@ -50,11 +50,9 @@
         </ion-grid>
 
         <!-- Spinner Container - Reveal if proposals are being fetched -->
-        <ion-grid *ngIf="!proposalsFetched" class="spinner-container">
-            <div class="spinner">
-                <ion-spinner name="crescent"></ion-spinner>
-            </div>
-        </ion-grid>
+        <div *ngIf="!proposalsFetched">
+          <ion-spinner></ion-spinner>
+        </div>
 
         <ion-infinite-scroll threshold="100px" (ionInfinite)="loadMoreProposals($event)">
             <ion-infinite-scroll-content class="ion-padding-top" loadingSpinner="crescent">
