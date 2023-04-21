@@ -1,13 +1,5 @@
 @import "../../root.scss";
 
-ion-searchbar {
-  .searchbar-input-container {
-    .searchbar-input {
-      border-radius: 30px !important;
-    }
-  }
-}
-
 .header {
   .search-container {
     width: 85%;
@@ -16,7 +8,7 @@ ion-searchbar {
       height: 45px;
       background: var(--essentials-box-color);
       font-size: 15px;
-      border-radius: 50px !important;
+      border-radius: 15px !important;
     }
   }
 }

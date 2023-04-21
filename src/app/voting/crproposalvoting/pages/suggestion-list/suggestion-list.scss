@@ -8,7 +8,7 @@ ion-content {
             height: 50px;
             background: var(--essentials-box-color);
             font-size: 15px;
-            border-radius: 5px;
+            border-radius: 15px;
             letter-spacing: -0.5px;
             --padding-start: 15px;
         }
@@ -16,12 +16,12 @@ ion-content {
 
     .container {
         min-height: 100%;
-        padding: 0px 0px 10px;
+        padding: 0px 15px 10px;
 
         .item-row {
             padding: 5px 0;
             margin-bottom: 2px;
-            background-color: var(--essentials-box-color);
+            border-bottom: 1px solid var(--essentials-box-color);
 
             h1,
             p {
