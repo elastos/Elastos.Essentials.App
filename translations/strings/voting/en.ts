@@ -17,6 +17,7 @@ export const en = {
         'voting-ends-in': 'Voting ends in',
         'vote-going': 'Vote is on going!',
         'vote-invalid': "Votes is invalid",
+        'vote-max-deadline': "BPoS voting with a maximum pledge period of 1000 days!",
 
         'successfully': ' successfully, please wait for transaction confirmation.',
 

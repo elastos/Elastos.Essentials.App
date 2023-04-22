@@ -17,6 +17,7 @@ export const zh = {
         'voting-ends-in': '投票剩余时间',
         'vote-going': '正在进行委员选举投票!',
         'vote-invalid': "票数不正确",
+        'vote-max-deadline': "BPoS 投票质押期不能超过1000天",
 
         'successfully': '成功，请等待交易确认。',
 

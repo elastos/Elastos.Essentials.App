@@ -185,6 +185,8 @@ export class DPoS2Service {
                         this.dposInfo.txConfirm = false;
                         break;
                     }
+                } else {
+                    break;
                 }
             }
         }
@@ -475,14 +477,6 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/everlastingos.png';
                 node.Location = 'Netherlands';
                 break;
-            case 'SmartWeb_Nenchy/能奇':
-                node.imageUrl = 'assets/dposvoting/supernodes/nenchy.jpeg';
-                node.Location = 'Slovenia';
-                break;
-            case "MButcho's Guard":
-                node.imageUrl = 'assets/dposvoting/supernodes/mbutcho-guard.png';
-                node.Location = 'Slovenia';
-                break;
             case "Elastos Digerati - 亦来云视角":
                 node.imageUrl = 'assets/dposvoting/supernodes/digerati.png';
                 node.Location = 'Philippines';
@@ -490,6 +484,10 @@ export class DPoS2Service {
             case "Elastos Scotland":
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos-scotland.jpg';
                 node.Location = 'Scotland';
+                break;
+            case "Elastos_storm-tang":
+                node.imageUrl = 'assets/dposvoting/supernodes/Elastos_storm-tang.png';
+                node.Location = 'Singapore';
                 break;
             case "Elastos SVK":
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos-svk.jpg';
@@ -503,6 +501,22 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/freedom.png';
                 node.Location = 'Germany';
                 break;
+            case "Godzilla_Germany":
+                node.imageUrl = 'assets/dposvoting/supernodes/godzilla-germany.jpg';
+                node.Location = 'Germany';
+                break;
+            case "MButcho's Guard":
+                node.imageUrl = 'assets/dposvoting/supernodes/mbutcho-guard.png';
+                node.Location = 'Slovenia';
+                break;
+            case "Own Your Data":
+                node.imageUrl = 'assets/dposvoting/supernodes/OwnYourData.png';
+                node.Location = 'Germany';
+                break;
+            case "Plutela":
+                node.imageUrl = 'assets/dposvoting/supernodes/plutela.jpg';
+                node.Location = 'Germany';
+                break;
             case "RealWeb3":
                 node.imageUrl = 'assets/dposvoting/supernodes/RealWeb3.jpg';
                 node.Location = 'Scotland';
@@ -510,6 +524,10 @@ export class DPoS2Service {
             case "sheepshaun":
                 node.imageUrl = 'assets/dposvoting/supernodes/shaun.jpg';
                 node.Location = 'Germany';
+                break;
+            case 'SmartWeb_Nenchy/能奇':
+                node.imageUrl = 'assets/dposvoting/supernodes/nenchy.jpeg';
+                node.Location = 'Slovenia';
                 break;
             case "Wild Strawberry Atlas":
                 node.imageUrl = 'assets/dposvoting/supernodes/wildstrawberryatlas.jpg';
@@ -523,18 +541,10 @@ export class DPoS2Service {
                 node.imageUrl = 'assets/dposvoting/supernodes/apollo.jpg';
                 node.Location = 'United States';
                 break;
-            case "Godzilla_Germany":
-                node.imageUrl = 'assets/dposvoting/supernodes/godzilla-germany.jpg';
-                node.Location = 'Germany';
-                break;
             case "tyro":
             case "Tyro-2nd ":
                 node.imageUrl = 'assets/dposvoting/supernodes/tyro.jpg';
                 node.Location = 'China';
-                break;
-            case "Plutela":
-                node.imageUrl = 'assets/dposvoting/supernodes/plutela.jpg';
-                node.Location = 'Germany';
                 break;
             case "相信ELASTOS":
                 node.imageUrl = 'assets/dposvoting/supernodes/elastos.jpg';
