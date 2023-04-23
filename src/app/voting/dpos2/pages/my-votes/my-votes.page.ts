@@ -40,8 +40,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
     async initData() {
         this.dataFetched = false;
         await this.dpos2Service.init();
-        await this.dpos2Service.geMyVoteds();
-        this.votes = this.dpos2Service.myVotes.votes;
+        this.votes = await this.dpos2Service.geMyVoteds();
         this.dataFetched = true;
     }
 

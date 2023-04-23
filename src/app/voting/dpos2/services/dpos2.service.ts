@@ -45,6 +45,7 @@ export type DPoS2RegistrationInfo = {
 
 export type VotesInfo = {
     timestamp: number,
+    stakeAddress: string,
     votes: any[]
 }
 
@@ -92,10 +93,7 @@ export class DPoS2Service {
     //Votes
     public minStakeDays = 10;
 
-    public myVotes: VotesInfo = {
-        timestamp: 0,
-        votes: []
-    };
+    public myVotes: VotesInfo[] = [];
 
     public onlyUpdateStakeUntil = false;
 
@@ -353,16 +351,17 @@ export class DPoS2Service {
         return -1;
     }
 
-    async geMyVoteds(): Promise<VotesInfo> {
+    async geMyVoteds(): Promise<any[]> {
+        var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         let currentTimestamp = moment().valueOf() / 1000;
-        if (this.myVotes.timestamp + 120 >= currentTimestamp) {
-            return this.myVotes;
+        if (this.myVotes[stakeAddress] && (this.myVotes[stakeAddress].timestamp + 120 >= currentTimestamp)) {
+            return this.myVotes[stakeAddress].votes;
         } else {
             return await this.fetchMyVoteds();
         }
     }
 
-    async fetchMyVoteds(): Promise<VotesInfo> {
+    async fetchMyVoteds(): Promise<any[]> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS2, 'getOwnerStakeAddress', stakeAddress);
         let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
@@ -375,8 +374,7 @@ export class DPoS2Service {
             },
         };
 
-        this.myVotes.timestamp = 0;
-        this.myVotes.votes = [];
+        this.myVotes[stakeAddress] = {timestamp : 0, votes : []}
 
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
@@ -417,7 +415,7 @@ export class DPoS2Service {
                             expired30 = locktime;
                         }
 
-                        this.myVotes.votes.push(item);
+                        this.myVotes[stakeAddress].votes.push(item);
                     }
                 }
             }
@@ -431,8 +429,8 @@ export class DPoS2Service {
                 }
             }
         }
-        this.myVotes.timestamp = currentBlockTimestamp;
-        return this.myVotes;
+        this.myVotes[stakeAddress].timestamp = currentBlockTimestamp;
+        return this.myVotes[stakeAddress].votes;
     }
 
     async getDepositcoin(): Promise<number> {
