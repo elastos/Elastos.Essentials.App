@@ -37,7 +37,7 @@ export class ListPage implements OnInit {
 
     public dataFetched = false;
 
-    private registering = false;
+    private isTrading = false;
     public available = 0;
 
     private popover: HTMLIonPopoverElement = null;
@@ -101,6 +101,8 @@ export class ListPage implements OnInit {
             iconPath: !this.theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg',
         });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
+            if (this.isTrading) return;
+
             switch (icon.key) {
                 case 'register':
                     void this.goToRegistration();
@@ -136,28 +138,30 @@ export class ListPage implements OnInit {
             return;
         }
 
-        if (this.registering) return;
-        this.registering = true;
-        if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
-            if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
-                this.registering = false;
-                return;
-            }
-        }
-        else {
-            if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
-                this.registering = false;
-                return;
-            }
+        this.isTrading = true;
+        try {
+          if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
+              if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
+                  return;
+              }
+          }
+          else {
+              if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
+                  return;
+              }
 
-            if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
-                this.registering = false;
-                return;
-            }
-        }
+              if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+                  return;
+              }
+          }
 
-        await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
-        this.registering = false;
+          await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
+        }
+        catch {
+        }
+        finally {
+            this.isTrading = false;
+        }
     }
 
     async goToWithdraw() {
@@ -165,7 +169,15 @@ export class ListPage implements OnInit {
             return;
         }
 
-        void this.dpos2Service.retrieve(this.available);
+        this.isTrading = true;
+        try {
+            await this.dpos2Service.retrieve(this.available);
+        }
+        catch (e) {
+        }
+        finally {
+            this.isTrading = false;
+        }
     }
 
     async showOptions(ev: any) {

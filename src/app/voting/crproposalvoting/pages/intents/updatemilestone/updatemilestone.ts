@@ -99,47 +99,46 @@ export class UpdatMilestonePage {
     }
 
     async signAndUpdateMilestone() {
-        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
-            //Check opinion value
-            if (!this.content || this.content == "") {
-                let blankMsg = this.translate.instant('crproposalvoting.opinion')
-                    + this.translate.instant('common.text-input-is-blank');
-                this.globalNative.genericToast(blankMsg);
-                return;
-            }
-
-            //Handle opinion
-            let data = { content: this.content }
-            let ret = await this.draftService.getDraft("message.json", data);
-            this.onGoingCommand.data.messageHash = ret.hash;
-            this.onGoingCommand.data.messageData = ret.data;
-            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
-        }
-
         this.signingAndSendingProposalResponse = true;
 
         try {
+            if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+                //Check opinion value
+                if (!this.content || this.content == "") {
+                    let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                        + this.translate.instant('common.text-input-is-blank');
+                    this.globalNative.genericToast(blankMsg);
+                    return;
+                }
+
+                //Handle opinion
+                let data = { content: this.content }
+                let ret = await this.draftService.getDraft("message.json", data);
+                this.onGoingCommand.data.messageHash = ret.hash;
+                this.onGoingCommand.data.messageData = ret.data;
+                Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+            }
+
             // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
             let digest = await this.getMilestoneDigest();
 
             let signedJWT = await this.signMilestoneDigestAsJWT(digest);
             if (!signedJWT) {
                 // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingProposalResponse = false;
                 return;
             }
 
             await this.proposalService.postUpdateMilestoneCommandResponse(signedJWT, this.onGoingCommand.callbackurl);
             this.crOperations.handleSuccessReturn();
+
+            void this.crOperations.sendIntentResponse();
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
             await this.crOperations.popupErrorMessage(e);
-            return;
         }
-
-        this.signingAndSendingProposalResponse = false;
-        void this.crOperations.sendIntentResponse();
+        finally {
+            this.signingAndSendingProposalResponse = false;
+        }
     }
 
     private async getMilestoneDigest(): Promise<string> {

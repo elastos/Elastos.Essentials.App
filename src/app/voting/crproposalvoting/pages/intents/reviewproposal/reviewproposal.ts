@@ -94,30 +94,30 @@ export class ReviewProposalPage {
     }
 
     async signAndReviewProposal() {
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
-
-        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
-            //Check opinion value
-            if (!this.content || this.content == "") {
-                let blankMsg = this.translate.instant('crproposalvoting.opinion')
-                    + this.translate.instant('common.text-input-is-blank');
-                this.globalNative.genericToast(blankMsg);
-                return;
-            }
-
-            //Handle opinion
-            let data = { content: this.content }
-            let ret = await this.draftService.getDraft("opinion.json", data);
-            this.onGoingCommand.data.opinionHash = ret.hash;
-            this.onGoingCommand.data.opinionData = ret.data;
-            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
-        }
-
         this.signingAndSendingProposalResponse = true;
 
         try {
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+              return;
+            }
+
+            if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+                //Check opinion value
+                if (!this.content || this.content == "") {
+                    let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                        + this.translate.instant('common.text-input-is-blank');
+                    this.globalNative.genericToast(blankMsg);
+                    return;
+                }
+
+                //Handle opinion
+                let data = { content: this.content }
+                let ret = await this.draftService.getDraft("opinion.json", data);
+                this.onGoingCommand.data.opinionHash = ret.hash;
+                this.onGoingCommand.data.opinionData = ret.data;
+                Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+            }
+
             //Get payload
             var payload = await this.getProposalPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review proposal payload.", payload);
@@ -134,27 +134,24 @@ export class ReviewProposalPage {
 
             if (!ret) {
                 // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingProposalResponse = false;
                 return;
             }
 
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             //Create transaction and send
             payload.Signature = ret.result.signature;
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createProposalReviewTransaction(payload, '');
-            await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
+
+            void this.crOperations.sendIntentResponse();
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
-            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }
-
-        this.signingAndSendingProposalResponse = false;
-        void this.crOperations.sendIntentResponse();
+        finally {
+          this.signingAndSendingProposalResponse = false;
+        }
     }
 
     private getProposalPayload(command: ReviewProposalCommand): Promise<any> {

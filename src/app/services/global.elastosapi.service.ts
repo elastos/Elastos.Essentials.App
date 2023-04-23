@@ -765,9 +765,10 @@ export class GlobalElastosAPIService extends GlobalService {
     }
 
     public async getCurrentHeight() {
+        // Logger.warn("elastosapi", "getCurrentHeight ");
         if (this.blockHeightCache) {
             let current = moment().valueOf();
-            if ((current - this.blockHeightTimestamp) < 30000) { // 30s
+            if ((current - this.blockHeightTimestamp) < 60000) { // 60s
                 return this.blockHeightCache
             }
         }
@@ -843,7 +844,7 @@ export class GlobalElastosAPIService extends GlobalService {
     // v2: identity == DPoSV1V2 or identity == DPoSV2
     // all: return all nodes.
     public async fetchDposNodes(state, identity = NodeType.ALL): Promise<ProducersSearchResponse> {
-        Logger.log('elastosapi', 'Fetching Dpos Nodes..');
+        Logger.log('elastosapi', 'Fetching Dpos Nodes ', identity);
         const param = {
             method: 'listproducers',
             params: {

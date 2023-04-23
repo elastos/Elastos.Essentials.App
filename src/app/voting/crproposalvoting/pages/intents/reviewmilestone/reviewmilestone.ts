@@ -107,30 +107,30 @@ export class ReviewMilestonePage {
     }
 
     async signAndReviewMilestone() {
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
-
-        if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
-            //Check content value
-            if (!this.content || this.content == "") {
-                let blankMsg = this.translate.instant('crproposalvoting.opinion')
-                    + this.translate.instant('common.text-input-is-blank');
-                this.globalNative.genericToast(blankMsg);
-                return;
-            }
-
-            //Handle opinion
-            let data = { content: this.content };
-            let ret = await this.draftService.getDraft("opinion.json", data);
-            this.onGoingCommand.data.secretaryOpinionHash = ret.hash;
-            this.onGoingCommand.data.secretaryOpinionData = ret.data;
-            Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
-        }
-
         this.signingAndSendingProposalResponse = true;
 
         try {
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                return;
+            }
+
+            if (this.onGoingCommand.type == CRCommandType.ProposalDetailPage) {
+                //Check content value
+                if (!this.content || this.content == "") {
+                    let blankMsg = this.translate.instant('crproposalvoting.opinion')
+                        + this.translate.instant('common.text-input-is-blank');
+                    this.globalNative.genericToast(blankMsg);
+                    return;
+                }
+
+                //Handle opinion
+                let data = { content: this.content };
+                let ret = await this.draftService.getDraft("opinion.json", data);
+                this.onGoingCommand.data.secretaryOpinionHash = ret.hash;
+                this.onGoingCommand.data.secretaryOpinionData = ret.data;
+                Logger.log(App.CRPROPOSAL_VOTING, "getDraft", ret, data);
+            }
+
             //Get payload
             var payload = this.getPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got review milestone payload.", payload);
@@ -147,29 +147,24 @@ export class ReviewMilestonePage {
 
             if (!ret) {
                 // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingProposalResponse = false;
                 return;
             }
 
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
 
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-
             //Create transaction and send
             payload.SecretaryGeneralSignature = ret.result.signature;
             const rawTx = await this.voteService.sourceSubwallet.createProposalTrackingTransaction(payload, '');
-            await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
+
+            void this.crOperations.sendIntentResponse();
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
-            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
-            return;
         }
-
-        this.signingAndSendingProposalResponse = false;
-        void this.crOperations.sendIntentResponse();
+        finally {
+          this.signingAndSendingProposalResponse = false;
+        }
     }
 
     private getPayload(command: ReviewMilestoneCommand): any {

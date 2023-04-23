@@ -4,7 +4,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
@@ -44,7 +43,6 @@ export class WithdrawPage {
         private proposalService: ProposalService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
-        private globalNative: GlobalNativeService,
     ) {
 
     }
@@ -79,13 +77,14 @@ export class WithdrawPage {
     }
 
     async signAndWithdraw() {
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
 
         this.signingAndSendingProposalResponse = true;
 
         try {
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                return;
+            }
+
             //Get payload
             var payload = this.getWithdrawPayload(this.onGoingCommand);
             Logger.log(App.CRPROPOSAL_VOTING, "Got payload.", payload);
@@ -102,27 +101,23 @@ export class WithdrawPage {
 
             if (!ret) {
                 // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingProposalResponse = false;
                 return;
             }
 
             Logger.log(App.CRPROPOSAL_VOTING, "Got signed digest.", ret);
             //Create transaction and send
             payload.Signature = ret.result.signature;
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createProposalWithdrawTransaction(payload, '');
-            await this.globalNative.hideLoading();
             await this.crOperations.signAndSendRawTransaction(rawTx);
+
+            void this.crOperations.sendIntentResponse();
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
-            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
-            return;
         }
-
-        this.signingAndSendingProposalResponse = false;
-        void this.crOperations.sendIntentResponse();
+        finally {
+            this.signingAndSendingProposalResponse = false;
+        }
     }
 
     private getWithdrawPayload(command: WithdrawCommand): any {

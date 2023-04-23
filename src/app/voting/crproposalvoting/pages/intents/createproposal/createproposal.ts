@@ -11,7 +11,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { SuggestionDetail } from '../../../model/suggestion-model';
-import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
+import { CRCommand, CROperationsService, CreateSuggestionBudget } from '../../../services/croperations.service';
 import { SuggestionService } from '../../../services/suggestion.service';
 
 export type CreateProposalCommand = CRCommand & {
@@ -164,13 +164,13 @@ export class CreateProposalPage {
     }
 
     async signAndCreateProposal() {
-        if (!await this.voteService.checkWalletAvailableForVote()) {
-            return;
-        }
-
         this.signingAndSendingProposalResponse = true;
 
         try {
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                return;
+            }
+
             //Get payload
             let payload = this.getPayload();
             Logger.log(App.CRPROPOSAL_VOTING, 'get payload', payload);
@@ -182,29 +182,26 @@ export class CreateProposalPage {
             let ret = await this.signDigest(digest);
             if (!ret) {
                 // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingProposalResponse = false;
                 return;
             }
 
             payload.CRCouncilMemberSignature = ret;
 
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             //Create transaction
             let rawTx = await this.creatTransactionFunction(payload, '');
             Logger.log(App.CRPROPOSAL_VOTING, 'creatTransactionFunction', rawTx);
-            await this.globalNative.hideLoading();
 
             await this.crOperations.signAndSendRawTransaction(rawTx);
+
+            void this.crOperations.sendIntentResponse();
         }
         catch (e) {
             this.signingAndSendingProposalResponse = false;
-            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
-            return;
         }
-
-        this.signingAndSendingProposalResponse = false;
-        void this.crOperations.sendIntentResponse();
+        finally {
+          this.signingAndSendingProposalResponse = false;
+        }
     }
 
     async signDigest(digest: string): Promise<string> {

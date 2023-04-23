@@ -11,7 +11,7 @@ import { SuggestionService } from 'src/app/voting/crproposalvoting/services/sugg
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { UXService } from '../../../../services/ux.service';
-import { CRCommand, CreateSuggestionBudget, CROperationsService } from '../../../services/croperations.service';
+import { CRCommand, CROperationsService, CreateSuggestionBudget } from '../../../services/croperations.service';
 
 
 export type CreateSuggestionCommand = CRCommand & {
@@ -117,7 +117,6 @@ export class CreateSuggestionPage {
 
             if (!signedJWT) {
                 // Operation cancelled, cancel the operation silently.
-                this.signingAndSendingSuggestionResponse = false;
                 return;
             }
 
@@ -130,15 +129,15 @@ export class CreateSuggestionPage {
             else {
                 this.crOperations.handleSuccessReturn();
             }
+
+            void this.exitIntentWithSuccess();
         }
         catch (e) {
-            this.signingAndSendingSuggestionResponse = false;
             await this.crOperations.popupErrorMessage(e);
-            return;
         }
-
-        this.signingAndSendingSuggestionResponse = false;
-        void this.exitIntentWithSuccess();
+        finally {
+          this.signingAndSendingSuggestionResponse = false;
+        }
     }
 
     private async signSuggestionDigestAsJWT(suggestionDigest: string): Promise<string> {

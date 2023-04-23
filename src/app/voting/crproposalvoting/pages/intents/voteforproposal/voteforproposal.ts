@@ -137,26 +137,35 @@ export class VoteForProposalPage {
                 return;
         }
 
-        // Request the wallet to publish our vote.
-        if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
-            return false;
-        }
-        else if (this.amount > this.maxVotes) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
-            return false;
-        }
-        else if (this.amount <= 0) {
-            await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.less-than-equal-zero-votes');
-            return false;
-        }
+        try {
+            if (this.amount > this.maxVotes) {
+                await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
+                return false;
+            }
+            else if (this.amount <= 0) {
+                await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.less-than-equal-zero-votes');
+                return false;
+            }
 
-        const stakeAmount = Util.accMul(this.amount, Config.SELA).toString();
-        if (this.stakeService.votesRight.totalVotesRight > 0) {
-            await this.createVoteCRProposalTransactionV2(stakeAmount);
+            this.signingAndSendingProposalResponse = true;
+
+            // Request the wallet to publish our vote.
+            if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
+                this.signingAndSendingProposalResponse = false;
+                await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+                return false;
+            }
+
+            const stakeAmount = Util.accMul(this.amount, Config.SELA).toString();
+            if (this.stakeService.votesRight.totalVotesRight > 0) {
+                await this.createVoteCRProposalTransactionV2(stakeAmount);
+            }
+            else {
+                await this.createVoteCRProposalTransaction(stakeAmount);
+            }
         }
-        else {
-            await this.createVoteCRProposalTransaction(stakeAmount);
+        finally {
+            this.signingAndSendingProposalResponse = false;
         }
         return true;
     }
@@ -166,7 +175,6 @@ export class VoteForProposalPage {
             return;
         }
 
-        this.signingAndSendingProposalResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
 
         let votes = {};
@@ -181,28 +189,22 @@ export class VoteForProposalPage {
         const voteContent = [crVoteContent];
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
                 voteContent,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
 
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
-            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }
 
-        this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 
     async createVoteCRProposalTransactionV2(voteAmount: string) {
-        this.signingAndSendingProposalResponse = true;
         Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
         const voteContents: VotesContentInfo[] = [
             {
@@ -223,23 +225,18 @@ export class VoteForProposalPage {
         };
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
 
             await this.crOperations.signAndSendRawTransaction(rawTx);
         }
         catch (e) {
-            this.signingAndSendingProposalResponse = false;
-            await this.globalNative.hideLoading();
             await this.crOperations.popupErrorMessage(e);
             return;
         }
 
-        this.signingAndSendingProposalResponse = false;
         void this.crOperations.sendIntentResponse();
     }
 
