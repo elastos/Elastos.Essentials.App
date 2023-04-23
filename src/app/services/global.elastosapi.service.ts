@@ -87,6 +87,11 @@ export enum NodeType {
   ALL = 'all'
 }
 
+export type NotesCache = {
+  timestamp: number,
+  result: any
+}
+
 /**
  * Service reponsible for switching between different API providers for elastos features,
  * such as Elastos ESCRPC, CyberRepublic listings, etc.
@@ -109,6 +114,8 @@ export class GlobalElastosAPIService extends GlobalService {
 
     private blockHeightCache = 0;
     private blockHeightTimestamp = 0;
+
+    private nodesCache: NotesCache[] = [];
 
     constructor(
         public translate: TranslateService,
@@ -845,6 +852,17 @@ export class GlobalElastosAPIService extends GlobalService {
     // all: return all nodes.
     public async fetchDposNodes(state, identity = NodeType.ALL): Promise<ProducersSearchResponse> {
         Logger.log('elastosapi', 'Fetching Dpos Nodes ', identity);
+
+        // check cache
+        let useCache = false;
+        if (state == 'all') {
+           useCache = true;
+           let current = moment().valueOf();
+           if (this.nodesCache[identity] && ((current - this.blockHeightTimestamp) < 120000)) {
+              return this.nodesCache[identity].result;
+           }
+        }
+
         const param = {
             method: 'listproducers',
             params: {
@@ -857,6 +875,12 @@ export class GlobalElastosAPIService extends GlobalService {
 
         try {
             const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            if (useCache) {
+                this.nodesCache[identity] = {
+                    timestamp: moment().valueOf(),
+                    result: dposNodes
+                }
+            }
             return dposNodes;
         } catch (e) {
             Logger.warn("elastosapi", "fetchDposNodes exception", e);
