@@ -39,6 +39,12 @@ export type RewardInfo = {
     total: number;
 }
 
+export type RewardCache = {
+    timestamp: number,
+    address: string,
+    rewardInfo: RewardInfo
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -60,6 +66,7 @@ export class StakeService {
             claimed: 0,
             total: 0,
         } as RewardInfo;
+    private rewardCache: RewardCache[] = []
 
     public firstAddress: string;
     public ownerAddress: string;
@@ -94,19 +101,17 @@ export class StakeService {
 
             this.ownerDpos2 = await this.isOwnerDpos2();
             this.votesRight = await this.getVoteRights();
-            this.rewardInfo = await this.getRewardInfo(this.firstAddress);
-            if (this.ownerDpos2 && this.firstAddress != this.ownerAddress) {
-                this.totalRewardInfo = Util.clone(this.rewardInfo);
-                let rewardInfo = await this.getRewardInfo(this.ownerAddress);
-                this.totalRewardInfo.claimable += rewardInfo.claimable;
-                this.totalRewardInfo.claiming += rewardInfo.claiming;
-                this.totalRewardInfo.claimed += rewardInfo.claimed;
-                this.totalRewardInfo.total += rewardInfo.total;
-                this.nodeRewardInfo = rewardInfo;
-            }
-            else {
-                this.totalRewardInfo = this.rewardInfo;
-            }
+
+            // reset reward info
+            // this.nodeRewardInfo = null;
+            // this.rewardInfo = null;
+            // this.totalRewardInfo = {
+            //     claimable: 0,
+            //     claiming: 0,
+            //     claimed: 0,
+            //     total: 0,
+            // }
+            void this.getAllRewardInfo();
         }
         catch (err) {
             Logger.error(App.STAKING, 'initData error:', err);
@@ -115,6 +120,23 @@ export class StakeService {
 
         this.initOngoning = false;
         this.voteService.needFetchData[App.STAKING] = false;
+    }
+
+    public async getAllRewardInfo() {
+        this.rewardInfo = await this.getRewardInfo(this.firstAddress);
+
+        if (this.ownerDpos2 && this.firstAddress != this.ownerAddress) {
+            this.totalRewardInfo = Util.clone(this.rewardInfo);
+            let rewardInfo = await this.getRewardInfo(this.ownerAddress);
+            this.totalRewardInfo.claimable += rewardInfo.claimable;
+            this.totalRewardInfo.claiming += rewardInfo.claiming;
+            this.totalRewardInfo.claimed += rewardInfo.claimed;
+            this.totalRewardInfo.total += rewardInfo.total;
+            this.nodeRewardInfo = rewardInfo;
+        }
+        else {
+            this.totalRewardInfo = this.rewardInfo;
+        }
     }
 
     public async getBalanceByAddress(address: string, spendable = false): Promise<number> {
@@ -224,6 +246,10 @@ export class StakeService {
     }
 
     async getRewardInfo(address: string): Promise<RewardInfo> {
+        let current = moment().valueOf();
+        if (this.rewardCache[address] && ((current - this.rewardCache[address].timestamp) < 120000)) {
+            return this.rewardCache[address].rewardInfo;
+        }
 
         var rewardInfo = {
             claimable: 0,
@@ -258,6 +284,10 @@ export class StakeService {
             rewardInfo.total = rewardInfo.claimable + rewardInfo.claiming + rewardInfo.claimed;
         }
 
+        this.rewardCache[address] = {
+            timestamp : current,
+            rewardInfo: rewardInfo
+        }
         return rewardInfo;
     }
 

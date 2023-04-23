@@ -71,6 +71,8 @@ export class StakingHomePage implements OnInit {
         this.addVoteItems();
         this.showArrow = this.stakeService.votesRight.totalVotesRight > 0;
         this.dataFetched = true;
+
+        void this.updateRewardInfo()
     }
 
     ionViewDidEnter() {
@@ -95,6 +97,10 @@ export class StakingHomePage implements OnInit {
         );
     }
 
+    async updateRewardInfo() {
+        await this.stakeService.getAllRewardInfo();
+        this.addShowItems()
+    }
 
     addButtonList() {
         this.buttonList = [];
