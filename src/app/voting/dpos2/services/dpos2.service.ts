@@ -43,6 +43,12 @@ export type DPoS2RegistrationInfo = {
     identity?: string;
 }
 
+export type VotesInfo = {
+    timestamp: number,
+    votes: any[]
+}
+
+
 @Injectable({
     providedIn: 'root'
 })
@@ -56,6 +62,7 @@ export class DPoS2Service {
     public activeNodes: DPoS2Node[] = [];
     public totalVotes = 0;
     public dposList: DPoS2Node[] = [];
+    private fetchNodesTimestamp = 0;
 
     public voteStakeExpired30: string = null;
     public voteStakeAboutExpire: string = null;
@@ -73,7 +80,7 @@ export class DPoS2Service {
     public block: Block;
 
     // Empty List - Used to loop dummy items while data is being fetched
-    public emptyList = new Array(20).fill('');
+    public emptyList = new Array(10).fill('');
     private initOngoning = false;
 
     // Storage
@@ -84,7 +91,11 @@ export class DPoS2Service {
 
     //Votes
     public minStakeDays = 10;
-    public myVotes = [];
+
+    public myVotes: VotesInfo = {
+        timestamp: 0,
+        votes: []
+    };
 
     public onlyUpdateStakeUntil = false;
 
@@ -130,7 +141,7 @@ export class DPoS2Service {
         try {
             await this.getStoredVotes();
             await this.fetchNodes();
-            await this.geMyVoteds();
+            void this.geMyVoteds();
         }
         catch (err) {
             Logger.warn('dposvoting', 'Initialize node error:', err);
@@ -209,11 +220,15 @@ export class DPoS2Service {
     }
 
     async fetchNodes() {
+        let currentBlockTimestamp = moment().valueOf() / 1000;
+        if (this.fetchNodesTimestamp + 120 >= currentBlockTimestamp) {
+            return;
+        }
+
         var ownerPublicKey = '';
         let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-        // let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
-        let currentBlockTimestamp = moment().valueOf() / 1000;
-        await this.stakeService.getVoteRights();
+
+        // await this.stakeService.getVoteRights();
 
         //The wallet imported by private key has no ELA subwallet.
         if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
@@ -316,6 +331,7 @@ export class DPoS2Service {
                 }
 
                 Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
+                this.fetchNodesTimestamp = currentBlockTimestamp;
                 // this.setupRewardInfo();
             }
 
@@ -337,11 +353,19 @@ export class DPoS2Service {
         return -1;
     }
 
-    async geMyVoteds(): Promise<any[]> {
+    async geMyVoteds(): Promise<VotesInfo> {
+        let currentTimestamp = moment().valueOf() / 1000;
+        if (this.myVotes.timestamp + 120 >= currentTimestamp) {
+            return this.myVotes;
+        } else {
+            return await this.fetchMyVoteds();
+        }
+    }
+
+    async fetchMyVoteds(): Promise<VotesInfo> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS2, 'getOwnerStakeAddress', stakeAddress);
         let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-        // let currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
         let currentBlockTimestamp = moment().valueOf() / 1000;
 
         const param = {
@@ -351,7 +375,9 @@ export class DPoS2Service {
             },
         };
 
-        this.myVotes = [];
+        this.myVotes.timestamp = 0;
+        this.myVotes.votes = [];
+
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
         const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
         Logger.log(App.DPOS2, 'getalldetaileddposv2votes', result);
@@ -391,7 +417,7 @@ export class DPoS2Service {
                             expired30 = locktime;
                         }
 
-                        this.myVotes.push(item);
+                        this.myVotes.votes.push(item);
                     }
                 }
             }
@@ -405,7 +431,7 @@ export class DPoS2Service {
                 }
             }
         }
-
+        this.myVotes.timestamp = currentBlockTimestamp;
         return this.myVotes;
     }
 
