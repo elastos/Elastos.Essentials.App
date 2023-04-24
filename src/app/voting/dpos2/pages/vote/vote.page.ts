@@ -33,6 +33,7 @@ export class VotePage implements OnInit, OnDestroy {
     public dataFetched = false;
     public signingAndTransacting = false;
     public isKeyboardHide = true;
+    public showConfirmPopup = false;
 
     constructor(
         public uxService: UXService,
@@ -185,11 +186,13 @@ export class VotePage implements OnInit, OnDestroy {
                 void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
             }
             else {
+                this.showConfirmPopup = true;
                 let confirmed = await this.popupProvider.showConfirmationPopup(
                         this.translate.instant('dposvoting.confirm-title'),
                         this.translate.instant('dposvoting.confirm-prompt'),
                         this.translate.instant('dposvoting.confirm-button-text'),
                         "/assets/identity/default/publishWarning.svg");
+                this.showConfirmPopup = false;
                 if (!confirmed) {
                     return;
                 }

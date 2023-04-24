@@ -59,8 +59,8 @@
 
         </ion-grid>
 
-        <div *ngIf="signingAndTransacting">
-            <ion-spinner></ion-spinner>
+        <div *ngIf="signingAndTransacting && !showConfirmPopup">
+            <ion-spinner class="loading"></ion-spinner>
         </div>
 
         <div *ngIf="!signingAndTransacting && isKeyboardHide">

@@ -162,3 +162,10 @@ h5 {
         flex-direction: row;
     }
 }
+
+.loading {
+    position: absolute;
+    width: 100%;
+    top: 17%;
+    z-index: 100;
+}
