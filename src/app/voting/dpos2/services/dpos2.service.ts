@@ -139,6 +139,7 @@ export class DPoS2Service {
         try {
             await this.getStoredVotes();
             await this.fetchNodes();
+            this.updateSelectedNode()
             void this.geMyVoteds();
         }
         catch (err) {
@@ -317,9 +318,6 @@ export class DPoS2Service {
 
                         if (node.state === 'Active') {
                             this.activeNodes.push(node);
-                            if (!node.checkDisabled && this.lastVotes.indexOf(node.ownerpublickey) != -1) {
-                                node.isChecked = true;
-                            }
                         }
 
                         this.dposList.push(node);
@@ -339,6 +337,19 @@ export class DPoS2Service {
         }
 
         await this.checkTxConfirm();
+    }
+
+    // After switching wallets, fetchNodes may not be executed, but voting records need to be updated.
+    updateSelectedNode() {
+        for (const node of this._nodes) {
+            if (node.state === 'Active') {
+                if (!node.checkDisabled && this.lastVotes.indexOf(node.ownerpublickey) != -1) {
+                    node.isChecked = true;
+                } else {
+                  node.isChecked = false;
+                }
+            }
+        }
     }
 
     async getConfirmCount(txid: string): Promise<number> {
@@ -552,6 +563,10 @@ export class DPoS2Service {
             case 'SmartWeb_Nenchy/能奇':
                 node.imageUrl = 'assets/dposvoting/supernodes/nenchy.jpeg';
                 node.Location = 'Slovenia';
+                break;
+            case 'Sparky':
+                node.imageUrl = 'assets/dposvoting/supernodes/sparky.png';
+                node.Location = 'Mexico';
                 break;
             case "Wild Strawberry Atlas":
                 node.imageUrl = 'assets/dposvoting/supernodes/wildstrawberryatlas.jpg';

@@ -45,6 +45,12 @@ export type RewardCache = {
     rewardInfo: RewardInfo
 }
 
+export type VotesRightCache = {
+  timestamp: number,
+  address: string,
+  votesRight: VotesRight
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -57,6 +63,7 @@ export class StakeService {
         minRemainVoteRight: 0,
 
     } as VotesRight;
+    private votesRightCache: VotesRightCache[] = []
 
     public rewardInfo: RewardInfo;
     public nodeRewardInfo: RewardInfo;
@@ -88,7 +95,6 @@ export class StakeService {
     }
 
     async initData() {
-
         if (!this.voteService.needFetchData[App.STAKING]) return;
 
         if (this.initOngoning) return;
@@ -163,6 +169,12 @@ export class StakeService {
     async getVoteRights(): Promise<VotesRight> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS_VOTING, 'getOwnerStakeAddress', stakeAddress);
+
+        let current = moment().valueOf();
+        if (this.votesRightCache[stakeAddress] && ((current - this.votesRightCache[stakeAddress].timestamp) < 120000)) {
+            this.votesRight = this.votesRightCache[stakeAddress].votesRight;
+            return this.votesRight;
+        }
 
         this.votesRight = {
             totalVotesRight: 0,
@@ -240,6 +252,11 @@ export class StakeService {
                     }
                 }
             }
+        }
+
+        this.votesRightCache[stakeAddress] = {
+            timestamp : current,
+            votesRight: this.votesRight
         }
 
         return this.votesRight;

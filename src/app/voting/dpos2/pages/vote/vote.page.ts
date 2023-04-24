@@ -71,6 +71,8 @@ export class VotePage implements OnInit, OnDestroy {
         this.dataFetched = false;
 
         this.titleBar.setTitle(this.translate.instant('dposvoting.dpos2-voting'));
+
+        await this.stakeService.getVoteRights();
         if (this.stakeService.votesRight.totalVotesRight > 0) {
             this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
         }
