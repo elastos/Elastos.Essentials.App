@@ -8,7 +8,6 @@ import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { DeleteComponent } from './components/delete/delete.component';
-import { HelpComponent } from './components/help/help.component';
 import { AppDetailsPage } from './pages/appdetails/appdetails';
 import { CreateAppPage } from './pages/createapp/createapp';
 import { HomePage } from './pages/home/home';
@@ -21,7 +20,6 @@ import { DeveloperToolsRoutingModule } from './routing';
     HomePage,
     CreateAppPage,
     AppDetailsPage,
-    HelpComponent,
     DeleteComponent,
   ],
   imports: [
@@ -39,7 +37,6 @@ import { DeveloperToolsRoutingModule } from './routing';
     HomePage,
     CreateAppPage,
     AppDetailsPage,
-    HelpComponent,
     DeleteComponent
   ],
   providers: [

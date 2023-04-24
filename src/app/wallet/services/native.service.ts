@@ -26,7 +26,6 @@ import { Logger } from 'src/app/logger';
 import { App } from "src/app/model/app.enum";
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { HelpComponent } from '../components/help/help.component';
 
 @Injectable({
     providedIn: 'root'
@@ -116,23 +115,6 @@ export class Native {
             await this.loader.dismiss();
             this.loader = null;
         }
-    }
-
-    public async showHelp(ev: any, helpMessage: string) {
-        this.popup = await this.popoverCtrl.create({
-            mode: 'ios',
-            component: HelpComponent,
-            cssClass: 'wallet-help-component',
-            event: ev,
-            componentProps: {
-                message: helpMessage
-            },
-            translucent: false
-        });
-        this.popup.onWillDismiss().then(() => {
-            this.popup = null;
-        });
-        return await this.popup.present();
     }
 }
 

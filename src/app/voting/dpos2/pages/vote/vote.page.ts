@@ -345,4 +345,15 @@ export class VotePage implements OnInit, OnDestroy {
     showIntegerPart(value: number) {
         return Math.ceil(value);
     }
+
+    shouldShowHelp(node: any) {
+      if (node.index <= 10 && node.dposv2votesNumber > 90000) {
+        return true;
+      }
+      return false;
+    }
+
+    showHelp(event): Promise<any> {
+        return this.popupProvider.showHelp(event, 'dposvoting.vote-warning')
+    }
 }

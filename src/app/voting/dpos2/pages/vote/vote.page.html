@@ -20,11 +20,18 @@
                     </div>
                     <div class="vote-col">
                         <div class="name">{{ node.nickname }}</div>
-                        <p>
-                            <!-- <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
-                            node.location | translate }} •  -->
-                            <span class="votes">{{ showIntegerPart(node.dposv2votesNumber) }}</span> {{ 'voting.vote-rights' | translate }}  ({{ showIntegerPart(node.votesPercentage) }}%)
-                        </p>
+                        <ion-row>
+                          <ion-col size="shouldShowHelp(node) ? 7 : 12" class="left-col">
+                            <p>
+                              <!-- <ion-icon name="navigate" class="navigate"></ion-icon> {{ 'crcouncilvoting.' +
+                              node.location | translate }} •  -->
+                              <span class="votes">{{ showIntegerPart(node.dposv2votesNumber) }}</span> {{ 'voting.vote-rights' | translate }}  ({{ showIntegerPart(node.votesPercentage) }}%)
+                            </p>
+                          </ion-col>
+                          <ion-col *ngIf="shouldShowHelp(node)" size="5" class="waringicon" (click)="showHelp($event)">
+                            <img src="/assets/identity/default/publishWarning.svg">
+                          </ion-col>
+                        </ion-row>
                         <p class="stake-until">{{ 'dposvoting.stake' | translate }}</p>
                         <ion-row>
                             <ion-col size="5.75" class="left-col input-col">

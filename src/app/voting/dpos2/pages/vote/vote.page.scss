@@ -140,6 +140,15 @@ h5 {
                         color: red;
                     }
                 }
+
+                .waringicon {
+                    display: flex;
+                    justify-content: center;
+
+                    img {
+                        width: 20px;
+                    }
+                }
             }
         }
     }

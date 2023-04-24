@@ -3,6 +3,7 @@ import { AlertController, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Logger } from 'src/app/logger';
 import { ConfirmationPopupComponent, ConfirmationPopupComponentParams } from '../components/confirmation-popup/confirmation-popup.component';
+import { HelpComponent } from '../components/help/help.component';
 
 @Injectable({
     providedIn: 'root'
@@ -302,5 +303,23 @@ export class GlobalPopupService {
             });
             await this.confirmationPopup.present();
         });
+    }
+
+    private helpPopup: HTMLIonPopoverElement = null;
+    public async showHelp(ev: any, helpMessage: string, cssClass = 'wallet-help-component') {
+        this.helpPopup = await this.popoverCtrl.create({
+            mode: 'ios',
+            component: HelpComponent,
+            cssClass: cssClass,
+            event: ev,
+            componentProps: {
+                message: helpMessage
+            },
+            translucent: false
+        });
+        this.helpPopup.onWillDismiss().then(() => {
+            this.helpPopup = null;
+        });
+        return await this.helpPopup.present();
     }
 }

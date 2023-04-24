@@ -7,7 +7,6 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from "src/app/components/sharedcomponents.module";
 
-import { HelpComponent } from './help/help.component';
 import { OptionsComponent } from './options/options.component';
 import { TxConfirmComponent } from './tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from './tx-success/tx-success.component';
@@ -17,7 +16,6 @@ import { WarningComponent } from './warning/warning.component';
   declarations: [
     TxConfirmComponent,
     TxSuccessComponent,
-    HelpComponent,
     OptionsComponent,
     WarningComponent,
   ],
@@ -34,7 +32,6 @@ import { WarningComponent } from './warning/warning.component';
   providers: [
   ],
   entryComponents: [
-    HelpComponent,
     OptionsComponent,
     TxConfirmComponent,
     TxSuccessComponent,

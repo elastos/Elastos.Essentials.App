@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { ImportWalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { Config } from '../../../config/Config';
@@ -39,7 +40,8 @@ export class WalletCreatePage implements OnInit {
         public walletCreationService: WalletCreationService,
         public zone: NgZone,
         public translate: TranslateService,
-        public uiService: UiService
+        public uiService: UiService,
+        private popupService: GlobalPopupService,
     ) {
         if (this.walletCreationService.isMulti) {
             this.wallet.singleAddress = true;
@@ -141,6 +143,6 @@ export class WalletCreatePage implements OnInit {
     }
 
     showHelp(event): Promise<any> {
-        return this.native.showHelp(event, 'wallet.help:create-password')
+        return this.popupService.showHelp(event, 'wallet.help:create-password')
     }
 }

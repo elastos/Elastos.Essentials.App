@@ -8,6 +8,7 @@ import { GlobalDirectivesModule } from '../helpers/directives/module';
 import { ConfirmationPopupComponent } from './confirmation-popup/confirmation-popup.component';
 import { DIDPublishingComponent } from './did-publishing/did-publishing.component';
 import { EButtonComponent } from './ebutton/ebutton.component';
+import { HelpComponent } from './help/help.component';
 import { ImgSVGFallbackComponent } from './img-svg-fallback/img-svg-fallback.component';
 import { MenuSheetComponent } from './menu-sheet/menu-sheet.component';
 import { MnemonicKeypadComponent } from './mnemonic-keypad/mnemonic-keypad.component';
@@ -27,7 +28,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     MnemonicKeypadComponent,
     MenuSheetComponent,
     EButtonComponent,
-    ImgSVGFallbackComponent
+    ImgSVGFallbackComponent,
+    HelpComponent
   ],
   imports: [
     CommonModule,
@@ -59,7 +61,8 @@ import { TitlebarmenuitemComponent } from './titlebarmenuitem/titlebarmenuitem.c
     RestartPromptComponent,
     ConfirmationPopupComponent,
     MnemonicKeypadComponent,
-    EButtonComponent
+    EButtonComponent,
+    HelpComponent
   ],
 })
 export class SharedComponentsModule { }

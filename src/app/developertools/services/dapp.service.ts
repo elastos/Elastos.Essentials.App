@@ -5,9 +5,9 @@ import { Logger } from 'src/app/logger';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPasswordService } from 'src/app/services/global.password.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
-import { HelpComponent } from '../components/help/help.component';
 import { CreatedDApp } from '../model/customtypes';
 import { StorageDApp } from '../model/storagedapp.model';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
@@ -26,7 +26,8 @@ export class DAppService {
         private globalPasswordService: GlobalPasswordService,
         private storage: GlobalStorageService,
         private native: GlobalNativeService,
-        private globalApplicationDidService: GlobalApplicationDidService
+        private globalApplicationDidService: GlobalApplicationDidService,
+        public popupService: GlobalPopupService,
     ) {
     }
 
@@ -302,17 +303,7 @@ export class DAppService {
     }
 
     public async showHelp(ev: any, helpMessage: string) {
-        const popover = await this.popoverController.create({
-            mode: 'ios',
-            component: HelpComponent,
-            cssClass: 'developertools-help-component',
-            event: ev,
-            componentProps: {
-                message: helpMessage
-            },
-            translucent: false
-        });
-        return await popover.present();
+        return this.popupService.showHelp(ev, helpMessage, 'developertools-help-component');
     }
 
     async deleteApp(app: StorageDApp): Promise<void> {

@@ -149,6 +149,8 @@ export const en = {
         'confirm-prompt': 'After voting, the pledged ELA will be locked during the chosen number of days and cannot withdrawn.',
         'confirm-button-text': 'Vote',
 
+        'vote-warning': 'This node already has a large number of votes so you will get less rewards. The closer above 80k votes, the more rewards.',
+
         /********** Sort **********/
         'sort-votes-dec': 'Number of votes ↓',
         'sort-votes-inc': 'Number of votes ↑',
