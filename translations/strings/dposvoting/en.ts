@@ -145,6 +145,10 @@ export const en = {
         'stakedays-input-err': 'The pledge time of the tokens shall not be less than {{ days }} days.',
         'no-voting': 'No voting data',
 
+        'confirm-title': 'Confirm votes',
+        'confirm-prompt': 'After voting, the pledged ELA will be locked during the chosen number of days and cannot withdrawn.',
+        'confirm-button-text': 'Vote',
+
         /********** Sort **********/
         'sort-votes-dec': 'Number of votes ↓',
         'sort-votes-inc': 'Number of votes ↑',

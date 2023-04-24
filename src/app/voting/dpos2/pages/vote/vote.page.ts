@@ -185,6 +185,15 @@ export class VotePage implements OnInit, OnDestroy {
                 void this.globalNative.genericToast('crcouncilvoting.not-allow-pledge-more-than-own');
             }
             else {
+                let confirmed = await this.popupProvider.showConfirmationPopup(
+                        this.translate.instant('dposvoting.confirm-title'),
+                        this.translate.instant('dposvoting.confirm-prompt'),
+                        this.translate.instant('dposvoting.confirm-button-text'),
+                        "/assets/identity/default/publishWarning.svg");
+                if (!confirmed) {
+                    return;
+                }
+
                 Logger.log(App.DPOS2, votedCandidates);
                 await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.selectedNodes);
                 this.votesCasted = false;

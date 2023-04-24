@@ -145,6 +145,10 @@ export const zh = {
         'stakedays-input-err': '质押时间不能小于{{ days }}天。',
         'no-voting': '没有投票数据',
 
+        'confirm-title': '确认投票',
+        'confirm-prompt': '投票后，质押的ELA将在选定的天数内锁定，不能撤回',
+        'confirm-button-text': '投票',
+
         /********** Sort **********/
         'sort-votes-dec': '按选票排序 ↓',
         'sort-votes-inc': '按选票排序 ↑',
