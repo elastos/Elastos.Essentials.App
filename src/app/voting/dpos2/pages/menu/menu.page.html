@@ -1,22 +1,22 @@
 <ion-content>
   <ion-tabs [class.dark-tabs]="theme.darkMode">
     <ion-tab-bar slot="bottom">
-      <ion-tab-button tab="list">
+      <ion-tab-button tab="list" [disabled]="dpos2Service.isFetchingData()">
         <ion-icon name="list-circle"></ion-icon>
         <ion-label>{{ 'dposvoting.menu-voting' | translate }}</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="stats">
+      <ion-tab-button tab="stats" [disabled]="dpos2Service.isFetchingData()">
         <ion-icon name="stats-chart"></ion-icon>
         <ion-label>{{ 'dposvoting.menu-stat' | translate }}</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="my-votes">
+      <ion-tab-button tab="my-votes" [disabled]="dpos2Service.isFetchingData()">
         <ion-icon name="book"></ion-icon>
         <ion-label>{{ 'dposvoting.my-votes' | translate }}</ion-label>
       </ion-tab-button>
 
-      <ion-tab-button tab="search">
+      <ion-tab-button tab="search" [disabled]="dpos2Service.isFetchingData()">
         <ion-icon name="search"></ion-icon>
         <ion-label>{{ 'dposvoting.menu-search' | translate }}</ion-label>
       </ion-tab-button>

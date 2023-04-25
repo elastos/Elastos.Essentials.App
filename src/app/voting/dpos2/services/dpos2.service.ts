@@ -94,6 +94,7 @@ export class DPoS2Service {
     public minStakeDays = 10;
 
     public myVotes: VotesInfo[] = [];
+    private isFetchingMyvotes = false;
 
     public onlyUpdateStakeUntil = false;
 
@@ -140,7 +141,8 @@ export class DPoS2Service {
             await this.getStoredVotes();
             await this.fetchNodes();
             this.updateSelectedNode()
-            void this.geMyVoteds();
+            // For faster startup, don't get my votes on init.
+            // await this.geMyVoteds();
         }
         catch (err) {
             Logger.warn('dposvoting', 'Initialize node error:', err);
@@ -368,7 +370,18 @@ export class DPoS2Service {
         if (this.myVotes[stakeAddress] && (this.myVotes[stakeAddress].timestamp + 120 >= currentTimestamp)) {
             return this.myVotes[stakeAddress].votes;
         } else {
-            return await this.fetchMyVoteds();
+            if (this.isFetchingMyvotes) return [];
+
+            this.isFetchingMyvotes = true;
+            try {
+                return await this.fetchMyVoteds();
+            }
+            catch (e) {
+                Logger.log(App.DPOS2, 'fetch my voteds exception:', e);
+            }
+            finally {
+                this.isFetchingMyvotes = false;
+            }
         }
     }
 
@@ -502,6 +515,10 @@ export class DPoS2Service {
                 break;
             case 'blockchain.vip':
                 node.imageUrl = 'assets/dposvoting/supernodes/blockchainvip.png';
+                node.Location = 'Germany';
+                break;
+            case 'dogbitzer':
+                node.imageUrl = 'assets/dposvoting/supernodes/dogbitzer.png';
                 node.Location = 'Germany';
                 break;
             case 'Enter Elastos':
@@ -748,4 +765,8 @@ export class DPoS2Service {
     getVotes(votes: string): string {
         return this.uxService.toThousands(votes);
     }
+
+    public isFetchingData() {
+      return this.initOngoning || this.isFetchingMyvotes;
+  }
 }
