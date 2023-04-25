@@ -525,7 +525,7 @@ export class DPoS2Service {
 
     getNodeIcon(node: DPoS2Node) {
         // Logger.warn(App.DPOS2, 'Node', node);
-        if (this.nodeImages[node.ownerpublickey]) {
+        if (this.nodeImages[node.ownerpublickey] && this.nodeImages[node.ownerpublickey].logo) {
             node.imageUrl = this.logoUrl + this.nodeImages[node.ownerpublickey].logo;
             return;
         }
