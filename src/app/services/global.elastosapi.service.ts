@@ -45,6 +45,7 @@ export enum ElastosApiUrlType {
     EID_BLOCK_EXPLORER = 'eidBlockExplorer',
     // widget
     WIDGETS = 'widgets',
+    IMAGES = 'images',
 }
 
 export type ElastosAPIProvider = {
@@ -77,20 +78,28 @@ export type ElastosAPIProvider = {
             eidBlockExplorer: string;
             // Widgets
             widgets: string;
+            images: string; // nodes or CRC avatar
         }
     }
 };
 
 export enum NodeType {
-  DPoS = 'v1',
-  BPoS = 'v2',
-  ALL = 'all'
+    DPoS = 'v1',
+    BPoS = 'v2',
+    ALL = 'all'
 }
 
 export type NotesCache = {
-  timestamp: number,
-  result: any
+    timestamp: number,
+    result: any
 }
+
+export type ImageInfo = {
+    [key: string]: { // ownerpublickkey (BPoS node) or did (CRC)
+        nickname: string;
+        logo: string;
+    }
+};
 
 /**
  * Service reponsible for switching between different API providers for elastos features,
@@ -116,6 +125,8 @@ export class GlobalElastosAPIService extends GlobalService {
     private blockHeightTimestamp = 0;
 
     private nodesCache: NotesCache[] = [];
+
+    private imagesCache: ImageInfo[] = null;
 
     constructor(
         public translate: TranslateService,
@@ -162,6 +173,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escBlockExplorer: 'https://esc.elastos.io',
                         eidBlockExplorer: 'https://eid.elastos.io',
                         widgets: 'https://api.elastos.io/widgets',
+                        images: 'https://api.elastos.io/images',
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.elastos.io/ela',
@@ -179,6 +191,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escBlockExplorer: 'https://esc-testnet.elastos.io',
                         eidBlockExplorer: 'https://eid-testnet.elastos.io',
                         widgets: 'https://api-testnet.elastos.io/widgets',
+                        images: 'https://api.elastos.io/images',
                     },
                     "LRW": {
                         mainChainRPC: 'https://dpos2.cpolar.top',
@@ -196,6 +209,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escBlockExplorer: '',
                         eidBlockExplorer: '',
                         widgets: 'https://api.elastos.io/widgets',
+                        images: 'https://api.elastos.io/images',
                     },
                 }
             },
@@ -220,6 +234,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escBlockExplorer: 'https://esc.elastos.io',
                         eidBlockExplorer: 'https://eid.elastos.io',
                         widgets: 'https://api.trinity-tech.io/widgets',
+                        images: 'https://api.trinity-tech.io/images',
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.trinity-tech.io/ela',
@@ -237,6 +252,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escBlockExplorer: 'https://esc-testnet.elastos.io',
                         eidBlockExplorer: 'https://eid-testnet.elastos.io',
                         widgets: 'https://api-testnet.trinity-tech.io/widgets',
+                        images: 'https://api.trinity-tech.io/images',
                     },
                     "LRW": {
                         mainChainRPC: 'https://crc1rpc.longrunweather.com:18443',
@@ -254,6 +270,7 @@ export class GlobalElastosAPIService extends GlobalService {
                         escBlockExplorer: '',
                         eidBlockExplorer: '',
                         widgets: 'https://api.trinity-tech.io/widgets',
+                        images: 'https://api.trinity-tech.io/images',
                     },
                 }
                 /*
@@ -1018,4 +1035,24 @@ export class GlobalElastosAPIService extends GlobalService {
         }
         return null;
     }
+
+    // images
+    public async fetchImages(): Promise<ImageInfo[]> {
+      if (this.imagesCache) {
+          return this.imagesCache;
+      }
+
+      const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.IMAGES);
+      const imagesurl = rpcApiUrl + '/logo.json';
+      try {
+          let result = await this.globalJsonRPCService.httpGet(imagesurl);
+          if (result && (Object.keys(result).length > 0)) {
+              this.imagesCache = result;
+              return result;
+          }
+      } catch (e) {
+          Logger.error('elastosapi', 'fetchImages error:', e)
+      }
+      return null;
+  }
 }

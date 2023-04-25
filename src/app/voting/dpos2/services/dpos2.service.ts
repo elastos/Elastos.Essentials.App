@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService, ImageInfo, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -64,6 +64,9 @@ export class DPoS2Service {
     public totalVotes = 0;
     public dposList: DPoS2Node[] = [];
     private fetchNodesTimestamp = 0;
+
+    // Image
+    private nodeImages: ImageInfo[] = [];
 
     public voteStakeExpired30: string = null;
     public voteStakeAboutExpire: string = null;
@@ -137,8 +140,11 @@ export class DPoS2Service {
             this.minStakeDays = 10;
         }
 
+        this.logoUrl = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.IMAGES) + '/';
+
         try {
             await this.getStoredVotes();
+            await this.fetchNodeAvatars();
             await this.fetchNodes();
             this.updateSelectedNode()
             // For faster startup, don't get my votes on init.
@@ -202,6 +208,17 @@ export class DPoS2Service {
                 }
             }
         }
+    }
+
+    async fetchNodeAvatars() {
+      try {
+          let result = await GlobalElastosAPIService.instance.fetchImages();
+          if (result) {
+              this.nodeImages = result;
+          }
+      } catch (err) {
+          Logger.error('dposvoting', 'fetchNodeAvatars error:', err);
+      }
     }
 
     async fetchStats() {
@@ -508,6 +525,12 @@ export class DPoS2Service {
 
     getNodeIcon(node: DPoS2Node) {
         // Logger.warn(App.DPOS2, 'Node', node);
+        if (this.nodeImages[node.ownerpublickey]) {
+            node.imageUrl = this.logoUrl + this.nodeImages[node.ownerpublickey].logo;
+            return;
+        }
+
+        // TODO: remove this code and avatar.
         switch (node.nickname) {
             case '韩锋/SunnyFengHan':
                 node.imageUrl = this.logoUrl + 'Sunny_Feng_Han_min.png';

@@ -10,7 +10,7 @@ import { App } from 'src/app/model/app.enum';
 import { DIDDocument } from 'src/app/model/did/diddocument.model';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDService } from 'src/app/services/global.did.service';
-import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { ElastosApiUrlType, GlobalElastosAPIService, ImageInfo } from 'src/app/services/global.elastosapi.service';
 import { GlobalHiveCacheService } from 'src/app/services/global.hivecache.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -97,26 +97,15 @@ export class CRCouncilService {
     public isCandidate = false;
     public isElected = false;
 
+    // Image
+    private logoUrl = 'https://api.elastos.io/images/';
+    private nodeImages: ImageInfo[] = [];
+
     public httpOptions = {
         headers: new HttpHeaders({
             'Content-Type': 'application/json',
         })
     };
-
-    public avatarList = {
-        "ioNZHmG9CpDvjEfpRNWU1vd8i1rSHzVGB2": "https://api.elastos.io/images/SunnyFengHan.png",
-        "iqHaEoHQNdsRBFHNXEoiwF8hMRAikgMuxS": "https://api.elastos.io/images/DonaldBullers.png",
-        "if4ApisvFmMQTsBBeibYj8RYY8T6zKU5v5": "https://api.elastos.io/images/ElationStudios.png",
-        "idzud676zaw6hbSbvkfzKnZgWdK9Pj3w8T": "https://api.elastos.io/images/MarkXing.png",
-        "ipLeeiAP46JHN12sXAAr22oowHJ23x9FRM": "https://api.elastos.io/images/BrittanyKaiser.png",
-        "iaBNozEmoTkzeEAjrUJyZDtuX8HJHBhYtx": "https://api.elastos.io/images/Starfish.png",
-        "ifFGHBuoAbT4Hk6uHn8vsQn5et7KExyMUZ": "https://api.elastos.io/images/SjunSong.png",
-        "icaVPz8nY7Y7LKjpJxmzWxCG5F3CEV6hnt": "https://api.elastos.io/images/RebeccaZhu.png",
-        "ioe6q6iXHvMEmdBEB4wpd1WGyrgEuttw93": "https://api.elastos.io/images/TheStrawberryCouncil.png",
-        "ianpxAxfvEwX2VrScpHgtBiUsSu2wcxj4B": "https://api.elastos.io/images/ZhangFeng.png",
-        "iXMsb6ippqkCHN3EeWc4QCA9ySnrSgLc4u": "https://api.elastos.io/images/NiuJingyu.png",
-        "iTN9V9kaBewdNE9aw7DfqHgRn6NcDj8HCf": "https://api.elastos.io/images/Orchard.png",
-    }
 
     init() {
         return this.initData();
@@ -126,7 +115,7 @@ export class CRCouncilService {
         this.candidates = [];
         this.selectedCandidates = [];
         this.selectedMember = null;
-        this.isVoting = false
+        this.isVoting = false;
     }
 
     async fetchCRMembers() {
@@ -134,6 +123,10 @@ export class CRCouncilService {
         if (this.crmembers.length) return;
 
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
+
+        if (this.nodeImages.length == 0) {
+            await this.fetchNodeAvatars();
+        }
 
         this.crmembers = [];
         this.crmemberInfo = null;
@@ -231,6 +224,10 @@ export class CRCouncilService {
     }
 
     async fetchCandidates() {
+        if (this.nodeImages.length == 0) {
+            await this.fetchNodeAvatars();
+        }
+
         let selectedCandidates = await this.getSelectedCandidates();
 
         Logger.log('crcouncil', 'Fetching Candidates..');
@@ -331,6 +328,18 @@ export class CRCouncilService {
         }
     }
 
+    async fetchNodeAvatars() {
+        this.logoUrl = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.IMAGES) + '/';
+        try {
+            let result = await GlobalElastosAPIService.instance.fetchImages();
+            if (result) {
+              this.nodeImages = result;
+            }
+        } catch (err) {
+            Logger.error('crcouncil', 'fetchNodeAvatars error:', err);
+        }
+    }
+
     public async getAvatarFromHive(item: any) {
         let doc = await DIDDocument.getDIDDocumentFromDIDString(item.did);
         let hiveIconUrl = doc.getHiveIconUrl();
@@ -347,9 +356,8 @@ export class CRCouncilService {
             return;
         }
 
-        item.avatar = null; //"/assets/crcouncilvoting/icon/avatar.png";
-        if (this.avatarList[item.did]) {
-            item.avatar = this.avatarList[item.did];
+        if (this.nodeImages[item.did]) {
+            item.avatar = this.logoUrl + this.nodeImages[item.did].logo;
         }
 
         this.globalDidService.fetchUserInformation(item.did).subscribe(userInfo => {
@@ -649,6 +657,10 @@ export class CRCouncilService {
 
     async fetchNextCRs() {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching next crs..');
+
+        if (this.nodeImages.length == 0) {
+            await this.fetchNodeAvatars();
+        }
 
         this.nextCRs = [];
         this.isElected = false;
