@@ -88,44 +88,54 @@ export class ImpeachCRMemberPage {
                 return;
             default:
                 // Should not happen.
-                Logger.error('wallet', 'Not support, pls check the wallet type:', this.voteService.sourceSubwallet.masterWallet.type)
+                Logger.error(App.CRCOUNCIL_VOTING, 'Not support, pls check the wallet type:', this.voteService.sourceSubwallet.masterWallet.type)
                 return;
         }
 
-        // Request the wallet to publish our vote.
-        if (!await this.voteService.checkPendingBalance()) {
-            return false;
+        this.signingAndTransacting = true;
+        try {
+            // Request the wallet to publish our vote.
+            if (!await this.voteService.checkPendingBalance()) {
+                return false;
+            }
+            if (!this.amount) {
+                await this.popupProvider.ionicAlert("common.error", 'voting.vote-invalid');
+                return false;
+            }
+            else if (this.amount > this.maxVotes) {
+                await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.greater-than-max-votes');
+                return false;
+            }
+            else if (this.amount <= 0) {
+                await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.less-than-equal-zero-votes');
+                return false;
+            }
+
+            const stakeAmount = Util.accMul(this.amount, Config.SELA).toString();
+            if (this.stakeService.votesRight.totalVotesRight > 0) {
+                await this.createVoteImpeachTransactionV2(stakeAmount);
+            }
+            else {
+                await this.createVoteImpeachTransaction(stakeAmount);
+            }
         }
-        if (!this.amount) {
-            await this.popupProvider.ionicAlert("common.error", 'voting.vote-invalid');
-            return false;
+        catch (e) {
+            Logger.log(App.CRCOUNCIL_VOTING, 'goTransaction exception:', e);
         }
-        else if (this.amount > this.maxVotes) {
-            await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.greater-than-max-votes');
-            return false;
-        }
-        else if (this.amount <= 0) {
-            await this.popupProvider.ionicAlert("common.error", 'crproposalvoting.less-than-equal-zero-votes');
-            return false;
+        finally {
+            this.signingAndTransacting = false;
         }
 
-        const stakeAmount = Util.accMul(this.amount, Config.SELA).toString();
-        if (this.stakeService.votesRight.totalVotesRight > 0) {
-            await this.createVoteImpeachTransactionV2(stakeAmount);
-        }
-        else {
-            await this.createVoteImpeachTransaction(stakeAmount);
-        }
         return true;
     }
 
     async createVoteImpeachTransaction(voteAmount: string) {
-        this.signingAndTransacting = true;
-        Logger.log('wallet', 'Creating vote transaction with amount', voteAmount);
+
+        Logger.log(App.CRCOUNCIL_VOTING, 'Creating vote transaction with amount', voteAmount);
 
         let votes = {};
         votes[this.member.cid] = voteAmount; // Vote with everything
-        Logger.log('wallet', "Vote:", votes);
+        Logger.log(App.CRCOUNCIL_VOTING, "Vote:", votes);
 
         let crVoteContent: VoteContent = {
             Type: VoteTypeString.CRCImpeachment,
@@ -135,24 +145,19 @@ export class ImpeachCRMemberPage {
         const voteContent = [crVoteContent];
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createVoteTransaction(
                 voteContent,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
-            Logger.log('wallet', "rawTx:", rawTx);
+            Logger.log(App.CRCOUNCIL_VOTING, "rawTx:", rawTx);
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
                 this.voteService.toastSuccessfully('crcouncilvoting.impeachment');
             }
         }
         catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-
-        this.signingAndTransacting = false;
     }
 
     async createVoteImpeachTransactionV2(voteAmount: string) {
@@ -179,20 +184,17 @@ export class ImpeachCRMemberPage {
         Logger.log(App.CRCOUNCIL_VOTING, 'CR Impeachment payload', payload);
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo
             );
-            await this.globalNative.hideLoading();
-            Logger.log('wallet', "rawTx:", rawTx);
+            Logger.log(App.CRCOUNCIL_VOTING, "rawTx:", rawTx);
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
                 this.voteService.toastSuccessfully('crcouncilvoting.impeachment');
             }
         }
         catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
 
