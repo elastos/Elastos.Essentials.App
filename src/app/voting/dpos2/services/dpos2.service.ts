@@ -82,6 +82,7 @@ export class DPoS2Service {
     public voters: Voters;
     public price: Price;
     public block: Block;
+    private fetchStatsTimestamp = 0;
 
     // Empty List - Used to loop dummy items while data is being fetched
     public emptyList = new Array(10).fill('');
@@ -222,6 +223,11 @@ export class DPoS2Service {
     }
 
     async fetchStats() {
+        let currentBlockTimestamp = moment().valueOf() / 1000;
+        if (this.fetchStatsTimestamp + 120 >= currentBlockTimestamp) {
+            return;
+        }
+
         try {
             let widgetsApi = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.WIDGETS);
             let result = await this.globalJsonRPCService.httpGet(widgetsApi);
@@ -231,6 +237,8 @@ export class DPoS2Service {
                 this.voters = result.voters;
                 this.price = result.price;
                 this.block = result.block;
+
+                this.fetchStatsTimestamp = currentBlockTimestamp;
             }
         } catch (err) {
             Logger.error('dposvoting', 'fetchStats error:', err);
@@ -244,7 +252,7 @@ export class DPoS2Service {
         }
 
         var ownerPublicKey = '';
-        let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
 
         // await this.stakeService.getVoteRights();
 
@@ -293,7 +301,7 @@ export class DPoS2Service {
 
                     if (node.state === 'Active' || (node.state === 'Inactive')) {
                         //Check stake Until
-                        let until = node.stakeuntil - currentHeight;
+                        let until = node.stakeuntil - this.currentHeight;
                         node.stakeDays = Math.ceil(until / 720);
                         if (until > 720 * 7) { //more than 7 days
                             var stakeTimestamp = until * 120 + currentBlockTimestamp
@@ -405,7 +413,7 @@ export class DPoS2Service {
     async fetchMyVoteds(): Promise<any[]> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS2, 'getOwnerStakeAddress', stakeAddress);
-        let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+        this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
         let currentBlockTimestamp = moment().valueOf() / 1000;
 
         const param = {
@@ -426,7 +434,7 @@ export class DPoS2Service {
             for (const vote of result) {
                 for (const node of this.activeNodes) {
                     if (vote.producerownerkey ==  node.ownerpublickey) {
-                        let locktime = vote.info.locktime - currentHeight;
+                        let locktime = vote.info.locktime - this.currentHeight;
                         var item =  {
                             index: index++,
                             imageUrl: node.imageUrl,
