@@ -815,7 +815,9 @@ export class GlobalElastosAPIService extends GlobalService {
         } catch (e) {
             Logger.warn("elastosapi", "getCurrentHeight exception", e);
         }
-        return 0;
+
+        // use cache value.
+        return this.blockHeightCache;
     }
 
     public async getELABlockHash(blockHeight: number) {

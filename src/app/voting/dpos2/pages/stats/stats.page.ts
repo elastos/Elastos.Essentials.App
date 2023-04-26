@@ -19,10 +19,7 @@ export class StatsPage implements OnInit {
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-dpos2-voting'));
-        //this.titleBar.setTheme('#732dcf', TitleBarForegroundMode.LIGHT);
-        if (!this.dpos2Service.statsFetched) {
-            await this.dpos2Service.fetchStats();
-        }
+        await this.dpos2Service.fetchStats();
     }
 
     updateStats(event) {
