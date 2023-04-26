@@ -1,8 +1,8 @@
 <ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents>
     <app-titlebar></app-titlebar>
 
-    <div *ngIf="!dataFetched">
-        <ion-spinner></ion-spinner>
+    <div class="loading" *ngIf="!dataFetched || (signingAndTransacting && !showConfirmPopup)">
+      <ion-spinner></ion-spinner>
     </div>
 
     <div *ngIf="dataFetched">
@@ -58,10 +58,6 @@
             </div>
 
         </ion-grid>
-
-        <div *ngIf="signingAndTransacting && !showConfirmPopup">
-            <ion-spinner class="loading"></ion-spinner>
-        </div>
 
         <div *ngIf="!signingAndTransacting && isKeyboardHide">
             <div class="footer-space"></div>

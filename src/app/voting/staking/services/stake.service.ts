@@ -109,15 +109,15 @@ export class StakeService {
             this.votesRight = await this.getVoteRights();
 
             // reset reward info
-            // this.nodeRewardInfo = null;
-            // this.rewardInfo = null;
-            // this.totalRewardInfo = {
-            //     claimable: 0,
-            //     claiming: 0,
-            //     claimed: 0,
-            //     total: 0,
-            // }
-            void this.getAllRewardInfo();
+            this.nodeRewardInfo = null;
+            this.rewardInfo = null;
+            this.totalRewardInfo = {
+                claimable: 0,
+                claiming: 0,
+                claimed: 0,
+                total: 0,
+            }
+            // void this.getAllRewardInfo();
         }
         catch (err) {
             Logger.error(App.STAKING, 'initData error:', err);
@@ -149,7 +149,7 @@ export class StakeService {
         let addressArray = [address];
         try {
             const balanceList = await this.voteService.sourceSubwallet.callGetBalanceByAddress(StandardCoinName.ELA, addressArray, spendable);
-            Logger.log(App.STAKING, 'getBalanceByAddress balance:', balanceList.value);
+            Logger.log(App.STAKING, 'getBalanceByAddress balance:', balanceList.value.toString());
             let balance = balanceList.value;
             if (!balance.isNegative()) {
                 return balance.dividedBy(Config.SELAAsBigNumber).toNumber();
@@ -207,9 +207,6 @@ export class StakeService {
                         this.votesRight.maxStakedRatio = this.uxService.getPercentage(this.votesRight.maxStaked, this.votesRight.totalVotesRight);
                         this.votesRight.minRemainVoteRight = min;
                         this.votesRight.remainVotes = arr;
-                        for (let i in arr) {
-                            this.votesRight.votes.push(this.votesRight.totalVotesRight - arr[i]);
-                        }
                     }
                 }
 
@@ -248,6 +245,13 @@ export class StakeService {
                     for (let i in this.votesRight.voteInfos) {
                         if (this.votesRight.voteInfos[i].list.length == 0) {
                             this.votesRight.votes[i] = 0;
+                        } else {
+                            let totalVotes = 0;
+                            for (let j in this.votesRight.voteInfos[i].list) {
+                              totalVotes += parseFloat(this.votesRight.voteInfos[i].list[j].votes);
+                            }
+
+                            this.votesRight.votes[i] = totalVotes;
                         }
                     }
                 }

@@ -75,7 +75,7 @@ export class VotePage implements OnInit, OnDestroy {
 
         await this.stakeService.getVoteRights();
         if (this.stakeService.votesRight.totalVotesRight > 0) {
-            this.totalEla = this.stakeService.votesRight.remainVotes[VoteType.DPoSV2];
+            this.totalEla = parseFloat(this.stakeService.votesRight.remainVotes[VoteType.DPoSV2].toFixed(2));
         }
         else {
             this.totalEla = 0;
@@ -114,7 +114,6 @@ export class VotePage implements OnInit, OnDestroy {
                 });
             });
         }
-
     }
 
     ionViewDidEnter() {

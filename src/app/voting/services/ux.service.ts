@@ -60,7 +60,7 @@ export class UXService {
     stringArrayToNumberArray(stringArray: string[]): number[] {
         var numberArray = [] ;
         for(let i in stringArray) {
-            numberArray.push(Number.parseInt(stringArray[i]));
+            numberArray.push(Number(stringArray[i]));
         }
         return numberArray;
     }
