@@ -42,7 +42,7 @@ ion-grid {
       line-height: 1;
       letter-spacing: -0.33px;
       text-align: left;
-      color: #372153;
+      color: var(--ion-text-color);
     }
   }
 
@@ -51,7 +51,8 @@ ion-grid {
       padding: 12.5px 5px;
       margin-bottom: 7.5px;
       box-shadow: 0 3px 15px 0 #ededf0;
-      background-color: #ffffff;
+      background: var(--essentials-button-background-color);
+      color: var(--essentials-button-text-color);
 
 
     ion-col {
@@ -75,14 +76,7 @@ ion-grid {
 }
 
 .dark-container {
-  .main-title-row {
-    p {
-      color: #9D9D9D;
-    }
-  }
-
   .options-row {
-    background-color: #212021;
     box-shadow: none;
   }
 }

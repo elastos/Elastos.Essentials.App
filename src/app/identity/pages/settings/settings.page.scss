@@ -7,7 +7,7 @@ ion-grid {
   .section-row {
     padding-top: 20px;
     padding-bottom: 20px;
-    border-bottom: 1px solid #EAEAEA;
+    border-bottom: 1px solid var(--ion-item-border-color);
 
     ion-col {
       padding: 0;
@@ -46,12 +46,3 @@ ion-grid {
   }
 }
 
-.dark-container {
-  .section-row {
-    border-bottom: 1px solid #464646;
-  }
-
-  .remove-border {
-    border-bottom: none;
-  }
-}
