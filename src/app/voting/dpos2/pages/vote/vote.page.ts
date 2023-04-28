@@ -349,8 +349,8 @@ export class VotePage implements OnInit, OnDestroy {
     }
 
     shouldShowHelp(node: any) {
-      if (node.index <= 10 && node.dposv2votesNumber > 90000) {
-        return true;
+      if (node.dposv2votesNumber > 90000) {
+          return true;
       }
       return false;
     }
