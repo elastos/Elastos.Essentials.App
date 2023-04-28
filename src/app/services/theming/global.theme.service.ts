@@ -176,6 +176,7 @@ export class GlobalThemeService extends GlobalService {
     document.body.style.setProperty('--ion-card-color', mainTextColor);
     document.body.style.setProperty('--ion-item-color', mainTextColor);
     document.body.style.setProperty('--ion-background-color', variant.color);
+    document.body.style.setProperty('--ion-item-background', variant.color);
     document.body.style.setProperty('--ion-item-border-color', `${mainTextColor}30`); // Semi transparent based on text color
     document.body.style.setProperty('--ion-color-step-50', variant.color);
     document.body.style.setProperty('--ion-color-step-100', variant.color);
