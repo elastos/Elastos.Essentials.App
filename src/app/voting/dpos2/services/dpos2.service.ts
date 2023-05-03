@@ -366,6 +366,35 @@ export class DPoS2Service {
         await this.checkTxConfirm();
     }
 
+    async checkDPoSStatus() {
+      var ownerPublicKey = '';
+
+      //The wallet imported by private key has no ELA subwallet.
+      if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
+          ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
+      }
+
+      try {
+          const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.DPoS);
+          Logger.log(App.DPOS2, "result:", result);
+
+          if (result && !Util.isEmptyObject(result.producers)) {
+              for (const node of result.producers) {
+                  if (node.ownerpublickey == ownerPublicKey) {
+                      this.dposInfo = node;
+                      return node;
+                  }
+              }
+          }
+
+      } catch (err) {
+          Logger.error('dposvoting', 'checkDPoSStatus error:', err);
+          await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
+      }
+
+      return null;
+  }
+
     // After switching wallets, fetchNodes may not be executed, but voting records need to be updated.
     updateSelectedNode() {
         for (const node of this._nodes) {

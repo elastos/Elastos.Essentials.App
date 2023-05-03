@@ -3,7 +3,8 @@ import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -11,7 +12,7 @@ import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
-import { NodesSortType, OptionsComponent } from '../../components/options/options.component';
+import { NodesActionType, NodesSortType, OptionsComponent } from '../../components/options/options.component';
 import { DPoS2Node } from '../../model/nodes.model';
 import { DPoS2Service } from '../../services/dpos2.service';
 
@@ -34,6 +35,9 @@ export class ListPage implements OnInit {
     public nodeIndex: number;
     public node: DPoS2Node;
     public dposListSorted: DPoS2Node[] = [];
+
+    // action menu
+    public actionOptions = [];
 
     public dataFetched = false;
 
@@ -74,47 +78,25 @@ export class ListPage implements OnInit {
         this.sortNodes(NodesSortType.VotesDec);
         await this.getSelectedNodes();
 
-        if (!this.voteService.isMuiltWallet()) {
-            if (this.dpos2Service.dposInfo.state == 'Unregistered'
-                || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
-                if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
-                    this.dpos2Service.dposInfo.state = 'Unregistered';
-                }
-                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'register', iconPath: BuiltInIcon.ADD });
-            }
-            else if (this.dpos2Service.dposInfo.state != 'Returned' && this.dpos2Service.dposInfo.identity != "DPoSV1") {
-                this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'detail', iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
-            }
-            else if (this.dpos2Service.dposInfo.state == 'Canceled' && this.dpos2Service.dposInfo.identity == "DPoSV1") {
-                let status = await this.voteService.dPoSStatus.value;
-                if (status == DposStatus.DPoSV2) {
-                    this.available = await this.dpos2Service.getDepositcoin();
-                    if (this.available > 0) {
-                        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'withdraw', iconPath: this.theme.darkMode ? '/assets/voting/icons/darkmode/withdraw.svg' : '/assets/voting/icons/withdraw.svg' });
-                    }
-                }
-            }
-        }
+        this.prepareActionMenu();
 
+        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+            key: "action",
+            iconPath:  !this.theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg',
+        });
         this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
             key: "sort",
-            iconPath: !this.theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg',
+            iconPath: !this.theme.darkMode ? '/assets/voting/icons/filter.svg' : '/assets/voting/icons/darkmode/filter.svg',
         });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
             if (this.isTrading) return;
 
             switch (icon.key) {
-                case 'register':
-                    void this.goToRegistration();
-                    break;
-                case 'detail':
-                    void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
-                    break;
-                case 'withdraw':
-                    void this.goToWithdraw();
-                    break;
+                case 'action':
+                    void this.showActionOptions(event);
+                    break
                 case 'sort':
-                    void this.showOptions(event);
+                    void this.showSortOptions(event);
                     break;
             }
         });
@@ -130,6 +112,82 @@ export class ListPage implements OnInit {
 
     ionViewWillLeave() {
         this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
+    }
+
+    async prepareActionMenu() {
+      if (!this.voteService.isMuiltWallet()) {
+          if (this.dpos2Service.dposInfo.state == 'Unregistered'
+              || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
+              if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
+                  this.dpos2Service.dposInfo.state = 'Unregistered';
+              }
+              // this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'register', iconPath: BuiltInIcon.ADD });
+              this.actionOptions.push({
+                  type: NodesActionType.Register,
+                  title: this.translate.instant("dposvoting.register-header"),
+            });
+          }
+          else if (this.dpos2Service.dposInfo.state != 'Returned' && this.dpos2Service.dposInfo.identity != "DPoSV1") {
+              // this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'detail', iconPath: this.theme.darkMode ? 'assets/dposvoting/icon/darkmode/node.svg' : 'assets/dposvoting/icon/node.svg' });
+              this.actionOptions.push({
+                  type: NodesActionType.Detail,
+                  title: this.translate.instant("dposvoting.dpos2-node-info"),
+            });
+          }
+          else if (this.dpos2Service.dposInfo.state == 'Canceled' && this.dpos2Service.dposInfo.identity == "DPoSV1") {
+              let status = await this.voteService.dPoSStatus.value;
+              if (status == DposStatus.DPoSV2) {
+                  this.available = await this.dpos2Service.getDepositcoin();
+                  if (this.available > 0) {
+                      // this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'withdraw', iconPath: this.theme.darkMode ? '/assets/voting/icons/darkmode/withdraw.svg' : '/assets/voting/icons/withdraw.svg' });
+                      this.actionOptions.push({
+                        type: NodesActionType.Withdraw,
+                        title: this.translate.instant("dposvoting.withdraw"),
+                    });
+                  }
+              }
+          }
+
+          this.actionOptions.push({
+              type: NodesActionType.CheckDPoSStatus,
+              title: this.translate.instant("dposvoting.check-dpos-status"),
+          });
+      }
+    }
+
+    async showActionOptions(ev: any) {
+        this.popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            component: OptionsComponent,
+            componentProps: {
+                options: this.actionOptions,
+            },
+            cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'launcher-options-component' : 'launcher-options-component-dark',
+            event: ev,
+            translucent: false
+        });
+        void this.popover.onWillDismiss().then((ret) => {
+            this.doAction(ret?.data);
+            this.popover = null;
+        });
+        return await this.popover.present();
+    }
+
+    doAction(type: NodesActionType) {
+        switch (type) {
+            case NodesActionType.Register:
+                void this.goToRegistration();
+            break;
+            case NodesActionType.Detail:
+                void this.globalNav.navigateTo(App.DPOS2, '/dpos2/node-detail');
+            break;
+            case NodesActionType.Withdraw:
+                void this.goToWithdraw();
+            break;
+            case NodesActionType.CheckDPoSStatus:
+                void this.checkDPoSStatus();
+            break;
+        }
     }
 
     async goToRegistration() {
@@ -180,11 +238,71 @@ export class ListPage implements OnInit {
         }
     }
 
-    async showOptions(ev: any) {
+    async checkDPoSStatus() {
+        try {
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            let dposInfo = await this.dpos2Service.checkDPoSStatus();
+            Logger.log(App.DPOS2, ' dposInfo:', dposInfo);
+            if (dposInfo && (dposInfo.state == 'Canceled') && (dposInfo.identity == "DPoSV1")) {
+                this.available = await this.dpos2Service.getDepositcoin();
+                await this.globalNative.hideLoading();
+                if (this.available > 0) {
+                    this.goToWithdraw();
+                }
+            } else {
+                await this.globalNative.hideLoading();
+                this.globalNative.genericToast('dposvoting.no-registered-dpos-node');
+            }
+        }
+        catch (e) {
+            Logger.warn(App.DPOS2, 'checkDPoSStatus exception:', e)
+        }
+        finally {
+            await this.globalNative.hideLoading();
+        }
+    }
+
+    async showSortOptions(ev: any) {
+        let options = [
+            {
+                type: NodesSortType.VotesDec,
+                title: this.translate.instant("dposvoting.sort-votes-dec"),
+            },
+            {
+                type: NodesSortType.VotesInc,
+                title: this.translate.instant("dposvoting.sort-votes-inc"),
+            },
+            {
+                type: NodesSortType.CreationDateDec,
+                title: this.translate.instant("dposvoting.sort-creation-date-dec"),
+            },
+            {
+                type: NodesSortType.CreationDateInc,
+                title: this.translate.instant("dposvoting.sort-creation-date-inc"),
+            },
+            {
+                type: NodesSortType.NameDec,
+                title: this.translate.instant("dposvoting.sort-name-dec"),
+            },
+            {
+                type: NodesSortType.NameInc,
+                title: this.translate.instant("dposvoting.sort-name-inc"),
+            },
+            {
+                type: NodesSortType.StakeUntilDec,
+                title: this.translate.instant("dposvoting.sort-stake-until-dec"),
+            },
+            {
+                type: NodesSortType.StakeUntilInc,
+                title: this.translate.instant("dposvoting.sort-stake-until-inc"),
+            },
+        ];
+
         this.popover = await this.popoverCtrl.create({
           mode: 'ios',
           component: OptionsComponent,
           componentProps: {
+            options
           },
           cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'launcher-options-component' : 'launcher-options-component-dark',
           event: ev,

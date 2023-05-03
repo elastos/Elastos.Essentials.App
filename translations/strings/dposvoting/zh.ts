@@ -119,7 +119,7 @@ export const zh = {
         'vote-exprie-message': '您的 BPoS 投票{{ time }}后过期，请点击更新投票。',
         'vote-about-exprie': '您的 BPoS 投票即将过期，请点击更新投票。',
         'dpos1-update-warning': '您是否想升级为BPoS节点？升级交易需要花费少量的交易费。',
-        'dpos1-withdraw-warning': '您要取回BPoS 节点的押金吗?',
+        'dpos1-withdraw-warning': '您要取回节点的押金吗?',
 
         'dpos2-node-info': 'BPoS 节点信息',
         'node2-details': 'BPoS 节点详情',
@@ -160,6 +160,10 @@ export const zh = {
         'sort-name-dec': '按名称排序 ↓',
         'sort-stake-until-inc': '按质押期排序 ↑',
         'sort-stake-until-dec': '按质押期排序 ↓',
+
+        'check-dpos-status': '检查旧版DPoS状态',
+        'no-registered-dpos-node': '没有需要处理的DPoS节点',
+        'withdraw': '取回押金',
     }
 
 };

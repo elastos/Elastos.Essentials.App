@@ -119,7 +119,7 @@ export const en = {
         'vote-exprie-message': 'Your votes for BPoS are about to expire in {{ time }}. Please click to update your votes.',
         'vote-about-exprie': 'Your votes for BPoS are about to expire. Please click to update your votes.',
         'dpos1-update-warning': 'Do you want to upgrade to a BPoS node? A minor transaction fee is paid for the DPoS node upgrade.',
-        'dpos1-withdraw-warning': 'Do you want to withdraw BPoS node deposit?',
+        'dpos1-withdraw-warning': 'Do you want to withdraw node deposit?',
 
         'dpos2-node-info': 'BPoS Node Info',
         'node2-details': 'BPoS Node Details',
@@ -160,6 +160,10 @@ export const en = {
         'sort-name-dec': 'Name ↓',
         'sort-stake-until-inc': 'Stake until ↑',
         'sort-stake-until-dec': 'Stake until ↓',
+
+        'check-dpos-status': 'Check legacy DPoS status',
+        'no-registered-dpos-node': 'No registered DPoS node',
+        'withdraw': 'Withdraw deposit',
     }
 
 };

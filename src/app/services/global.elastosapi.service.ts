@@ -874,7 +874,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         // check cache
         let useCache = false;
-        if (state == 'all') {
+        if (state !== 'all') {
            useCache = true;
            let current = moment().valueOf();
            if (this.nodesCache[identity] && ((current - this.nodesCache[identity].timestamp) < 120000)) {

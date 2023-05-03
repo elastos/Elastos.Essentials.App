@@ -1,6 +1,7 @@
 <ion-grid [class.darkContainer]="theme.darkMode">
 
   <ion-row class="row ion-activatable" (click)="selectSortType(option.type)" *ngFor="let option of options">
+    <ion-img *ngIf="option.iconpath" src="option.iconpath"></ion-img>
     <ion-label>{{ option.title }}</ion-label>
   </ion-row>
 
