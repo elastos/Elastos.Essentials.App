@@ -1,10 +1,23 @@
 @import "../../root.scss";
 
+
 .toggle-row {
     margin: 10px 0;
 
     p {
         margin-top: 5px;
+    }
+}
+
+.address-row {
+    margin-top: 20px;
+
+    p {
+        margin: 5px 0px;
+    }
+
+    .address-col {
+        padding-left: 20px;
     }
 }
 

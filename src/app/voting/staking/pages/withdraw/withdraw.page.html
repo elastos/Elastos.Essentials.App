@@ -29,26 +29,13 @@
             </ion-col>
         </ion-row>
 
-        <ion-row class="staked-for-vote">
-            <ion-col size="11.5" class="left-col">
-                {{ 'staking.advanced-options' | translate }}
-            </ion-col>
-
-            <ion-col size="0.5" class="right-col" (click)="advanced = !advanced">
-                <img *ngIf="advanced"
-                    [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
-                <img *ngIf="!advanced"
-                    [src]="!theme.darkMode ? 'assets/staking/icons/up-arrow.svg' : 'assets/staking/icons/darkmode/up-arrow.svg'" />
-            </ion-col>
-
-            <ion-col *ngIf="advanced" class="advanced-col">
+        <ion-row class="address-row">
+            <ion-col class="advanced-col">
                 <ion-row>
                     <h5>{{ 'staking.send-to' | translate }}</h5>
                 </ion-row>
-                <ion-row>
-                    <ion-input id="max-votes" type="text" name="address" [attr.disabled]="true"
-                        ngDefaultControl placeholder="{{'staking.reciever-address' | translate}}" [(ngModel)]="address">
-                    </ion-input>
+                <ion-row class="address-col">
+                    <p>{{ address }}</p>
                 </ion-row>
             </ion-col>
         </ion-row>
