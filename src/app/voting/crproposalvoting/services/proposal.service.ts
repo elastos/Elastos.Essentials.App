@@ -228,44 +228,44 @@ export class ProposalService {
 
     async getRemainingTime(proposal: ProposalDetails): Promise<string> {
         var ret;
-        var remainingTime = -1;
+        var remainingBlockCount = -1;
         if (proposal.status == "registered" || proposal.status == "cragreed") {
             let state = await this.getCrProposalState(proposal.proposalHash);
             if (state && state.registerheight) {
                 let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
                 if (currentHeight >= state.registerheight) {
                     if (proposal.status == "registered") {
-                        remainingTime = (720 * 7 - (currentHeight - state.registerheight)) * 2;
+                        remainingBlockCount = 720 * 7 - (currentHeight - state.registerheight);
                     }
                     else if (proposal.status == "cragreed") {
-                        remainingTime = (720 * 14 - (currentHeight - state.registerheight)) * 2;
+                        remainingBlockCount = 720 * 14 - (currentHeight - state.registerheight);
                     }
                 }
             }
         }
 
-        if (remainingTime > 0) {
-            ret = this.getRemainingTimeString(remainingTime);
+        if (remainingBlockCount > 0) {
+            ret = this.getRemainingTimeString(remainingBlockCount);
         }
         return ret;
     }
 
-    getRemainingTimeString(remainingTime: number): Promise<string> {
+    getRemainingTimeString(remainingBlockCount: number): Promise<string> {
         var ret;
-        if (remainingTime >= (1440 * 2)) { //more 2 days
-            ret = Math.floor(remainingTime / 1440) + " " + this.translate.instant('crproposalvoting.days');
+        if (remainingBlockCount >= (720 * 2)) { //more 2 days
+            ret = Math.floor(remainingBlockCount / 720) + " " + this.translate.instant('crproposalvoting.days');
         }
-        else if (remainingTime > 1440) {
-            ret = "1 " + this.translate.instant('crproposalvoting.day') + " " + Math.floor((remainingTime % 1440) / 60) + " " + this.translate.instant('crproposalvoting.hours');
+        else if (remainingBlockCount > 720) {
+            ret = "1 " + this.translate.instant('crproposalvoting.day') + " " + Math.floor((remainingBlockCount % 720) / 30) + " " + this.translate.instant('crproposalvoting.hours');
         }
-        else if (remainingTime == 1440) {
+        else if (remainingBlockCount == 720) {
             ret = "1 " + this.translate.instant('crproposalvoting.day');
         }
-        else if (remainingTime > 60) {
-            ret = Math.floor(remainingTime / 60) + " " + this.translate.instant('crproposalvoting.hours');
+        else if (remainingBlockCount > 30) {
+            ret = Math.floor(remainingBlockCount / 30) + " " + this.translate.instant('crproposalvoting.hours');
         }
         else {
-            ret = remainingTime + " " + this.translate.instant('crproposalvoting.minutes');
+            ret = remainingBlockCount * 2 + " " + this.translate.instant('crproposalvoting.minutes');
         }
         return ret;
     }

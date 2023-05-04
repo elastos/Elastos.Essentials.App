@@ -459,29 +459,29 @@ export class VoteService implements GlobalService {
         return true;
     }
 
-    getRemainingTimeString(remainingTime: number): Promise<string> {
+    getRemainingTimeString(remainingBlockCount: number): Promise<string> {
         var ret;
-        if (remainingTime >= (720 * 2)) { //more 2 days
-            ret = " " + Math.floor(remainingTime / 720) + " " + this.translate.instant('voting.days');
+        if (remainingBlockCount >= (720 * 2)) { //more 2 days
+            ret = " " + Math.floor(remainingBlockCount / 720) + " " + this.translate.instant('voting.days');
         }
-        else if (remainingTime > 720) {
-            ret = " 1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingTime % 720) / 30) + " " + this.translate.instant('voting.hours');
+        else if (remainingBlockCount > 720) {
+            ret = " 1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingBlockCount % 720) / 30) + " " + this.translate.instant('voting.hours');
         }
-        else if (remainingTime == 720) {
+        else if (remainingBlockCount == 720) {
             ret = " 1 " + this.translate.instant('voting.day');
         }
-        else if (remainingTime > 60) {
-            ret = " " + Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours');
+        else if (remainingBlockCount > 60) {
+            ret = " " + Math.floor(remainingBlockCount / 30) + " " + this.translate.instant('voting.hours');
         }
-        else if (remainingTime > 30) {
-            ret = " " + Math.floor(remainingTime / 30) + " " + this.translate.instant('voting.hours') + " "
-                + Math.floor(remainingTime % 30) * 2 + " " + this.translate.instant('voting.minutes');
+        else if (remainingBlockCount > 30) {
+            ret = " " + Math.floor(remainingBlockCount / 30) + " " + this.translate.instant('voting.hours') + " "
+                + Math.floor(remainingBlockCount % 30) * 2 + " " + this.translate.instant('voting.minutes');
         }
-        else if (remainingTime == 30) {
+        else if (remainingBlockCount == 30) {
             ret = " 1 " + this.translate.instant('voting.hours');
         }
         else {
-            ret = " " + remainingTime * 2 + " " + this.translate.instant('voting.minutes');
+            ret = " " + remainingBlockCount * 2 + " " + this.translate.instant('voting.minutes');
         }
         return ret;
     }

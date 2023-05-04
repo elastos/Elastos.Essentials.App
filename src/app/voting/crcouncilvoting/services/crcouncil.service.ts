@@ -478,20 +478,19 @@ export class CRCouncilService {
 
     async getRemainingTime(): Promise<string> {
         var ret;
-        var remainingTime = -1;
+        var remainingBlockCount = -1;
 
         let result = await this.getCRRelatedStage();
         if (result && result.invoting) {
             let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-
             if (result.votingendheight > currentHeight) {
                 let block_remain = result.votingendheight - currentHeight;
-                remainingTime = block_remain * 2;
+                remainingBlockCount = block_remain;
             }
         }
 
-        if (remainingTime > 0) {
-            ret = this.voteService.getRemainingTimeString(remainingTime);
+        if (remainingBlockCount > 0) {
+            ret = this.voteService.getRemainingTimeString(remainingBlockCount);
         }
         return ret;
     }
