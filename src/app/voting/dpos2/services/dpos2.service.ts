@@ -478,6 +478,7 @@ export class DPoS2Service {
                             locktime: vote.info.locktime,
                             lockDays: Math.ceil(locktime / 720),
                             nodeStakeDays: node.stakeDays,
+                            voteRights: vote.DPoSV2VoteRights,
                         } as any;
                         item.inputStakeDays = item.lockDays;
 

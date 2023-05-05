@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { UXService } from 'src/app/voting/services/ux.service';
 import { DPoS2Service } from '../../services/dpos2.service';
 
 @Component({
@@ -27,6 +28,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
         public theme: GlobalThemeService,
         public translate: TranslateService,
         public popupProvider: GlobalPopupService,
+        public uxService: UXService,
     ) { }
 
 
@@ -66,9 +68,5 @@ export class MyVotesPage implements OnInit, OnDestroy {
 
     onClick(index: number) {
         this.showNode = false;
-    }
-
-    calcVoteRights(node: any) {
-      return Math.floor(parseFloat(node.votes) * Math.log10(node.lockDays));
     }
 }
