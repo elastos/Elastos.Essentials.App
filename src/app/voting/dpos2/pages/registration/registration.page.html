@@ -46,7 +46,7 @@
                         placeholder="{{'dposvoting.stakedays-placeholder' | translate : {days: dposInfo.stakeDays} }}"
                         [(ngModel)]="dposInfo.inputStakeDays" clearInput>
                     </ion-input>
-                    <p class="expiration-date">{{ 'dposvoting.expiration-date' | translate }}: <span [class.less-than]="dposInfo.inputStakeDays < dposInfo.stakeDays">{{ uxService.getStakeDate(dposInfo.inputStakeDays) }}</span></p>
+                    <p class="expiration-date">{{ 'dposvoting.node-expiration-date' | translate }}: <span [class.less-than]="dposInfo.inputStakeDays < dposInfo.stakeDays">{{ uxService.getStakeDate(dposInfo.inputStakeDays) }}</span></p>
                 </ion-col>
             </ion-row>
 
