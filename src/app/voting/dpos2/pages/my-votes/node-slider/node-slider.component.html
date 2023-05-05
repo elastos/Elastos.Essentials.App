@@ -34,7 +34,7 @@
                     <ion-col>
                         <h5>{{ 'dposvoting.stake' | translate }}({{ 'dposvoting.input-days' | translate }})</h5>
                         <ion-row class="input-container">
-                            <p (click)="setMaxStakeDays(node)">{{ 'dposvoting.max' | translate }}</p>
+                            <ebutton class="update-btn" [title]="'dposvoting.max' | translate" (click)="setMaxStakeDays(node)"></ebutton>
                             <ion-input type="number" name="stake-until" ngDefaultControl
                                 (ionBlur)="onInputDaysBlur(node)" (ionFocus)="onInputDaysFocus(node)"
                                 placeholder="{{'dposvoting.stakedays-placeholder' | translate : {days: node.lockDays} }}"

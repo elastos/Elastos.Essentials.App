@@ -117,7 +117,7 @@ h5 {
         }
 
         .input-col {
-            height: 36px;
+            height: 47px;
         }
 
         .input-container {
@@ -134,6 +134,18 @@ h5 {
                 font-size: 13px;
                 font-weight: 400;
                 background: var(--essentials-box-color);
+            }
+
+            .update-btn {
+                width: 50px;
+                min-height: 30px;
+                font-size: 13px;
+                font-weight: 400;
+
+                display: flex;
+                text-align: right;
+                align-items: center;
+                justify-content: center;
             }
 
             p {

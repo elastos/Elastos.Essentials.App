@@ -50,7 +50,7 @@
                 <ion-row class="input-row">
                     <ion-col size="5.75" class="left-col input-col">
                         <ion-row class="input-container">
-                            <p (click)="setMaxStakeDays(node)">{{ 'dposvoting.max' | translate }}</p>
+                            <ebutton class="update-btn" [title]="'dposvoting.max' | translate" (click)="setMaxStakeDays(node)"></ebutton>
                             <ion-input type="number" [(ngModel)]="node.userStakeDays"
                                 (ionBlur)="onInputDaysBlur(node)" (ionFocus)="onInputDaysFocus(node)">
                             </ion-input>

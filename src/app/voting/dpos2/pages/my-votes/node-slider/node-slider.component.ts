@@ -171,7 +171,12 @@ export class NodeSliderComponent implements OnInit {
     }
 
     calcVoteRights(node: any) {
-        return Math.floor(parseFloat(node.votes) * Math.log10(node.inputStakeDays));
+        if (node.inputStakeDays) {
+            return Math.floor(parseFloat(node.votes) * Math.log10(node.inputStakeDays));
+        }
+        else {
+            return 0;
+        }
     }
 
     setMaxStakeDays(node: any) {
