@@ -83,6 +83,11 @@ export class NodeSliderComponent implements OnInit {
             return;
         }
 
+        if (node.inputStakeDays > 1000) {
+            this.globalNative.genericToast('voting.vote-max-deadline');
+            return;
+        }
+
         this.signingAndTransacting = true;
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
