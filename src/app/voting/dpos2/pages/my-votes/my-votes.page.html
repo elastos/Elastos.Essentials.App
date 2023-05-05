@@ -28,7 +28,7 @@
                                         <ion-icon name="navigate"></ion-icon> {{ node.Location }}
                                     </span>
                                     &#8226;  -->
-                                    {{ dpos2Service.getVotes(node.votes) }} {{ 'dposvoting.votes' | translate }}
+                                    {{ dpos2Service.getVotes(node.votes) }} {{ 'dposvoting.input-votes' | translate }} ( {{ calcVoteRights(node) }} {{ 'voting.vote-rights' | translate }} )
                                 </p>
                                 <p  *ngIf="node.stakeuntilDate">
                                     {{ 'dposvoting.stake-until' | translate }}: {{node.stakeuntilDate}}

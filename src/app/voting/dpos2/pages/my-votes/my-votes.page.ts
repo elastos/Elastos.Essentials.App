@@ -67,4 +67,8 @@ export class MyVotesPage implements OnInit, OnDestroy {
     onClick(index: number) {
         this.showNode = false;
     }
+
+    calcVoteRights(node: any) {
+      return Math.floor(parseFloat(node.votes) * Math.log10(node.lockDays));
+    }
 }
