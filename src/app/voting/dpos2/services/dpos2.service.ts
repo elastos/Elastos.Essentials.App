@@ -49,7 +49,6 @@ export type VotesInfo = {
     votes: any[]
 }
 
-
 @Injectable({
     providedIn: 'root'
 })
@@ -64,6 +63,7 @@ export class DPoS2Service {
     public totalVotes = 0;
     public dposList: DPoS2Node[] = [];
     private fetchNodesTimestamp = 0;
+    private fetchNodesOwnerPublicKey = '';
 
     // Image
     private nodeImages: ImageInfo[] = [];
@@ -246,8 +246,13 @@ export class DPoS2Service {
     }
 
     async fetchNodes() {
+        //The wallet imported by private key has no ELA subwallet.
+        if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
+            ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
+        }
+
         let currentBlockTimestamp = moment().valueOf() / 1000;
-        if (this.fetchNodesTimestamp + 120 >= currentBlockTimestamp) {
+        if ((this.fetchNodesOwnerPublicKey == ownerPublicKey) && (this.fetchNodesTimestamp + 120 >= currentBlockTimestamp)) {
             return;
         }
 
@@ -256,10 +261,6 @@ export class DPoS2Service {
 
         // await this.stakeService.getVoteRights();
 
-        //The wallet imported by private key has no ELA subwallet.
-        if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
-            ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
-        }
         this.dposInfo = {
             nickname: "",
             location: 0,
@@ -355,6 +356,7 @@ export class DPoS2Service {
 
                 Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
                 this.fetchNodesTimestamp = currentBlockTimestamp;
+                this.fetchNodesOwnerPublicKey = ownerPublicKey;
                 // this.setupRewardInfo();
             }
 
@@ -475,6 +477,7 @@ export class DPoS2Service {
                             votes: vote.info.votes,
                             locktime: vote.info.locktime,
                             lockDays: Math.ceil(locktime / 720),
+                            nodeStakeDays: node.stakeDays,
                         } as any;
                         item.inputStakeDays = item.lockDays;
 

@@ -87,10 +87,15 @@ export class NodeSliderComponent implements OnInit {
 
         try {
             this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-            let locktime = this.currentHeight + node.inputStakeDays * 720;
-            if (locktime > node.stakeuntil) {
-                this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
-                return;
+            let locktime;
+            if (node.locktime == node.stakeuntil) { // Max
+                locktime = node.stakeuntil;
+            } else {
+                locktime = this.currentHeight + node.inputStakeDays * 720;
+                if (locktime > node.stakeuntil) {
+                    this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
+                    return;
+                }
             }
 
             if (!await this.voteService.checkWalletAvailableForVote()) {
@@ -143,6 +148,11 @@ export class NodeSliderComponent implements OnInit {
             return true;
         }
 
+        // MAX stake days
+        if (node.locktime == node.stakeuntil) {
+            return false;
+        }
+
         let locktime = this.currentHeight + inputStakeDays * 720;
         return (locktime > node.stakeuntil);
     }
@@ -158,6 +168,20 @@ export class NodeSliderComponent implements OnInit {
             node.inputStakeDays = node.lockDays;
         }
         node.inputStakeDays = Math.floor(node.inputStakeDays);
+    }
+
+    calcVoteRights(node: any) {
+        return Math.floor(parseFloat(node.votes) * Math.log10(node.inputStakeDays));
+    }
+
+    setMaxStakeDays(node: any) {
+        if (node.nodeStakeDays <= 1000) {
+            node.locktime = node.stakeuntil;
+            node.inputStakeDays = node.nodeStakeDays;
+        } else {
+            node.locktime = this.currentHeight + 720000;
+            node.inputStakeDays = 1000;
+        }
     }
 
 }

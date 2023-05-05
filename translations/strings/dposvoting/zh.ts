@@ -123,7 +123,8 @@ export const zh = {
 
         'dpos2-node-info': 'BPoS 节点信息',
         'node2-details': 'BPoS 节点详情',
-        'expiration-date': '预计过期日期',
+        'expiration-date': '我的投票到期日期',
+        'node-expiration-date': '节点到期日期',
         'edit-node': '更新节点',
         'illegal-message': '节点状态异常，请补充质押金。',
         'height': '高度',
@@ -135,10 +136,11 @@ export const zh = {
         'dpos2-voting': 'BPoS 节点投票',
         'stake-more': '质押更多',
         'input-days': '天',
-        'input-votes': '票',
+        'input-votes': 'ELA 票',
         'pledge-some-votes-to-nodes': '请分配一些选票给您的候选节点',
         'stake-days-less-than-10': '投票的质押时间不能少于10。',
         'stake-days-more-than-stakeuntil': "投票的质押时间不能大于节点的质押时间。",
+        'max': '最大',
 
         'update-vote': '更新投票',
         'stakedays-placeholder': '不小于{{ days }}天',

@@ -46,110 +46,117 @@ h5 {
         }
     }
 
-    .vote-list {
-        padding: 0px 0px 1px;
-        padding-bottom: 20%;
+    .vote {
+        display: flex;
+        align-items: flex-start;
+        padding-top: 20px;
+        padding-bottom: 16px;
+        padding: 10px 15px 15px;
 
-        .vote {
+        // &:first-child {
+        //     border-top: solid 3px #F5F4F8;
+        // }
+
+        .index-col {
+            height: 50px;
+            // width: 40px;
             display: flex;
-            align-items: flex-start;
-            padding-top: 20px;
-            padding-bottom: 16px;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
 
-            // &:first-child {
-            //     border-top: solid 3px #F5F4F8;
-            // }
+        .icon-col {
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
-            .index-col {
-                height: 50px;
+            .img {
+                border-radius: 50%;
                 width: 40px;
+                height: 40px;
+                object-fit: cover;
+                overflow: hidden;
                 display: flex;
                 align-items: center;
-                justify-content: center;
-                font-weight: 600;
+            }
+        }
+
+        p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 400;
+        }
+
+        .vote-col {
+            margin-left: 10px;
+            flex: 0.9;
+
+            .name {
+                margin-bottom: 4px;
+                font-size: 16px;
+                font-weight: 500;
             }
 
-            .icon-col {
-                height: 50px;
+            .navigate {
+                color: #732cce;
+            }
+
+            .waringicon {
+                display: flex;
+                justify-content: center;
 
                 img {
-                    width: 50px;
-                    height: 100%;
+                    width: 20px;
                 }
+            }
+
+            .voteright {
+                text-align: right;
+            }
+        }
+
+        .input-col {
+            height: 36px;
+        }
+
+        .input-container {
+            height: 100%;
+            border-radius: 9px;
+            padding: 0 6px;
+            background: var(--essentials-box-color);
+            border: solid 1px var(--essentials-border-separator-color);
+
+            ion-input {
+                height: 100%;
+                text-align: right;
+
+                font-size: 13px;
+                font-weight: 400;
+                background: var(--essentials-box-color);
             }
 
             p {
-                margin: 0;
-                font-size: 13px;
-                font-weight: 400;
+                height: 100%;
+
+                text-align: right;
+                display: flex;
+                align-items: center;
+                justify-content: center;
             }
+        }
 
-            .vote-col {
-                margin-left: 10px;
-                flex: 0.9;
+        .expiration-date {
+            opacity: 0.7;
+            margin-top: 10px;
 
-                .name {
-                    margin-bottom: 4px;
-                    font-size: 16px;
-                    font-weight: 500;
-                }
-
-                .navigate {
-                    color: #732cce;
-                }
-
-                .stake-until {
-                    margin-top: 15px;
-                }
-
-                .input-col {
-                    height: 36px;
-                }
-
-                .input-container {
-                    height: 100%;
-                    border-radius: 9px;
-                    padding: 0 6px;
-                    background: var(--essentials-box-color);
-                    border: solid 1px var(--essentials-border-separator-color);
-
-                    ion-input {
-                        height: 100%;
-                        text-align: right;
-
-                        font-size: 13px;
-                        font-weight: 400;
-                        background: var(--essentials-box-color);
-                    }
-
-                    p {
-                        height: 100%;
-
-                        text-align: right;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-                }
-
-                .expiration-date {
-                    opacity: 0.7;
-                    margin-top: 10px;
-
-                    .error-input {
-                        color: red;
-                    }
-                }
-
-                .waringicon {
-                    display: flex;
-                    justify-content: center;
-
-                    img {
-                        width: 20px;
-                    }
-                }
+            .error-input {
+                color: red;
             }
+        }
+
+        .stake-until {
+            margin: 5px 0px;
         }
     }
 

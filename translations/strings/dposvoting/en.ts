@@ -123,7 +123,8 @@ export const en = {
 
         'dpos2-node-info': 'BPoS Node Info',
         'node2-details': 'BPoS Node Details',
-        'expiration-date': 'Expiration date',
+        'expiration-date': 'My vote expiration date',
+        'node-expiration-date': 'Node expiration date',
         'edit-node': 'Edit node',
         'illegal-message': 'The node is illegal, please add the deposit.',
         'height': 'Height',
@@ -135,10 +136,11 @@ export const en = {
         'dpos2-voting': 'BPoS Node Voting',
         'stake-more': 'Stake more',
         'input-days': 'Days',
-        'input-votes': 'Votes',
+        'input-votes': 'ELA Votes',
         'pledge-some-votes-to-nodes': 'Please pledge some votes to your candidate nodes',
         'stake-days-less-than-10': "The stake days of the vote should not be less than 10.",
         'stake-days-more-than-stakeuntil': "The stake days of the vote should not be greater than the node's stake days.",
+        'max': 'Max',
 
         'update-vote': 'Update vote',
         'stakedays-placeholder': 'no less than {{ days }} days',

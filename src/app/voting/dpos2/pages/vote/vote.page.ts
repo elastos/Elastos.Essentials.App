@@ -147,26 +147,20 @@ export class VotePage implements OnInit, OnDestroy {
                     }
 
                     var userStakeDays = node.userStakeDays;
-                    if (this.voteService.isMuiltWallet() && (node.userStakeDays < 1000)) {
-                        userStakeDays++;
-                    }
-
-                    let buffer = 5; // Add 10 minutes for time buffer
-                    if (userStakeDays == 1000) {
-                        buffer = 0;
-                    }
-                    let locktime = this.currentHeight + userStakeDays * 720 + buffer;
-                    if (locktime > node.stakeuntil) {
-                        this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
-                        return;
+                    let locktime = 0
+                    // MAX stake days
+                    if (userStakeDays == node.stakeDays) {
+                        locktime = node.stakeuntil;
+                    } else {
+                        locktime = this.currentHeight + this.getStakeBlockCount(userStakeDays);
+                        if (locktime > node.stakeuntil) {
+                            this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
+                            return;
+                        }
                     }
 
                     // let userVotes = node.userVotes * 100000000;
                     let userVotes = Util.accMul(node.userVotes, Config.SELA);
-                    var userStakeDays = node.userStakeDays;
-                    if (this.voteService.isMuiltWallet()) {
-                        userStakeDays++;
-                    }
                     let _vote = {
                         Candidate: node.ownerpublickey,
                         Votes: userVotes,
@@ -281,6 +275,7 @@ export class VotePage implements OnInit, OnDestroy {
 
     public checkInputDays(node: DPoS2Node): boolean {
         var userStakeDays = node.userStakeDays || 0;
+
         if (userStakeDays < 10) {
             return true;
         }
@@ -289,11 +284,12 @@ export class VotePage implements OnInit, OnDestroy {
             return true;
         }
 
-        if (this.voteService.isMuiltWallet()) {
-            userStakeDays++;
+        // MAX stake days
+        if (userStakeDays == node.stakeDays) {
+            return false;
         }
-        let locktime = this.currentHeight + userStakeDays * 720 + 5;
 
+        let locktime = this.currentHeight + this.getStakeBlockCount(userStakeDays)
         return (locktime > node.stakeuntil);
     }
 
@@ -340,6 +336,20 @@ export class VotePage implements OnInit, OnDestroy {
         this.votedEla = count;
     }
 
+    public getStakeBlockCount(userStakeDays: number) {
+      var userStakeDays = userStakeDays;
+      if (this.voteService.isMuiltWallet() && (userStakeDays < 1000)) {
+          userStakeDays++;
+      }
+
+      let buffer = 5; // Add 10 minutes for time buffer if the stake days is 10.
+      if (userStakeDays >= 11) {
+          buffer = 0;
+      }
+
+      return userStakeDays * 720 + buffer;
+    }
+
     stakeMore() {
         void this.globalNav.navigateTo(App.STAKING, "/staking/stake");
     }
@@ -357,5 +367,17 @@ export class VotePage implements OnInit, OnDestroy {
 
     showHelp(event): Promise<any> {
         return this.popupProvider.showHelp(event, 'dposvoting.vote-warning')
+    }
+
+    calcVoteRights(node: DPoS2Node) {
+        return Math.floor(node.userVotes * Math.log10(node.userStakeDays));
+    }
+
+    setMaxStakeDays(node: DPoS2Node) {
+        if (node.stakeDays <= 1000) {
+            node.userStakeDays = node.stakeDays;
+        } else {
+            node.userStakeDays = 1000;
+        }
     }
 }
