@@ -494,6 +494,10 @@ export class WalletHomePage implements OnInit, OnDestroy {
         }
     }
 
+    public getStakedBalanceInNative() {
+        return WalletUtil.getFriendlyBalance(new BigNumber(this.stakedBalance));
+    }
+
     public getStakedBalanceInCurrency() {
         let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedBalance),
             this.networkWallet.network, this.currencyService.selectedCurrency.symbol);

@@ -68,7 +68,7 @@
 
                     <h3 *ngIf="stakedBalance">{{ getStakeTitle() | translate }}</h3>
                     <div *ngIf="stakedBalance" (click)="currencyService.toggleCurrencyDisplay()">
-                        <h5 *ngIf="!currencyService.useCurrency">{{ stakedBalance }}
+                        <h5 *ngIf="!currencyService.useCurrency">{{ getStakedBalanceInNative() }}
                             <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
                         </h5>
                         <h5 *ngIf="currencyService.useCurrency">{{ getStakedBalanceInCurrency() }}

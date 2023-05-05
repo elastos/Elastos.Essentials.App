@@ -944,7 +944,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         var stakeAddress = this.getOwnerStakeAddress()
         const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);
         if (result && result[0] && result[0].totalvotesright) {
-            return Number.parseInt(result[0].totalvotesright);
+            return parseFloat(result[0].totalvotesright);
         } else
             return 0;
     }
