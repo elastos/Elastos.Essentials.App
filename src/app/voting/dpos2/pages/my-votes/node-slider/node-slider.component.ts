@@ -34,6 +34,7 @@ export class NodeSliderComponent implements OnInit {
     public stakeDays = 0;
     public signingAndTransacting = false;
     public currentHeight = 0;
+    private useMaxStakeDays = false;
 
     slideOpts = {
         initialSlide: 1,
@@ -88,8 +89,8 @@ export class NodeSliderComponent implements OnInit {
         try {
             this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let locktime;
-            if (node.locktime == node.stakeuntil) { // Max
-                locktime = node.stakeuntil;
+            if (this.useMaxStakeDays) { // Max
+                locktime = node.locktime;
             } else {
                 locktime = this.currentHeight + node.inputStakeDays * 720;
                 if (locktime > node.stakeuntil) {
@@ -148,6 +149,10 @@ export class NodeSliderComponent implements OnInit {
             return true;
         }
 
+        if (inputStakeDays > 1000) {
+            return true;
+        }
+
         // MAX stake days
         if (node.locktime == node.stakeuntil) {
             return false;
@@ -168,14 +173,16 @@ export class NodeSliderComponent implements OnInit {
             node.inputStakeDays = node.lockDays;
         }
         node.inputStakeDays = Math.floor(node.inputStakeDays);
+        this.useMaxStakeDays = false;
     }
 
     calcVoteRights(node: any) {
         if (node.inputStakeDays) {
-            return Math.floor(parseFloat(node.votes) * Math.log10(node.inputStakeDays));
+            let totalStakeDays = this.currentHeight - node.blockheight + node.inputStakeDays * 720;
+            return this.uxService.toThousands(parseFloat(node.votes) * Math.log10(totalStakeDays / 720), 0);
         }
         else {
-            return 0;
+            return Math.floor(node.voteRights);
         }
     }
 
@@ -187,6 +194,8 @@ export class NodeSliderComponent implements OnInit {
             node.locktime = this.currentHeight + 720000;
             node.inputStakeDays = 1000;
         }
+
+        this.useMaxStakeDays = true;
     }
 
 }

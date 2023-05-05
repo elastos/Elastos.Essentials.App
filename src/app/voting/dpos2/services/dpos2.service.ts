@@ -479,6 +479,7 @@ export class DPoS2Service {
                             lockDays: Math.ceil(locktime / 720),
                             nodeStakeDays: node.stakeDays,
                             voteRights: vote.DPoSV2VoteRights,
+                            blockheight: vote.blockheight, // The block height of start pledging.
                         } as any;
                         item.inputStakeDays = item.lockDays;
 
