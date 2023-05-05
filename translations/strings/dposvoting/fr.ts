@@ -63,6 +63,7 @@ export const fr = {
         'register-header': 'Enregistrer votre noeud BPoS',
         'update-header': 'Mettre à jour votre noeud BPoS',
         'node-upgrade-toast': 'Upgrade node',
+        'node-update-toast': 'Update node',
         'register': 'Enregistrer',
         'unregister': 'Désenregistrer',
         'update': 'Mettre à jour',
