@@ -9,6 +9,14 @@ ion-col {
     .avatar {
         width: 68px;
         height: 68px;
+
+        .img {
+            border-radius: 50%;
+            object-fit: cover;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
     }
 
     .name {

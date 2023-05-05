@@ -17,7 +17,7 @@
             <div *ngFor="let candidate of crCouncilService.selectedCandidates; index as i" class="candidate"
                 lines="none">
                 <div class="index-col">{{ i+1 }}</div>
-                <div class="icon-col">
+                <div class="icon-col img-col">
                     <img-svg-fallback class="img" [src]="candidate.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                 </div>
                 <div class="candidate-col">
