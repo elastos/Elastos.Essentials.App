@@ -33,6 +33,8 @@ export class CandidatesPage implements OnInit {
     public candidatesFetched = false;
     public remainingTime: string;
 
+    private isExecuting = false;
+
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     constructor(
@@ -67,8 +69,16 @@ export class CandidatesPage implements OnInit {
         switch (this.crCouncilService.candidateInfo.state) {
             case 'Unregistered':
                 this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: null, iconPath: BuiltInIcon.ADD });
-                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-                    void this.goToCandidateRegistration();
+                this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = async (icon) => {
+                  if (this.isExecuting) return;
+
+                  try {
+                      this.isExecuting = true;
+                      await this.goToCandidateRegistration();
+                  }
+                  finally {
+                      this.isExecuting = false;
+                  }
                 });
                 break;
             case 'Pending':
@@ -87,7 +97,7 @@ export class CandidatesPage implements OnInit {
 
     async goToCandidateRegistration() {
         if (!await this.voteService.isSamePublicKey()) {
-            void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.reg-use-the-same-did-wallet');
+            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.reg-use-the-same-did-wallet');
             return;
         }
 

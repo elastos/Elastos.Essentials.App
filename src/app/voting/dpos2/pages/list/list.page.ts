@@ -41,7 +41,7 @@ export class ListPage implements OnInit {
 
     public dataFetched = false;
 
-    private isTrading = false;
+    private isExecuting = false;
     public available = 0;
 
     private popover: HTMLIonPopoverElement = null;
@@ -89,7 +89,7 @@ export class ListPage implements OnInit {
             iconPath: !this.theme.darkMode ? '/assets/voting/icons/filter.svg' : '/assets/voting/icons/darkmode/filter.svg',
         });
         this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-            if (this.isTrading) return;
+            if (this.isExecuting) return;
 
             switch (icon.key) {
                 case 'action':
@@ -115,6 +115,8 @@ export class ListPage implements OnInit {
     }
 
     async prepareActionMenu() {
+      this.actionOptions = [];
+
       if (!this.voteService.isMuiltWallet()) {
           if (this.dpos2Service.dposInfo.state == 'Unregistered'
               || (this.dpos2Service.dposInfo.state == 'Active' && this.dpos2Service.dposInfo.identity == "DPoSV1")) {
@@ -156,6 +158,8 @@ export class ListPage implements OnInit {
     }
 
     async showActionOptions(ev: any) {
+        this.isExecuting = true;
+
         this.popover = await this.popoverCtrl.create({
             mode: 'ios',
             component: OptionsComponent,
@@ -167,6 +171,7 @@ export class ListPage implements OnInit {
             translucent: false
         });
         void this.popover.onWillDismiss().then((ret) => {
+            this.isExecuting = false;
             this.doAction(ret?.data);
             this.popover = null;
         });
@@ -196,7 +201,7 @@ export class ListPage implements OnInit {
             return;
         }
 
-        this.isTrading = true;
+        this.isExecuting = true;
         try {
           if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
               if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
@@ -218,7 +223,7 @@ export class ListPage implements OnInit {
         catch {
         }
         finally {
-            this.isTrading = false;
+            this.isExecuting = false;
         }
     }
 
@@ -227,14 +232,14 @@ export class ListPage implements OnInit {
             return;
         }
 
-        this.isTrading = true;
+        this.isExecuting = true;
         try {
             await this.dpos2Service.retrieve(this.available);
         }
         catch (e) {
         }
         finally {
-            this.isTrading = false;
+            this.isExecuting = false;
         }
     }
 
@@ -298,6 +303,7 @@ export class ListPage implements OnInit {
             },
         ];
 
+        this.isExecuting = true;
         this.popover = await this.popoverCtrl.create({
           mode: 'ios',
           component: OptionsComponent,
@@ -309,6 +315,7 @@ export class ListPage implements OnInit {
           translucent: false
         });
         void this.popover.onWillDismiss().then((ret) => {
+          this.isExecuting = false;
           this.sortNodes(ret?.data);
           this.popover = null;
         });
