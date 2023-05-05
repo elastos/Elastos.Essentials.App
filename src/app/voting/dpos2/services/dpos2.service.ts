@@ -246,6 +246,7 @@ export class DPoS2Service {
     }
 
     async fetchNodes() {
+        let ownerPublicKey = '';
         //The wallet imported by private key has no ELA subwallet.
         if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
             ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
@@ -256,7 +257,6 @@ export class DPoS2Service {
             return;
         }
 
-        var ownerPublicKey = '';
         this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
 
         // await this.stakeService.getVoteRights();
