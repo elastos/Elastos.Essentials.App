@@ -80,10 +80,12 @@ export class ListPage implements OnInit {
 
         this.prepareActionMenu();
 
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-            key: "action",
-            iconPath:  !this.theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg',
-        });
+        if (!this.voteService.isMuiltWallet()) {
+            this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+                key: "action",
+                iconPath:  !this.theme.darkMode ? '/assets/launcher/icons/vertical-dots.svg' : '/assets/launcher/icons/dark_mode/vertical-dots.svg',
+            });
+        }
         this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
             key: "sort",
             iconPath: !this.theme.darkMode ? '/assets/voting/icons/filter.svg' : '/assets/voting/icons/darkmode/filter.svg',
