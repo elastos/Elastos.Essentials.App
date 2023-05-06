@@ -1,7 +1,7 @@
 @import "src/app/wallet/root.scss";
 
 .content {
-    padding: 20px;
+    padding: 0px 20px 20px;
 }
 
 .flex {
@@ -25,16 +25,23 @@
     align-items: center;
 
     .title {
-        font-weight: 600;
+        font-weight: 500;
+        font-size: 13px;
     }
 
     .go-arrow {
         margin-left: 5px;
     }
+
+    ebutton {
+        min-height: 40px;
+        height: 40px;
+        width: 50px;
+    }
 }
 
 .note-row {
-    margin: 10px 0;
+    margin-top: 10px;
 }
 
 .error-row {
@@ -48,6 +55,7 @@
 
     .device-name {
         font-weight: bold;
+        font-size: 13px;
     }
 }
 
@@ -70,7 +78,6 @@
 
 .account-row,
 .prompt-row {
-    margin: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -91,6 +98,16 @@
     }
 }
 
+.account-row {
+    background: var(--essentials-box-color);
+    padding: 15px 5px;
+
+    .index {
+        padding: 0px;
+        text-align: center;
+    }
+}
+
 .prompt-row {
     margin-top: 15px;
     background: lightblue;
@@ -102,7 +119,7 @@
     justify-content: center;
     align-items: center;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .scanning {
@@ -110,16 +127,14 @@
     align-items: center;
     justify-content: center;
 
+    margin-bottom: 10px;
+
     ion-spinner {
         margin-right: 10px;
     }
 }
 
 .dark-container {
-    .account-row {
-        background: #2c2c2c;
-    }
-
     .prompt-row {
         background: lightseagreen;
     }

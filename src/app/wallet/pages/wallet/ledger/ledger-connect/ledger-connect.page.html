@@ -64,15 +64,18 @@
             </ion-row>
 
             <!-- Addresses -->
-            <ion-row class="row note-row" *ngIf="hasGotAddress()">
-                <ion-col size="12">
+            <!-- <ion-row class="row note-row" *ngIf="hasGotAddress()">
+                <ion-col>
                     <div class='title'>{{ 'wallet.ledger-addresses' | translate }}</div>
                 </ion-col>
-            </ion-row>
+            </ion-row> -->
 
             <ion-row class="account-row ripple ion-activatable" *ngFor="let address of addresses"
                 (click)="selectAddress(address)">
-                <ion-col size="11">
+                <ion-col size="1.25" class="index">
+                  <ion-label>{{ address.pathIndex + 1 }}</ion-label>
+                </ion-col>
+                <ion-col size="9.75">
                     <ion-label>{{ address.address }}</ion-label>
                 </ion-col>
                 <ion-col size="1">
@@ -82,7 +85,7 @@
             </ion-row>
 
             <ion-row class="btn-row" *ngIf="shouldShowGetAddressButton()">
-                <ebutton (clicked)="refreshAddressesWithTimeout()" [title]="'wallet.ledger-get-addresses' | translate">
+                <ebutton [disabled]="gettingAddresses" (clicked)="refreshAddressesWithTimeout()" [title]="getButtonLabel() | translate">
                 </ebutton>
             </ion-row>
         </ng-container>

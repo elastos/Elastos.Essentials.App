@@ -238,16 +238,16 @@ export class LedgerConnectPage implements OnInit {
             this.createLedgerApp();
         }
 
-        this.addresses = [];
         this.gettingAddresses = true;
+        let startIndex = this.addresses.length > 0 ? this.addresses[this.addresses.length - 1].pathIndex + 1 : 0;
         try {
-            // We only get 5 addresses.
-            for (let i = 0; i < 5 && this.gettingAddresses; i++) {
+            // We only get 5 addresses at once.
+            for (let i = startIndex; i < startIndex + 5 && this.gettingAddresses; i++) {
                 Logger.log(TAG, 'LedgerConnectPage call getAddresses ', i)
                 let addresses = await this.ledgerApp.getAddresses(this.addressType, i, 1, false);
                 this.addresses = [...this.addresses, ...addresses];
 
-                if (i === 0) {
+                if (i === startIndex) {
                     this.closeGetAddressTimeout();
                 }
             }
@@ -288,6 +288,7 @@ export class LedgerConnectPage implements OnInit {
                     message = this.translate.instant('wallet.ledger-error-app-not-start', { appname: this.ledgerNanoAppname })
                     break;
                 case 0x6982:
+                case 0x6983:
                 case 0x6a82:
                     message = this.translate.instant('wallet.ledger-prompt', { appname: this.ledgerNanoAppname })
                     break;
@@ -338,7 +339,7 @@ export class LedgerConnectPage implements OnInit {
     }
 
     public shouldShowGetAddressButton() {
-        return (this.failedToGetAddress || this.shouldPickAddressType) && !this.hasGotAddress() && !this.gettingAddresses && !this.connecting;
+        return this.selectedNetwork && !this.connecting;
     }
 
     public async pickNetwork() {
@@ -527,5 +528,13 @@ export class LedgerConnectPage implements OnInit {
         } while (nameExists);
 
         this.walletName = walletName;
+    }
+
+    getButtonLabel() {
+        if (this.addresses.length == 0) {
+            return 'wallet.ledger-get-addresses';
+        } else {
+            return 'wallet.ledger-get-more-addresses';
+        }
     }
 }

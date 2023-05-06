@@ -343,6 +343,7 @@ export const zh = {
         "ledger-connect-ledger-sucess": "成功连接 Ledger 硬件钱包",
         "ledger-getting-addresses": "正在获取地址",
         "ledger-get-addresses": "获取地址",
+        "ledger-get-more-addresses": "获取更多地址",
         "ledger-choose-address-type": "选择地址类型",
         "ledger-reconnect": "点击以重新连接",
 

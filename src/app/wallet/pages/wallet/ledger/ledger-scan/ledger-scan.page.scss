@@ -7,7 +7,13 @@
 .searching-row {
     margin-top: 10px;
     margin-bottom: 20px;
+    display: flex;
     justify-content: center;
+    align-items: center;
+
+    ion-spinner {
+        margin-right: 10px;
+    }
 
     .title {
         font-size: 14px;
@@ -33,7 +39,7 @@
     margin-bottom: 20px;
     padding: 15px 10px;
     border-radius: 13px;
-    background: white;
+    background:  var(--essentials-box-color);
 
     ion-label {
         font-weight: bold;
@@ -41,24 +47,8 @@
     }
 }
 
-.scanning {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    ion-spinner {
-        margin-right: 10px;
-    }
-}
-
 .retry-row {
     div {
       margin-bottom: 10px;
-    }
-}
-
-.dark-container {
-    .device-row {
-        background: #2C2C2C;
     }
 }

@@ -1,4 +1,4 @@
-<ion-content [class.dark-container]="theme.darkMode">
+<ion-content>
     <app-titlebar></app-titlebar>
 
     <ion-grid class="content">
@@ -12,7 +12,7 @@
         </ion-row>
 
         <!-- Scan in progress -->
-        <ion-row *ngIf="scanning" class="scanning">
+        <ion-row *ngIf="scanning" class="searching-row">
             <ion-spinner name="crescent"></ion-spinner>
             <ion-label>{{ 'wallet.ledger-scan-ledger-scanning' | translate }}</ion-label>
         </ion-row>

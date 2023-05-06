@@ -343,6 +343,7 @@ export const fr = {
         "ledger-connect-ledger-sucess": "Portefeuille physique Ledger connecté",
         "ledger-getting-addresses": "Getting address",
         "ledger-get-addresses": "Get addresses",
+        "ledger-get-more-addresses": "View more addresses",
         "ledger-choose-address-type": "Choose Address Type",
         "ledger-reconnect": "Touch to connect",
 
