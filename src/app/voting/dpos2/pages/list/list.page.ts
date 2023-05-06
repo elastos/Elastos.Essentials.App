@@ -198,33 +198,43 @@ export class ListPage implements OnInit {
     }
 
     async goToRegistration() {
-        if (!this.dpos2Service.dposInfo.txConfirm) {
+        if (!this.dpos2Service.dposInfo.txConfirm && this.dpos2Service.dposInfo.identity !== 'DPoSV1') {
             this.globalNative.genericToast('dposvoting.text-registration-no-confirm');
             return;
         }
 
         this.isExecuting = true;
         try {
-          if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
-              if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
-                  return;
-              }
-          }
-          else {
-              if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
-                  return;
-              }
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
-              if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
-                  return;
-              }
-          }
+            let dposInfo = await this.dpos2Service.checkDPoSStatus();
+            Logger.log(App.DPOS2, ' dposInfo:', dposInfo);
+            if (dposInfo) {
+                this.globalNative.genericToast('dposvoting.already-registered-node', 4000);
+                return;
+            }
 
-          await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
+            if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
+                if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
+                    return;
+                }
+            }
+            else {
+                if (!await this.dpos2Service.checkBalanceForRegDposNode()) {
+                    return;
+                }
+
+                if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+                    return;
+                }
+            }
+
+            await this.globalNav.navigateTo(App.DPOS2, '/dpos2/registration');
         }
         catch {
         }
         finally {
+            await this.globalNative.hideLoading();
             this.isExecuting = false;
         }
     }

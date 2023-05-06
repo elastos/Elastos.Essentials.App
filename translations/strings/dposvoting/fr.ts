@@ -166,5 +166,6 @@ export const fr = {
         'check-dpos-status': 'Check legacy DPoS status',
         'no-registered-dpos-node': 'No registered DPoS node',
         'withdraw': 'Retirer',
+        'already-registered-node' : 'A wallet can only register a node once, including DPoS and BPoS, you can register a node with another wallet',
     }
 };

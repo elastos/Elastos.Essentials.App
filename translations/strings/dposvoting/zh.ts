@@ -167,6 +167,7 @@ export const zh = {
         'check-dpos-status': '检查旧版DPoS状态',
         'no-registered-dpos-node': '没有需要处理的DPoS节点',
         'withdraw': '取回押金',
+        'already-registered-node' : '一个钱包只能注册一次节点，包括 DPoS 和 BPoS。您可以换一个钱包注册节点',
     }
 
 };

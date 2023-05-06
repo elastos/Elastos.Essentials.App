@@ -14,8 +14,8 @@ ion-content {
 }
 
 ion-input {
-    background: #ffffff;
-    box-shadow: 0 3px 15px 0 #ededf0;
+    background: var(--essentials-box-color);
+    // box-shadow: 0 3px 15px 0 #ededf0;
     height: 48px;
     border-radius: 8px;
     font-size: 13px;
@@ -43,12 +43,5 @@ p {
 
     .less-than {
         color: red;
-    }
-}
-
-.darkContainer {
-    ion-input {
-        background-color: #212021;
-        box-shadow: none;
     }
 }
