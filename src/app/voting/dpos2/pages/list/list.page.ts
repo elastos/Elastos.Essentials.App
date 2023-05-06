@@ -239,6 +239,7 @@ export class ListPage implements OnInit {
             await this.dpos2Service.retrieve(this.available);
         }
         catch (e) {
+            Logger.warn(App.DPOS2, 'BPoS retrieve exception:', e)
         }
         finally {
             this.isExecuting = false;
@@ -250,16 +251,21 @@ export class ListPage implements OnInit {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             let dposInfo = await this.dpos2Service.checkDPoSStatus();
             Logger.log(App.DPOS2, ' dposInfo:', dposInfo);
-            if (dposInfo && (dposInfo.state == 'Canceled') && (dposInfo.identity == "DPoSV1")) {
-                this.available = await this.dpos2Service.getDepositcoin();
-                await this.globalNative.hideLoading();
-                if (this.available > 0) {
-                    this.goToWithdraw();
+            if (dposInfo) {
+                // Can't register BPoS node again. remove 'Register' from menu.
+                this.prepareActionMenu();
+
+                if ((dposInfo.state == 'Canceled') && (dposInfo.identity == "DPoSV1")) {
+                    this.available = await this.dpos2Service.getDepositcoin();
+                    await this.globalNative.hideLoading();
+                    if (this.available > 0) {
+                        return this.goToWithdraw();
+                    }
                 }
-            } else {
-                await this.globalNative.hideLoading();
-                this.globalNative.genericToast('dposvoting.no-registered-dpos-node');
             }
+
+            await this.globalNative.hideLoading();
+            this.globalNative.genericToast('dposvoting.no-registered-dpos-node');
         }
         catch (e) {
             Logger.warn(App.DPOS2, 'checkDPoSStatus exception:', e)
