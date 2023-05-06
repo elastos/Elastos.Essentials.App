@@ -51,6 +51,8 @@ export class DPoS2RegistrationPage implements OnInit {
     needConfirm = false;
     onlyEditStakeUntil = false;
 
+    public isExecuting = false;
+
     constructor(
         public uxService: UXService,
         public translate: TranslateService,
@@ -197,11 +199,19 @@ export class DPoS2RegistrationPage implements OnInit {
     }
 
     async confirm() {
-        if (this.dposInfo.state == 'Unregistered' && this.dposInfo.identity != "DPoSV1") {
-            await this.register();
+        try {
+            this.isExecuting = true;
+            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+            if (this.dposInfo.state == 'Unregistered' && this.dposInfo.identity != "DPoSV1") {
+                await this.register();
+            }
+            else {
+                await this.update();
+            }
         }
-        else {
-            await this.update();
+        finally {
+            await this.globalNative.hideLoading();
+            this.isExecuting = false;
         }
     }
 
@@ -223,8 +233,6 @@ export class DPoS2RegistrationPage implements OnInit {
         }
 
         try {
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
-
             let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let stakeUntil = currentHeight + this.dposInfo.inputStakeDays * 720;
 
@@ -234,14 +242,12 @@ export class DPoS2RegistrationPage implements OnInit {
             Logger.log(App.DPOS2, 'register payload:', payload);
 
             const rawTx = await this.voteService.sourceSubwallet.createRegisterProducerTransaction(payload, this.voteService.deposit2K, "");
-            await this.globalNative.hideLoading();
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
                 this.voteService.toastSuccessfully('dposvoting.registration');
             }
         } catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
             this.needConfirm = false;
         }
@@ -265,15 +271,12 @@ export class DPoS2RegistrationPage implements OnInit {
                 this.dposInfo.ownerpublickey, this.dposInfo.nodepublickey, this.dposInfo.nickname, this.dposInfo.url, "", this.dposInfo.location, payPassword, stakeUntil);
 
             Logger.log(App.DPOS2, 'Update node payload:', payload);
-            await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             const rawTx = await this.voteService.sourceSubwallet.createUpdateProducerTransaction(payload, "");
-            await this.globalNative.hideLoading();
             let ret = await this.voteService.signAndSendRawTransaction(rawTx);
             if (ret) {
                 this.voteService.toastSuccessfully('dposvoting.node-update-toast');
             }
         } catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
             this.needConfirm = false;
         }

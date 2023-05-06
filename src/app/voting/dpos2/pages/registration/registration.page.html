@@ -77,7 +77,7 @@
                     </ebutton>
                 </ion-col>
                 <ion-col class="right-col" color="success">
-                    <ebutton (clicked)="confirm()" [title]="'common.confirm' | translate "> </ebutton>
+                    <ebutton [disabled]="isExecuting" (clicked)="confirm()" [title]="'common.confirm' | translate "> </ebutton>
                 </ion-col>
             </ion-row>
 

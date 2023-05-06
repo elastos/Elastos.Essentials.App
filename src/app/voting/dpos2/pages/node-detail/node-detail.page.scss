@@ -6,7 +6,9 @@ ion-list-header {
     padding: 0 24px;
     height: 50px;
     font-size: 16px;
-    background-color: #e9eff6;
+    background-color: var(--essentials-box-color);
+    color: var(--ion-text-color);
+    border-radius: 15px;
 }
 
 .pending-msg {
@@ -15,7 +17,7 @@ ion-list-header {
 
 .status_mark {
     padding: 10px 15px;
-    border-radius: 7px;
+    border-radius: 15px;
     background-color: #F2F2F2;
 }
 
@@ -24,17 +26,6 @@ ion-list-header {
 }
 
 .darkContainer {
-    ion-list-header {
-        color: #ffffff;
-        background-color: #212021;
-    }
-
-    ion-list {
-        .profile-data {
-            border-bottom: 1px solid #464646;
-        }
-    }
-
     .status_mark {
         background-color: #3B3B3B;
     }
