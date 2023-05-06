@@ -185,7 +185,7 @@ export class CandidatesPage implements OnInit {
     }
 
     async deleteStorage(): Promise<void> {
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', []);
+        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', this.voteService.masterWalletId + 'votes', []);
     }
 
     async onShowCandidateInfo(did: string) {

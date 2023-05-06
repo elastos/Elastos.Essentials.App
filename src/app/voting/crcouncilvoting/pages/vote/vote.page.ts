@@ -10,8 +10,6 @@ import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
-import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
@@ -85,7 +83,7 @@ export class VotePage implements OnInit, OnDestroy {
         // Initialize candidate percentages with default values
         this.crCouncilService.selectedCandidates.forEach((candidate) => {
             //console.log("candidate.userVotes", candidate.userVotes, Number.isInteger(candidate.userVotes))
-            this.candidatesVotes[candidate.cid] = Number.isInteger(candidate.userVotes) ? candidate.userVotes : 0;
+            this.candidatesVotes[candidate.cid] = candidate.userVotes ? candidate.userVotes : 0;
             if (isNaN(this.candidatesVotes[candidate.cid])) {
                 this.candidatesVotes[candidate.cid] = 0;
             }
@@ -162,7 +160,7 @@ export class VotePage implements OnInit, OnDestroy {
         }
         else {
             Logger.log('crcouncil', votedCandidates);
-            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.crCouncilService.selectedCandidates);
+            await this.crCouncilService.setSelectedCandidates(this.crCouncilService.selectedCandidates)
             this.castingVote = true;
             this.votesCasted = false;
             if (this.stakeService.votesRight.totalVotesRight > 0) {
@@ -215,8 +213,7 @@ export class VotePage implements OnInit, OnDestroy {
     public onInputBlur(event, candidate: SelectedCandidate) {
         //console.log("onInputBlur", candidate)
 
-        // For a parseInt() to fix keypad mistakes (eg: 123.45)
-        let targetValue = parseInt(this.candidatesVotes[candidate.cid] as any) || 0;
+        let targetValue = parseFloat(this.candidatesVotes[candidate.cid] as any) || 0;
 
         // Can't spend more than what we have
         targetValue = Math.min(targetValue, this.totalEla);
@@ -232,6 +229,7 @@ export class VotePage implements OnInit, OnDestroy {
 
         // Progress bar is between 0-10000 (<-> 0-100.00%), this is a percentage of total ELA voting power
         let newCandidateValue = Math.round(new BigNumber(this.totalEla).multipliedBy(value).dividedBy(10000).toNumber());
+        if (newCandidateValue > this.totalEla) newCandidateValue = this.totalEla;
         this.recomputeVotes(candidate, newCandidateValue, true);
     }
 

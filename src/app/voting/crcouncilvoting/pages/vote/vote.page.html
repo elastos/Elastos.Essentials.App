@@ -1,5 +1,10 @@
 <ion-content [class.dark-container]="theme.darkMode" ngxDetectHideOnScroll scrollEvents [class.blur]="castingVote">
     <app-titlebar></app-titlebar>
+
+    <div class="spinner" *ngIf="!initialComputationDone">
+        <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
     <div class="council-header" *ngIf="initialComputationDone">
         <div *ngIf="remainingTime">
             <p id="remaining-time">{{ ("voting.voting-ends-in" | translate) + " " + remainingTime }} </p>
@@ -36,16 +41,12 @@
                 </div>
             </div>
         </div>
-
-        <div class="spinner" *ngIf="castingVote">
-            <ion-spinner name="bubbles"></ion-spinner>
-        </div>
     </ion-grid>
 
-    <div class="footer" ngxHideOnScroll>
+    <div *ngIf="initialComputationDone" class="footer" ngxHideOnScroll>
         <ebutton mode="cancel" (clicked)="distributeEqually()" [title]="'crcouncilvoting.dist-equally' | translate">
         </ebutton>
-        <ebutton [disabled]="overflow" (clicked)="cast()"
+        <ebutton [disabled]="overflow || castingVote" (clicked)="cast()"
             [title]="(!votesCasted ? 'crcouncilvoting.cast-votes' : 'crcouncilvoting.votes-casted') | translate ">
         </ebutton>
     </div>

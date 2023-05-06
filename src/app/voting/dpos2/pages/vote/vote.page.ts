@@ -11,8 +11,6 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
-import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -191,7 +189,6 @@ export class VotePage implements OnInit, OnDestroy {
                 }
 
                 Logger.log(App.DPOS2, votedCandidates);
-                await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', this.selectedNodes);
                 this.votesCasted = false;
                 await this.createVoteCRTransaction(votedCandidates);
             }

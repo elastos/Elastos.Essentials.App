@@ -218,9 +218,13 @@ export class CRCouncilService {
     }
 
     async getSelectedCandidates(): Promise<any> {
-        let data = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', 'votes', []);
+        let data = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', this.voteService.masterWalletId + 'votes', []);
         Logger.log('crcouncil', 'Selected Candidates', data);
         return data;
+    }
+
+    async setSelectedCandidates(selectedCandidates: SelectedCandidate[]): Promise<any> {
+        return await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'crcouncil', this.voteService.masterWalletId + 'votes', selectedCandidates);
     }
 
     async fetchCandidates() {
