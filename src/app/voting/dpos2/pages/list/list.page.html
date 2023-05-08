@@ -10,6 +10,9 @@
         <ion-grid class="container ion-no-padding" *ngIf="dataFetched; else loadingList">
 
             <div *ngIf="!showNode" class="message-container">
+                <p *ngIf="dpos2Service.nodePublicKeyNotSet" class="message" (click)="goToUpdateNode()">
+                    {{ dpos2Service.nodePublicKeyNotSet }}
+                </p>
                 <p *ngIf="dpos2Service.myNodeStakeExpired30" class="message" (click)="goToUpdateNode()">
                     {{ 'dposvoting.node-exprie-message' | translate : {time: dpos2Service.myNodeStakeExpired30} }}
                 </p>

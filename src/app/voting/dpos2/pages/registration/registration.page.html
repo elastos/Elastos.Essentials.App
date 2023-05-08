@@ -23,10 +23,11 @@
             <ion-row class="profile-data">
                 <ion-col>
                     <h5>{{ 'dposvoting.node-publickey' | translate }}</h5>
-                    <ion-input type="text" name="publickey" [attr.disabled]="needConfirm || onlyEditStakeUntil" ngDefaultControl
+                    <ion-input type="text" name="publickey" [attr.disabled]="needConfirm" ngDefaultControl
                         placeholder="{{'dposvoting.required-placeholder' | translate}}"
                         [(ngModel)]="dposInfo.nodepublickey" clearInput>
                     </ion-input>
+                    <p class="note">{{ 'dposvoting.node-publickey-note' | translate }}</p>
                 </ion-col>
             </ion-row>
 

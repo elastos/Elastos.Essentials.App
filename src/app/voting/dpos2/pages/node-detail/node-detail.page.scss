@@ -1,28 +1,41 @@
 @import "../../root.scss";
 
 
-ion-list-header {
-    margin: 10px 0 0 0;
-    padding: 0 24px;
-    height: 50px;
-    font-size: 16px;
-    background-color: var(--essentials-box-color);
-    color: var(--ion-text-color);
-    border-radius: 15px;
-}
+.container {
+  padding: 0px 10px;
 
-.pending-msg {
-    margin-left: 15px;
-}
+  ion-list-header {
+      margin: 10px 0 0 0;
+      padding: 0 24px;
+      height: 50px;
+      font-size: 16px;
+      background-color: var(--essentials-box-color);
+      color: var(--ion-text-color);
+      border-radius: 15px;
+  }
 
-.status_mark {
-    padding: 10px 15px;
-    border-radius: 15px;
-    background-color: #F2F2F2;
-}
+  ion-list {
+      padding: 0px;
 
-#Active {
-    background-color: rgba(65, 232, 168, 0.18);
+      .note {
+          margin-top: 8px;
+          color: red;
+      }
+  }
+
+  .pending-msg {
+      margin-left: 15px;
+  }
+
+  .status_mark {
+      padding: 10px 15px;
+      border-radius: 15px;
+      background-color: #F2F2F2;
+  }
+
+  #Active {
+      background-color: rgba(65, 232, 168, 0.18);
+  }
 }
 
 .darkContainer {

@@ -45,8 +45,6 @@ export class NodeDetailPage implements OnInit {
     public state = "";
     public elastosChainCode = StandardCoinName.ELA;
 
-    public ownerPublicKey: string;
-
     public blockHeight = 0;
     public cancelHeight = 0;
     public available = 0;
