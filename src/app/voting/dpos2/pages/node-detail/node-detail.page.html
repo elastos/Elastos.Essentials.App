@@ -1,7 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <ion-grid class="container ion-no-padding ion-no-margin" [class.darkContainer]="theme.darkMode">
+    <ion-grid class="container" [class.darkContainer]="theme.darkMode">
 
         <div *ngIf="dposInfo.state == 'Illegal'" class="message-container">
             <p class="message">
@@ -50,6 +50,7 @@
                 <ion-col>
                     <h5>{{ 'dposvoting.node-publickey' | translate }}</h5>
                     <h4>{{ dpos2Service.dposInfo.nodepublickey }}</h4>
+                    <h5 class="note" *ngIf="dpos2Service.nodePublicKeyNotSet">{{ dpos2Service.nodePublicKeyNotSet }}</h5>
                 </ion-col>
             </ion-row>
 

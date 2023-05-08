@@ -1,5 +1,5 @@
 ion-grid {
-    background: #F9FAFF;
+    background: var(--essentials-box-color);
     padding: 10px;
     border-radius: 15px;
 
@@ -21,25 +21,12 @@ ion-grid {
             }
 
             img {
-                background: #EDF0F8;
                 font-size: 15px;
                 padding: 8px;
                 height: 40px;
                 width: 40px;
                 border-radius: 8px;
                 margin-right:10px;
-            }
-        }
-    }
-}
-
-.darkContainer {
-    background: #393939;
-
-    ion-row {
-        ion-col {
-            img {
-                background: #555555;
             }
         }
     }

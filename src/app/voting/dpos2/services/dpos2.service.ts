@@ -73,6 +73,8 @@ export class DPoS2Service {
     public myNodeStakeExpired30: string = null;
     public myNodeStakeAboutExpire: string = null;
 
+    public nodePublicKeyNotSet: string = null;
+
     public updateInfo: any;
 
     // Stats
@@ -277,6 +279,7 @@ export class DPoS2Service {
         this.voteStakeAboutExpire = null;
         this.myNodeStakeExpired30 = null;
         this.myNodeStakeAboutExpire = null;
+        this.nodePublicKeyNotSet = null;
         if (!this.lastVotes) {
             this.lastVotes = [];
         }
@@ -292,6 +295,10 @@ export class DPoS2Service {
                 for (const node of this._nodes) {
                     if (node.ownerpublickey == ownerPublicKey) {
                         this.dposInfo = node;
+
+                        if (node.ownerpublickey == node.nodepublickey) {
+                            this.nodePublicKeyNotSet = this.translate.instant('dposvoting.node-unbind');
+                        }
                     }
 
                     if (!node.identity || node.identity && node.identity == "DPoSV1") {
