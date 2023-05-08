@@ -42,16 +42,16 @@ a {
 
 /********************** LOADER **********************/
 .custom-loader {
-  --spinner-color: #121212;
-  --background: #ffffff;
-  color: #121212;
+  --spinner-color: var(--ion-text-color);
+  --background: var(--essentials-box-color);
+  color: var(--ion-text-color);
   box-shadow: 0 3px 10px 0 rgba(22, 23, 64, 0.12);
 }
 
 .dark-custom-loader {
-  --spinner-color: white;
-  --background: #121212;
-  color: white;
+  --spinner-color: var(--ion-text-color);;
+  --background: var(--essentials-box-color);;
+  color: var(--ion-text-color);
 }
 
 /********************** LAUNCHER **********************/
