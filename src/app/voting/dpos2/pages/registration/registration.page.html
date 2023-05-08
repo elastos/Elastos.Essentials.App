@@ -27,7 +27,7 @@
                         placeholder="{{'dposvoting.required-placeholder' | translate}}"
                         [(ngModel)]="dposInfo.nodepublickey" clearInput>
                     </ion-input>
-                    <p class="note">{{ 'dposvoting.node-publickey-note' | translate }}</p>
+                    <p class="note" *ngIf="dposInfo.nodepublickey == dposInfo.ownerpublickey">{{ 'dposvoting.node-publickey-note' | translate }}</p>
                 </ion-col>
             </ion-row>
 
