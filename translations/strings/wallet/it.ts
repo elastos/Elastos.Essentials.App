@@ -171,6 +171,7 @@ export const it = {
         "coin-op-coin-base": "Coinbase Transaction",
         "coin-op-freeze": "Freeze",
         "coin-op-unfreeze": "Unfreeze",
+        "coin-op-withdraw": "Withdraw",
         "coin-dir-from-mainchain": "Da Main Chain",
         "coin-dir-from-idchain": "Da EID Sidechain",
         "coin-dir-from-ethsc": "Da ESC Sidechain",

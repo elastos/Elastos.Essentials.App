@@ -86,7 +86,15 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
                     || (transaction.raw_data.contract[0].type === 'UnfreezeBalanceV2Contract')) {
                     return "wallet.coin-op-unfreeze";
                 }
-                return await "wallet.coin-op-received-token";
+                switch (transaction.raw_data.contract[0].type) {
+                    case 'UnfreezeBalanceContract':
+                    case 'UnfreezeBalanceV2Contract':
+                      return "wallet.coin-op-unfreeze";
+                    case "WithdrawExpireUnfreezeContract":
+                      return "wallet.coin-op-withdraw";
+                    default:
+                      return await "wallet.coin-op-received-token";
+                }
             case TransactionDirection.SENT:
                 if ((transaction.raw_data.contract[0].type === 'FreezeBalanceContract')
                     || (transaction.raw_data.contract[0].type === 'FreezeBalanceV2Contract')) {
@@ -171,6 +179,14 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         } else {
             transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
             transactionInfo.status = 'confirmed';
+        }
+
+        // Get the withdraw amount.
+        if (transaction.raw_data.contract[0].type == "WithdrawExpireUnfreezeContract") {
+            let extInfo = await this.networkWallet.getOrFetchExtendedTxInfo(transaction.txID);
+            if (extInfo && extInfo.tvm && extInfo.tvm.txInfo) {
+                transactionInfo.amount = new BigNumber(extInfo.tvm.txInfo.withdraw_expire_amount).dividedBy(this.tokenAmountMulipleTimes);
+            }
         }
 
         if (transaction.raw_data.contract[0].parameter.value.data) {

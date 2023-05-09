@@ -111,6 +111,10 @@ export class TronSubWalletProvider<SubWalletType extends TronSubWallet> extends 
                         tx.value = tx.raw_data.contract[0].parameter.value.unfreeze_balance.toString();;
                         tx.to = this.accountAddress;
                     break;
+                    case "WithdrawExpireUnfreezeContract":
+                        tx.value = '0';
+                        tx.to = this.accountAddress;
+                    break;
                     default:
                         tx.value = '0';
                         tx.to = this.tronWeb.address.fromHex(tx.raw_data.contract[0].parameter.value.contract_address);

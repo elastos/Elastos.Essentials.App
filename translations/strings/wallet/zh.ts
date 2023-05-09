@@ -171,6 +171,7 @@ export const zh = {
         "coin-op-coin-base": "创币交易",
         "coin-op-freeze": "冻结",
         "coin-op-unfreeze": "解冻",
+        "coin-op-withdraw": "提现",
         "coin-dir-from-mainchain": "ELA 主链充值",
         "coin-dir-from-idchain": "EID 侧链提现",
         "coin-dir-from-ethsc": "ESC 侧链提现",

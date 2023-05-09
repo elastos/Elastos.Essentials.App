@@ -176,7 +176,8 @@ export type TronTransactionInfo = {
         address: string,
         topics: string[],
         data: string
-    }[]
+    }[],
+    withdraw_expire_amount?: number;
 }
 
 // if bandwith/trx is not enough, return {
