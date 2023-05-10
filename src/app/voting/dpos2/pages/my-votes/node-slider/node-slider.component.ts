@@ -77,13 +77,15 @@ export class NodeSliderComponent implements OnInit {
     }
 
     async update(node: any) {
+        let maxStakeDays = Math.ceil((this.getUserMaxStakeBlockHeight(node) - this.currentHeight) / 720);
+
         if (node.inputStakeDays < node.lockDays) {
             let msg = this.translate.instant('dposvoting.stakedays-input-err', {days: node.lockDays});
             this.globalNative.genericToast(msg);
             return;
         }
 
-        if (node.inputStakeDays > 1000) {
+        if (node.inputStakeDays > maxStakeDays) {
             this.globalNative.genericToast('voting.vote-max-deadline');
             return;
         }
@@ -149,12 +151,14 @@ export class NodeSliderComponent implements OnInit {
     }
 
     public checkInputDays(node: any): boolean {
+        let maxStakeDays = Math.ceil((this.getUserMaxStakeBlockHeight(node) - this.currentHeight) / 720);
+
         var inputStakeDays = node.inputStakeDays || 0;
         if (inputStakeDays < node.lockDays) {
             return true;
         }
 
-        if (inputStakeDays > 1000) {
+        if (inputStakeDays > maxStakeDays) {
             return true;
         }
 
@@ -192,15 +196,21 @@ export class NodeSliderComponent implements OnInit {
     }
 
     setMaxStakeDays(node: any) {
-        if (node.nodeStakeDays <= 1000) {
-            node.locktime = node.stakeuntil;
-            node.inputStakeDays = node.nodeStakeDays;
-        } else {
-            node.locktime = this.currentHeight + 720000;
-            node.inputStakeDays = 1000;
-        }
+        node.locktime = this.getUserMaxStakeBlockHeight(node)
+        node.inputStakeDays = Math.ceil((node.locktime - this.currentHeight) / 720);
 
         this.useMaxStakeDays = true;
+    }
+
+    getUserMaxStakeBlockHeight(node: any) {
+        let blockHeight = 0;
+        if (node.blockheight + 720000 >= node.stakeuntil) {
+            blockHeight = node.stakeuntil;
+        } else {
+            blockHeight = node.blockheight + 720000;
+        }
+
+        return blockHeight;
     }
 
 }

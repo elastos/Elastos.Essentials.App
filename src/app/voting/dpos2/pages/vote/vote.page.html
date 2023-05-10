@@ -71,7 +71,7 @@
                   <p class="expiration-date">{{ 'dposvoting.expiration-date' | translate }}: <span [class.error-input]="checkInputDays(node)">{{ uxService.getStakeDate(node.userStakeDays) }}</span></p>
                 </ion-row>
                 <ion-row>
-                  <p class="expiration-date">{{ 'dposvoting.node-expiration-date' | translate }}: <span [class.error-input]="checkInputDays(node)">{{ uxService.getStakeDate(node.stakeDays) }}</span></p>
+                  <p class="expiration-date">{{ 'dposvoting.node-expiration-date' | translate }}: <span>{{ uxService.getStakeDate(node.stakeDays) }}</span></p>
                 </ion-row>
             </ion-row>
         </ion-grid>
