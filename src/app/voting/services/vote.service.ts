@@ -79,9 +79,11 @@ export class VoteService implements GlobalService {
     }
 
     onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        void this.getDPoSStatus().then(status => {
-            this.dPoSStatus.next(status);
-        });
+        // The mainnet is already a BPOS consensus, so hardcode to DPoSV2.
+        this.dPoSStatus.next(DposStatus.DPoSV2);
+        // void this.getDPoSStatus().then(status => {
+        //     this.dPoSStatus.next(status);
+        // });
         return;
     }
 
