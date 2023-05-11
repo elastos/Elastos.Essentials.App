@@ -55,12 +55,35 @@
                     </ion-row>
                 </ion-row>
 
-                <ion-row *ngFor="let item of showItems" class="item-row">
+                <ion-row *ngFor="let item of showItems; let i = index" class="item-row">
                     <ion-col size="5" class="left-col">
                         {{ item.title }}
                     </ion-col>
-                    <ion-col size="7" class="right-col align-right">
+                    <ion-col [size]="item.rewardItems.length > 1 ? 6.5 : 7" class="right-col align-right rewardWithArraw">
                         {{ item.value }} ELA
+                    </ion-col>
+
+                    <ion-col size="0.5" class="right-col" (click)="detail = !detail; detailType = i"
+                        *ngIf="item.rewardItems.length > 1">
+                        <img *ngIf="detail && (detailType == i)"
+                            [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
+                        <img *ngIf="!detail || (detailType != i)"
+                            [src]="!theme.darkMode ? 'assets/staking/icons/up-arrow.svg' : 'assets/staking/icons/darkmode/up-arrow.svg'" />
+                    </ion-col>
+
+                    <ion-col *ngIf="detail && (detailType == i)" class="details-col" size="12">
+                      <ion-grid>
+                          <div *ngFor="let subItem of item.rewardItems" class="item">
+                              <ion-row>
+                                  <ion-col size="5" class="left-col">
+                                      <p>{{ subItem.title }}</p>
+                                  </ion-col>
+                                  <ion-col size="6.5" class="right-col align-right">
+                                      <p>{{ subItem.value }} ELA</p>
+                                  </ion-col>
+                              </ion-row>
+                          </div>
+                      </ion-grid>
                     </ion-col>
                 </ion-row>
 
@@ -68,19 +91,19 @@
                     <ion-col size="9.5" class="left-col">
                         {{ 'staking.staked-for-votes' | translate }}
                     </ion-col>
-                    <ion-col class="middle-col" [size]="showArrow ? 2 : 2.5"
-                            [class.align-center]="showArrow" [class.align-right]="!showArrow" >
+                    <ion-col class="middle-col" [size]="votesShowArrow ? 2 : 2.5"
+                            [class.align-center]="votesShowArrow" [class.align-right]="!votesShowArrow" >
                         {{ stakeService.votesRight.maxStakedRatio }}%
                     </ion-col>
 
-                    <ion-col size="0.5" class="right-col" (click)="detail = !detail"
-                        *ngIf="showArrow">
-                        <img *ngIf="detail"
+                    <ion-col size="0.5" class="right-col" (click)="detail = !detail; detailType = 2"
+                        *ngIf="votesShowArrow">
+                        <img *ngIf="detail && (detailType == 2)"
                             [src]="!theme.darkMode ? 'assets/staking/icons/down-arrow.svg' : 'assets/staking/icons/darkmode/down-arrow.svg'" />
-                        <img *ngIf="!detail"
+                        <img *ngIf="!detail || (detailType != 2)"
                             [src]="!theme.darkMode ? 'assets/staking/icons/up-arrow.svg' : 'assets/staking/icons/darkmode/up-arrow.svg'" />
                     </ion-col>
-                    <ion-col *ngIf="detail" class="details-col" size="12">
+                    <ion-col *ngIf="detail && (detailType == 2)" class="details-col" size="12">
                         <ion-grid>
                             <!-- <h5>{{'Nodes' | translate}}</h5> -->
                             <div *ngFor="let item of voteItems" class="item">

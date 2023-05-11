@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
+import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -8,6 +9,7 @@ import { App } from 'src/app/model/app.enum';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -33,13 +35,14 @@ export class StakingHomePage implements OnInit {
     public voteItems = [];
 
     public detail = false;
+    public detailType = 0;
     public showVotesDetails = false;
     public voteType = VoteType.DPoSV2;
     public voteInfo: any;
 
     public dataFetched = false;
     public signingAndTransacting = false;
-    public showArrow = true;
+    public votesShowArrow = true;
 
     // Helper
     public WalletUtil = WalletUtil;
@@ -58,7 +61,7 @@ export class StakingHomePage implements OnInit {
     ) {
     }
 
-    ngOnInit() { }
+    ngOnInit() {}
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-elastos-staking'));
@@ -69,7 +72,7 @@ export class StakingHomePage implements OnInit {
         this.addShowItems();
         this.addButtonList();
         this.addVoteItems();
-        this.showArrow = this.stakeService.votesRight.totalVotesRight > 0;
+        this.votesShowArrow = this.stakeService.votesRight.totalVotesRight > 0;
         this.dataFetched = true;
 
         void this.updateRewardInfo()
@@ -81,6 +84,30 @@ export class StakingHomePage implements OnInit {
 
     addShowItems() {
         this.showItems = [];
+
+        let totalRewardItems = [], availableRewardItems = [];
+        if (this.stakeService.nodeRewardInfo) {
+            totalRewardItems.push({
+                title: this.translate.instant('staking.node-reward'),
+                value: this.uxService.toThousands(this.stakeService.nodeRewardInfo.total),
+            });
+            availableRewardItems.push({
+                title: this.translate.instant('staking.node-reward'),
+                value: this.uxService.toThousands(this.stakeService.nodeRewardInfo.claimable),
+            });
+        }
+        if (this.stakeService.rewardInfo) {
+            totalRewardItems.push({
+                title: this.translate.instant('staking.voting-reward'),
+                value: this.uxService.toThousands(this.stakeService.rewardInfo.total),
+            });
+            availableRewardItems.push({
+                title: this.translate.instant('staking.voting-reward'),
+                value: this.uxService.toThousands(this.stakeService.rewardInfo.claimable),
+            });
+        }
+
+
         this.showItems.push(
             // {
             //     title: this.translate.instant('staking.staked'),
@@ -89,10 +116,12 @@ export class StakingHomePage implements OnInit {
             {
                 title: this.translate.instant('staking.your-rewards'),
                 value: this.uxService.toThousands(this.stakeService.totalRewardInfo.total),
+                rewardItems: totalRewardItems
             },
             {
                 title: this.translate.instant('staking.available-reward'),
                 value: this.uxService.toThousands(this.stakeService.totalRewardInfo.claimable),
+                rewardItems: availableRewardItems
             },
         );
     }
@@ -231,8 +260,21 @@ export class StakingHomePage implements OnInit {
                 this.globalNative.genericToast('staking.no-stake');
             }
         }
-        else if (url == "/staking/withdraw" && this.stakeService.totalRewardInfo.claimable == 0) {
-            this.globalNative.genericToast('staking.no-reward');
+        else if (url == "/staking/withdraw") {
+            if (this.stakeService.totalRewardInfo.claimable == 0) {
+                this.globalNative.genericToast('staking.no-reward');
+            }
+            else {
+                if (this.stakeService.rewardInfo && this.stakeService.nodeRewardInfo) {
+                    this.pickWithdrawType(url);
+                } else {
+                    let withdrawNodeReward = false;
+                    if (this.stakeService.nodeRewardInfo) {
+                        withdrawNodeReward = true;
+                    }
+                    this.goTo(url, { state: { withdrawNodeReward: withdrawNodeReward} });
+                }
+            }
         }
         else {
             this.goTo(url);
@@ -240,8 +282,8 @@ export class StakingHomePage implements OnInit {
 
     }
 
-    goTo(url: string) {
-        void this.globalNav.navigateTo(App.STAKING, url);
+    goTo(url: string, option = undefined) {
+        void this.globalNav.navigateTo(App.STAKING, url, option);
     }
 
     async doRefresh(event) {
@@ -251,5 +293,29 @@ export class StakingHomePage implements OnInit {
         setTimeout(() => {
             event.target.complete();
         }, 500);
+    }
+
+    public pickWithdrawType(url) {
+        let menuItems: MenuSheetMenu[] =  [
+            {
+                title: GlobalTranslationService.instance.translateInstant("staking.node-reward"),
+                routeOrAction: () => {
+                  this.goTo(url, { state: { withdrawNodeReward: true} });
+                }
+            },
+            {
+                title: GlobalTranslationService.instance.translateInstant("staking.voting-reward"),
+                routeOrAction: () => {
+                  this.goTo(url, { state: { withdrawNodeReward: false} });
+                }
+            }
+        ]
+
+        let menu: MenuSheetMenu = {
+            title: GlobalTranslationService.instance.translateInstant("staking.choose-reward-type"),
+            items: menuItems
+        };
+
+        void this.globalNative.showGenericBottomSheetMenuChooser(menu);
     }
 }

@@ -1,4 +1,5 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -42,14 +43,28 @@ export class WithdrawPage {
         private globalNative: GlobalNativeService,
         public keyboard: Keyboard,
         public zone: NgZone,
+        private router: Router,
     ) {
+    }
+
+    ngOnInit() {
+        const navigation = this.router.getCurrentNavigation();
+        if (!Util.isEmptyObject(navigation.extras.state)) {
+            this.isNodeReward = navigation.extras.state.withdrawNodeReward;
+        }
+        if (this.isNodeReward) {
+            this.available = this.stakeService.nodeRewardInfo.claimable;
+            this.address = this.stakeService.ownerAddress;
+        }
+        else {
+            this.available = this.stakeService.rewardInfo.claimable;
+            this.address = this.stakeService.firstAddress;
+        }
     }
 
     ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('staking.withdraw'));
 
-        this.available = this.stakeService.rewardInfo.claimable;
-        this.address = this.stakeService.firstAddress;
         this.isMuiltWallet = this.voteService.isMuiltWallet();
 
         this.keyboard.onKeyboardWillShow().subscribe(() => {
@@ -143,17 +158,6 @@ export class WithdrawPage {
         }
     }
 
-    onRewardChange(event) {
-        if (this.isNodeReward) {
-            this.available = this.stakeService.nodeRewardInfo.claimable;
-            this.address = this.stakeService.ownerAddress;
-        }
-        else {
-            this.available = this.stakeService.rewardInfo.claimable;
-            this.address = this.stakeService.firstAddress;
-        }
-    }
-
     clickMax() {
         this.amount = this.available;
     }
@@ -169,5 +173,4 @@ export class WithdrawPage {
             this.amount  = 0;
         }
     }
-
 }
