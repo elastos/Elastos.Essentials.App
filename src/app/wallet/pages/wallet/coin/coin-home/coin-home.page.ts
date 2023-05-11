@@ -22,12 +22,13 @@
 
 import { Component, ElementRef, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { PopoverController } from '@ionic/angular';
+import { Platform, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
@@ -122,6 +123,9 @@ export class CoinHomePage implements OnInit {
 
     public popover: any = null;
 
+    private isIOS = false;
+    private canBrowseInApp = true;
+
     constructor(
         public router: Router,
         public walletManager: WalletService,
@@ -140,6 +144,8 @@ export class CoinHomePage implements OnInit {
         private globalNav: GlobalNavService,
         private didSessions: GlobalDIDSessionsService,
         private chaingeSwapService: ChaingeSwapService,
+        private dAppBrowserService: DappBrowserService,
+        private platform: Platform,
         public stakingInitService: StakingInitService,
         private voteService: VoteService
     ) {
@@ -194,7 +200,7 @@ export class CoinHomePage implements OnInit {
     }
 
     // Cannot be async
-    init() {
+    async init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
             let masterWalletId = navigation.extras.state.masterWalletId;
@@ -240,6 +246,11 @@ export class CoinHomePage implements OnInit {
                 this.extendedTxInfo[info.txHash] = info.extInfo;
             });
         });
+
+        this.isIOS = this.platform.platforms().indexOf('android') < 0;
+        if (this.isIOS) {
+            this.canBrowseInApp = await this.dAppBrowserService.canBrowseInApp();
+        }
     }
 
     ngOnInit() {
@@ -646,6 +657,9 @@ export class CoinHomePage implements OnInit {
     }
 
     public canSwap(): boolean {
+        if (this.isIOS && !this.canBrowseInApp) {
+            return false;
+        }
         return this.chaingeSwapService.isNetworkSupported(this.networkWallet.network);
     }
 
