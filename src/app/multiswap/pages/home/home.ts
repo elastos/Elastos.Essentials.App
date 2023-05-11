@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonInput, NavController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
-import { filter, Subscription, take } from 'rxjs';
+import { Subscription, filter, take } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
@@ -510,6 +510,7 @@ export class HomePage {
       chaingeSwapWebApp += `&fromAmount=${this.activeTransfer.amount.toString(10)}`;
 
       // Open in the built-in browser (attempt), disregarding the "external/internal" setting of ios users.
+      // chaingeSwapWebApp doesn't support walletconnect.
       void this.dAppBrowserService.open(chaingeSwapWebApp);
     }
     else {
