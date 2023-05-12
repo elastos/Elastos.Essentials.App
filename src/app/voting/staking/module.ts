@@ -10,6 +10,7 @@ import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
 import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
+import { WalletChooserComponentModule } from 'src/app/wallet/components/wallet-chooser/module';
 import { StakingHomePage } from './pages/home/home.page';
 import { VoteSliderComponent } from './pages/home/vote-slider/vote-slider.component';
 import { StakePage } from './pages/stake/stake.page';
@@ -36,7 +37,8 @@ import { StakingRoutingModule } from './routing';
         SharedComponentsModule,
         StdTransactionComponentModule,
         GlobalDirectivesModule,
-        InlineSVGModule
+        InlineSVGModule,
+        WalletChooserComponentModule
     ],
     bootstrap: [],
     entryComponents: [

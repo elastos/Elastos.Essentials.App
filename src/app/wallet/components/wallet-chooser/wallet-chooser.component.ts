@@ -22,7 +22,7 @@ export type WalletChooserComponentOptions = {
   currentNetworkWallet: AnyNetworkWallet;
   /**
    * Optional filter. Only returned wallets will show in the list.
-   * Return true to keep the walelt in the list, false to hide it.
+   * Return true to keep the wallet in the list, false to hide it.
    */
   filter?: WalletChooserFilter;
   /**

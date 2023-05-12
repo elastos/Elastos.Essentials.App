@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { VotesContentInfo, VotingInfo } from '@elastosfoundation/wallet-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -13,10 +14,13 @@ import { GlobalTranslationService } from 'src/app/services/global.translation.se
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { ElastosStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/networkwallets/standard/elastos.networkwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { StakeService, VoteType } from '../../services/stake.service';
 
 
@@ -48,6 +52,8 @@ export class StakingHomePage implements OnInit {
     public WalletUtil = WalletUtil;
     public networkWallet: AnyNetworkWallet = null;
 
+    private activeNetworkWalletSubscription: Subscription = null;
+
     constructor(
         public uxService: UXService,
         public translate: TranslateService,
@@ -58,28 +64,44 @@ export class StakingHomePage implements OnInit {
         private voteService: VoteService,
         public popupProvider: GlobalPopupService,
         public currencyService: CurrencyService,
+        public walletManager: WalletService,
+        private walletUIService: WalletUIService,
     ) {
     }
 
-    ngOnInit() {}
+    ngOnInit() {
+        this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async (activeNetworkWallet) => {
+            if (activeNetworkWallet) {
+              this.dataFetched = false;
+              this.networkWallet = WalletService.instance.activeNetworkWallet.value;
+
+              this.voteService.needFetchData[App.STAKING] = true;
+              if (!await this.voteService.setNetworkWallet(this.networkWallet as ElastosStandardNetworkWallet, App.STAKING)) {
+                  Logger.warn(App.STAKING, "Do not support this wallet:", this.networkWallet.masterWallet.name);
+                  return this.globalNav.navigateHome();
+              }
+
+              await this.stakeService.initData();
+              this.addShowItems();
+              this.addButtonList();
+              this.addVoteItems();
+              this.votesShowArrow = this.stakeService.votesRight.totalVotesRight > 0;
+              this.dataFetched = true;
+
+              void this.updateRewardInfo()
+            }
+        })
+    }
+
+    ngOnDestroy() {
+        if (this.activeNetworkWalletSubscription) {
+            this.activeNetworkWalletSubscription.unsubscribe();
+            this.activeNetworkWalletSubscription = null;
+        }
+    }
 
     async ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-elastos-staking'));
-        this.dataFetched = false;
-        this.networkWallet = WalletService.instance.activeNetworkWallet.value;
-
-        await this.stakeService.initData();
-        this.addShowItems();
-        this.addButtonList();
-        this.addVoteItems();
-        this.votesShowArrow = this.stakeService.votesRight.totalVotesRight > 0;
-        this.dataFetched = true;
-
-        void this.updateRewardInfo()
-    }
-
-    ionViewDidEnter() {
-
     }
 
     addShowItems() {
@@ -317,5 +339,22 @@ export class StakingHomePage implements OnInit {
         };
 
         void this.globalNative.showGenericBottomSheetMenuChooser(menu);
+    }
+
+    public getPotentialActiveWallets(): AnyNetworkWallet[] {
+        return this.walletManager.getNetworkWalletsList();
+    }
+
+    /**
+     * Shows the wallet selector component to pick a different wallet
+     */
+    public pickOtherWallet() {
+        void this.walletUIService.chooseActiveWallet(networkWallet => {
+            // Choose only among multisig wallets
+            if (networkWallet.masterWallet.type == WalletType.LEDGER)
+                return false;
+
+            return true;
+        });
     }
 }

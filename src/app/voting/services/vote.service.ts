@@ -152,8 +152,7 @@ export class VoteService implements GlobalService {
         this.routerOptions = null;
     }
 
-    //For select-wallet page call
-    private async navigateTo(networkWallet: ElastosStandardNetworkWallet, context: string) {
+    public async setNetworkWallet(networkWallet: ElastosStandardNetworkWallet, context: string) {
         this.networkWallet = networkWallet;
         this.masterWalletId = networkWallet.id;
 
@@ -176,21 +175,30 @@ export class VoteService implements GlobalService {
                 break;
             case WalletType.LEDGER:
                 await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
-                return;
+                return false;
             case WalletType.MULTI_SIG_STANDARD:
             case WalletType.MULTI_SIG_EVM_GNOSIS:
                 if (!supportMultiSign) {
                     await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
-                    return;
+                    return false;
                 }
                 break;
             default:
                 // Should not happen.
                 Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type)
-                return;
+                return false;
         }
 
         this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
+        return true;
+    }
+
+    //For select-wallet page call
+    private async navigateTo(networkWallet: ElastosStandardNetworkWallet, context: string) {
+        if (!await this.setNetworkWallet(networkWallet, context)) {
+          return;
+        }
+
         void this.nav.navigateTo(this.context, this.route, this.routerOptions);
         this.clearRoute();
     }

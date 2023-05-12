@@ -50,9 +50,10 @@ export class WalletUIService {
      * Lets user pick a wallet in the list of all available wallets.
      * Promise resolves after the wallet is chosen, or on cancellation
      */
-    async chooseActiveWallet(): Promise<boolean> {
+    async chooseActiveWallet(filter?: WalletChooserFilter): Promise<boolean> {
         let options: WalletChooserComponentOptions = {
             currentNetworkWallet: this.walletService.activeNetworkWallet.value,
+            filter,
             showActiveWallet: true
         };
 
