@@ -53,7 +53,7 @@
                             [title]="'common.cancel' | translate"> </ebutton>
                     </ion-col>
                     <ion-col>
-                        <ebutton class="btn-container" (clicked)="update(node)" [disabled]="signingAndTransacting || (node.locktime - node.blockheight) >= 72000"
+                        <ebutton class="btn-container" (clicked)="update(node)" [disabled]="signingAndTransacting || (node.locktime - node.blockheight) >= 720000"
                             [title]="'common.update' | translate"> </ebutton>
                     </ion-col>
                 </ion-row>
