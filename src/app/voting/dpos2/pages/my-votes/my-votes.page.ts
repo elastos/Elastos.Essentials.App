@@ -51,7 +51,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
     }
 
     showUpdateNode(index: number, node: any) {
-        if ((node.locktime - node.blockheight) >= 72000) {
+        if ((node.locktime - node.blockheight) >= 720000) {
             return GlobalNativeService.instance.genericToast('voting.vote-max-deadline');
         }
 
