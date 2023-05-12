@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
@@ -31,8 +32,6 @@ export class MyVotesPage implements OnInit, OnDestroy {
         public uxService: UXService,
     ) { }
 
-
-
     async ngOnInit() {
     }
 
@@ -47,20 +46,15 @@ export class MyVotesPage implements OnInit, OnDestroy {
     }
 
     ionViewWillEnter() {
-        //this.titleBar.setBackgroundColor("#732CCE");
-        //this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
         this.titleBar.setTitle(this.translate.instant('dposvoting.my-votes'));
         void this.initData();
     }
 
-    ionViewDidEnter() {
-    }
-
-    ionViewWillLeave() {
-
-    }
-
     showUpdateNode(index: number, node: any) {
+        if ((node.locktime - node.blockheight) >= 72000) {
+            return GlobalNativeService.instance.genericToast('voting.vote-max-deadline');
+        }
+
         this.showNode = true;
         this.nodeIndex = index;
         this.node = node;
