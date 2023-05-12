@@ -457,6 +457,12 @@ export class ListPage implements OnInit {
     showIntegerPart(value: number) {
         return Math.ceil(value);
     }
+
+    hasMessage() {
+        return this.dpos2Service.nodePublicKeyNotSet || this.dpos2Service.myNodeStakeExpired30
+                || this.dpos2Service.myNodeStakeAboutExpire || this.dpos2Service.voteStakeExpired30
+                || this.dpos2Service.voteStakeAboutExpire;
+    }
 }
 
 

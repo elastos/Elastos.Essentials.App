@@ -31,16 +31,7 @@
     padding-bottom: 20%;
 }
 
-.content {
-    &.vote-open {
-        padding-top: 55px;
-        //--padding-bottom:55px; // Attempt to fix secondary ion-content (because of ion-refresher) cutting the bottom of the screen
-    }
-}
-
 .container {
-    // padding-top: 15%;
-
     .candidate-list {
         padding: 0px 0px 1px;
         height: 100%;

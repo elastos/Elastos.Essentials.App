@@ -9,7 +9,7 @@
 
         <ion-grid class="container ion-no-padding" *ngIf="dataFetched; else loadingList">
 
-            <div *ngIf="!showNode" class="message-container">
+            <div *ngIf="!showNode && hasMessage()" class="message-container">
                 <p *ngIf="dpos2Service.nodePublicKeyNotSet" class="message" (click)="goToUpdateNode()">
                     {{ dpos2Service.nodePublicKeyNotSet }}
                 </p>

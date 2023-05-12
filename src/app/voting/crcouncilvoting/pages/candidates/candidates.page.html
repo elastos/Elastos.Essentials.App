@@ -6,53 +6,50 @@
         </div>
     </div>
 
-    <div class="content">
+    <ion-grid *ngIf="crCouncilService.candidates.length > 0" id="add-padding-bottom"
+        class="container ion-no-padding">
+        <ion-list lines="none" class="candidate-list">
+            <ion-item *ngFor="let candidate of crCouncilService.candidates">
+                <ion-grid class="ion-no-padding">
+                    <ion-row>
+                        <ion-col size="1.25" class="rank-col" (click)="onShowCandidateInfo(candidate.did)">
+                            {{ crCouncilService.candidates.indexOf(candidate) + 1 }}
+                        </ion-col>
+                        <ion-col size="1.5" class="img-col" (click)="onShowCandidateInfo(candidate.did)">
+                            <img-svg-fallback class="img" [src]="candidate.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
+                        </ion-col>
+                        <ion-col size="7.75" class="label-col" (click)="onShowCandidateInfo(candidate.did)">
+                            <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
+                            </h4>
+                            <p>
+                                <!-- <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
+                                | translate }}
+                                &nbsp; -->
+                                <span class="votes">{{ fixVotes(candidate.votes) }}</span>
+                                {{'crcouncilvoting.votes' | translate }}
+                            </p>
+                        </ion-col>
+                        <ion-col size="1.5" class="checkbox-col" (click)="addCandidate(candidate)">
+                            <!--  TODO checked="candidateIsSelected(candidate)" can't work, why?-->
+                            <ion-checkbox checked="true" *ngIf="candidateIsSelected(candidate)"></ion-checkbox>
+                            <ion-checkbox checked="false" *ngIf="!candidateIsSelected(candidate)"></ion-checkbox>
+                        </ion-col>
+                    </ion-row>
+                </ion-grid>
+            </ion-item>
+        </ion-list>
+    </ion-grid>
 
-        <ion-grid *ngIf="crCouncilService.candidates.length > 0" id="add-padding-bottom"
-            class="container ion-no-padding">
-            <ion-list lines="none" class="candidate-list">
-                <ion-item *ngFor="let candidate of crCouncilService.candidates">
-                    <ion-grid class="ion-no-padding">
-                        <ion-row>
-                            <ion-col size="1.25" class="rank-col" (click)="onShowCandidateInfo(candidate.did)">
-                                {{ crCouncilService.candidates.indexOf(candidate) + 1 }}
-                            </ion-col>
-                            <ion-col size="1.5" class="img-col" (click)="onShowCandidateInfo(candidate.did)">
-                                <img-svg-fallback class="img" [src]="candidate.avatar" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
-                            </ion-col>
-                            <ion-col size="7.75" class="label-col" (click)="onShowCandidateInfo(candidate.did)">
-                                <h4 [class.selected]="candidateIsSelected(candidate)">{{ candidate.nickname }}
-                                </h4>
-                                <p>
-                                    <!-- <ion-icon name="navigate"></ion-icon> {{ 'crcouncilvoting.' + candidate.location
-                                    | translate }}
-                                    &nbsp; -->
-                                    <span class="votes">{{ fixVotes(candidate.votes) }}</span>
-                                    {{'crcouncilvoting.votes' | translate }}
-                                </p>
-                            </ion-col>
-                            <ion-col size="1.5" class="checkbox-col" (click)="addCandidate(candidate)">
-                                <!--  TODO checked="candidateIsSelected(candidate)" can't work, why?-->
-                                <ion-checkbox checked="true" *ngIf="candidateIsSelected(candidate)"></ion-checkbox>
-                                <ion-checkbox checked="false" *ngIf="!candidateIsSelected(candidate)"></ion-checkbox>
-                            </ion-col>
-                        </ion-row>
-                    </ion-grid>
-                </ion-item>
-            </ion-list>
-        </ion-grid>
+    <div *ngIf="candidatesFetched && crCouncilService.candidates.length == 0" class="no-data">
+        {{ 'crcouncilvoting.no-candidates' | translate }}
+    </div>
 
-        <div *ngIf="candidatesFetched && crCouncilService.candidates.length == 0" class="no-data">
-            {{ 'crcouncilvoting.no-candidates' | translate }}
-        </div>
+    <div *ngIf="!candidatesFetched" class="spinner align-center">
+        <ion-spinner name="crescent"></ion-spinner>
+    </div>
 
-        <div *ngIf="!candidatesFetched" class="spinner align-center">
-            <ion-spinner name="crescent"></ion-spinner>
-        </div>
-
-        <div *ngIf="candidatesFetched && crCouncilService.candidates.length > 0" class="footer">
-            <ebutton [disabled]="!crCouncilService.selectedCandidates.length" (clicked)="addCandidates()"
-                [title]="'crcouncilvoting.dist-votes' | translate"></ebutton>
-        </div>
+    <div *ngIf="candidatesFetched && crCouncilService.candidates.length > 0" class="footer">
+        <ebutton [disabled]="!crCouncilService.selectedCandidates.length" (clicked)="addCandidates()"
+            [title]="'crcouncilvoting.dist-votes' | translate"></ebutton>
     </div>
 </ion-content>
