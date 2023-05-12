@@ -57,6 +57,11 @@ export class NodeSliderComponent implements OnInit {
         this.displayedNodes = this._nodes.slice(0, this.nodeIndex + 2);
         this.slideOpts.initialSlide = this.displayedNodes.indexOf(this.node);
         this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+
+        //reset inputStakeDays
+        this._nodes.forEach(n => {
+            n.inputStakeDays = n.lockDays;
+        })
     }
 
     //// Increment nodes array when sliding forward ////
@@ -97,7 +102,7 @@ export class NodeSliderComponent implements OnInit {
             this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let locktime;
             if (this.useMaxStakeDays) { // Max
-                locktime = node.locktime;
+                locktime = node.userLocktime;
             } else {
                 locktime = this.currentHeight + node.inputStakeDays * 720;
                 if (locktime > node.stakeuntil) {
@@ -163,7 +168,7 @@ export class NodeSliderComponent implements OnInit {
         }
 
         // MAX stake days
-        if (node.locktime == node.stakeuntil) {
+        if (this.useMaxStakeDays) {
             return false;
         }
 
@@ -196,8 +201,8 @@ export class NodeSliderComponent implements OnInit {
     }
 
     setMaxStakeDays(node: any) {
-        node.locktime = this.getUserMaxStakeBlockHeight(node)
-        node.inputStakeDays = Math.ceil((node.locktime - this.currentHeight) / 720);
+        node.userLocktime = this.getUserMaxStakeBlockHeight(node)
+        node.inputStakeDays = Math.ceil((node.userLocktime - this.currentHeight) / 720);
 
         this.useMaxStakeDays = true;
     }
