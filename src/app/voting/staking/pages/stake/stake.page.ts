@@ -63,7 +63,7 @@ export class StakePage {
 
             // Request the wallet to publish our vote.
             if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
-                await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+                await this.popupProvider.ionicAlert('common.warning', 'wallet.transaction-pending');
                 return false;
             }
             else if (this.amount > this.maxStake) {

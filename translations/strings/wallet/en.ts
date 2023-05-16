@@ -509,7 +509,6 @@ export const en = {
         'ethaddress': 'ESC Address',
         'requester': 'Request from',
         'text-allow': 'Allow',
-        'text-warning': 'Warning',
         'text-share-mnemonic-warning': 'Mnemonic is the only proof of blockchain assets. Please confirm that there is no risk of leakage before sharing!',
 
         /***********************

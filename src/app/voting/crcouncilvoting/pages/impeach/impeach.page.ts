@@ -81,10 +81,10 @@ export class ImpeachCRMemberPage {
             case WalletType.MULTI_SIG_STANDARD:
                 break;
             case WalletType.LEDGER:
-                await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+                await this.popupProvider.ionicAlert('common.warning', 'voting.ledger-reject-voting');
                 return;
             case WalletType.MULTI_SIG_EVM_GNOSIS:
-                await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+                await this.popupProvider.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
                 return;
             default:
                 // Should not happen.

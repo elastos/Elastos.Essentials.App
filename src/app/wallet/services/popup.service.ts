@@ -28,7 +28,7 @@ export class PopupProvider {
         mode: 'ios',
         buttons: [
           {
-            text: okText ? this.translate.instant(okText) : this.translate.instant('common.confirm'),
+            text: okText ? this.translate.instant(okText) : this.translate.instant('common.understood'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert Ok clicked');
               this.alertPopup = null;
@@ -59,92 +59,6 @@ export class PopupProvider {
             text: okText ? okText : this.translate.instant('common.confirm'),
             handler: () => {
               Logger.log('wallet', 'ionicAlert_data Ok clicked');
-              this.alertPopup = null;
-              resolve();
-            }
-          }
-        ]
-      }).then(alert => alert.present());
-    });
-  }
-
-  public ionicAlert_delTx(
-    title: string,
-    subTitle?: string,
-    hash?: any,
-    okText?: string
-  ): Promise<any> {
-    const transactionDeleted = this.translate.instant('wallet.transaction-deleted');
-    return new Promise<void>((resolve, reject) => {
-      this.alertPopup = this.alertCtrl.create({
-        header: this.translate.instant(title),
-        subHeader: "txHash:" + "(" + hash + ")" + ":" + transactionDeleted,
-        backdropDismiss: false,
-        cssClass: 'alert',
-        mode: 'ios',
-        buttons: [
-          {
-            text: okText ? okText : this.translate.instant('common.confirm'),
-            handler: () => {
-              Logger.log('wallet', 'ionicAlert_delTx Ok clicked');
-              this.alertPopup = null;
-              resolve();
-            }
-          }
-        ]
-      }).then(alert => alert.present());
-    });
-  }
-
-  public ionicAlert_PublishedTx_fail(
-    title: string,
-    subTitle?: string,
-    hash?: string,
-    failDetail?: string,
-    okText?: string
-  ): Promise<any> {
-    const sub = this.translate.instant(subTitle);
-    const reason = this.translate.instant('wallet.reasons-failure');
-    return new Promise<void>((resolve, reject) => {
-      this.alertPopup = this.alertCtrl.create({
-        header: this.translate.instant(title),
-        subHeader: reason + ':' + sub,
-        backdropDismiss: false,
-        cssClass: 'alert',
-        mode: 'ios',
-        buttons: [
-          {
-            text: okText ? okText : this.translate.instant('common.confirm'),
-            handler: () => {
-              Logger.log('wallet', 'ionicAlert_PublishedTx_fail Ok clicked');
-              this.alertPopup = null;
-              resolve();
-            }
-          }
-        ]
-      }).then(alert => alert.present());
-    });
-  }
-
-  public ionicAlert_PublishedTx_sucess(
-    title: string,
-    subTitle?: string,
-    hash?: any,
-    okText?: string
-  ): Promise<any> {
-    const sub = this.translate.instant(subTitle);
-    return new Promise<void>((resolve, reject) => {
-      this.alertPopup = this.alertCtrl.create({
-        header: this.translate.instant(title),
-        subHeader: sub + "<br/>" + "(" + "txHash:" + hash + ")",
-        backdropDismiss: false,
-        cssClass: 'alert',
-        mode: 'ios',
-        buttons: [
-          {
-            text: okText ? okText : this.translate.instant('common.confirm'),
-            handler: () => {
-              Logger.log('wallet', 'ionicAlert_PublishedTx_sucess Ok clicked');
               this.alertPopup = null;
               resolve();
             }

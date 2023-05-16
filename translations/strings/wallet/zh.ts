@@ -508,7 +508,6 @@ export const zh = {
         'ethaddress': 'ESC侧链钱包地址',
         'requester': '请求授权应用',
         'text-allow': '允许',
-        'text-warning': '警告',
         'text-share-mnemonic-warning': '助记词是区块链资产的唯一凭证，分享前请确认不会有泄露风险！',
 
         /***********************

@@ -126,10 +126,10 @@ export class VoteForProposalPage {
             case WalletType.MULTI_SIG_STANDARD:
                 break;
             case WalletType.LEDGER:
-                await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+                await this.popupProvider.ionicAlert('common.warning', 'voting.ledger-reject-voting');
                 return;
             case WalletType.MULTI_SIG_EVM_GNOSIS:
-                await this.popupProvider.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+                await this.popupProvider.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
                 return;
             default:
                 // Should not happen.
@@ -152,7 +152,7 @@ export class VoteForProposalPage {
             // Request the wallet to publish our vote.
             if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
                 this.signingAndSendingProposalResponse = false;
-                await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+                await this.popupProvider.ionicAlert('common.warning', 'wallet.transaction-pending');
                 return false;
             }
 

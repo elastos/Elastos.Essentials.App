@@ -137,7 +137,7 @@ export class DPoSVotePage implements OnInit {
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+            await this.popupProvider.ionicAlert('common.warning', 'wallet.transaction-pending');
             void this.cancelOperation();
         }
     }

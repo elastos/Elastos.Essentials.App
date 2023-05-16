@@ -509,7 +509,6 @@ export const fr = {
         'ethaddress': 'Adresses ESC',
         'requester': 'Demandé par',
         'text-allow': 'Autoriser',
-        'text-warning': 'Attention',
         'text-share-mnemonic-warning': 'Le mnémonique donne un accès total à tous vos actifs numériques. Veuillez confirmez que vous le partagez avec un tiers de confiance!',
 
         /***********************

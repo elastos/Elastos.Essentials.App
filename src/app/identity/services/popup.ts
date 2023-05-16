@@ -16,7 +16,7 @@ export class PopupProvider {
                 subHeader: subTitle ? this.translate.instant(subTitle) : '',
                 backdropDismiss: false,
                 buttons: [{
-                    text: okText ? okText : this.translate.instant('common.confirm'),
+                    text: okText ? okText : this.translate.instant('common.understood'),
                     handler: () => {
                         Logger.log('Identity', 'ionicAlert Ok clicked');
                         resolve();

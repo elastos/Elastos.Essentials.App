@@ -185,7 +185,7 @@ export class DPosUnRegistrationPage implements OnInit {
     async unregister() {
         Logger.log(App.DPOS_REGISTRATION, 'Calling createUnregisterDPoSTransaction()');
 
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposregistration.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
+        if (!await this.popupProvider.ionicConfirm('common.warning', 'dposregistration.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
         }
 

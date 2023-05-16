@@ -129,7 +129,7 @@ export class VotePage implements OnInit {
             return;
         }
 
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposregistration.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+        if (!await this.popupProvider.ionicConfirm('common.warning', 'dposregistration.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
             this.registering = false;
             return;
         }

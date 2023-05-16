@@ -508,7 +508,6 @@ export const it = {
         'ethaddress': 'Indirizzo ESC',
         'requester': 'Richiesta da',
         'text-allow': 'Consenti',
-        'text-warning': 'Attenzione',
         'text-share-mnemonic-warning': 'Il mnemonico dà pieno accesso a tutte le tue Risorse Digitali. Conferma che lo stai condividendo con una terza parte fidata!',
 
         /***********************

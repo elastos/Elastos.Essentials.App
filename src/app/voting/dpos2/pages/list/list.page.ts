@@ -215,7 +215,7 @@ export class ListPage implements OnInit {
             }
 
             if (this.dpos2Service.dposInfo.identity == 'DPoSV1') {
-                if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
+                if (!await this.popupProvider.ionicConfirm('common.warning', 'dposvoting.dpos1-update-warning', 'common.ok', 'common.cancel')) {
                     return;
                 }
             }
@@ -224,7 +224,7 @@ export class ListPage implements OnInit {
                     return;
                 }
 
-                if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
+                if (!await this.popupProvider.ionicConfirm('common.warning', 'dposvoting.dpos-deposit-warning', 'common.ok', 'common.cancel')) {
                     return;
                 }
             }
@@ -240,7 +240,7 @@ export class ListPage implements OnInit {
     }
 
     async goToWithdraw() {
-        if (!await this.popupProvider.ionicConfirm('wallet.text-warning', 'dposvoting.dpos1-withdraw-warning', 'common.ok', 'common.cancel')) {
+        if (!await this.popupProvider.ionicConfirm('common.warning', 'dposvoting.dpos1-withdraw-warning', 'common.ok', 'common.cancel')) {
             return;
         }
 

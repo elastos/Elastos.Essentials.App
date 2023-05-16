@@ -54,6 +54,8 @@ export const fr = {
         'sentry-message': 'Aie désolés... une erreur est apparue dans l\'application. L\'équipe de développement en a été informée.',
         'network-or-server-error': 'Network or server error, please try again later!',
         "wc-not-supported-chainId": "Network with chain ID {{chainId}} is currently not supported",
+        'warning': 'Attention',
+        'understood': 'Understood',
 
         // Related to DID
         'sign-in': 'Connexion',

@@ -97,7 +97,7 @@ export class CandidatesPage implements OnInit {
 
     async goToCandidateRegistration() {
         if (!await this.voteService.isSamePublicKey()) {
-            await this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.reg-use-the-same-did-wallet');
+            await this.globalPopupService.ionicAlert('common.warning', 'crcouncilvoting.reg-use-the-same-did-wallet');
             return;
         }
 
@@ -111,7 +111,7 @@ export class CandidatesPage implements OnInit {
             return;
         }
 
-        if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-deposit-warning', 'common.ok', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('common.warning', 'crcouncilvoting.candidate-deposit-warning', 'common.ok', 'common.cancel')) {
             return;
         }
 

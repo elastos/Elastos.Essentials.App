@@ -550,7 +550,7 @@ export class CRCouncilService {
             return;
         }
 
-        if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('common.warning', 'crcouncilvoting.candidate-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
         }
 
@@ -584,7 +584,7 @@ export class CRCouncilService {
         Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
 
         if (!await this.voteService.isSamePublicKey()) {
-            void this.globalPopupService.ionicAlert('wallet.text-warning', 'crcouncilvoting.use-registered-wallet');
+            void this.globalPopupService.ionicAlert('common.warning', 'crcouncilvoting.use-registered-wallet');
             return;
         }
 
@@ -594,7 +594,7 @@ export class CRCouncilService {
 
         let msg = this.translate.instant('crcouncilvoting.candidate-withdraw-warning-pre') + available +
             this.translate.instant('crcouncilvoting.candidate-withdraw-warning-suf');
-        if (!await this.globalPopupService.ionicConfirm('wallet.text-warning', msg, 'common.confirm', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('common.warning', msg, 'common.confirm', 'common.cancel')) {
             return;
         }
 

@@ -174,12 +174,12 @@ export class VoteService implements GlobalService {
             case WalletType.STANDARD:
                 break;
             case WalletType.LEDGER:
-                await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.ledger-reject-voting');
+                await this.globalPopupService.ionicAlert('common.warning', 'voting.ledger-reject-voting');
                 return false;
             case WalletType.MULTI_SIG_STANDARD:
             case WalletType.MULTI_SIG_EVM_GNOSIS:
                 if (!supportMultiSign) {
-                    await this.globalPopupService.ionicAlert('wallet.text-warning', 'voting.multi-sign-reject-voting');
+                    await this.globalPopupService.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
                     return false;
                 }
                 break;
@@ -498,7 +498,7 @@ export class VoteService implements GlobalService {
 
     async checkPendingBalance(): Promise<boolean> {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.globalPopupService.ionicAlert('wallet.confirmTitle', 'wallet.transaction-pending');
+            await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending');
             return false;
         }
         return true;

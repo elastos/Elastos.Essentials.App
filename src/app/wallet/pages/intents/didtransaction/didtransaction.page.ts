@@ -189,7 +189,7 @@ export class DidTransactionPage implements OnInit {
     async checkValue() {
         const isAvailableBalanceEnough = await this.sourceSubwallet.isAvailableBalanceEnough(this.fee);
         if (!isAvailableBalanceEnough) {
-            await this.popupProvider.ionicAlert('wallet.confirmTitle', 'wallet.text-did-balance-not-enough');
+            await this.popupProvider.ionicAlert('common.warning', 'wallet.text-did-balance-not-enough');
             void this.cancelOperation();
             return;
         }
