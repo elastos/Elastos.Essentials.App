@@ -6,12 +6,12 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { MnemonicPassCheckComponent } from 'src/app/didsessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
-import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
 
@@ -52,7 +52,7 @@ export class ImportDIDPage {
     private identityService: IdentityService,
     private uxService: UXService,
     private translate: TranslateService,
-    private popup: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     public theme: GlobalThemeService,
     private events: GlobalEvents,
     public element: ElementRef,
@@ -144,7 +144,7 @@ export class ImportDIDPage {
     this.mnemonicForImport = this.mnemonicWords.join(' ').toLowerCase();
     this.mnemonicLanguage = await DIDMnemonicHelper.getMnemonicLanguage(this.mnemonicForImport);
     if (!this.mnemonicLanguage) {
-      void this.popup.ionicAlert('didsessions.mnemonic-invalid', 'didsessions.mnemonic-invalid-prompt');
+      void this.globalPopupService.ionicAlert('didsessions.mnemonic-invalid', 'didsessions.mnemonic-invalid-prompt');
       return;
     }
 

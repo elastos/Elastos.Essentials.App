@@ -4,6 +4,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwork.service';
 import { StandardCoinName } from '../model/coin';
 import { MasterWallet } from '../model/masterwallets/masterwallet';
@@ -14,7 +15,6 @@ import { EditCustomNetworkRoutingParams } from '../pages/settings/edit-custom-ne
 import { CoinTransferService, TransferType } from './cointransfer.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
-import { PopupProvider } from './popup.service';
 import { WalletService } from './wallet.service';
 import { WalletAccessService } from './walletaccess.service';
 import { WalletEditionService } from './walletedition.service';
@@ -39,7 +39,7 @@ export class IntentService {
         public native: Native,
         private walletManager: WalletService,
         private coinTransferService: CoinTransferService,
-        private popupProvider: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         private walletAccessService: WalletAccessService,
         private walletEditionService: WalletEditionService,
         private walletNetworkService: WalletNetworkService,
@@ -84,7 +84,7 @@ export class IntentService {
             this.native.setRootRouter("/wallet/settings", {
                 createWallet: true
             });
-            const toCreateWallet = await this.popupProvider.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'wallet.exit');
+            const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'wallet.exit');
             if (toCreateWallet) {
                 // TODO
                 // Should call sendIntentResponse?

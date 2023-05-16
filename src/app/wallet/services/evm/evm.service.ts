@@ -8,6 +8,7 @@ import { Logger } from 'src/app/logger';
 import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import type Web3 from 'web3';
 import type { TransactionReceipt } from 'web3-core';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
@@ -17,7 +18,6 @@ import type { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwalle
 import type { AnyNetwork } from '../../model/networks/network';
 import type { RawTransactionPublishResult } from '../../model/tx-providers/transaction.types';
 import type { Transfer } from '../cointransfer.service';
-import { PopupProvider } from '../popup.service';
 import { TransactionService } from '../transaction.service';
 
 export type ETHTransactionStatusInfo = {
@@ -44,7 +44,8 @@ class ETHTransactionManager {
   constructor(
     private publicationService: EVMService,
     private modalCtrl: ModalController,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    public globalPopupService: GlobalPopupService,
   ) { }
 
   /**
@@ -182,7 +183,7 @@ class ETHTransactionManager {
             if (message.includes("insufficient funds for gas * price + value")) {
                 message = 'wallet.insufficient-balance';
             }
-            await PopupProvider.instance.ionicAlert('wallet.transaction-fail', message);
+            await this.globalPopupService.ionicAlert('wallet.transaction-fail', message);
           }
         }
         return result.txid;
@@ -307,14 +308,16 @@ export class EVMService {
 
   constructor(
     private modalCtrl: ModalController,
-    private transactionService: TransactionService
+    private transactionService: TransactionService,
+    public globalPopupService: GlobalPopupService,
   ) {
     EVMService.instance = this;
 
     this.manager = new ETHTransactionManager(
       this,
       this.modalCtrl,
-      this.transactionService);
+      this.transactionService,
+      this.globalPopupService);
   }
 
   public init(): void {

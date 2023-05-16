@@ -8,10 +8,10 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CustomNetworkDiskEntry, CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { EditCustomNetworkIntentResult } from './intentresult';
 
 export type EditCustomNetworkRoutingParams = {
@@ -51,7 +51,7 @@ export class EditCustomNetworkPage implements OnInit {
     private native: GlobalNativeService,
     private globalNav: GlobalNavService,
     private http: HttpClient,
-    private popup: PopupProvider,
+    public globalPopupService: GlobalPopupService,
     private zone: NgZone
   ) { }
 
@@ -144,7 +144,7 @@ export class EditCustomNetworkPage implements OnInit {
       this.native.genericToast("wallet.cant-delete-active-network");
     }
     else {
-      let deletionConfirmation = await this.popup.ionicConfirm("wallet.delete-network-prompt-title", "wallet.delete-network-prompt-text");
+      let deletionConfirmation = await this.globalPopupService.ionicConfirm("wallet.delete-network-prompt-title", "wallet.delete-network-prompt-text");
       if (!deletionConfirmation)
         return;
 

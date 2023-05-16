@@ -9,6 +9,7 @@ import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { DIDNotUpToDateException } from "src/app/model/exceptions/didnotuptodateexception";
 import { NetworkException } from "src/app/model/exceptions/network.exception";
 import { GlobalEvents } from "src/app/services/global.events.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { DIDDocument } from "../model/diddocument.model";
@@ -18,7 +19,6 @@ import { DIDDocumentsService } from "./diddocuments.service";
 import { IntentReceiverService } from "./intentreceiver.service";
 import { LocalStorage } from "./localstorage";
 import { Native } from "./native";
-import { PopupProvider } from "./popup";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -40,7 +40,7 @@ export class DIDSyncService implements GlobalService {
     private translate: TranslateService,
     public toastCtrl: ToastController,
     public events: GlobalEvents,
-    public popupProvider: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     public localStorage: LocalStorage,
     public native: Native,
     private globalPublicationService: GlobalPublicationService
@@ -125,11 +125,11 @@ export class DIDSyncService implements GlobalService {
       Logger.error("identity", JSON.stringify(err));
       let reworkedEx = DIDHelper.reworkedPluginException(err);
       if (reworkedEx instanceof DIDNotUpToDateException) {
-        await this.popupProvider.ionicAlert("identity.publish-error-title", "identity.publish-error-call-sync-did");
+        await this.globalPopupService.ionicAlert("identity.publish-error-title", "identity.publish-error-call-sync-did", 'common.close');
       } else if (reworkedEx instanceof NetworkException) {
-        await this.popupProvider.ionicAlert("identity.publish-error-title", "common.network-or-server-error");
+        await this.globalPopupService.ionicAlert("identity.publish-error-title", "common.network-or-server-error", 'common.close');
       } else {
-        await this.popupProvider.ionicAlert("identity.publish-error-title", err.message);
+        await this.globalPopupService.ionicAlert("identity.publish-error-title", err.message, 'common.close');
       }
     }
   }
@@ -150,14 +150,14 @@ export class DIDSyncService implements GlobalService {
   private onDIDDocumentPublishResponse(result: DIDDocumentPublishEvent) {
     if (result.published) {
       Logger.log("identity", "PUBLISHED !");
-      void this.popupProvider.ionicAlert("identity.publish-success").then(() => {
+      void this.globalPopupService.ionicAlert("identity.publish-success").then(() => {
         this.events.publish("diddocument:publishresultpopupclosed", result);
       });
     } else if (result.cancelled) {
       Logger.log("identity", "CANCELLED");
     } else if (result.error) {
       Logger.error('identity', "ERROR");
-      void this.popupProvider.ionicAlert("identity.publish-error").then(() => {
+      void this.globalPopupService.ionicAlert("identity.publish-error").then(() => {
         this.events.publish("diddocument:publishresultpopupclosed", result);
       });
     }

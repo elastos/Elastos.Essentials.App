@@ -17,7 +17,6 @@ import { WarningComponent } from "../components/warning/warning.component";
 import { TabsnavPageModule } from "../pages/tabnav/tabnav.module";
 import { IdentityRoutingModule } from "../routing";
 import { LocalStorage } from "./localstorage";
-import { PopupProvider } from "./popup";
 
 @NgModule({
   declarations: [
@@ -48,7 +47,6 @@ import { PopupProvider } from "./popup";
   providers: [
     Clipboard,
     LocalStorage,
-    PopupProvider,
     Platform,
     WebView
   ],

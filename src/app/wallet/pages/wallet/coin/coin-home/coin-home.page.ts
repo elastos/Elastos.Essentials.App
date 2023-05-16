@@ -64,7 +64,6 @@ import { AnyOfflineTransaction, GenericTransaction, OfflineTransactionType, Tran
 import { CoinTransferService, TransferType } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -134,7 +133,6 @@ export class CoinHomePage implements OnInit {
         public native: Native,
         public events: GlobalEvents,
         private zone: NgZone,
-        public popupProvider: PopupProvider,
         private popoverCtrl: PopoverController,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,

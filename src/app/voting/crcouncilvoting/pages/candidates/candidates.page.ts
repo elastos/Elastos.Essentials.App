@@ -97,7 +97,7 @@ export class CandidatesPage implements OnInit {
 
     async goToCandidateRegistration() {
         if (!await this.voteService.isSamePublicKey()) {
-            await this.globalPopupService.ionicAlert('common.warning', 'crcouncilvoting.reg-use-the-same-did-wallet');
+            await this.globalPopupService.ionicAlert('common.warning', 'crcouncilvoting.reg-use-the-same-did-wallet', "common.understood");
             return;
         }
 

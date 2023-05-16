@@ -13,7 +13,6 @@ import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AuthService } from 'src/app/wallet/services/auth.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { DPoS2RegistrationInfo, DPoS2Service } from '../../services/dpos2.service';
 
 @Component({
@@ -59,7 +58,6 @@ export class DPoS2RegistrationPage implements OnInit {
         public theme: GlobalThemeService,
         public voteService: VoteService,
         private authService: AuthService,
-        public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
         public dpos2Service: DPoS2Service,
         private globalNative: GlobalNativeService,

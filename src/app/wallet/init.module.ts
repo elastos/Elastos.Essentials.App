@@ -29,7 +29,6 @@ import { IonicModule } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { Native } from './services/native.service';
-import { PopupProvider } from './services/popup.service';
 import { LocalStorage } from './services/storage.service'; */
 
 @NgModule({
@@ -47,7 +46,6 @@ import { LocalStorage } from './services/storage.service'; */
         /* Clipboard,
         LocalStorage,
         Native,
-        PopupProvider,
         WebView */
     ],
     bootstrap: [],

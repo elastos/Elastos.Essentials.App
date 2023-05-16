@@ -12,7 +12,6 @@ import { DIDService } from './did.service';
 import { ExpirationService } from './expiration.service';
 import { LocalStorage } from './localstorage';
 import { Native } from './native';
-import { PopupProvider } from './popup';
 
 export interface LastExpirationNotification {
   last_check: string
@@ -29,7 +28,6 @@ export class BackgroundService extends GlobalService {
   constructor(
     public zone: NgZone,
     public toastCtrl: ToastController,
-    public popupProvider: PopupProvider,
     public localStorage: LocalStorage,
     private didService: DIDService,
     private authService: AuthService,

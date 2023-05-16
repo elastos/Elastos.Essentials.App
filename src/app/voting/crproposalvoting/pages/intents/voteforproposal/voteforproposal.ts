@@ -8,6 +8,7 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { DposStatus, VoteService } from 'src/app/voting/services/vote.service';
@@ -15,7 +16,6 @@ import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { VoteContent, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { CRCommand, CROperationsService } from '../../../services/croperations.service';
 
 type VoteForProposalCommand = CRCommand & {
@@ -43,7 +43,7 @@ export class VoteForProposalPage {
         private crOperations: CROperationsService,
         private stakeService: StakeService,
         public translate: TranslateService,
-        public popupProvider: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNav: GlobalNavService,
@@ -126,10 +126,10 @@ export class VoteForProposalPage {
             case WalletType.MULTI_SIG_STANDARD:
                 break;
             case WalletType.LEDGER:
-                await this.popupProvider.ionicAlert('common.warning', 'voting.ledger-reject-voting');
+                await this.globalPopupService.ionicAlert('common.warning', 'voting.ledger-reject-voting');
                 return;
             case WalletType.MULTI_SIG_EVM_GNOSIS:
-                await this.popupProvider.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
+                await this.globalPopupService.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
                 return;
             default:
                 // Should not happen.
@@ -139,11 +139,11 @@ export class VoteForProposalPage {
 
         try {
             if (this.amount > this.maxVotes) {
-                await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
+                await this.globalPopupService.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.greater-than-max-votes');
                 return false;
             }
             else if (this.amount <= 0) {
-                await this.popupProvider.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.less-than-equal-zero-votes');
+                await this.globalPopupService.ionicAlert('crproposalvoting.vote-proposal', 'crproposalvoting.less-than-equal-zero-votes');
                 return false;
             }
 
@@ -152,7 +152,7 @@ export class VoteForProposalPage {
             // Request the wallet to publish our vote.
             if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
                 this.signingAndSendingProposalResponse = false;
-                await this.popupProvider.ionicAlert('common.warning', 'wallet.transaction-pending');
+                await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
                 return false;
             }
 

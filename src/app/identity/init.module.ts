@@ -6,7 +6,6 @@ import { IonicModule, Platform } from "@ionic/angular";
 import { IonicStorageModule } from "@ionic/storage";
 import { TranslateModule } from "@ngx-translate/core";
 import { LocalStorage } from "./services/localstorage";
-import { PopupProvider } from "./services/popup";
 
 @NgModule({
   declarations: [
@@ -23,7 +22,6 @@ import { PopupProvider } from "./services/popup";
   providers: [
     Clipboard,
     LocalStorage,
-    PopupProvider,
     Platform,
     WebView
   ],

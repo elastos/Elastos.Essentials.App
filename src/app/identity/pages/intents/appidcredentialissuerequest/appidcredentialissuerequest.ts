@@ -7,13 +7,13 @@ import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AppIdCredIssueIdentityIntent } from '../../../model/identity.intents';
 import { AppIDService } from '../../../services/appid.service';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
 import { IntentReceiverService } from '../../../services/intentreceiver.service';
-import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
 // Displayable version of a verifiable credential. Can contain one or more IssuedCredentialItem that
@@ -48,7 +48,7 @@ export class AppIdCredentialIssueRequestPage {
     constructor(
         private zone: NgZone,
         public didService: DIDService,
-        private popup: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         private uxService: UXService,
         private authService: AuthService,
         private appServices: UXService,
@@ -103,7 +103,7 @@ export class AppIdCredentialIssueRequestPage {
             let errorMessage = `The application DID ${this.appDid} could not be found on the identity chain. `;
             errorMessage += "If you are developing your application, make sure to first create and publish your application identity ";
             errorMessage += "using the developers tools screen in Essentials settings.";
-            await this.popup.ionicAlert(this.translate.instant('common.error'), errorMessage, this.translate.instant('common.close'));
+            await this.globalPopupService.ionicAlert('common.error', errorMessage, 'common.close');
             this.rejectRequest();
             return false;
         }
@@ -118,7 +118,7 @@ export class AppIdCredentialIssueRequestPage {
                 let errorMessage = `The application DID ${this.appDid} was found on chain, but it doesn't
                 contain a name and icon. Please first configure your application using the developers tools screen in Essentials settings.`;
 
-                await this.popup.ionicAlert(this.translate.instant('common.error'), errorMessage, this.translate.instant('common.close'));
+                await this.globalPopupService.ionicAlert('common.error', errorMessage, 'common.close');
                 this.rejectRequest();
                 return false;
             }
@@ -130,7 +130,7 @@ export class AppIdCredentialIssueRequestPage {
         if (this.appDid === GlobalConfig.ESSENTIALS_APP_DID) {
             let errorMessage = `Requesting to generate an application ID credential to access the
             Essentials' context (using Essentials' DID) is forbidden.`;
-            await this.popup.ionicAlert(this.translate.instant('common.error'), errorMessage, this.translate.instant('common.close'));
+            await this.globalPopupService.ionicAlert('common.error', errorMessage, 'common.close');
             this.rejectRequest();
             return;
         }

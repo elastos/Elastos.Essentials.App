@@ -269,7 +269,7 @@ export class VoteService implements GlobalService {
 
     public async checkWalletAvailableForVote(): Promise<boolean> {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending');
+            await this.globalPopupService.ionicAlert("common.please-wait", 'wallet.transaction-pending', "common.understood");
             return false;
         }
 
@@ -498,7 +498,7 @@ export class VoteService implements GlobalService {
 
     async checkPendingBalance(): Promise<boolean> {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending');
+            await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
             return false;
         }
         return true;

@@ -34,7 +34,6 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -84,7 +83,6 @@ export class WalletAssetPage implements OnDestroy {
     constructor(
         public defiService: DefiService,
         public native: Native,
-        public popupProvider: PopupProvider,
         public walletManager: WalletService,
         public networkService: WalletNetworkService,
         private translate: TranslateService,

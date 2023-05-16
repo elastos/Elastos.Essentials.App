@@ -6,10 +6,10 @@ import { IdentityIntent, IdentityIntentParams } from 'src/app/identity/model/ide
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
 import { BASE64 } from 'src/app/model/base64';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
-import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
 
@@ -38,7 +38,7 @@ export class SignDigestPage {
 
     constructor(
         private didService: DIDService,
-        private popup: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         private translate: TranslateService,
         private appServices: UXService,
         private authService: AuthService,
@@ -107,7 +107,7 @@ export class SignDigestPage {
                 await this.sendIntentResponse({ signature: signature, jwt: jwtToken }, this.receivedIntent.intentId);
             }
             catch (e) {
-                await this.popup.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e);
+                await this.globalPopupService.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e, 'common.close');
             }
         }, () => {
             // Cancelled

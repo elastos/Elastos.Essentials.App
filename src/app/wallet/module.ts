@@ -33,7 +33,6 @@ import { IonicStorageModule } from '@ionic/storage';
 import { TranslateModule } from '@ngx-translate/core';
 import { WalletRoutingModule } from './routing';
 import { Native } from './services/native.service';
-import { PopupProvider } from './services/popup.service';
 import { LocalStorage } from './services/storage.service';
 @NgModule({
     declarations: [],
@@ -52,7 +51,6 @@ import { LocalStorage } from './services/storage.service';
         Clipboard,
         LocalStorage,
         Native,
-        PopupProvider,
         WebView,
     ],
     bootstrap: [],

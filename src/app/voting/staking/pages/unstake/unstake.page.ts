@@ -6,12 +6,12 @@ import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalDetails } from 'src/app/voting/crproposalvoting/model/proposal-details';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { StakeService } from '../../services/stake.service';
 
 @Component({
@@ -32,7 +32,7 @@ export class UnstakePage {
         public uxService: UXService,
         public stakeService: StakeService,
         public translate: TranslateService,
-        public popupProvider: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         private voteService: VoteService,
         public theme: GlobalThemeService,
         private globalNative: GlobalNativeService,
@@ -52,15 +52,15 @@ export class UnstakePage {
         try {
             // Request the wallet to publish our vote.
             if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
-                await this.popupProvider.ionicAlert('common.warning', 'wallet.transaction-pending');
+                await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
                 return false;
             }
             else if (this.amount > this.maxStake) {
-                await this.popupProvider.ionicAlert('staking.unstake', 'crproposalvoting.greater-than-max-votes');
+                await this.globalPopupService.ionicAlert('staking.unstake', 'crproposalvoting.greater-than-max-votes');
                 return false;
             }
             else if (this.amount <= 0) {
-                await this.popupProvider.ionicAlert('staking.unstake', 'crproposalvoting.less-than-equal-zero-votes');
+                await this.globalPopupService.ionicAlert('staking.unstake', 'crproposalvoting.less-than-equal-zero-votes');
                 return false;
             }
 

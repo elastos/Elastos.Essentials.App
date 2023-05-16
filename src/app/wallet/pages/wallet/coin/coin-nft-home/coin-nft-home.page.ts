@@ -39,7 +39,6 @@ import { TransactionInfo } from '../../../../model/tx-providers/transaction.type
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -83,7 +82,6 @@ export class CoinNFTHomePage implements OnInit {
         private coinTransferService: CoinTransferService,
         public native: Native,
         public events: GlobalEvents,
-        public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private erc721service: ERC721Service,

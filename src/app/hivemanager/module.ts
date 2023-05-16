@@ -13,7 +13,6 @@ import { PickPlanPage } from './pages/pickplan/pickplan.page';
 import { PickPlanPurchasePage } from './pages/pickplanpurchase/pickplanpurchase.page';
 import { PickProviderPage } from './pages/pickprovider/pickprovider.page';
 import { HiveManagerRoutingModule } from './routing';
-import { PopupService } from './services/popup.service';
 
 
 
@@ -38,7 +37,6 @@ import { PopupService } from './services/popup.service';
   entryComponents: [
   ],
   providers: [
-    PopupService,
     Platform,
     Clipboard
   ],

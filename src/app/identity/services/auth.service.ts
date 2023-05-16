@@ -6,7 +6,6 @@ import { PasswordManagerCancellationException } from 'src/app/model/exceptions/p
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPasswordService } from 'src/app/services/global.password.service';
 import { DIDService } from './did.service';
-import { PopupProvider } from './popup';
 
 @Injectable({
     providedIn: 'root'
@@ -17,8 +16,7 @@ export class AuthService {
 
     constructor(public modalCtrl: ModalController,
         private didService: DIDService,
-        private globalPasswordService: GlobalPasswordService,
-        private popupProvider: PopupProvider) {
+        private globalPasswordService: GlobalPasswordService) {
         AuthService.instance = this;
     }
 

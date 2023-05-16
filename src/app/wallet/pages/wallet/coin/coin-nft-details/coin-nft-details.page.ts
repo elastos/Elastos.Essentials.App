@@ -36,7 +36,6 @@ import { CoinTransferService, TransferType } from 'src/app/wallet/services/coint
 import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -59,7 +58,6 @@ export class CoinNFTDetailsPage implements OnInit {
         public translate: TranslateService,
         public native: Native,
         public events: GlobalEvents,
-        public popupProvider: PopupProvider,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private erc721service: ERC721Service,

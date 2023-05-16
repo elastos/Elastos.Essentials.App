@@ -8,10 +8,10 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
-import { PopupService } from './popup.service';
 
 export type PaidIncompleteOrder = {
   orderId: string;
@@ -32,7 +32,7 @@ export class HiveService {
   constructor(
     private router: Router,
     private storage: GlobalStorageService,
-    private popup: PopupService,
+    private globalPopupService: GlobalPopupService,
     private events: GlobalEvents,
     public translate: TranslateService,
     private globalIntentService: GlobalIntentService,
@@ -81,7 +81,7 @@ export class HiveService {
    */
   public async purchasePlan(plan: PricingPlan): Promise<void> {
     if (plan.getCurrency() != "ELA") {
-      await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.unavailable'), this.translate.instant('hivemanager.alert.only-payments-in-ELA'));
+      await this.globalPopupService.ionicAlert('hivemanager.alert.unavailable', 'hivemanager.alert.only-payments-in-ELA', 'common.understood');
       return;
     }
 
@@ -124,10 +124,10 @@ export class HiveService {
     }
 
     if (operationSuccessful) {
-      await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.completed'), this.translate.instant('hivemanager.alert.plan-has-been-configured'));
+      await this.globalPopupService.ionicAlert('hivemanager.alert.completed', 'hivemanager.alert.plan-has-been-configured', 'hivemanager.alert.ok');
     }
     else {
-      await this.popup.ionicAlert(this.translate.instant('hivemanager.alert.operation-not-completed-title'), this.translate.instant('hivemanager.alert.operation-not-completed-text'));
+      await this.globalPopupService.ionicAlert('hivemanager.alert.operation-not-completed-title', 'hivemanager.alert.operation-not-completed-text', 'hivemanager.alert.ok');
     }
   }
 

@@ -29,6 +29,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CoinType } from 'src/app/wallet/model/coin';
@@ -51,7 +52,6 @@ import { MainCoinSubWallet } from '../../../model/networks/base/subwallets/mainc
 import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -106,7 +106,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     constructor(
         public native: Native,
-        public popupProvider: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         public walletManager: WalletService,
         public networkService: WalletNetworkService,
         private walletEditionService: WalletEditionService,
@@ -376,7 +376,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     async promptTransfer2IDChain() {
         if (this.walletManager.needToPromptTransferToIDChain) {
-            void this.popupProvider.ionicAlert('wallet.text-did-balance-not-enough');
+            void this.globalPopupService.ionicAlert('wallet.text-did-balance-not-enough');
             await this.walletManager.setHasPromptTransfer2IDChain();
         }
     }

@@ -38,7 +38,6 @@ import { OfflineTransactionsService } from 'src/app/wallet/services/offlinetrans
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
 import { CoinTransferService, IntentTransfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import { CoinTxInfoParams } from '../../wallet/coin/coin-tx-info/coin-tx-info.page';
@@ -68,7 +67,6 @@ export class MultiSigTxPage implements OnInit {
 
   constructor(
     public walletManager: WalletService,
-    public popupProvider: PopupProvider,
     private coinTransferService: CoinTransferService,
     private globalIntentService: GlobalIntentService,
     private globalNativeService: GlobalNativeService,

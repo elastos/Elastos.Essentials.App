@@ -37,6 +37,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { OptionsComponent, OptionsType } from 'src/app/wallet/components/options/options.component';
@@ -62,7 +63,6 @@ import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { IntentService, ScanType } from 'src/app/wallet/services/intent.service';
 import { NameResolvingService } from 'src/app/wallet/services/nameresolving.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { ContactsComponent } from '../../../../components/contacts/contacts.component';
 import { TxConfirmComponent } from '../../../../components/tx-confirm/tx-confirm.component';
 import { TxSuccessComponent } from '../../../../components/tx-success/tx-success.component';
@@ -186,6 +186,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private translate: TranslateService,
         public currencyService: CurrencyService,
         private globalIntentService: GlobalIntentService,
+        public globalPopupService: GlobalPopupService,
         private intentService: IntentService,
         public uiService: UiService,
         public keyboard: Keyboard,
@@ -597,7 +598,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (!rawTx) {
                 // Probably failed to create transaction because of non standard NFT transfer methods in contracts.
                 // Let user know
-                await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "wallet.nft-transaction-creation-error");
+                await this.globalPopupService.ionicAlert("wallet.transaction-fail", "wallet.nft-transaction-creation-error");
             }
 
         } catch (err) {
@@ -859,13 +860,13 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         Logger.error('wallet', "transaction error:", err);
         let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
         if (reworkedEx instanceof Web3Exception) {
-            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+            await this.globalPopupService.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
             let message: string = typeof (err) === "string" ? err : err.message;
             if (message.includes('Cannot transfer TRX to the same account')) {
                 message = "wallet.transaction-same-account";
             }
-            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", message);
+            await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
         }
     }
 

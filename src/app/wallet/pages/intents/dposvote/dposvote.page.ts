@@ -29,6 +29,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { StakeService } from 'src/app/voting/staking/services/stake.service';
 import { Candidates, VoteTypeString } from 'src/app/wallet/model/elastos.types';
@@ -37,7 +38,6 @@ import { Config } from '../../../config/Config';
 import { MainChainSubWallet } from '../../../model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
 
 
@@ -66,7 +66,7 @@ export class DPoSVotePage implements OnInit {
         public coinTransferService: CoinTransferService,
         public native: Native,
         public zone: NgZone,
-        public popupProvider: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
         private globalIntentService: GlobalIntentService,
@@ -137,7 +137,7 @@ export class DPoSVotePage implements OnInit {
 
     async hasPendingVoteTransaction() {
         if (await this.sourceSubwallet.hasPendingBalance()) {
-            await this.popupProvider.ionicAlert('common.warning', 'wallet.transaction-pending');
+            await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
             void this.cancelOperation();
         }
     }

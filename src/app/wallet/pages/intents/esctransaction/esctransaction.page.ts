@@ -45,7 +45,6 @@ import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
@@ -82,7 +81,6 @@ export class EscTransactionPage implements OnInit {
 
   constructor(
     public walletManager: WalletService,
-    public popupProvider: PopupProvider,
     private coinTransferService: CoinTransferService,
     private globalIntentService: GlobalIntentService,
     public native: Native,

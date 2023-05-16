@@ -11,7 +11,6 @@ import { DPoSRegistrationInfo, NodesService } from 'src/app/voting/dposvoting/se
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AuthService } from 'src/app/wallet/services/auth.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 
 @Component({
     selector: 'app-registration',
@@ -49,7 +48,6 @@ export class DPosRegistrationPage implements OnInit {
         public theme: GlobalThemeService,
         public voteService: VoteService,
         private authService: AuthService,
-        public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
         public nodesService: NodesService,
         private globalNative: GlobalNativeService,

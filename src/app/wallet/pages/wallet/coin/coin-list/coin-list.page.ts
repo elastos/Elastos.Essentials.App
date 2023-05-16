@@ -16,7 +16,6 @@ import { Coin, CoinType } from '../../../../model/coin';
 import { MasterWallet } from '../../../../model/masterwallets/masterwallet';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
@@ -66,7 +65,6 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     constructor(
         public walletManager: WalletService,
-        public popupProvider: PopupProvider,
         public native: Native,
         public localStorage: LocalStorage,
         public modalCtrl: ModalController,
@@ -117,11 +115,6 @@ export class CoinListPage implements OnInit, OnDestroy {
 
     ionViewWillLeave() {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
-
-        if (this.popupProvider.alertPopup) {
-            void this.popupProvider.alertCtrl.dismiss();
-            this.popupProvider.alertPopup = null;
-        }
     }
 
     async switchCoin(item: EditableCoinInfo, open: boolean) {

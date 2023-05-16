@@ -15,11 +15,11 @@ import { GlobalHiveService, VaultStatus } from 'src/app/services/global.hive.ser
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { HiveService, PaidIncompleteOrder } from '../../services/hive.service';
-import { PopupService } from '../../services/popup.service';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 type StorageProvider = {
@@ -64,7 +64,7 @@ export class PickProviderPage implements OnInit {
     private route: ActivatedRoute,
     public theme: GlobalThemeService,
     private nav: GlobalNavService,
-    private popup: PopupService,
+    private globalPopupService: GlobalPopupService,
     private prefs: GlobalPreferencesService,
     private events: GlobalEvents,
     private native: GlobalNativeService,
@@ -164,11 +164,6 @@ export class PickProviderPage implements OnInit {
 
   ionViewWillLeave() {
     this.titleBar.setMenuVisibility(false);
-
-    if (this.popup.alert) {
-      void this.popup.alertCtrl.dismiss();
-      this.popup.alert = null;
-    }
 
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
 
@@ -304,7 +299,7 @@ export class PickProviderPage implements OnInit {
   }
 
   public transferVault() {
-    void this.popup.ionicAlert("hivemanager.alert.not-available", "hivemanager.alert.not-available-msg");
+    void this.globalPopupService.ionicAlert("hivemanager.alert.not-available", "hivemanager.alert.not-available-msg", "common.understood");
   }
 
   private async revokeHiveAuthToken() {

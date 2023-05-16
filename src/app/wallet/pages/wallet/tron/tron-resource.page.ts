@@ -34,6 +34,7 @@ import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalTronGridService } from 'src/app/services/global.tron.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -45,7 +46,6 @@ import { TransferType } from 'src/app/wallet/services/cointransfer.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
@@ -123,7 +123,6 @@ export class TronResourcePage implements OnDestroy {
 
     constructor(
         public native: Native,
-        public popupProvider: PopupProvider,
         public walletManager: WalletService,
         public networkService: WalletNetworkService,
         private translate: TranslateService,
@@ -131,6 +130,7 @@ export class TronResourcePage implements OnDestroy {
         public theme: GlobalThemeService,
         public uiService: UiService,
         private globalNativeService: GlobalNativeService,
+        public globalPopupService: GlobalPopupService,
     ) {
     }
 
@@ -384,10 +384,10 @@ export class TronResourcePage implements OnDestroy {
         Logger.error('wallet', "tron resource transaction error:", err);
         let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
         if (reworkedEx instanceof Web3Exception) {
-            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+            await this.globalPopupService.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
             let message = typeof (err) === "string" ? err : err.message;
-            await PopupProvider.instance.ionicAlert("wallet.transaction-fail", message);
+            await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
         }
     }
 

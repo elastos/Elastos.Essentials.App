@@ -6,12 +6,12 @@ import { DIDURL } from 'src/app/identity/model/didurl.model';
 import { CredDeleteIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
-import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -63,7 +63,7 @@ export class CredentialDeleteRequestPage {
   constructor(
     private zone: NgZone,
     public didService: DIDService,
-    private popupProvider: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private appServices: UXService,
     private translate: TranslateService,
     public theme: GlobalThemeService,
@@ -106,7 +106,7 @@ export class CredentialDeleteRequestPage {
   async runPreliminaryChecks() {
     // Make sure that we received at least one credential in the list
     if (!this.receivedIntent.params.credentialsids || this.receivedIntent.params.credentialsids.length == 0) {
-      void this.popupProvider.ionicAlert("Error", "No credential ID was provided. At least one ID must be passed for deletion.", "Close");
+      void this.globalPopupService.ionicAlert("Error", "No credential ID was provided. At least one ID must be passed for deletion.", 'common.close');
       await this.failingRequest();
       return;
     }
@@ -127,7 +127,7 @@ export class CredentialDeleteRequestPage {
 
     // Make sure that we could find at least one credential to delete
     if (this.credentials.length == 0) {
-      void this.popupProvider.ionicAlert("Error", "Credential IDs given for deletion are not part of the currently active user's profile", "Close");
+      void this.globalPopupService.ionicAlert("Error", "Credential IDs given for deletion are not part of the currently active user's profile", 'common.close');
       await this.failingRequest();
       return;
     }
@@ -245,7 +245,7 @@ export class CredentialDeleteRequestPage {
   }
 
   private finalizeRequest(deletedCredentialsIds: string[]) {
-    void this.popupProvider.ionicAlert(this.translate.instant('identity.creddelete-success-title'), this.translate.instant('identity.creddelete-success'), this.translate.instant('identity.creddelete-success-done')).then(async () => {
+    void this.globalPopupService.ionicAlert('identity.creddelete-success-title', 'identity.creddelete-success', 'identity.creddelete-success-done').then(async () => {
       Logger.log('Identity', "Sending creddelete intent response for intent id " + this.receivedIntent.intentId)
       await this.sendIntentResponse({
         deletedcredentialsids: deletedCredentialsIds

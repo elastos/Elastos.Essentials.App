@@ -12,7 +12,6 @@ import { Config } from '../../../config/Config';
 import { StandardCoinName } from '../../../model/coin';
 import { IntentTransfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletAccessService } from '../../../services/walletaccess.service';
@@ -51,7 +50,6 @@ export class AccessPage implements OnInit {
     constructor(
         private globalIntentService: GlobalIntentService,
         public walletManager: WalletService,
-        public popupProvider: PopupProvider,
         public native: Native,
         private router: Router,
         private translate: TranslateService,

@@ -7,9 +7,9 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.service';
-import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
@@ -144,7 +144,7 @@ export class CredentialAccessRequestPage {
     private expirationService: ExpirationService,
     private didSyncService: DIDSyncService,
     public theme: GlobalThemeService,
-    private popupService: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private globalIntentService: GlobalIntentService,
@@ -529,7 +529,7 @@ export class CredentialAccessRequestPage {
           }
         }
         catch (e) {
-          this.popup = await this.popupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. " + e);
+          await this.globalPopupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. " + e, 'common.close');
           this.showSpinner = false;
         }
       }, () => {

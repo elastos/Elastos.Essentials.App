@@ -3,7 +3,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { IdentityGroup, IdentityService } from 'src/app/didsessions/services/identity.service';
-import { PopupProvider } from 'src/app/didsessions/services/popup';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
@@ -36,7 +35,6 @@ export class PickIdentityPage {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private events: GlobalEvents,
-    public popupProvider: PopupProvider,
     private globalNetworksService: GlobalNetworksService,
     private didSessions: GlobalDIDSessionsService,
     private nativeService: GlobalNativeService,

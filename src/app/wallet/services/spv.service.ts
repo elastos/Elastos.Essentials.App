@@ -2,15 +2,14 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalLanguageService } from 'src/app/services/global.language.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
-import { Config } from '../config/Config';
 import type { StandardCoinName } from '../model/coin';
 import { PubKeyInfo } from '../model/elastos.types';
 import type { WalletAccountType } from '../model/walletaccount';
 import { Native } from './native.service';
-import { PopupProvider } from './popup.service';
 
 declare let walletManager: WalletPlugin.WalletManager;
 
@@ -52,7 +51,7 @@ export class SPVService {
 
     private masterWalletIdMapping: JSSPVMasterWalletIDPair[] = [];
 
-    constructor(private native: Native, private event: GlobalEvents, private popupProvider: PopupProvider) {
+    constructor(private native: Native, private event: GlobalEvents, public globalPopupService: GlobalPopupService) {
         SPVService.instance = this;
     }
 
@@ -1184,12 +1183,7 @@ export class SPVService {
         }
 
         // Show an error popup
-        if (err["code"] === 20013) {
-            let amount = err["Data"] / Config.SELA;
-            void this.popupProvider.ionicAlert_data('wallet.transaction-fail', error, amount);
-        } else {
-            void this.popupProvider.ionicAlert('common.error', 'wallet.Error-' + err["code"]);
-        }
+        void this.globalPopupService.ionicAlert('common.error', 'wallet.Error-' + err["code"]);
 
         // Send a special error event
         if (err["code"] === 20036) {

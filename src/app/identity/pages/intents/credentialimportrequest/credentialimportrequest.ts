@@ -9,12 +9,12 @@ import { Logger } from 'src/app/logger';
 import { GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VerifiableCredential } from '../../../model/verifiablecredential.model';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
-import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -91,7 +91,7 @@ export class CredentialImportRequestPage {
   constructor(
     private zone: NgZone,
     public didService: DIDService,
-    private popupProvider: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private appServices: UXService,
     private translate: TranslateService,
     public theme: GlobalThemeService,
@@ -143,7 +143,7 @@ export class CredentialImportRequestPage {
   async runPreliminaryChecks() {
     // Make sure that we received at least one credential in the list
     if (!this.receivedIntent.params.credentials || this.receivedIntent.params.credentials.length == 0) {
-      await this.popupProvider.ionicAlert("Error", "Sorry, there is actually no credential provided in the given information", "Close");
+      await this.globalPopupService.ionicAlert("Error", "Sorry, there is actually no credential provided in the given information", 'common.close');
       return;
     }
 
@@ -307,7 +307,7 @@ export class CredentialImportRequestPage {
   }
 
   private finalizeRequest(importedCredentials: string[]) {
-    void this.popupProvider.ionicAlert(this.translate.instant('identity.credimport-success-title'), this.translate.instant('identity.credimport-success'), this.translate.instant('identity.credimport-success-done')).then(async () => {
+    void this.globalPopupService.ionicAlert('identity.credimport-success-title', 'identity.credimport-success', 'identity.credimport-success-done').then(async () => {
       Logger.log('Identity', "Sending credimport intent response for intent id " + this.receivedIntent.intentId)
       await this.sendIntentResponse({
         importedcredentials: importedCredentials

@@ -34,7 +34,6 @@ import type { MasterWallet } from '../model/masterwallets/masterwallet';
 import type { EVMNetwork } from '../model/networks/evms/evm.network';
 import type { AnyNetwork } from '../model/networks/network';
 import { Native } from './native.service';
-import { PopupProvider } from './popup.service';
 import { LocalStorage } from './storage.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
@@ -74,7 +73,6 @@ export class WalletNetworkService {
     constructor(
         public events: GlobalEvents,
         public native: Native,
-        public popupProvider: PopupProvider,
         private globalNetworksService: GlobalNetworksService,
         private globalStorageService: GlobalStorageService,
         private globalFirebaseService: GlobalFirebaseService,

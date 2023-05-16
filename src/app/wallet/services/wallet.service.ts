@@ -32,6 +32,7 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -39,7 +40,7 @@ import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.st
 import { AESEncrypt } from '../../helpers/crypto/aes';
 import { CoinType } from '../model/coin';
 import { LedgerAccountType } from '../model/ledger.types';
-import { defaultWalletTheme, MasterWallet } from '../model/masterwallets/masterwallet';
+import { MasterWallet, defaultWalletTheme } from '../model/masterwallets/masterwallet';
 import { MasterWalletBuilder } from '../model/masterwallets/masterwalletbuilder';
 import { ElastosMainChainWalletNetworkOptions, LedgerAccountOptions, PrivateKeyType, SerializedLedgerMasterWallet, SerializedMasterWallet, SerializedStandardMasterWallet, SerializedStandardMultiSigMasterWallet, WalletCreator, WalletNetworkOptions, WalletType } from '../model/masterwallets/wallet.types';
 import type { AnyNetworkWallet } from '../model/networks/base/networkwallets/networkwallet';
@@ -56,7 +57,6 @@ import { MultiSigService } from './multisig.service';
 import { Native } from './native.service';
 import { WalletNetworkService } from './network.service';
 import { OfflineTransactionsService } from './offlinetransactions.service';
-import { PopupProvider } from './popup.service';
 import { SafeService } from './safe.service';
 import { SPVService } from './spv.service';
 import { LocalStorage } from './storage.service';
@@ -129,11 +129,11 @@ export class WalletService {
         private erc721Service: ERC721Service,
         private erc1155Service: ERC1155Service,
         private authService: AuthService,
-        public popupProvider: PopupProvider,
         private prefs: GlobalPreferencesService,
         private safeService: SafeService, // Keep this - init
         private networkService: WalletNetworkService,
         private globalNetworksService: GlobalNetworksService,
+        public globalPopupService: GlobalPopupService,
         private multiSigService: MultiSigService, // Keep for init
         private offlineTransactionsService: OfflineTransactionsService, // Keep for init
         private didSessions: GlobalDIDSessionsService
@@ -146,7 +146,7 @@ export class WalletService {
         this.masterWallets = {};
         this.networkWallets = {};
 
-        this.spvBridge = new SPVService(this.native, this.events, this.popupProvider);
+        this.spvBridge = new SPVService(this.native, this.events, this.globalPopupService);
 
         const hasWallets = await this.initWallets();
 

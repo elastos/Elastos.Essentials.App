@@ -6,10 +6,10 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ManagedProvider } from '../../../model/managedprovider';
 import { AdminService } from '../../../services/admin.service';
-import { PopupService } from '../../../services/popup.service';
 
 type StorageProvider = {
   name: string,
@@ -39,7 +39,7 @@ export class AdminProviderEditPage implements OnInit {
     public alertController: AlertController,
     private router: Router,
     private adminService: AdminService,
-    private popup: PopupService,
+    private globalPopupService: GlobalPopupService,
     public theme: GlobalThemeService,
     private native: GlobalNativeService,
     private globalNav: GlobalNavService,
@@ -68,13 +68,6 @@ export class AdminProviderEditPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('hivemanager.adminprovideredit.title'));
   }
 
-  ionViewWillLeave() {
-    if (this.popup.alert) {
-      void this.popup.alertCtrl.dismiss();
-      this.popup.alert = null;
-    }
-  }
-
   private async retrieveAdminDIDPublicationStatus() {
     this.adminDIDPublished = await this.adminService.retrieveAdminDIDPublicationStatus(this.managedProvider);
     this.adminDIDPublicationStatusFetched = true;
@@ -89,7 +82,7 @@ export class AdminProviderEditPage implements OnInit {
       this.managedProvider = newProvider;
       Logger.log('HiveManager', "createdDIDInfo", createdDIDInfo);
     } else {
-      this.popup.toast('hivemanager.toast.provide-name');
+      this.native.genericToast('hivemanager.toast.provide-name');
     }
   }
 
@@ -116,7 +109,7 @@ export class AdminProviderEditPage implements OnInit {
   }
 
   async deleteVaultProvider() {
-    let confirmed = await this.popup.ionicConfirm("hivemanager.alert.delete-title", "hivemanager.alert.delete-msg", "hivemanager.alert.delete", "hivemanager.alert.cancel");
+    let confirmed = await this.globalPopupService.ionicConfirm("hivemanager.alert.delete-title", "hivemanager.alert.delete-msg", "hivemanager.alert.delete", "hivemanager.alert.cancel");
     if (confirmed) {
       await this.adminService.deleteProvider(this.managedProvider);
       void this.globalNav.navigateBack();

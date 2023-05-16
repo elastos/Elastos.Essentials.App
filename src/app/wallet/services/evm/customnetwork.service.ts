@@ -32,7 +32,6 @@ import { CustomNetwork } from '../../model/networks/custom/network/custom.networ
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { Native } from '../native.service';
 import { WalletNetworkService } from '../network.service';
-import { PopupProvider } from '../popup.service';
 import { LocalStorage } from '../storage.service';
 
 export type CustomNetworkDiskEntry = {
@@ -57,7 +56,6 @@ export class CustomNetworkService {
     constructor(
         public events: GlobalEvents,
         public native: Native,
-        public popupProvider: PopupProvider,
         private localStorage: LocalStorage,
         private networkService: WalletNetworkService,
         private globalStorage: GlobalStorageService,

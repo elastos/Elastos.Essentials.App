@@ -7,12 +7,12 @@ import { IdentityEntry } from "src/app/model/didsessions/identityentry";
 import { ApiNoAuthorityException } from "src/app/model/exceptions/apinoauthorityexception.exception";
 import { GlobalDIDSessionsService } from "src/app/services/global.didsessions.service";
 import { GlobalEvents } from "src/app/services/global.events.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalService, GlobalServiceManager } from "src/app/services/global.service.manager";
 import { DID } from "../model/did.model";
 import { DIDStore } from "../model/didstore.model";
 import { LocalStorage } from "./localstorage";
 import { Native } from "./native";
-import { PopupProvider } from "./popup";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -32,7 +32,7 @@ export class DIDService extends GlobalService {
     public toastCtrl: ToastController,
     public events: GlobalEvents,
     public localStorage: LocalStorage,
-    private popupProvider: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     public native: Native
   ) {
     super();
@@ -98,9 +98,10 @@ export class DIDService extends GlobalService {
 
     let didStore = await DIDStore.loadFromDidStoreId(storeId);
     if (!didStore) {
-      void this.popupProvider.ionicAlert(
+      void this.globalPopupService.ionicAlert(
         "Store load error",
-        "Sorry, we were unable to load your DID store..."
+        "Sorry, we were unable to load your DID store...",
+        'common.close'
       );
       return false;
     }
@@ -174,9 +175,10 @@ export class DIDService extends GlobalService {
       await didStore.initNewDidStore();
     } catch (e) {
       if (e instanceof ApiNoAuthorityException) {
-        await this.popupProvider.ionicAlert(
+        await this.globalPopupService.ionicAlert(
           "Init Store error",
-          'Sorry, this application can not run without the "Create a DID Store" feature'
+          'Sorry, this application can not run without the "Create a DID Store" feature',
+          'common.close'
         );
       }
     }

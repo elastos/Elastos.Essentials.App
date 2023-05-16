@@ -4,12 +4,12 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { DIDPublicationStatus, GlobalPublicationService } from 'src/app/services/global.publication.service';
 import { CredAccessIdentityIntent, IdentityIntent, IdentityIntentParams, RequestCredentialsIntent, SetHiveProviderIdentityIntent } from '../model/identity.intents';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 import { AppIDService } from './appid.service';
 import { Native } from './native';
-import { PopupProvider } from './popup';
 import { ProfileService } from './profile.service';
 import { UXService } from './ux.service';
 
@@ -28,7 +28,7 @@ export class IntentReceiverService {
         public translate: TranslateService,
         public events: GlobalEvents,
         private native: Native,
-        private popup: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         private appIDService: AppIDService, // Keep it for init
         private uxService: UXService,
         private globalIntentService: GlobalIntentService,
@@ -298,7 +298,7 @@ export class IntentReceiverService {
         let errorMessage = "Sorry, there are invalid parameters in the request";
         errorMessage += "\n\n" + JSON.stringify(intent.params);
 
-        await this.popup.ionicAlert("Action error", errorMessage, this.translate.instant("common.close"));
+        await this.globalPopupService.ionicAlert("Action error", errorMessage, "common.close");
 
         Logger.error('identity', errorMessage);
 

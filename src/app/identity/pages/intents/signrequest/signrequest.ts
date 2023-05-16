@@ -5,10 +5,10 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { SignIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
-import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
 /*
@@ -34,7 +34,7 @@ export class SignRequestPage {
 
   constructor(
     private didService: DIDService,
-    private popup: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private translate: TranslateService,
     private appServices: UXService,
     private authService: AuthService,
@@ -101,7 +101,7 @@ export class SignRequestPage {
         await this.sendIntentResponse({ jwt: jwtToken }, this.receivedIntent.intentId);
       }
       catch (e) {
-        await this.popup.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e);
+        await this.globalPopupService.ionicAlert("Response error", "Sorry, we were unable to return the signed information to the calling app. " + e, 'common.close');
       }
     }, () => {
       // Cancelled

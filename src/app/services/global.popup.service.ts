@@ -27,7 +27,7 @@ export class GlobalPopupService {
                 mode: 'ios',
                 buttons: [
                     {
-                        text: okText ? this.translate.instant(okText) : this.translate.instant('common.understood'),
+                        text: okText ? this.translate.instant(okText) : this.translate.instant('common.close'),
                         handler: () => {
                             Logger.log('wallet', 'ionicAlert Ok clicked');
                             this.alertPopup = null;

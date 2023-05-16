@@ -14,7 +14,6 @@ import { TranslateModule } from '@ngx-translate/core';
   providers: [
     /* QRScanner,
     Platform,
-    PopupProvider,
     WebView */
   ],
   schemas: []

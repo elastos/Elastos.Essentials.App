@@ -11,7 +11,6 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.service';
-import { PopupProvider } from 'src/app/identity/services/popup';
 import { Logger } from 'src/app/logger';
 import { JSONObject } from 'src/app/model/json';
 import { GlobalCredentialToolboxService } from 'src/app/services/credential-toolbox/global.credential-toolbox.service';
@@ -20,6 +19,7 @@ import { GlobalApplicationDidService } from 'src/app/services/global.application
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { SuccessComponent } from '../../../components/success/success.component';
 import { DID } from '../../../model/did.model';
@@ -137,7 +137,7 @@ export class RequestCredentialsPage {
     private translate: TranslateService,
     private expirationService: ExpirationService,
     public theme: GlobalThemeService,
-    private popupService: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private alertCtrl: AlertController,
     private popoverCtrl: PopoverController,
     private didDocumentsService: DIDDocumentsService,
@@ -623,7 +623,7 @@ export class RequestCredentialsPage {
           }
         }
         catch (e) {
-          this.popup = await this.popupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. " + e);
+          this.popup = await this.globalPopupService.ionicAlert("Response error", "Sorry, we were unable to return the right information to the calling app. " + e, 'common.close');
           this.sendingResponse = false;
         }
       }, () => {

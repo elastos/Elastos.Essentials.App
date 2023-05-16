@@ -6,6 +6,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
@@ -20,7 +21,6 @@ import { MasterWallet } from '../../../model/masterwallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from "../../../services/popup.service";
 import { LocalStorage } from '../../../services/storage.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
@@ -95,7 +95,7 @@ export class WalletSettingsPage implements OnInit {
         public router: Router,
         public events: GlobalEvents,
         public localStorage: LocalStorage,
-        public popupProvider: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         public walletManager: WalletService,
         public native: Native,
         private translate: TranslateService,
@@ -226,7 +226,7 @@ export class WalletSettingsPage implements OnInit {
 
         if (utxosCount > Config.UTXO_CONSOLIDATE_MIN_THRESHOLD) {
             const UTXOsCountString = this.translate.instant('wallet.text-consolidate-UTXO-counts', { count: utxosCount });
-            let ret = await this.popupProvider.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt',
+            let ret = await this.globalPopupService.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt',
                 UTXOsCountString, 'wallet.text-consolidate-note')
             if (ret) {
                 let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos,

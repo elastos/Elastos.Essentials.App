@@ -9,6 +9,7 @@ import { Logger } from 'src/app/logger';
 import { WalletAlreadyExistException } from 'src/app/model/exceptions/walletalreadyexist.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { MasterWallet, StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -17,7 +18,6 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Native } from 'src/app/wallet/services/native.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { LocalStorage } from 'src/app/wallet/services/storage.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
@@ -46,6 +46,7 @@ export class StandardMultiSigCreatePage implements OnInit {
     constructor(
         public translate: TranslateService,
         public theme: GlobalThemeService,
+        public globalPopupService: GlobalPopupService,
         private native: Native,
         private walletService: WalletService,
         private walletUIService: WalletUIService,
@@ -139,9 +140,9 @@ export class StandardMultiSigCreatePage implements OnInit {
             await this.walletService.destroyMasterWallet(walletId)
             let reworkedEx = WalletExceptionHelper.reworkedWalletJSException(e);
             if (reworkedEx instanceof WalletAlreadyExistException) {
-                await PopupProvider.instance.ionicAlert("common.error", "wallet.Error-20005");
+                await this.globalPopupService.ionicAlert("common.error", "wallet.Error-20005");
             } else {
-                await PopupProvider.instance.ionicAlert("common.error", e.reason);
+                await this.globalPopupService.ionicAlert("common.error", e.reason);
             }
         }
     }

@@ -27,6 +27,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
@@ -38,7 +39,6 @@ import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { WalletService } from '../../../services/wallet.service';
 
 
@@ -73,7 +73,7 @@ export class DidTransactionPage implements OnInit {
 
     constructor(
         public walletManager: WalletService,
-        public popupProvider: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         private coinTransferService: CoinTransferService,
         private globalIntentService: GlobalIntentService,
         public native: Native,
@@ -189,7 +189,7 @@ export class DidTransactionPage implements OnInit {
     async checkValue() {
         const isAvailableBalanceEnough = await this.sourceSubwallet.isAvailableBalanceEnough(this.fee);
         if (!isAvailableBalanceEnough) {
-            await this.popupProvider.ionicAlert('common.warning', 'wallet.text-did-balance-not-enough');
+            await this.globalPopupService.ionicAlert('common.warning', 'wallet.text-did-balance-not-enough');
             void this.cancelOperation();
             return;
         }
@@ -219,7 +219,7 @@ export class DidTransactionPage implements OnInit {
                 if (result.published === false) {
                     if (result.message && result.message.includes('oversized data')) {
                         // DID payload over size
-                        await this.popupProvider.ionicAlert('wallet.transaction-fail', 'wallet.did-oversize');
+                        await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'wallet.did-oversize');
                     }
                 }
 
@@ -233,7 +233,7 @@ export class DidTransactionPage implements OnInit {
         }
         catch (e) {
             await this.native.hideLoading();
-            await this.popupProvider.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
+            await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
             await this.sendIntentResponse(
                 { txid: null, status: 'error' },
                 this.intentTransfer.intentId

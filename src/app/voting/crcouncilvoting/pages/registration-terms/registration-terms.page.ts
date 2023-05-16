@@ -5,7 +5,6 @@ import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { CRCouncilService } from '../../services/crcouncil.service';
 
 @Component({
@@ -18,7 +17,6 @@ export class CandidateRegistrationTermsPage implements OnInit {
         public translate: TranslateService,
         public theme: GlobalThemeService,
         public voteService: VoteService,
-        public popupProvider: PopupProvider,
         public jsonRPCService: GlobalJsonRPCService,
         private globalNav: GlobalNavService,
         public crCouncilService: CRCouncilService,

@@ -8,10 +8,10 @@ import { WalletAlreadyExistException } from 'src/app/model/exceptions/walletalre
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { ElastosMainChainWalletNetworkOptions, WalletCreator } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AuthService } from '../../../services/auth.service';
 import { Native } from '../../../services/native.service';
-import { PopupProvider } from '../../../services/popup.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletCreationService } from '../../../services/walletcreation.service';
@@ -53,7 +53,7 @@ export class WalletImportPage implements OnInit {
         public native: Native,
         public localStorage: LocalStorage,
         public events: GlobalEvents,
-        public popupProvider: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         public zone: NgZone,
         private authService: AuthService,
         private translate: TranslateService,
@@ -130,9 +130,9 @@ export class WalletImportPage implements OnInit {
                 await this.localStorage.deleteMasterWallet(this.masterWalletId);
                 let reworkedEx = WalletExceptionHelper.reworkedWalletJSException(err);
                 if (reworkedEx instanceof WalletAlreadyExistException) {
-                    await PopupProvider.instance.ionicAlert("common.error", "wallet.Error-20005");
+                    await this.globalPopupService.ionicAlert("common.error", "wallet.Error-20005");
                 } else {
-                    await PopupProvider.instance.ionicAlert("common.error", err.reason);
+                    await this.globalPopupService.ionicAlert("common.error", err.reason);
                 }
             }
             await this.native.hideLoading();

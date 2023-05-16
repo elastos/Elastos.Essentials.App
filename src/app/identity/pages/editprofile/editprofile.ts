@@ -31,7 +31,6 @@ import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { AuthService } from "../../services/auth.service";
 import { DIDService } from "../../services/did.service";
 import { Native } from "../../services/native";
-import { PopupProvider } from "../../services/popup";
 import { ProfileService } from "../../services/profile.service";
 import { ProfileEntryPickerPage } from "../profileentrypicker/profileentrypicker";
 
@@ -83,8 +82,7 @@ export class EditProfilePage {
     private globalHiveService: GlobalHiveService,
     private hiveCache: GlobalHiveCacheService,
     private globalNav: GlobalNavService,
-    private globalPopupService: GlobalPopupService,
-    private popup: PopupProvider) {
+    private globalPopupService: GlobalPopupService) {
     Logger.log('Identity', "Editing an existing profile");
 
     // Get a profile object - higher level representation of basic credentials in the local DID document, for convenience.
@@ -305,7 +303,7 @@ export class EditProfilePage {
           }
 
           await this.native.hideLoading();
-          await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", message);
+          await this.globalPopupService.ionicAlert("identity.save-avatar-error-title", message, 'common.close');
         }
       }
     });
@@ -403,12 +401,10 @@ export class EditProfilePage {
 
       // Alert and get consent from user for modification of verified credentials
       if (credentialVerified) {
-        return await this.popup.ionicConfirm(
+        return await this.globalPopupService.ionicConfirm(
           "Warning",
           entry.key +
           " credential is Verified, modification will overwrite the credential and you will need to request another validation.",
-          "OK",
-          "Cancel"
         );
       }
     }

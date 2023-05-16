@@ -20,6 +20,7 @@ import { GlobalLanguageService } from 'src/app/services/global.language.service'
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPasswordService } from 'src/app/services/global.password.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -29,7 +30,6 @@ import { DIDMnemonicHelper } from '../helpers/didmnemonic.helper';
 import { CredentialAvatar, DID } from '../model/did.model';
 import { DIDStore } from '../model/didstore.model';
 import { NewIdentity } from '../model/newidentity';
-import { PopupProvider } from './popup';
 import { UXService } from './ux.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
@@ -62,12 +62,10 @@ export class IdentityService {
     private nextSteps = new Array<NextStep>();
     public signedIdentity: IdentityEntry;
 
-    public popup = false;
-
     constructor(
         public zone: NgZone,
         private events: GlobalEvents,
-        private popupProvider: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         private language: GlobalLanguageService,
         private translate: TranslateService,
         private alertCtrl: AlertController,
@@ -384,7 +382,7 @@ export class IdentityService {
                         Logger.warn("didsessions", "Corrupted user DID, synchronize() has failed. Need to create a new DID");
 
                         await this.nativeService.hideLoading();
-                        void this.popupProvider.ionicAlert(this.translate.instant('didsessions.did-corrupted-title'), this.translate.instant('didsessions.did-corrupted-info'), this.translate.instant('didsessions.got-it')).then(() => {
+                        void this.globalPopupService.ionicAlert('didsessions.did-corrupted-title', 'didsessions.did-corrupted-info', 'didsessions.got-it').then(() => {
                             void this.globalNavService.navigateDIDSessionHome();
                         });
 
@@ -447,7 +445,7 @@ export class IdentityService {
             await this.nativeService.hideLoading();
             let reworkedEx = e ? e : "No specific information";
             Logger.error('didsessions', 'createStoreAfterImport error', reworkedEx);
-            await this.popupProvider.ionicAlert("Synchronization error", reworkedEx, this.translate.instant("common.close"));
+            await this.globalPopupService.ionicAlert("Synchronization error", reworkedEx, "common.close");
         }
     }
 

@@ -5,13 +5,13 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { ERC20Coin } from '../../../../model/coin';
 import { AnySubWallet } from '../../../../model/networks/base/subwallets/subwallet';
 import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { WalletEditionService } from '../../../../services/walletedition.service';
 
@@ -36,7 +36,7 @@ export class CoinErc20DetailsPage implements OnInit {
     private native: Native,
     private translate: TranslateService,
     private router: Router,
-    private popupProvider: PopupProvider,
+    public globalPopupService: GlobalPopupService,
     private walletManager: WalletService,
     private walletEditionService: WalletEditionService,
     private globalIntentService: GlobalIntentService,
@@ -70,10 +70,6 @@ export class CoinErc20DetailsPage implements OnInit {
   }
 
   ionViewWillLeave() {
-    if (this.popupProvider.alertPopup) {
-      void this.popupProvider.alertCtrl.dismiss();
-      this.popupProvider.alertPopup = null;
-    }
   }
 
   copy() {
@@ -82,7 +78,7 @@ export class CoinErc20DetailsPage implements OnInit {
   }
 
   delete() {
-    void this.popupProvider.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
+    void this.globalPopupService.ionicConfirm('wallet.delete-coin-confirm-title', 'wallet.delete-coin-confirm-subtitle')
       .then(async (data) => {
         if (data) {
           await this.network.deleteERC20Coin(this.coin);

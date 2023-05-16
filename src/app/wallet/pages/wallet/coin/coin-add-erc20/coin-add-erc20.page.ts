@@ -7,6 +7,7 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AddERCTokenRequestParams } from 'src/app/wallet/model/networks/evms/adderctokenrequest';
@@ -16,7 +17,6 @@ import { WalletPrefsService } from 'src/app/wallet/services/pref.service';
 import { ERC20Coin } from '../../../../model/coin';
 import { ERC20CoinService } from '../../../../services/evm/erc20coin.service';
 import { Native } from '../../../../services/native.service';
-import { PopupProvider } from '../../../../services/popup.service';
 import { LocalStorage } from '../../../../services/storage.service';
 import { WalletService } from '../../../../services/wallet.service';
 
@@ -55,7 +55,7 @@ export class CoinAddERC20Page implements OnInit {
         private evmService: EVMService,
         private translate: TranslateService,
         public theme: GlobalThemeService,
-        private popup: PopupProvider,
+        public globalPopupService: GlobalPopupService,
         private prefs: WalletPrefsService,
         private zone: NgZone,
         private router: Router,
@@ -124,7 +124,7 @@ export class CoinAddERC20Page implements OnInit {
 
             // Check if this looks like a valid address. If not, give feedback to user.
             if (!(await this.evmService.isAddress(this.networkWallet.network, this.coinAddress))) {
-                void this.popup.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
+                void this.globalPopupService.ionicAlert("wallet.not-a-valid-address", "wallet.coin-adderc20-not-a-erc20-contract", "common.ok");
                 this.coinAddress = '';
             } else {
                 /*   if (this.coinAlreadyAdded(this.coinAddress)) {
@@ -178,7 +178,7 @@ export class CoinAddERC20Page implements OnInit {
                         this.coinInfoFetched = true;
                     } else {
                         Logger.warn('wallet', "Can not get the coin info - invalid contract? Not ERC20?");
-                        void this.popup.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
+                        void this.globalPopupService.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
                     }
 
                     this.fetchingCoinInfo = false;
@@ -186,7 +186,7 @@ export class CoinAddERC20Page implements OnInit {
             } catch (e) {
                 this.fetchingCoinInfo = false;
                 Logger.log('wallet', "Contract call exception - invalid contract? Not ERC20?");
-                void this.popup.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
+                void this.globalPopupService.ionicAlert("common.error", "wallet.coin-adderc20-invalid-contract-or-network-error", "common.ok");
             }
         }
     }

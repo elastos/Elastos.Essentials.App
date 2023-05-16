@@ -176,7 +176,7 @@ export class CROperationsService {
         if (!Util.isEmptyObject(data.userdid)) {
             if (crCommand.data.userdid != DIDSessionsStore.signedInDIDString) {
                 Logger.warn('crproposal', "The did isn't match");
-                await this.globalPopupService.ionicAlert('common.warning', 'crproposalvoting.wrong-did');
+                await this.globalPopupService.ionicAlert('common.warning', 'crproposalvoting.wrong-did', "common.understood");
                 return false;
             }
         }

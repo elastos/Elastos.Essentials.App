@@ -5,11 +5,11 @@ import { TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.typ
 import { CredIssueIdentityIntent } from 'src/app/identity/model/identity.intents';
 import { IntentReceiverService } from 'src/app/identity/services/intentreceiver.service';
 import { Logger } from 'src/app/logger';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDURL } from '../../../model/didurl.model';
 import { AuthService } from '../../../services/auth.service';
 import { DIDService } from '../../../services/did.service';
-import { PopupProvider } from '../../../services/popup';
 import { UXService } from '../../../services/ux.service';
 
 // TODO: Verify and show clear errors in case data is missing in credentials (expiration date, issuer, etc).
@@ -67,7 +67,7 @@ export class CredentialIssueRequestPage {
   constructor(
     private zone: NgZone,
     public didService: DIDService,
-    private popup: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private uxService: UXService,
     private authService: AuthService,
     private appServices: UXService,
@@ -165,7 +165,7 @@ export class CredentialIssueRequestPage {
         this.receivedIntent.params.properties,
         this.authService.getCurrentUserPassword(),
         (issuedCredential) => {
-          void this.popup.ionicAlert(this.translate.instant('identity.credential-issued'), this.translate.instant('identity.credential-issued-success'), this.translate.instant('common.done')).then(async () => {
+          void this.globalPopupService.ionicAlert('identity.credential-issued', 'identity.credential-issued-success', 'common.done').then(async () => {
             Logger.log('Identity', "Sending credissue intent response for intent id " + this.receivedIntent.intentId)
             let credentialAsString = await issuedCredential.toString();
             await this.sendIntentResponse({
@@ -174,7 +174,7 @@ export class CredentialIssueRequestPage {
           })
           // eslint-disable-next-line @typescript-eslint/no-misused-promises
         }, async (err) => {
-          await this.popup.ionicAlert(this.translate.instant('common.error'), this.translate.instant('identity.credential-issued-error') + JSON.stringify(err), this.translate.instant('common.close'));
+          await this.globalPopupService.ionicAlert('common.error', this.translate.instant('identity.credential-issued-error') + JSON.stringify(err), 'common.close');
           void this.rejectRequest();
         });
     }, () => {

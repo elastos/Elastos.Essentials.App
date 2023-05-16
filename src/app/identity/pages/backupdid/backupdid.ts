@@ -9,12 +9,12 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { PrintoptionsComponent } from '../../components/printoptions/printoptions.component';
 import { DIDURL } from '../../model/didurl.model';
 import { AuthService } from '../../services/auth.service';
 import { DIDService } from '../../services/did.service';
-import { PopupProvider } from '../../services/popup';
 import { UXService } from '../../services/ux.service';
 
 @Component({
@@ -50,7 +50,7 @@ export class BackupDIDPage {
     private modalCtrl: ModalController,
     private nav: GlobalNavService,
     private authService: AuthService,
-    private popup: PopupProvider,
+    private globalPopupService: GlobalPopupService,
     private zone: NgZone,
     private didSessions: GlobalDIDSessionsService,
     public theme: GlobalThemeService
@@ -246,7 +246,7 @@ export class BackupDIDPage {
    * Asks user to confirm that the qr code was really printed.
    */
   private async checkPrintCompleted(): Promise<void> {
-    let confirmed: boolean = await this.popup.ionicConfirm(this.translate.instant('didsessions.print-confirmation-title'), this.translate.instant('didsessions.print-confirmation-des'), this.translate.instant('didsessions.print-yes'), this.translate.instant('didsessions.print-try-again'));
+    let confirmed: boolean = await this.globalPopupService.ionicConfirm('didsessions.print-confirmation-title', 'didsessions.print-confirmation-des', 'didsessions.print-yes', 'didsessions.print-try-again');
     if (confirmed) {
       // Backup is considered as completed, we can go back to the home screen.
       await this.didSessions.markActiveIdentityBackedUp();

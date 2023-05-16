@@ -11,13 +11,13 @@ import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/glo
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DPoSRegistrationInfo, NodesService } from 'src/app/voting/dposvoting/services/nodes.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { Utxo, UtxoType } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { AuthService } from 'src/app/wallet/services/auth.service';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 
 type DPoSTransactionInfo = {
     Status?: string;
@@ -76,7 +76,7 @@ export class DPosUnRegistrationPage implements OnInit {
         public theme: GlobalThemeService,
         public voteService: VoteService,
         private authService: AuthService,
-        public popupProvider: PopupProvider,
+        private globalPopupService: GlobalPopupService,
         public jsonRPCService: GlobalJsonRPCService,
         private globalElastosAPIService: GlobalElastosAPIService,
         private globalNav: GlobalNavService,
@@ -185,7 +185,7 @@ export class DPosUnRegistrationPage implements OnInit {
     async unregister() {
         Logger.log(App.DPOS_REGISTRATION, 'Calling createUnregisterDPoSTransaction()');
 
-        if (!await this.popupProvider.ionicConfirm('common.warning', 'dposregistration.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
+        if (!await this.globalPopupService.ionicConfirm('common.warning', 'dposregistration.dpos-unregister-warning', 'common.confirm', 'common.cancel')) {
             return;
         }
 

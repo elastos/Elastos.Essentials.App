@@ -9,7 +9,6 @@ import { DIDDocument } from "../model/diddocument.model";
 import { DIDService } from "./did.service";
 import { LocalStorage } from "./localstorage";
 import { Native } from "./native";
-import { PopupProvider } from "./popup";
 
 declare let didManager: DIDPlugin.DIDManager;
 
@@ -68,7 +67,6 @@ export class DIDDocumentsService {
     public zone: NgZone,
     public toastCtrl: ToastController,
     public events: GlobalEvents,
-    public popupProvider: PopupProvider,
     public localStorage: LocalStorage,
     public native: Native
   ) {

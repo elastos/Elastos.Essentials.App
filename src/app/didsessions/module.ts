@@ -19,7 +19,6 @@ import { ScanPage } from './pages/scan/scan.page';
 import { SettingsSelectNetPage } from './pages/settings-select-net/settings-select-net.page';
 import { SettingsPage } from './pages/settings/settings.page';
 import { DIDSessionsRoutingModule } from './routing';
-import { PopupProvider } from './services/popup';
 
 @NgModule({
   declarations: [
@@ -49,7 +48,6 @@ import { PopupProvider } from './services/popup';
   providers: [
     QRScanner,
     Platform,
-    PopupProvider,
     WebView,
     LoadingController
   ],

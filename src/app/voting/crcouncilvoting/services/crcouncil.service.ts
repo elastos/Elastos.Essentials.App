@@ -584,7 +584,7 @@ export class CRCouncilService {
         Logger.log(App.CRCOUNCIL_VOTING, 'withdrawCandidate', available);
 
         if (!await this.voteService.isSamePublicKey()) {
-            void this.globalPopupService.ionicAlert('common.warning', 'crcouncilvoting.use-registered-wallet');
+            void this.globalPopupService.ionicAlert('common.warning', 'crcouncilvoting.use-registered-wallet', "common.understood");
             return;
         }
 

@@ -21,7 +21,6 @@ import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { MultiSigSafe } from 'src/app/wallet/model/safes/multisig.safe';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
-import { PopupProvider } from 'src/app/wallet/services/popup.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../../config/Config';
 import { StandardCoinName } from '../../../../coin';
@@ -798,7 +797,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         if ((usedUTXOs.length > 0) && (!getEnoughUTXO || (amountSELA == -1))) {
             Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length);
-            await PopupProvider.instance.ionicAlert('wallet.transaction-pending');
             return { value: 0, utxo: null };
         }
 
