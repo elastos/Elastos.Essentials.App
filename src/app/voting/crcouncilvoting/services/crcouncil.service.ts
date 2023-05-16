@@ -140,7 +140,7 @@ export class CRCouncilService {
         };
 
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
             if (!result || Util.isEmptyObject(result.crmembersinfo)) {
                 return;
             }
@@ -253,7 +253,7 @@ export class CRCouncilService {
         this.originCandidates = [];
         this.selectedCandidates = []
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
             Logger.log('crcouncil', 'Candidates fetched', result);
             if (result && result.crcandidatesinfo) {
                 for (let candidate of result.crcandidatesinfo) {
@@ -425,7 +425,7 @@ export class CRCouncilService {
         };
 
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
             Logger.log(App.CRCOUNCIL_VOTING, 'getCRRelatedStage', result);
             return result;
         }
@@ -633,7 +633,7 @@ export class CRCouncilService {
         };
 
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
             Logger.log(App.CRCOUNCIL_VOTING, 'getCRDepositcoin', result);
             return result;
         }
@@ -676,7 +676,7 @@ export class CRCouncilService {
         };
 
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
             Logger.log(App.CRCOUNCIL_VOTING, "next crs:", result);
             if (!result || Util.isEmptyObject(result.crmembersinfo)) {
                 return;

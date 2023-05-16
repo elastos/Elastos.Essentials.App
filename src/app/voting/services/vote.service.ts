@@ -398,30 +398,6 @@ export class VoteService implements GlobalService {
         return this.sourceSubwallet ? true : false;
     }
 
-    async getBlockByHeight(currentHeight: number): Promise<number> {
-        Logger.log(App.VOTING, 'Get Block By Height...');
-
-        const param = {
-            method: 'getblockbyheight',
-            params: {
-                height: currentHeight
-            },
-        };
-
-        try {
-            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
-            Logger.log(App.CRPROPOSAL_VOTING, 'getBlockByHeight', result);
-            if (result && result.time) {
-                return result.time;
-            }
-        }
-        catch (err) {
-            Logger.error(App.VOTING, 'getBlockByHeight error', err);
-        }
-
-        return 0;
-    }
-
     async getConfirmCount(txid: string): Promise<number> {
         //Get ower dpos info
         const result = await await GlobalElastosAPIService.instance.getRawTransaction(txid);

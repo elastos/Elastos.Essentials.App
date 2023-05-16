@@ -532,7 +532,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
         // Logger.warn('wallet', 'rpcApiUrl:', rpcApiUrl, ' param:', param)
         // The caller need catch the execption.
-        return GlobalJsonRPCService.instance.httpPost(rpcApiUrl, param);
+        return GlobalJsonRPCService.instance.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
     }
 
     // ********************************

@@ -108,7 +108,7 @@ export class VoteSliderComponent implements OnInit {
 
             let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
             try {
-                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
 
                 if (result && !Util.isEmptyObject(result.crmembersinfo)) {
                     Logger.log(App.STAKING, "crcouncil:", result.crmembersinfo);
@@ -145,7 +145,7 @@ export class VoteSliderComponent implements OnInit {
 
             let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
             try {
-                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
 
                 if (result && !Util.isEmptyObject(result.crcandidatesinfo)) {
                     Logger.log(App.STAKING, "crcandidates:", result.crcandidatesinfo);

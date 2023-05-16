@@ -464,7 +464,7 @@ export class DPoS2Service {
         this.myVotes[stakeAddress] = {timestamp : 0, votes : []}
 
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         Logger.log(App.DPOS2, 'getalldetaileddposv2votes', result);
         if (result) {
             var index = 0;
@@ -532,7 +532,7 @@ export class DPoS2Service {
             },
         };
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         Logger.log(App.DPOS2, "getdepositcoin:", result);
         if (!Util.isEmptyObject(result.available)) {
             available = result.available;

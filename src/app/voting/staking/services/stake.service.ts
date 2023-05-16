@@ -287,7 +287,7 @@ export class StakeService {
         };
 
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         Logger.log(App.DPOS_VOTING, 'dposv2rewardinfo', result);
         if (result) {
             if (result.claimable) {
@@ -315,7 +315,6 @@ export class StakeService {
     async getStakeUntil(stakeUntil: number, currentHeight?: number, currentBlockTimestamp?: number): Promise<any> {
         if (!currentHeight) {
             currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-            // currentBlockTimestamp = await this.voteService.getBlockByHeight(currentHeight);
             currentBlockTimestamp = moment().valueOf() / 1000;
         }
         var until = stakeUntil - currentHeight;

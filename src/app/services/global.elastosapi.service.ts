@@ -806,7 +806,7 @@ export class GlobalElastosAPIService extends GlobalService {
         }
 
         try {
-            let blockHeight = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            let blockHeight = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
             if (blockHeight) {
                 this.blockHeightTimestamp = moment().valueOf();
                 this.blockHeightCache = blockHeight;
@@ -855,7 +855,7 @@ export class GlobalElastosAPIService extends GlobalService {
         }
 
         try {
-            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
             return result;
         }
         catch (e) {
@@ -874,7 +874,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         // check cache
         let useCache = false;
-        if (state !== 'all') {
+        if (state == 'all') {
            useCache = true;
            let current = moment().valueOf();
            if (this.nodesCache[identity] && ((current - this.nodesCache[identity].timestamp) < 120000)) {
@@ -893,7 +893,7 @@ export class GlobalElastosAPIService extends GlobalService {
         const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
         try {
-            const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            const dposNodes = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 20000, false, true);
             if (useCache) {
                 this.nodesCache[identity] = {
                     timestamp: moment().valueOf(),
@@ -920,7 +920,7 @@ export class GlobalElastosAPIService extends GlobalService {
         const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
 
         try {
-            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         } catch (e) {
             Logger.warn("elastosapi", "getVoteRights exception", e);
         }
@@ -937,7 +937,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let result = null;
         try {
-            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         } catch (e) {
             Logger.warn("elastosapi", "getCRrelatedStage exception", e);
         }
@@ -987,7 +987,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let result = null;
         try {
-            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         } catch (e) {
             Logger.warn("elastosapi", "getCRMember exception", e);
         }

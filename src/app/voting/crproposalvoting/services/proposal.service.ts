@@ -213,7 +213,7 @@ export class ProposalService {
 
         var ret;
         try {
-            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param, 'default', 10000, false, true);
             Logger.log(App.CRPROPOSAL_VOTING, 'Get cr proposal state', result);
             if (result && result.proposalstate && result.proposalstate) {
                 ret = result.proposalstate;
@@ -282,7 +282,7 @@ export class ProposalService {
 
         var amount = 0;
         try {
-            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param, 'default', 10000, false, true);
             if (result && result.proposalstate && result.proposalstate.proposal && !Util.isEmptyObject(result.proposalstate.proposal.budgets)) {
                 let budgets = result.proposalstate.proposal.budgets;
                 Logger.log(App.CRCOUNCIL_VOTING, "proposal budgets:", budgets);

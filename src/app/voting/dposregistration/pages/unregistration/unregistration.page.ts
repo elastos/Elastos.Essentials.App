@@ -174,7 +174,7 @@ export class DPosUnRegistrationPage implements OnInit {
             },
         };
         let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param);
+        const result = await this.jsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         Logger.log(App.DPOS_REGISTRATION, "getdepositcoin:", result);
         if (!Util.isEmptyObject(result.available)) {
             this.available = result.available;
