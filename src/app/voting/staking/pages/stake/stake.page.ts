@@ -43,8 +43,7 @@ export class StakePage {
         this.titleBar.setTitle(this.translate.instant('staking.stake'));
 
         this.dataFetched = false;
-        // Actively update the balance in case the balance is not updated.
-        await this.voteService.sourceSubwallet.updateBalance();
+
         this.maxStake = await this.stakeService.getBalanceByFirstAddress();
         if (this.maxStake >= 1) {
             this.maxStake = this.maxStake - 1;
