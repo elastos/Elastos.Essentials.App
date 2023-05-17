@@ -10,6 +10,7 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { StandardMultiSigMasterWallet } from 'src/app/wallet/model/masterwallets/standard.multisig.masterwallet';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { Utxo } from 'src/app/wallet/model/tx-providers/transaction.types';
@@ -119,47 +120,64 @@ export class WalletSettingsPage implements OnInit {
         this.canExportKeystore = false; // TODO - repair - export "private key" keystores, not "elastos keystores" //this.masterWallet.createType === WalletCreateType.MNEMONIC || this.masterWallet.createType === WalletCreateType.KEYSTORE;
         Logger.log('wallet', 'Settings for master wallet - ' + this.networkWallet);
 
-        if (this.networkWallet && this.networkWallet.canBackupWallet()) {
-            this.settings.unshift({
-                type: 'wallet-export',
-                navCallback: () => {
-                    if (this.canExportKeystore) {
-                        this.showExportMenu = !this.showExportMenu;
-                    } else {
-                        void this.export();
-                    }
-                },
-                title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
-                subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
-                icon: '/assets/wallet/settings/key.svg',
-                iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
-            });
-        }
+        if (this.networkWallet) {
+            if (this.networkWallet.canBackupWallet()) {
+                this.settings.unshift({
+                    type: 'wallet-export',
+                    navCallback: () => {
+                        if (this.canExportKeystore) {
+                            this.showExportMenu = !this.showExportMenu;
+                        } else {
+                            void this.export();
+                        }
+                    },
+                    title: this.translate.instant("wallet.wallet-settings-backup-wallet"),
+                    subtitle: this.translate.instant("wallet.wallet-settings-backup-wallet-subtitle"),
+                    icon: '/assets/wallet/settings/key.svg',
+                    iconDarkmode: '/assets/wallet/settings/darkmode/key.svg'
+                });
+            }
 
-        if (this.networkWallet && (this.networkWallet.network.supportsERC20Coins() || this.networkWallet.network.supportsTRC20Coins())) {
-            this.settings.push({
-                type: 'coin-list',
-                route: "/wallet/coin-list",
-                title: this.translate.instant("wallet.wallet-settings-manage-coin-list"),
-                subtitle: this.translate.instant("wallet.wallet-settings-manage-coin-list-subtitle"),
-                icon: '/assets/wallet/settings/coins.svg',
-                iconDarkmode: '/assets/wallet/settings/darkmode/coins.svg'
-            });
-        }
+            if (this.networkWallet.network.supportsERC20Coins() || this.networkWallet.network.supportsTRC20Coins()) {
+                this.settings.push({
+                    type: 'coin-list',
+                    route: "/wallet/coin-list",
+                    title: this.translate.instant("wallet.wallet-settings-manage-coin-list"),
+                    subtitle: this.translate.instant("wallet.wallet-settings-manage-coin-list-subtitle"),
+                    icon: '/assets/wallet/settings/coins.svg',
+                    iconDarkmode: '/assets/wallet/settings/darkmode/coins.svg'
+                });
+            }
 
-        if (this.networkWallet && this.networkWallet.getExtendedPublicKey()) {
-            this.settings.push({
-                type: 'wallet-ext-pub-keys',
-                navCallback: () => {
-                    this.native.go("/wallet/wallet-ext-pub-keys", {
-                        masterWalletId: this.masterWalletId
+            if (this.masterWallet instanceof StandardMultiSigMasterWallet) {
+                this.settings.push({
+                    type: 'wallet-ext-pub-keys',
+                    navCallback: () => {
+                        this.native.go("/wallet/multisig/standard/info", {
+                            masterWalletId: this.masterWalletId
+                        });
+                    },
+                    title: this.translate.instant("wallet.wallet-settings-multisig-extended-public-keys-title"),
+                    subtitle: this.translate.instant("wallet.wallet-settings-multisig-extended-public-keys-subtitle"),
+                    icon: '/assets/wallet/settings/picture.svg',
+                    iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
+                });
+            } else {
+                if (this.networkWallet.getExtendedPublicKey()) {
+                    this.settings.push({
+                        type: 'wallet-ext-pub-keys',
+                        navCallback: () => {
+                            this.native.go("/wallet/wallet-ext-pub-keys", {
+                                masterWalletId: this.masterWalletId
+                            });
+                        },
+                        title: this.translate.instant("wallet.wallet-settings-extended-public-keys-title"),
+                        subtitle: this.translate.instant("wallet.wallet-settings-extended-public-keys-subtitle"),
+                        icon: '/assets/wallet/settings/picture.svg',
+                        iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
                     });
-                },
-                title: this.translate.instant("wallet.wallet-settings-extended-public-keys-title"),
-                subtitle: this.translate.instant("wallet.wallet-settings-extended-public-keys-subtitle"),
-                icon: '/assets/wallet/settings/picture.svg',
-                iconDarkmode: '/assets/wallet/settings/darkmode/picture.svg'
-            });
+                }
+            }
         }
 
         this.settings.push({

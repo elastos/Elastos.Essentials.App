@@ -384,6 +384,8 @@ export const zh = {
         "wallet-settings-consolidate-no-need": "无需执行零钱换整",
         "wallet-settings-extended-public-keys-title": "扩展公钥",
         "wallet-settings-extended-public-keys-subtitle": "创建多签钱包所需的特殊密钥",
+        "wallet-settings-multisig-extended-public-keys-title": "多签钱包扩展公钥信息",
+        "wallet-settings-multisig-extended-public-keys-subtitle": "显示所有联合签名人的扩展公钥",
 
         /************************
         * Wallet Edit Name Page *
@@ -720,6 +722,12 @@ export const zh = {
         'multi-sig-extended-public-key-copy': '点击即可复制',
         'multi-sig-extended-public-key-note': '技术说明',
         'multi-sig-extended-public-key-note-info': '此扩展公钥是使用BIP45派生的，以便在多签钱包中使用，而由于历史原因，您的 Elastos 主链钱包使用BIP44。',
+
+        /********************************
+        * Multisig info page *
+        *********************************/
+        'multi-sig-my-signing-wallet-extended-public-key': '我的签名钱包扩展公钥',
+        'multi-sig-co-signers-extended-public-key': '联合签名人扩展公钥',
 
         /************************
         * Offline transactions  *

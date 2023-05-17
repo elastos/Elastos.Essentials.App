@@ -1,0 +1,25 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="ion-text-center container">
+        <!-- My signing wallet -->
+        <div class="title">{{ 'wallet.multi-sig-my-signing-wallet-extended-public-key' | translate }}</div>
+        <ion-row>
+          <ion-col size="12" (click)="copyAddress(displayedKey)">
+            <p> {{ displayedKey }}</p>
+          </ion-col>
+        </ion-row>
+
+        <!-- Co-signers -->
+        <div class="title">{{ 'wallet.multi-sig-co-signers-extended-public-key' | translate }}</div>
+        <ion-row *ngFor="let extPubKey of masterWallet.signersExtPubKeys">
+            <ion-col size="12" (click)="copyAddress(extPubKey)">
+                <p> {{ extPubKey }}</p>
+            </ion-col>
+        </ion-row>
+
+        <div class="title">
+            {{ 'wallet.multi-sig-required-signers' | translate }} : {{ masterWallet.requiredSigners }}
+        </div>
+
+    </ion-grid>
+</ion-content>

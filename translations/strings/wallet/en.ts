@@ -385,6 +385,8 @@ export const en = {
         "wallet-settings-consolidate-no-need": "No need to Consolidate",
         "wallet-settings-extended-public-keys-title": "Extended public keys",
         "wallet-settings-extended-public-keys-subtitle": "Special keys required to create multi-signature wallets",
+        "wallet-settings-multisig-extended-public-keys-title": "Multi-signature wallet extension public key information",
+        "wallet-settings-multisig-extended-public-keys-subtitle": "Display extension public keys for all signers",
 
         /************************
         * Wallet Edit Name Page *
@@ -721,6 +723,12 @@ export const en = {
         'multi-sig-extended-public-key-copy': 'Tap the key to copy',
         'multi-sig-extended-public-key-note': 'Technical note',
         'multi-sig-extended-public-key-note-info': 'This extended public key is derived using BIP45 in order to be used in a multi-signature wallet, while your elastos mainchain wallet is BIP44 for historical reasons.',
+
+        /********************************
+        * Multisig info page *
+        *********************************/
+        'multi-sig-my-signing-wallet-extended-public-key': 'My signing wallet extended public key',
+        'multi-sig-co-signers-extended-public-key': 'Other cosigners extended public key',
 
         /************************
         * Offline transactions  *

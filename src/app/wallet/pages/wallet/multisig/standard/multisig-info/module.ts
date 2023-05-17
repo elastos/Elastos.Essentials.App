@@ -5,23 +5,19 @@ import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
+import { MultiSigInfoPage } from './multisig-info.page';
 
 @NgModule({
-    declarations: [
-    ],
+    declarations: [MultiSigInfoPage],
     imports: [
         SharedComponentsModule,
         CommonModule,
         FormsModule,
         IonicModule,
         TranslateModule,
-        RouterModule,
-        RouterModule.forChild([
-            { path: 'standard/create', loadChildren: () => import('./standard/std-multisig-create/module').then(m => m.MultiSigStandardCreateModule) },
-            { path: 'standard/info', loadChildren: () => import('./standard/multisig-info/module').then(m => m.MultiSigInfoModule) }
-        ])
+        RouterModule.forChild([{ path: '', component: MultiSigInfoPage }])
     ],
     exports: [RouterModule],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class MultiSigModule { }
+export class MultiSigInfoModule { }

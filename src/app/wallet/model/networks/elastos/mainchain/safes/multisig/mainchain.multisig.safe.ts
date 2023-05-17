@@ -1,10 +1,17 @@
 import type {
-    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
-    CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
-    CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, MainchainSubWallet as SDKMainchainSubWallet,
-    MasterWallet as SDKMasterWallet, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo,
-    RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo,
-    UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+  CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+  CRCouncilMemberClaimNodeInfo,
+  CRInfoJson,
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo,
+  DPoSV2ClaimRewardInfo, EncodedTx,
+  NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo,
+  RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
+  MainchainSubWallet as SDKMainchainSubWallet,
+  MasterWallet as SDKMasterWallet,
+  SecretaryElectionInfo, TerminateProposalOwnerInfo,
+  UTXOInput,
+  UnstakeInfo,
+  VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
 import { Transaction } from "@elastosfoundation/wallet-js-sdk/typings/transactions/Transaction";
 import moment from "moment";
@@ -494,6 +501,35 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
       return await this.elaSubWallet.decodeTx(offlineTransaction.rawTx);
     } catch (e) {
       Logger.error("wallet", "Multisig safe: getOfflineTransaction() error:", e);
+    }
+  }
+
+  /**
+   * -----
+   * BIP45 WARNING
+   * -----
+   *
+   * IMPORTANT NOTE:
+   * - Historically, ELA mainchain wallets in the SPVSDK use BIP44 derivation which is a mistake, they should
+   * use BIP45.
+   * - ELA mainchain multisig implementation inside Essentials uses BIP45 as as such, they require signing wallets
+   * to provide BIP45 xpubs.
+   * - It was agreed with the elastos blockchain team that stopping to push this error (BIP44 legacy) was the best
+   * thing to do.
+   * - getExtendedPublicKey() is for now used only by multisig, so we use the seed to get the BIP45 xpub here,
+   * not the BIP44 one that the native SPVSDK could return to us.
+   */
+  public getExtendedPublicKey() {
+    try {
+      if (!this.sdkMasterWallet)
+        return null;
+
+      let pubKeyInfo = <PubKeyInfo>this.sdkMasterWallet.getPubKeyInfo();
+
+      return pubKeyInfo.xPubKeyHDPM; // BIP45 !
+    }
+    catch (e) {
+      Logger.error("wallet", "walletjs safe getExtendedPublicKey() error:", e);
     }
   }
 }
