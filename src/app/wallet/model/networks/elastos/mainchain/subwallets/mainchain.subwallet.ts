@@ -354,9 +354,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     /**
      * Check whether there are any unconfirmed transactions
      * For vote transaction
+     * bposTx: only check the stake, unstake, voting and mintNft transactions if bposTx = true.
      */
-    public async hasPendingBalance() {
-        let pendingTx = await this.getPendingTransaction();
+    public async hasPendingBalance(bposTx = false) {
+        let pendingTx = await this.getPendingTransaction(bposTx);
         if (pendingTx.length === 0) {
             return false;
         }
@@ -573,7 +574,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
     }
 
-    private async getPendingTransaction() {
+    /**
+     * Stake, Unstake, Vote, and Mint NFT are four transactions that can only be processed simultaneously for one wallet.
+     * bposTx: only check the stake, unstake, voting and mintNft transactions if bposTx = true.
+     */
+    private async getPendingTransaction(bposTx = false) {
         const twoMinutesago = moment().add(-2, 'minutes').valueOf();
         // It takes several seconds for getTransactionByRPC.
         if ((this.networkWallet.getTransactionDiscoveryProvider().fetchTransactionTimestamp < twoMinutesago)) {
@@ -591,7 +596,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 findLastUnConfirmedTx = true;
             }
             if (transactions[i].Status !== TransactionStatus.CONFIRMED) {
-                pendingTransactions.push(transactions[i].txid);
+                if (!bposTx || [RawTransactionType.Stake, RawTransactionType.Unstake, RawTransactionType.Voting, RawTransactionType.MintNFT].includes(transactions[i].txtype)) {
+                    pendingTransactions.push(transactions[i].txid);
+                }
             } else {
                 // the transactions list is sorted by block height.
                 break;
@@ -733,7 +740,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         if (this.id === StandardCoinName.ELA) {
             if (address) { // for createStakeTransaction. Only use the utxos of the first external address.
                 let amountELA = amountSELA / Config.SELA
-                utxoArray = await this.getUtxosByAmount(address, amountELA.toString(), UtxoType.Mixed);
+                utxoArray = await this.getUtxosByAmount(address, amountELA.toString(), UtxoType.Unused);
             } else {
                 let addressesHasBalance = [];
                 for (let i = 0; i < this.addressWithBalanceArray.length; i++) {
@@ -748,7 +755,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                     let addressList = this.getAddressListByAmount(amountSELA.toString(), votingUtxoArray);
                     if (addressList.length == 1) {
                         let amountELA = amountSELA / Config.SELA
-                        utxoArray = await this.getUtxosByAmount(addressList[0], amountELA.toString(), UtxoType.Normal);
+                        utxoArray = await this.getUtxosByAmount(addressList[0], amountELA.toString(), UtxoType.Unused);
                     } else {
                         utxoArray = await this.getAllUtxoByType(UtxoType.Normal, addressesHasBalance);
                     }
@@ -796,7 +803,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
 
         if ((usedUTXOs.length > 0) && (!getEnoughUTXO || (amountSELA == -1))) {
-            Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length);
+            Logger.warn('wallet', 'used UTXOs count:', usedUTXOs.length, usedUTXOs);
             return { value: 0, utxo: null };
         }
 

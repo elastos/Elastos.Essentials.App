@@ -356,6 +356,13 @@ export class VotePage implements OnInit, OnDestroy {
 
         try {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
+
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                this.castingVote = false;
+                this.signingAndTransacting = false;
+                return;
+            }
+
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo

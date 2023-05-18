@@ -150,7 +150,7 @@ export class VoteForProposalPage {
             this.signingAndSendingProposalResponse = true;
 
             // Request the wallet to publish our vote.
-            if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
+            if (await this.voteService.sourceSubwallet.hasPendingBalance(true)) {
                 this.signingAndSendingProposalResponse = false;
                 await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
                 return false;

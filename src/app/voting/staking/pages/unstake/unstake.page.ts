@@ -51,7 +51,7 @@ export class UnstakePage {
 
         try {
             // Request the wallet to publish our vote.
-            if (await this.voteService.sourceSubwallet.hasPendingBalance()) {
+            if (await this.voteService.sourceSubwallet.hasPendingBalance(true)) {
                 await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
                 return false;
             }

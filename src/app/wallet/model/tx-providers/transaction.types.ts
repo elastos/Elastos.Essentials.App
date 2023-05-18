@@ -161,6 +161,10 @@ export enum RawTransactionType {
   // CancelVotes = 0x64, // removed
   Unstake = 0x64,
   UnstakeRealWithdraw = 0x65,
+
+  // Mint NFT
+  MintNFT = 0x71,
+
   // DPoS2.0 end
 
   TypeMaxCount
