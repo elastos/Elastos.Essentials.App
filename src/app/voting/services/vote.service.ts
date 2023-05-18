@@ -207,7 +207,12 @@ export class VoteService implements GlobalService {
         Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
 
         if (!rawTx) {
-            // throw new Error("rawTx is null");
+            // 1.can not get the utxo.
+            if (await this.sourceSubwallet.hasPendingBalance(false)) {
+                await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
+            } else {
+                await this.globalPopupService.ionicAlert('common.warning', 'common.network-or-server-error', "common.close");
+            }
             return null;
         }
 
