@@ -3,7 +3,7 @@ import { IonSlides } from '@ionic/angular';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
-import { ElastosApiUrlType, GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
+import { GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { ProposalService } from 'src/app/voting/crproposalvoting/services/proposal.service';
@@ -98,17 +98,8 @@ export class VoteSliderComponent implements OnInit {
         Logger.log(App.CRCOUNCIL_VOTING, 'Fetching CRMembers..');
 
         if (this.voteInfos[VoteType.CRImpeachment].list.length > 0) {
-            const param = {
-                method: 'listcurrentcrs',
-                params: {
-                    state: "all"
-                },
-            };
-
-
-            let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
             try {
-                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
+                const result = await GlobalElastosAPIService.instance.getCRMembers();
 
                 if (result && !Util.isEmptyObject(result.crmembersinfo)) {
                     Logger.log(App.STAKING, "crcouncil:", result.crmembersinfo);
@@ -136,16 +127,8 @@ export class VoteSliderComponent implements OnInit {
         Logger.log(App.STAKING, 'Fetching Candidates..');
 
         if (this.voteInfos[VoteType.CRCouncil].list.length > 0) {
-            const param = {
-                method: 'listcrcandidates',
-                params: {
-                    state: "all"
-                },
-            };
-
-            let rpcApiUrl = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
             try {
-                const result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
+                const result = await GlobalElastosAPIService.instance.getCRCandidates();
 
                 if (result && !Util.isEmptyObject(result.crcandidatesinfo)) {
                     Logger.log(App.STAKING, "crcandidates:", result.crcandidatesinfo);

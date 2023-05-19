@@ -14,7 +14,8 @@ export type Secretariat = {
   did: string,
   didName: string,
   status: string,
-  startDate: number
+  startDate: number,
+  startDateStr?: string
 }
 
 export type CRCouncilSearchResponse = {

@@ -731,8 +731,9 @@ export class CoinTxInfoPage implements OnInit {
         if (voteContentInfo.VoteType !== VoteType.CRCouncil) return [];
         let voteList = [];
 
-        const candidateList = await GlobalElastosAPIService.instance.getCRCandidates();
-        if (candidateList) {
+        const result = await GlobalElastosAPIService.instance.getCRCandidates();
+        if (result && result.crcandidatesinfo) {
+            let candidateList = result.crcandidatesinfo;
             for (let i = 0; i < voteContentInfo.VotesInfo.length; i++) {
                 let candidate = candidateList.find(c => c.cid == voteContentInfo.VotesInfo[i].Candidate);
                 if (candidate) {

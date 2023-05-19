@@ -685,7 +685,7 @@ export class CoinHomePage implements OnInit {
      */
     public async toggleShowAllActions(): Promise<void> {
         this.shouldShowAllActions = !this.shouldShowAllActions;
-        await await this.globalStorage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "coinhome-show-all-actions", this.shouldShowAllActions);
+        await this.globalStorage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "wallet", "coinhome-show-all-actions", this.shouldShowAllActions);
     }
 
     public async loadShowAllActions(): Promise<void> {

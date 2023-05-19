@@ -287,33 +287,6 @@ export class VoteService implements GlobalService {
         return true;
     }
 
-    //Note:: now don't use this function to get data
-    // async getCRMembers() {
-    //     Logger.log(App.VOTING, 'Get CRMembers..');
-
-    //     this.crmembers = []
-
-    //     const param = {
-    //         method: 'listcurrentcrs',
-    //         params: {
-    //             state: "all"
-    //         },
-    //     };
-
-    //     try {
-    //         const elaRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-    //         const result = await this.jsonRPCService.httpPost(elaRpcApi, param);
-    //         if (!result || !result.crmembersinfo) {
-    //             return;
-    //         }
-    //         Logger.log(App.VOTING, "crmembers:", result.crmembersinfo);
-    //         this.crmembers = result.crmembersinfo;
-    //     }
-    //     catch (err) {
-    //         Logger.error(App.VOTING, 'getCRMembers error', err);
-    //     }
-    // }
-
     async getCurrentCRMembers() {
         this.crmembers = [];
 
@@ -374,12 +347,8 @@ export class VoteService implements GlobalService {
 
     async getSecretaryGeneralPublicKey() {
         if (this.secretaryGeneralPublicKey == null) {
-            const param = {
-                method: 'getsecretarygeneral',
-            };
-
             try {
-                const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+                const result = await GlobalElastosAPIService.instance.getSecretaryGeneral();
                 Logger.log(App.VOTING, 'getSecretaryGeneralPublicKey', result);
                 if (result && result.secretarygeneral) {
                     this.secretaryGeneralPublicKey = result.secretarygeneral;
@@ -405,7 +374,7 @@ export class VoteService implements GlobalService {
 
     async getConfirmCount(txid: string): Promise<number> {
         //Get ower dpos info
-        const result = await await GlobalElastosAPIService.instance.getRawTransaction(txid);
+        const result = await GlobalElastosAPIService.instance.getRawTransaction(txid);
         if (result && result.confirmations) {
             return result.confirmations;
         }

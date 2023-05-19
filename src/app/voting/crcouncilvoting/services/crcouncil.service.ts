@@ -132,15 +132,8 @@ export class CRCouncilService {
         this.crmemberInfo = null;
         this.isCRMember = false;
 
-        const param = {
-            method: 'listcurrentcrs',
-            params: {
-                state: "all"
-            },
-        };
-
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
+            const result = await GlobalElastosAPIService.instance.getCRMembers();
             if (!result || Util.isEmptyObject(result.crmembersinfo)) {
                 return;
             }
@@ -156,13 +149,18 @@ export class CRCouncilService {
             }
 
             // Get secretariat
-            let resultFromCR = await this.jsonRPCService.httpGet(this.voteService.getCrRpcApi() + "/api/council/list");
-            Logger.log(App.CRCOUNCIL_VOTING, "council list from CR:", result.data);
+            let resultFromCR = await GlobalElastosAPIService.instance.fetchCRcouncil();
+            Logger.log(App.CRCOUNCIL_VOTING, "council list from CR:", resultFromCR.data);
+            if (!resultFromCR || !resultFromCR.data) {
+                Logger.warn(App.CRCOUNCIL_VOTING, "Can not get the council list");
+                return;
+            }
+
             for (let item of resultFromCR.data.secretariat) {
                 if (item.status == 'CURRENT') {
                     this.getAvatar(item);
                     if (item.startDate) {
-                        item.startDate = Util.timestampToDateTime(item.startDate * 1000);
+                        item.startDateStr = Util.timestampToDateTime(item.startDate * 1000);
                     }
 
                     this.secretaryGeneralInfo = item;
@@ -235,12 +233,6 @@ export class CRCouncilService {
         let selectedCandidates = await this.getSelectedCandidates();
 
         Logger.log('crcouncil', 'Fetching Candidates..');
-        const param = {
-            method: 'listcrcandidates',
-            params: {
-                state: "all"
-            },
-        };
 
         this.candidateInfo = {
             nickname: "",
@@ -253,7 +245,7 @@ export class CRCouncilService {
         this.originCandidates = [];
         this.selectedCandidates = []
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
+            const result = await GlobalElastosAPIService.instance.getCRCandidates();
             Logger.log('crcouncil', 'Candidates fetched', result);
             if (result && result.crcandidatesinfo) {
                 for (let candidate of result.crcandidatesinfo) {
@@ -393,7 +385,8 @@ export class CRCouncilService {
                 {
                     text: this.translate.instant('common.ok'),
                     handler: () => {
-                        void this.globalNav.navigateHome();
+                        // Do nothing
+                        // void this.globalNav.navigateHome();
                     }
                 }
             ]
@@ -418,14 +411,8 @@ export class CRCouncilService {
     async getCRRelatedStage(): Promise<any> {
         Logger.log(App.CRCOUNCIL_VOTING, 'Get CR Related Stage...');
 
-        const param = {
-            method: 'getcrrelatedstage',
-            params: {
-            },
-        };
-
         try {
-            const result = await this.jsonRPCService.httpPost(this.voteService.getElaRpcApi(), param, 'default', 10000, false, true);
+            const result = await GlobalElastosAPIService.instance.getCRrelatedStage()
             Logger.log(App.CRCOUNCIL_VOTING, 'getCRRelatedStage', result);
             return result;
         }
@@ -638,7 +625,9 @@ export class CRCouncilService {
             return result;
         }
         catch (err) {
-            Logger.error(App.CRCOUNCIL_VOTING, 'getCRDepositcoin error', err);
+            if (42002 !== err.code) { // ID does not exist
+                Logger.warn(App.CRCOUNCIL_VOTING, 'getCRDepositcoin error', err);
+            }
         }
 
         return null;

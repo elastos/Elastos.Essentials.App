@@ -8,7 +8,6 @@ import { IdentityEntry } from '../model/didsessions/identityentry';
 import { CRCouncilSearchResponse } from '../model/voting/cyber-republic/CRCouncilSearchResult';
 import { CRProposalStatus } from '../model/voting/cyber-republic/CRProposalStatus';
 import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProposalsSearchResponse';
-import { Candidate } from '../voting/crcouncilvoting/model/candidates.model';
 import { CRMemberInfo } from '../voting/crcouncilvoting/services/crcouncil.service';
 import { ProposalDetails } from '../voting/crproposalvoting/model/proposal-details';
 import { StandardCoinName } from '../wallet/model/coin';
@@ -89,7 +88,7 @@ export enum NodeType {
     ALL = 'all'
 }
 
-export type NotesCache = {
+export type RequestCache = {
     timestamp: number,
     result: any
 }
@@ -124,7 +123,11 @@ export class GlobalElastosAPIService extends GlobalService {
     private blockHeightCache = 0;
     private blockHeightTimestamp = 0;
 
-    private nodesCache: NotesCache[] = [];
+    private nodesCache: RequestCache[] = [];
+    private crMembersCache: RequestCache = {timestamp: 0, result: null};
+    private crCandidatesCache: RequestCache = {timestamp: 0, result: null};
+    private crRelatedStageCache: RequestCache = {timestamp: 0, result: null};
+    private crSecretaryGeneralCache: RequestCache = {timestamp: 0, result: null};
 
     private imagesCache: ImageInfo[] = null;
 
@@ -929,6 +932,11 @@ export class GlobalElastosAPIService extends GlobalService {
 
     //crc
     public async getCRrelatedStage() {
+        let current = moment().valueOf();
+        if (this.crRelatedStageCache && ((current - this.crRelatedStageCache.timestamp) < 120000)) {
+            return this.crRelatedStageCache.result;
+        }
+
         const param = {
             method: 'getcrrelatedstage',
         };
@@ -938,8 +946,72 @@ export class GlobalElastosAPIService extends GlobalService {
         let result = null;
         try {
             result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
+            if (result) {
+                this.crRelatedStageCache = {
+                    timestamp: current,
+                    result: result
+                }
+            }
         } catch (e) {
             Logger.warn("elastosapi", "getCRrelatedStage exception", e);
+        }
+        return result;
+    }
+
+    public async getCRMembers() {
+        let current = moment().valueOf();
+        if (this.crMembersCache && ((current - this.crMembersCache.timestamp) < 120000)) {
+            return this.crMembersCache.result;
+        }
+
+        const param = {
+            method: 'listcurrentcrs',
+            params: {
+                state: "all"
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+        let result = null;
+        try {
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
+            if (result) {
+                this.crMembersCache = {
+                    timestamp: current,
+                    result: result
+                }
+            }
+        } catch (e) {
+            Logger.warn("elastosapi", "getCRMembers exception", e);
+        }
+        return result;
+    }
+
+    public async getSecretaryGeneral() {
+        let current = moment().valueOf();
+        // The Secretary General's message will never be changed?
+        if (this.crSecretaryGeneralCache && ((current - this.crSecretaryGeneralCache.timestamp) < 120000)) {
+            return this.crSecretaryGeneralCache.result;
+        }
+
+        const param = {
+            method: 'getsecretarygeneral',
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+
+        let result = null;
+        try {
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
+            if (result) {
+                this.crSecretaryGeneralCache = {
+                    timestamp: current,
+                    result: result
+                }
+            }
+        } catch (e) {
+            Logger.warn("elastosapi", "getCRMembers exception", e);
         }
         return result;
     }
@@ -994,7 +1066,12 @@ export class GlobalElastosAPIService extends GlobalService {
         return result;
     }
 
-    public async getCRCandidates(): Promise<Candidate[]> {
+    public async getCRCandidates(): Promise<any> {
+        let current = moment().valueOf();
+        if (this.crCandidatesCache && ((current - this.crCandidatesCache.timestamp) < 120000)) {
+            return this.crCandidatesCache.result;
+        }
+
         const param = {
             method: 'listcrcandidates',
             params: {
@@ -1006,8 +1083,14 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let result = null;
         try {
-            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
-            return result?.crcandidatesinfo;
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
+            if (result) {
+                this.crCandidatesCache = {
+                    timestamp: current,
+                    result: result
+                }
+            }
+            return result;
         } catch (e) {
             Logger.warn("elastosapi", "getCRCandidates exception", e);
         }

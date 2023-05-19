@@ -321,7 +321,7 @@ export class NodesService {
 
     async getConfirmCount(txid: string): Promise<number> {
         //Get ower dpos info
-        const result = await await GlobalElastosAPIService.instance.getRawTransaction(txid);
+        const result = await GlobalElastosAPIService.instance.getRawTransaction(txid);
         if (result && result.confirmations) {
             return result.confirmations;
         }
