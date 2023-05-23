@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController } from '@ionic/angular';
+import { NavController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -36,6 +36,8 @@ export class HomePage {
   private publicPacketsSubscription: Subscription;
   public walletAddress: string;
 
+  public isIOS = false;
+
   // Callbacks
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -44,9 +46,16 @@ export class HomePage {
     private globalNavService: GlobalNavService,
     public packetService: PacketService,
     private translate: TranslateService,
-    private walletService: WalletService
+    private walletService: WalletService,
+    private platform: Platform
   ) {
     GlobalFirebaseService.instance.logEvent("redpackets_home_enter");
+  }
+
+  ngOnInit() {
+      // For now (3.0.7 release), remove the create button on iOS as apple complains about this.
+      // We can try to disable this ios check later (with changes to get rejected).
+      this.isIOS = this.platform.platforms().indexOf('android') < 0;
   }
 
   ionViewWillEnter() {
@@ -56,7 +65,7 @@ export class HomePage {
 
     this.walletAddress = this.getActiveWalletAddress();
 
-    if (this.walletAddress) {
+    if (this.walletAddress && !this.isIOS) {
       this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
         iconPath: 'assets/redpackets/images/ic-plus.svg',
         key: 'create-packet'

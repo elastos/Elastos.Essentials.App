@@ -73,7 +73,8 @@ export class HomePage { //implements DappBrowserClient // '_blank' mode {
         this.isIOS = this.platform.platforms().indexOf('android') < 0;
         this.canBrowseInApp = await this.dAppBrowserService.canBrowseInApp();
 
-        this.allDApps = suggestedDApps(this.theme.darkMode);
+        if (!this.isIOS)
+            this.allDApps = suggestedDApps(this.theme.darkMode);
 
         void this.updateFavoritesAndApps();
     }

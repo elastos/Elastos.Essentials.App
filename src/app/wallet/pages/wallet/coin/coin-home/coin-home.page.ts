@@ -123,7 +123,7 @@ export class CoinHomePage implements OnInit {
     public popover: any = null;
 
     private isIOS = false;
-    private canBrowseInApp = true;
+    private canBrowseInApp = false;
 
     constructor(
         public router: Router,
@@ -246,9 +246,10 @@ export class CoinHomePage implements OnInit {
         });
 
         this.isIOS = this.platform.platforms().indexOf('android') < 0;
-        if (this.isIOS) {
-            this.canBrowseInApp = await this.dAppBrowserService.canBrowseInApp();
-        }
+        // Disable swap on iOS as apple complains about swap.
+        // if (this.isIOS) {
+        //     this.canBrowseInApp = await this.dAppBrowserService.canBrowseInApp();
+        // }
     }
 
     ngOnInit() {
