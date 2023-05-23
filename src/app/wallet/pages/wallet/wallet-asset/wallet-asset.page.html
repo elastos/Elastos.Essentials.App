@@ -76,7 +76,32 @@
                         </ion-row>
 
                         <!-- Staked assets -->
-                        <ion-col [size]="12" class="stake-title" *ngIf="network.stakingData.length">
+                        <ion-col [size]="12" class="stake-title" *ngIf="network.stakedBalance">
+                            <p>
+                                {{ 'wallet.staking-assets' | translate }}
+                            </p>
+                        </ion-col>
+
+                        <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode" *ngIf="network.stakedBalance">
+                          <ion-col size="2" class="left-col">
+                              <div class="icon-container">
+                                  <img [src]="network.logo">
+                              </div>
+                          </ion-col>
+                          <ion-col [size]="5" class="middle-col">
+                              <h1>{{ network.name }}</h1>
+                              <!-- <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p> -->
+                          </ion-col>
+                          <ion-col [size]="5" class="right-col">
+                              <p>
+                                  {{ network.stakedBalanceString }}
+                                  {{ currencyService.selectedCurrency.symbol }}
+                              </p>
+                          </ion-col>
+                        </ion-row>
+
+                        <!-- staking assets from tin network -->
+                        <!-- <ion-col [size]="12" class="stake-title" *ngIf="network.stakingData.length">
                             <p>
                                 {{ 'wallet.staking-assets' | translate }}
                             </p>
@@ -99,7 +124,7 @@
                                     {{ currencyService.selectedCurrency.symbol }}
                                 </p>
                             </ion-col>
-                        </ion-row>
+                        </ion-row> -->
                     </ion-row>
                 </div>
             </ion-row>

@@ -7,6 +7,7 @@ import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
+import { TimeBasedPersistentCache } from '../../../timebasedpersistentcache';
 import { ResourceType, TronTransaction } from '../../../tron.types';
 import { TransactionDirection, TransactionInfo, TransactionType } from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
@@ -19,7 +20,10 @@ const TRANSACTION_LIMIT = 100;
 
 export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     private tronAddress: string = null;
-    private frozenBalance: number = 0;
+
+    private stakedBalanceCache: TimeBasedPersistentCache<any> = null;
+    private stakedBalanceKeyInCache = null;
+    private stakedBalance = 0;
 
     private txInfoParser: ETHTransactionInfoParser;
 
@@ -32,6 +36,12 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
         this.getRootPaymentAddress();
 
         this.txInfoParser = new ETHTransactionInfoParser(this.networkWallet.network);
+    }
+
+    public async initialize(): Promise<void> {
+        super.initialize();
+
+        await this.loadStakedBalanceFromCache();
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -260,8 +270,8 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
     }
 
     // Get staked balance, the unit is TRX.
-    public async getFrozenBalance() {
-        return this.frozenBalance;
+    public async getStakedBalance() {
+        return this.stakedBalance;
     }
 
     /**
@@ -380,8 +390,10 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             }
 
             if (frozenBalance) {
-                this.frozenBalance = GlobalTronGridService.instance.fromSun(frozenBalance);
-            } else this.frozenBalance = 0;
+                this.stakedBalance = GlobalTronGridService.instance.fromSun(frozenBalance);
+            } else this.stakedBalance = 0;
+
+            this.saveStakedBalanceToCache();
 
             // TRC20
             if (accountInfo.trc20?.length > 0) {
@@ -390,6 +402,22 @@ export class TronSubWallet extends MainCoinSubWallet<TronTransaction, any> {
             }
             // TRC10
         }
+    }
+
+    private async loadStakedBalanceFromCache() {
+        if (!this.stakedBalanceKeyInCache) {
+            this.stakedBalanceKeyInCache = this.masterWallet.id + '-' + this.getUniqueIdentifierOnNetwork() + '-stakedbalance';
+        }
+        this.stakedBalanceCache = await TimeBasedPersistentCache.loadOrCreate(this.stakedBalanceKeyInCache);
+        if (this.stakedBalanceCache.size() !== 0) {
+            this.stakedBalance = parseFloat(this.stakedBalanceCache.values()[0].data);
+        }
+    }
+
+    public async saveStakedBalanceToCache(): Promise<void> {
+        const timestamp = (new Date()).valueOf();
+        this.stakedBalanceCache.set('stakedbalance', this.stakedBalance, timestamp);
+        await this.stakedBalanceCache.save();
     }
 
     async getTransactionDetails(txid: string): Promise<any> {

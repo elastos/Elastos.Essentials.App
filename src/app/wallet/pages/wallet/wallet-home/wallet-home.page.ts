@@ -488,7 +488,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             } else if (this.networkWallet.network.key === 'tron') {
                 let subwallet = this.networkWallet.getMainTokenSubWallet() as TronSubWallet;
                 if (subwallet) {
-                    this.stakedBalance = await subwallet.getFrozenBalance();
+                    this.stakedBalance = await subwallet.getStakedBalance();
                 }
             }
         }

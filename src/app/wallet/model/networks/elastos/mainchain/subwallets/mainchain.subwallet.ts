@@ -20,6 +20,7 @@ import { Candidates, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { MultiSigSafe } from 'src/app/wallet/model/safes/multisig.safe';
+import { TimeBasedPersistentCache } from 'src/app/wallet/model/timebasedpersistentcache';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../../config/Config';
@@ -74,11 +75,21 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
 
+    private stakedBalanceCache: TimeBasedPersistentCache<any> = null;
+    private stakedBalanceKeyInCache = null;
+    private stakedBalance = 0;
+
     constructor(networkWallet: AnyNetworkWallet) {
         super(networkWallet, StandardCoinName.ELA);
 
         this.tokenDecimals = 8;
         this.tokenAmountMulipleTimes = Config.SELAAsBigNumber;
+    }
+
+    public async initialize(): Promise<void> {
+        super.initialize();
+
+        await this.loadStakedBalanceFromCache();
     }
 
     public supportsCrossChainTransfers(): boolean {
@@ -345,10 +356,12 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async update() {
         await this.getBalanceByRPC();
+        await this.updateStakedBalance();
     }
 
     public async updateBalance() {
         await this.getBalanceByRPC();
+        await this.updateStakedBalance();
     }
 
     /**
@@ -945,13 +958,35 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     /**
      * Get staked balance, the unit is ELA.
      */
-    public async getStakedBalance() {
+    public getStakedBalance() {
+        return this.stakedBalance;
+    }
+
+    public async updateStakedBalance() {
         var stakeAddress = this.getOwnerStakeAddress()
         const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);
         if (result && result[0] && result[0].totalvotesright) {
-            return parseFloat(result[0].totalvotesright);
+            this.stakedBalance = parseFloat(result[0].totalvotesright);
         } else
-            return 0;
+            this.stakedBalance = 0;
+
+        await this.saveStakedBalanceToCache();
+    }
+
+    private async loadStakedBalanceFromCache() {
+        if (!this.stakedBalanceKeyInCache) {
+            this.stakedBalanceKeyInCache = this.masterWallet.id + '-' + this.getUniqueIdentifierOnNetwork() + '-stakedbalance';
+        }
+        this.stakedBalanceCache = await TimeBasedPersistentCache.loadOrCreate(this.stakedBalanceKeyInCache);
+        if (this.stakedBalanceCache.size() !== 0) {
+            this.stakedBalance = parseFloat(this.stakedBalanceCache.values()[0].data);
+        }
+    }
+
+    public async saveStakedBalanceToCache(): Promise<void> {
+        const timestamp = (new Date()).valueOf();
+        this.stakedBalanceCache.set('stakedbalance', this.stakedBalance, timestamp);
+        await this.stakedBalanceCache.save();
     }
 
     public getOwnerAddress(): string {

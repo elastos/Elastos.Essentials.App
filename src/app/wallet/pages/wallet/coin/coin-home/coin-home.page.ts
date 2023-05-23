@@ -773,7 +773,7 @@ export class CoinHomePage implements OnInit {
                 }
             } else if (this.networkWallet.network.key === 'tron') {
                 if (this.subWallet instanceof TronSubWallet) {
-                    this.stakedBalance = await this.subWallet.getFrozenBalance();
+                    this.stakedBalance = await this.subWallet.getStakedBalance();
                 }
             }
         }

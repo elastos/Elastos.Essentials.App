@@ -29,6 +29,9 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
+import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { DefiService, StakingData } from 'src/app/wallet/services/evm/defi.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AnySubWallet } from '../../../model/networks/base/subwallets/subwallet';
@@ -42,8 +45,9 @@ export type NetworkAssetInfo = {
     name: string,
     logo: string,
     balance: BigNumber, // raw balance
-    // stakedBalance: number, // staked balance
     balanceString: string, // display balance
+    stakedBalance: number, // staked balance
+    stakedBalanceString: string, // display staked balance
     subWallets: AnySubWallet[],
     stakingData: StakingData[],
 }
@@ -139,25 +143,44 @@ export class WalletAssetPage implements OnDestroy {
                     let networkWalletIndex = this.findWalletIndex(networkWallet);
 
                     // Staking assets.
-                    if (updateBalance) {
-                        await networkWallet.fetchStakingAssets();
-                    }
+                    // if (updateBalance) {
+                    //     await networkWallet.fetchStakingAssets();
+                    // }
                     let stakingData = networkWallet.getStakingAssets();
                     // let stakedBalance = 0;
                     // for (let k = 0; k < stakingData.length; k++) {
                     //     stakedBalance += stakingData[k].amountUSD;
                     // }
 
+                    let stakedBalance = 0;
+                    if (networkWallet.network.key === 'elastos') {
+                        let subwallet = networkWallet.getMainTokenSubWallet() as MainChainSubWallet;
+                        if (subwallet) {
+                            stakedBalance = await subwallet.getStakedBalance();
+                        }
+                    } else if (networkWallet.network.key === 'tron') {
+                        let subwallet = networkWallet.getMainTokenSubWallet() as TronSubWallet;
+                        if (subwallet) {
+                            stakedBalance = await subwallet.getStakedBalance();
+                        }
+                    }
+
                     let subWallets = await this.getSubwalletsShouldShowOn(networkWallet, updateBalance);
                     if ((subWallets.length > 0) || (stakingData.length > 0)) {
                         // getDisplayBalanceInActiveCurrency including the staked assets.
                         let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
+                        let stakedBalanceString = null;
+                        if (stakedBalance) {
+                            stakedBalanceString = this.getStakedBalanceInCurrency(stakedBalance, networkWallet);
+                            balanceBigNumber = balanceBigNumber.plus(new BigNumber(stakedBalanceString));
+                        }
                         let networkAssetInfo: NetworkAssetInfo = {
                             name: networks[i].name,
                             logo: networks[i].logo,
                             balance: balanceBigNumber,
-                            // stakedBalance: stakedBalance,
                             balanceString: this.getAmountForDisplay(balanceBigNumber),
+                            stakedBalance: stakedBalance,
+                            stakedBalanceString: stakedBalanceString,
                             subWallets: subWallets,
                             stakingData: stakingData,
                         }
@@ -223,6 +246,7 @@ export class WalletAssetPage implements OnDestroy {
         let subWallets: AnySubWallet[] = [];
         for (let index = 0; index < showSubwalets.length; index++) {
             if (updateBalance) {
+                Logger.log('wallet', 'update networkWallet:', networkWallet.masterWallet.name, ' network:', networkWallet.network.key)
                 await showSubwalets[index].updateBalance();
                 this.zone.run(() => {
                     this.updatedSubwalletCount++;
@@ -301,6 +325,12 @@ export class WalletAssetPage implements OnDestroy {
 
         let curerentAmount = this.currencyService.usdToCurrencyAmount(new BigNumber(balance));
         return curerentAmount.decimalPlaces(decimalplace).toFixed();
+    }
+
+    public getStakedBalanceInCurrency(stakedBalance: number, networkWallet: AnyNetworkWallet) {
+        let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(stakedBalance),
+            networkWallet.network, this.currencyService.selectedCurrency.symbol);
+        return WalletUtil.getFriendlyBalance(balance);
     }
 
     async doRefresh(event) {
