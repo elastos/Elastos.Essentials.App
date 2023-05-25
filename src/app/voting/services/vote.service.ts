@@ -3,9 +3,12 @@ import { NavigationOptions } from '@ionic/angular/providers/nav-controller';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { BehaviorSubject } from 'rxjs';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { WalletNotEnoughUtxoException } from 'src/app/model/exceptions/walletnotenoughutxo.exception';
+import { WalletPendingTransactionException } from 'src/app/model/exceptions/walletpendingtransaction.exception';
 import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -248,6 +251,13 @@ export class VoteService implements GlobalService {
     public async popupErrorMessage(error: any, context?: string) {
         if (!error) {
             return;
+        }
+
+        let reworkedEx = WalletExceptionHelper.reworkedWalletTransactionException(error);
+        if (reworkedEx instanceof WalletPendingTransactionException) {
+            return await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
+        } else if (reworkedEx instanceof WalletNotEnoughUtxoException) {
+            return await this.globalPopupService.ionicAlert('common.warning', 'wallet.insufficient-balance');
         }
 
         var message = "";

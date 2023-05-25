@@ -3,6 +3,8 @@ import { BiometricAuthenticationFailedException } from "../model/exceptions/biom
 import { BiometricLockedoutException } from "../model/exceptions/biometriclockedout.exception";
 import { PasswordManagerCancellationException } from "../model/exceptions/passwordmanagercancellationexception";
 import { WalletAlreadyExistException } from "../model/exceptions/walletalreadyexist.exception";
+import { WalletNotEnoughUtxoException } from "../model/exceptions/walletnotenoughutxo.exception";
+import { WalletPendingTransactionException } from "../model/exceptions/walletpendingtransaction.exception";
 import { Web3Exception } from "../model/exceptions/web3.exception";
 
 /**
@@ -85,6 +87,21 @@ export class WalletExceptionHelper {
         }
 
         Logger.log("wallet", "No specific password exception info", e);
+        return e; // No more info - return the raw error.
+    }
+
+    static reworkedWalletTransactionException(e: any) {
+        if (e && e.message) {
+            if (e.message.includes("There is already an on going transaction")) {
+                return new WalletPendingTransactionException();
+            }
+
+            if (e.message.includes("Insufficient Balance")) {
+                return new WalletNotEnoughUtxoException();
+            }
+        }
+
+        Logger.log("wallet", "No specific exception info");
         return e; // No more info - return the raw error.
     }
 }

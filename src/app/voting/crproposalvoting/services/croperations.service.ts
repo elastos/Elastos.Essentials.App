@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
+import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { WalletNotEnoughUtxoException } from 'src/app/model/exceptions/walletnotenoughutxo.exception';
+import { WalletPendingTransactionException } from 'src/app/model/exceptions/walletpendingtransaction.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
@@ -419,6 +422,13 @@ export class CROperationsService {
     public async popupErrorMessage(error: any) {
         if (!error) {
             return;
+        }
+
+        let reworkedEx = WalletExceptionHelper.reworkedWalletTransactionException(error);
+        if (reworkedEx instanceof WalletPendingTransactionException) {
+            return await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
+        } else if (reworkedEx instanceof WalletNotEnoughUtxoException) {
+            return await this.globalPopupService.ionicAlert('common.warning', 'wallet.insufficient-balance');
         }
 
         var message = "";

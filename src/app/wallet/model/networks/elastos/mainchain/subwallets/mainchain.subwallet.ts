@@ -399,7 +399,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             toAmount = Util.accMul(amount.toNumber(), Config.SELA);
             au = await this.getAvailableUtxo(toAmount + 10000);// 10000: fee
         }
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         Logger.log('wallet', 'createPaymentTransaction toAmount:', toAmount);
 
@@ -417,7 +417,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createVoteTransaction(voteContents: VoteContentInfo[], memo = ""): Promise<string> {
         let au = await this.getAvailableUtxo(-1);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         let newVoteContents = await this.mergeVoteContents(voteContents);
         Logger.log('wallet', 'createVoteTransaction:', JSON.stringify(newVoteContents));
@@ -441,7 +441,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             toAmount = Util.accMul(amount, Config.SELA);
             au = await this.getAvailableUtxo(toAmount + 20000);// 20000: fee, cross transafer need more fee.
         }
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         Logger.log('wallet', 'createDepositTransaction toAmount:', toAmount);
 
@@ -826,6 +826,14 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             return { value: totalAmount, utxo: utxoArrayForSDK };
         } else {
             return { value: totalAmount, utxo: utxoArrayForSDK };
+        }
+    }
+
+    private async throwUtxoNotEnoughError() {
+        if (await this.hasPendingBalance()) {
+            throw new Error('There is already an on going transaction')
+        } else {
+            throw new Error('Insufficient Balance');
         }
     }
 
@@ -1392,7 +1400,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createProposalTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalTransaction(
             au.utxo,
@@ -1404,7 +1412,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createProposalChangeOwnerTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalChangeOwnerTransaction(
             au.utxo,
@@ -1424,7 +1432,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createTerminateProposalTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createTerminateProposalTransaction(
             au.utxo,
@@ -1444,7 +1452,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createSecretaryGeneralElectionTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createSecretaryGeneralElectionTransaction(
             au.utxo,
@@ -1468,7 +1476,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createProposalTrackingTransaction(payload: CRCProposalTrackingInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalTrackingTransaction(
             au.utxo,
@@ -1484,7 +1492,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createProposalReviewTransaction(payload: CRCProposalReviewInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalReviewTransaction(
             au.utxo,
@@ -1504,7 +1512,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createProposalWithdrawTransaction(payload: CRCProposalWithdrawInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createProposalWithdrawTransaction(
             au.utxo,
@@ -1524,7 +1532,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createReserveCustomIDTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createReserveCustomIDTransaction(
             au.utxo,
@@ -1544,7 +1552,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createReceiveCustomIDTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createReceiveCustomIDTransaction(
             au.utxo,
@@ -1564,7 +1572,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createChangeCustomIDFeeTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createChangeCustomIDFeeTransaction(
             au.utxo,
@@ -1584,7 +1592,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createRegisterSidechainTransaction(payload: CRCProposalInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRegisterSidechainTransaction(
             au.utxo,
@@ -1599,7 +1607,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     //
     public async createRegisterProducerTransaction(payload: ProducerInfoJson, amount: number, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(amount + 20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRegisterProducerTransaction(
             au.utxo,
@@ -1612,7 +1620,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createCancelProducerTransaction(payload: CancelProducerInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createCancelProducerTransaction(
             au.utxo,
@@ -1624,7 +1632,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createUpdateProducerTransaction(payload: ProducerInfoJson, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUpdateProducerTransaction(
             au.utxo,
@@ -1656,7 +1664,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createRetrieveDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
             utxo,
@@ -1689,7 +1697,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createRegisterCRTransaction(payload: CRInfoJson, amount: number, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(amount + 20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRegisterCRTransaction(
             au.utxo,
@@ -1702,7 +1710,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createUnregisterCRTransaction(payload: CRInfoJson, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnregisterCRTransaction(
             au.utxo,
@@ -1714,7 +1722,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createUpdateCRTransaction(payload: CRInfoJson, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUpdateCRTransaction(
             au.utxo,
@@ -1726,7 +1734,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createRetrieveCRDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
             utxo,
@@ -1738,7 +1746,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     public async createCRCouncilMemberClaimNodeTransaction(version: number, payload: CRCouncilMemberClaimNodeInfo, memo = ""): Promise<EncodedTx> {
         let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createCRCouncilMemberClaimNodeTransaction(
             version,
@@ -1756,7 +1764,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let firstExternalAddress = this.getCurrentReceiverAddress();
 
         let au = await this.getAvailableUtxo(amount + 20000, firstExternalAddress);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(
             au.utxo,
@@ -1771,7 +1779,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
         let firstExternalAddress = this.getCurrentReceiverAddress();
         let au = await this.getAvailableUtxo(20000, firstExternalAddress);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(au.utxo, payload, '10000', memo);
     }
@@ -1783,7 +1791,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async createDPoSV2ClaimRewardTransaction(payload: DPoSV2ClaimRewardInfo, memo = ""): Promise<EncodedTx> {
         let firstExternalAddress = this.getCurrentReceiverAddress();
         let au = await this.getAvailableUtxo(20000, firstExternalAddress);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2ClaimRewardTransaction(au.utxo, payload, '10000', memo);
     }
@@ -1795,7 +1803,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async createUnstakeTransaction(payload: UnstakeInfo, memo = ""): Promise<EncodedTx> {
         let firstExternalAddress = this.getCurrentReceiverAddress();
         let au = await this.getAvailableUtxo(20000, firstExternalAddress);
-        if (!au.utxo) return;
+        if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnstakeTransaction(au.utxo, payload, '10000', memo);
     }
@@ -1803,8 +1811,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // BPoS NFT
     // public async createMintNFTTransaction(payload: PayloadStakeInfo): Promise<EncodedTx> {
     //     let au = await this.getAvailableUtxo(20000);
-    //     if (!au.utxo) return;
+    //     if (!au.utxo) await this.throwUtxoNotEnoughError();
 
     //     return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000');
     // }
+
 }

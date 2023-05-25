@@ -32,6 +32,7 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { sleep } from 'src/app/helpers/sleep.helper';
 import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
+import { WalletPendingTransactionException } from 'src/app/model/exceptions/walletpendingtransaction.exception';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -862,11 +863,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (reworkedEx instanceof Web3Exception) {
             await this.globalPopupService.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
         } else {
-            let message: string = typeof (err) === "string" ? err : err.message;
-            if (message.includes('Cannot transfer TRX to the same account')) {
-                message = "wallet.transaction-same-account";
+            reworkedEx = WalletExceptionHelper.reworkedWalletTransactionException(err);
+            if (reworkedEx instanceof WalletPendingTransactionException) {
+                await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
+            } else {
+                let message: string = typeof (err) === "string" ? err : err.message;
+                if (message.includes('Cannot transfer TRX to the same account')) {
+                    message = "wallet.transaction-same-account";
+                }
+                await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
             }
-            await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
+
         }
     }
 
