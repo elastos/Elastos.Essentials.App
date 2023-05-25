@@ -1,6 +1,7 @@
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { Clipboard } from '@awesome-cordova-plugins/clipboard/ngx';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -58,6 +59,8 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
   private pluginsListSub: Subscription = null;
 
+  public isIOS = false;
+
   constructor(
     public theme: GlobalThemeService,
     private widgetsService: WidgetsService,
@@ -67,10 +70,15 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     private zone: NgZone,
     private clipboard: Clipboard,
     private native: GlobalNativeService,
-    private globalIntentService: GlobalIntentService
+    private globalIntentService: GlobalIntentService,
+    private platform: Platform
   ) { }
 
   ngOnInit() {
+    // For now (3.0.7 release), hide dapps on iOS as apple complains about this.
+    // We can try to disable this ios check later (with changes to get rejected).
+    this.isIOS = this.platform.platforms().indexOf('android') < 0;
+
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
       this.receivedIntent = <EssentialsIntentPlugin.ReceivedIntent>navigation.extras.state.intent;
@@ -82,8 +90,13 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       { key: DisplayCategory.BROWSER, title: "widget-category-browser" },
       { key: DisplayCategory.ELASTOS, title: "widget-category-elastos-tech" },
       { key: DisplayCategory.COMMUNITY, title: "widget-category-community" },
-      { key: DisplayCategory.DAPPS, title: "widget-category-dapps" }
+      // { key: DisplayCategory.DAPPS, title: "widget-category-dapps" }
     ];
+
+    if (!this.isIOS) {
+      this.categories.push({ key: DisplayCategory.DAPPS, title: "widget-category-dapps" })
+    }
+
     this.selectedCategory = this.categories[0];
 
     this.pluginsListSub = this.widgetPluginsService.onAvailableCustomPluginsListChanged.subscribe(() => {
@@ -111,7 +124,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       iconPath: BuiltInIcon.CLOSE
     });
 
-    if (!this.addingCustomWidget) {
+    if (!this.addingCustomWidget && !this.isIOS) {
         this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
           key: "add-custom",
           iconPath: BuiltInIcon.ADD
