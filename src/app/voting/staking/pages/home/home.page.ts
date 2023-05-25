@@ -241,6 +241,10 @@ export class StakingHomePage implements OnInit {
         Logger.log(App.STAKING, 'unvote payload', payload);
 
         try {
+            if (!await this.voteService.checkWalletAvailableForVote()) {
+                return;
+            }
+
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(
                 payload,
                 '', //memo

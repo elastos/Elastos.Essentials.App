@@ -358,8 +358,6 @@ export class VotePage implements OnInit, OnDestroy {
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
             if (!await this.voteService.checkWalletAvailableForVote()) {
-                this.castingVote = false;
-                this.signingAndTransacting = false;
                 return;
             }
 
@@ -376,12 +374,13 @@ export class VotePage implements OnInit, OnDestroy {
             }
         }
         catch (e) {
-            await this.globalNative.hideLoading();
             await this.voteService.popupErrorMessage(e);
         }
-
-        this.castingVote = false;
-        this.signingAndTransacting = false;
+        finally {
+            await this.globalNative.hideLoading();
+            this.castingVote = false;
+            this.signingAndTransacting = false;
+        }
     }
 
     public getVotedCount() {
