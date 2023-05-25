@@ -1,6 +1,7 @@
 import type {
   CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
   CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+  CreateNFTInfo,
   CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, json, MainchainSubWallet, NormalProposalOwnerInfo,
   PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
   SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
@@ -422,10 +423,8 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
     return (<MainchainSubWallet>this.sdkSubWallet).createUnstakeTransaction(inputs, payload, fee, memo);
   }
 
-  public createMintNFTTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, fee: string): EncodedTx {
-    // TODO: Do not support.
-    return null;
-    // return (<MainchainSubWallet>this.sdkSubWallet).createMintNFTTransaction(inputs, payload, fee);
+  public createMintNFTTransaction(inputs: UTXOInput[], payload: CreateNFTInfo, fee: string, memo: string): EncodedTx {
+    return (<MainchainSubWallet>this.sdkSubWallet).createMintNFTTransaction(inputs, payload, fee, memo);
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: json, transfer: Transfer): Promise<SignTransactionResult> {

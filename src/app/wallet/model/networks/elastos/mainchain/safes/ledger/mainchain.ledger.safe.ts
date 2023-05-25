@@ -1,6 +1,6 @@
 import type {
   CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
+  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CreateNFTInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
   EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
   ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
@@ -388,7 +388,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createMintNFTTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, fee: string): EncodedTx {
+  public createMintNFTTransaction(inputs: UTXOInput[], payload: CreateNFTInfo, fee: string, memo: string): EncodedTx {
     // TODO: Do not support.
     return null;
   }

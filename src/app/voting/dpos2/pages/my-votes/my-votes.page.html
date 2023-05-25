@@ -44,7 +44,7 @@
                                 <ebutton class="update-btn" [disabled]='(node.locktime - node.blockheight) >= 720000' [title]="'common.update' | translate"></ebutton>
                             </ion-col>
                             <ion-col size="1.75" (click)="mintBPosNFT(i, node)">
-                                <div class="update-btn"> {{ 'Mint' | translate }} </div>
+                                <ebutton class="update-btn" [title]="'Mint' | translate"></ebutton>
                             </ion-col>
                         </ion-row>
                     </ion-grid>
