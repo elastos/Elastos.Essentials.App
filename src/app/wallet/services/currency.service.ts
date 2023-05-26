@@ -126,11 +126,11 @@ export class CurrencyService {
     runDelayed(async () => {
       await this.computeExchangeRatesFromCurrenciesService();
       await this.fetchTokenStatsFromPriceService();
-    }, 10000);
 
-    this.updateInterval = setInterval(() => {
-      void this.fetchTokenStatsFromPriceService();
-    }, 120000);// 120s
+      this.updateInterval = setInterval(() => {
+        void this.fetchTokenStatsFromPriceService();
+      }, 30000);// 30s
+    }, 10000);
 
     Logger.log('wallet', "Currency service initialization complete");
   }
@@ -220,7 +220,7 @@ export class CurrencyService {
     Logger.log("wallet", "Fetching trinity api prices");
 
     return new Promise(resolve => {
-      this.http.get<any>(this.trinityPriceUrl).subscribe((res: TrinityPriceAPITokenStats[]) => {
+      this.http.get<any>(this.trinityPriceUrl).subscribe(async (res: TrinityPriceAPITokenStats[]) => {
         if (res) {
           for (let tokenSymbol in this.networkMainTokenPrice) {
             let tokenStats = res[tokenSymbol];
@@ -235,6 +235,7 @@ export class CurrencyService {
           void this.saveMainTokenPrice();
           void this.saveExchangeRates();
 
+          await this.updateAllNetworkMainTokenValue();
           this.pricesFetchedSubject.next(true);
           // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
           resolve(true);
@@ -302,7 +303,7 @@ export class CurrencyService {
     }
   }
 
-  public async fetchMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public async fetchMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol, pricesFetched = false): Promise<void> {
     let cacheKey = network.key + network.getMainTokenSymbol();
     let currentTime = Date.now() / 1000;
     let priceUpdated = false;
@@ -310,7 +311,8 @@ export class CurrencyService {
     //void this.pricesCache.delete(); // DEV
     //return;
 
-    await this.pricesFetched();
+    if (!pricesFetched)
+      await this.pricesFetched();
 
     let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
     if (tokenStats) {
@@ -343,6 +345,15 @@ export class CurrencyService {
     }
     if (priceUpdated)
       void this.pricesCache.save();
+  }
+
+  // Update pricesCache
+  public async updateAllNetworkMainTokenValue(): Promise<void> {
+    let networks = this.walletNetworkService.getDisplayableNetworks();
+
+    for (let i = 0; i < networks.length; i++) {
+      await CurrencyService.instance.fetchMainTokenValue(new BigNumber(1), networks[i], 'USD', true);
+    }
   }
 
   // ERC20 tokens

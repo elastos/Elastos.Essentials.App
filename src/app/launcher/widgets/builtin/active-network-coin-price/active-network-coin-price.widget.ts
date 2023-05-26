@@ -20,7 +20,6 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
   private coinPriceRoot: ElementRef;
   @ViewChild('coinPriceRoot', { static: false }) set content(_coinPriceRoot: ElementRef) {
     this.coinPriceRoot = _coinPriceRoot;
-    this.prepare();
   }
 
   public activeNetwork: AnyNetwork = null;
@@ -56,10 +55,8 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
 
     // Refresh when the currency is changed
     this.currencyChangedSub = this.currencyService.currencyChangedSubject.subscribe(() => {
-        void this.prepare();
+      void this.prepare();
     })
-
-    void this.prepare();
 
     return;
   }
