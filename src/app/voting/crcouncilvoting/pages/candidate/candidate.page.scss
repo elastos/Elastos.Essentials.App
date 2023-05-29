@@ -1,4 +1,4 @@
-@import "src/app/voting/root.scss";
+@import "../../root.scss";
 
 ion-col {
     margin: 0px;
@@ -7,13 +7,13 @@ ion-col {
 .id-row {
     margin-top: 29px;
     .avatar {
+        display: flex;
+        align-items: center;
+
         width: 68px;
         height: 68px;
 
         .img {
-            border-radius: 50%;
-            object-fit: cover;
-            overflow: hidden;
             display: flex;
             align-items: center;
         }
