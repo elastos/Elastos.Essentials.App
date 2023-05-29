@@ -39,6 +39,14 @@ class MnemonicKeypadSuggestionsGenerator {
 
             for (let w of mnemonicWords) {
                 let convertResult = await hanziConvert(w);
+
+                // TODO: The result returned by hanziConvert is incorrect
+                if (w == '弄') {
+                  convertResult = [ ['nòng', 'lòng']]
+                } else if (w == '谁') {
+                  convertResult = [ ['shuí', 'shéi']]
+                }
+
                 let pinyinArray = [];
                 // Can return arrays of strings, or arrays of arrays os strings (in case of multiple pinyin for the same hanzi word)
                 if (typeof convertResult[0] === "string")
