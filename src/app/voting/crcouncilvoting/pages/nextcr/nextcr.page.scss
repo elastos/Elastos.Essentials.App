@@ -7,8 +7,17 @@ ion-col {
 .id-row {
     margin-top: 29px;
     .avatar {
+        display: flex;
+        align-items: center;
+
         width: 68px;
         height: 68px;
+
+        // img svg fallback
+        .img {
+          display: flex;
+          align-items: center;
+      }
     }
 
     .name-col {
