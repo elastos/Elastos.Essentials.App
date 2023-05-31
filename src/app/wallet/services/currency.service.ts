@@ -335,7 +335,7 @@ export class CurrencyService {
             } else {
                 Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
             }
-        } else {
+        } else if ((<EVMNetwork>network).getDexScreenerCurrencyProvider()) {
             this.dexScreenerTokenFetch(cacheKey, <EVMNetwork>network, (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin());
         }
       }

@@ -115,6 +115,7 @@ export class CoinHomePage implements OnInit {
     private transactionListChangedSubscription: Subscription = null;
     private transactionFetchStatusChangedSubscription: Subscription = null;
     private extendedInfoChangeSubscription: Subscription = null;
+    private sendTransactionSubscription: Subscription = null;
 
     private updateInterval = null;
     private updateTmeout = null;
@@ -174,6 +175,10 @@ export class CoinHomePage implements OnInit {
         if (this.fetchMoreTriggerObserver) {
             this.fetchMoreTriggerObserver.disconnect();
             this.fetchMoreTriggerObserver = null;
+        }
+        if (this.sendTransactionSubscription) {
+            this.sendTransactionSubscription.unsubscribe();
+            this.sendTransactionSubscription = null;
         }
     }
 
@@ -243,6 +248,10 @@ export class CoinHomePage implements OnInit {
             void this.zone.run(() => {
                 this.extendedTxInfo[info.txHash] = info.extInfo;
             });
+        });
+
+        this.sendTransactionSubscription = this.events.subscribe("wallet:transactionpublished", () => {
+            void this.updateWalletInfo();
         });
 
         this.isIOS = this.platform.platforms().indexOf('android') < 0;

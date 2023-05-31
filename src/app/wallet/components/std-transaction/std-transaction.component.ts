@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { Subscription } from 'rxjs';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { OutgoingTransactionState, TransactionService } from '../../services/transaction.service';
+import { WalletService } from '../../services/wallet.service';
 
 /**
  * Generic transaction publication component.
@@ -47,6 +48,7 @@ export class StdTransactionComponent implements OnInit {
         this.publicationSuccessful = true;
         setTimeout(() => {
           this.exitComponent();
+          WalletService.instance.events.publish('wallet:transactionpublished');
         }, 3000);
       }
     });

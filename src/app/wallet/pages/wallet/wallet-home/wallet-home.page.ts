@@ -175,7 +175,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
             this.stakedBalance = null;
         });
 
-        this.sendTransactionSubscription = this.events.subscribe("wallet:transactionsent", () => {
+        this.sendTransactionSubscription = this.events.subscribe("wallet:transactionpublished", () => {
             // Update balance and transactions.
             this.restartUpdateInterval();
             void this.updateCurrentWalletInfo();

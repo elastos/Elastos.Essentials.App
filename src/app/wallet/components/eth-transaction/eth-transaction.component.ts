@@ -7,6 +7,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { Config } from '../../config/Config';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';
+import { WalletService } from '../../services/wallet.service';
 
 @Component({
   selector: 'app-eth-transaction',
@@ -54,6 +55,7 @@ export class ETHTransactionComponent implements OnInit {
           // Show the successful result and automatically exit this screen.
           setTimeout(() => {
             this.exitComponent();
+            WalletService.instance.events.publish('wallet:transactionpublished');
           }, 3000);
           break;
         case ETHTransactionStatus.UNPACKED:

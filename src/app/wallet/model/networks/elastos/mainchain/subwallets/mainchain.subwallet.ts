@@ -971,14 +971,16 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async updateStakedBalance() {
-        var stakeAddress = this.getOwnerStakeAddress()
-        const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);
-        if (result && result[0] && result[0].totalvotesright) {
-            this.stakedBalance = parseFloat(result[0].totalvotesright);
-        } else
-            this.stakedBalance = 0;
+        var stakeAddress = this.getOwnerStakeAddress();
+        if (stakeAddress) {
+            const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);
+            if (result && result[0] && result[0].totalvotesright) {
+                this.stakedBalance = parseFloat(result[0].totalvotesright);
+            } else
+                this.stakedBalance = 0;
 
-        await this.saveStakedBalanceToCache();
+            await this.saveStakedBalanceToCache();
+        }
     }
 
     private async loadStakedBalanceFromCache() {

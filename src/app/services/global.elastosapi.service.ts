@@ -735,7 +735,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let utxoArray = null;
         try {
-            utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 30000, false, true);
         } catch (e) {
             Logger.warn("elastosapi", "getAllUtxoByAddress exception", e);
         }
@@ -762,7 +762,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
         let utxoArray = null;
         try {
-            utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+            utxoArray = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, 'default', 10000, false, true);
         } catch (e) {
             Logger.error('elastosapi', 'getUtxosByAmount error:', e)
         }
@@ -912,7 +912,7 @@ export class GlobalElastosAPIService extends GlobalService {
 
     // BPoS
     public async getVoteRights(stakeAddresses: string): Promise<StakeInfo[]> {
-        Logger.log('elastosapi', 'Get Vote Rights..');
+        Logger.log('elastosapi', 'Get Vote Rights.. stakeAddresses:', stakeAddresses);
         const param = {
             method: 'getvoterights',
             params: {
