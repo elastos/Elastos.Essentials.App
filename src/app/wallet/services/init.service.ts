@@ -13,8 +13,6 @@ import { IdrissResolver } from '../model/address-resolvers/resolvers/IdrissAddre
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/network/arbitrum.mainnet.network';
 import { ArbitrumTestNetNetwork } from '../model/networks/arbitrum/network/arbitrum.testnet.network';
-import { AtomMainNetNetwork } from '../model/networks/atom/network/atom.mainnet.network';
-import { AtomTestNetNetwork } from '../model/networks/atom/network/atom.testnet.network';
 import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.mainnet.network';
 import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.testnet.network';
 import { BSCMainNetNetwork } from '../model/networks/bsc/network/bsc.mainnet.network';
@@ -180,7 +178,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new EvmosMainNetNetwork());
     await this.createAndRegisterNetwork(new TronMainNetNetwork());
     await this.createAndRegisterNetwork(new CeloMainNetNetwork());
-    await this.createAndRegisterNetwork(new AtomMainNetNetwork());
+    // await this.createAndRegisterNetwork(new AtomMainNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
@@ -202,7 +200,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new EvmosTestNetNetwork());
     await this.createAndRegisterNetwork(new TronShastaTestNetNetwork());
     await this.createAndRegisterNetwork(new CeloTestNetNetwork());
-    await this.createAndRegisterNetwork(new AtomTestNetNetwork());
+    // await this.createAndRegisterNetwork(new AtomTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
 
