@@ -3,12 +3,15 @@ import { ActivatedRoute } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
+import { TransactionInfoType } from 'src/app/wallet/model/tx-providers/transaction.types';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { StandardCoinName } from '../../../../model/coin';
 import { CoinTransferService } from '../../../../services/cointransfer.service';
 import { Native } from '../../../../services/native.service';
@@ -42,6 +45,7 @@ export class CoinReceivePage implements OnInit, OnDestroy {
         private coinTransferService: CoinTransferService,
         public theme: GlobalThemeService,
         private translate: TranslateService,
+        public dappbrowserService: DappBrowserService,
     ) {
     }
 
@@ -111,5 +115,12 @@ export class CoinReceivePage implements OnInit, OnDestroy {
                 subWalletId: this.subWalletId
             }
         );
+    }
+
+    async openForBrowseMode() {
+        let browserUrl = WalletNetworkService.instance.activeNetwork.value.getBrowserUrlByType(TransactionInfoType.ADDRESS, this.qrcode);
+        if (browserUrl) {
+            void this.dappbrowserService.openForBrowseMode(browserUrl, "");
+        }
     }
 }

@@ -17,9 +17,14 @@
             </ion-col>
         </ion-row>
 
-        <h2 *ngIf="qrcode" (click)="copyAddress()">
-            {{ qrcode.slice(0,20) }}<br>{{ qrcode.slice(20,50) }}
-        </h2>
+        <ion-row class="address-row">
+            <ion-col class="address-col">
+              <h2 *ngIf="qrcode" (click)="copyAddress()">
+                  {{ qrcode.slice(0,20) }}<br>{{ qrcode.slice(20,50) }}
+              </h2>
+              <ion-icon class='icon' mode="ios" name="open-outline" (click)="openForBrowseMode()"></ion-icon>
+            </ion-col>
+        </ion-row>
         <p>{{ 'wallet.coin-receive-tap-to-copy' | translate }}</p>
 
         <h3 *ngIf="!isSingleAddress" (click)="showAddressList()">

@@ -37,14 +37,12 @@
     }
 
     h2 {
-        width: 100%;
-        margin-bottom: 25px;
+        width: 80%;
+        padding: 20px 0 20px 20px;
+        margin: 0 10px;
         font-size: 14px;
         font-weight: 500;
         text-align: center;
-        border-radius: 17px;
-        background-color: var(--essentials-box-color);
-        padding: 20px;
     }
 
     h3,
@@ -79,4 +77,25 @@
             }
         }
     }
+
+    .address-row {
+      background-color: var(--essentials-box-color);
+      margin-bottom: 10px;
+      border-radius: 17px;
+
+      .address-col {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+
+          &.active {
+              opacity: 1;
+          }
+
+          ion-icon {
+            height: 20px;
+            width: 20px;
+          }
+      }
+  }
 }
