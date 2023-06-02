@@ -108,6 +108,15 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     walletConnectSupported: false,
     networks: ["elastossmartchain", "polygon"]
   },
+  {
+    icon: '/assets/browser/dapps/kyc-me.png',
+    title: 'Kyc-me',
+    description: "KYC service for W3C DID Verifiable Credentials on Elastos",
+    url: 'https://kyc-me.io/',
+    useExternalBrowser: false,
+    walletConnectSupported: true,
+    networks: [] // All networks
+  },
   /* {
       icon: '/assets/browser/dapps/profile.png',
       title: 'Profile',
