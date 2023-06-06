@@ -8,7 +8,8 @@ export class BasicCredentialEntry {
     public value: any, // Credentials will mostly be strings, sometimes more complex objects
     public context: string = null,
     public shortType: string = null,
-    public isVisible: boolean = false // Convenient way to toggle profile credentials visibility from the UI
+    public isVisible: boolean = false, // Convenient way to toggle profile credentials visibility from the UI
+    public isSensitive: boolean = false,
   ) { }
 
   /**
@@ -23,6 +24,8 @@ export class BasicCredentialEntry {
         return this.getDisplayableDate();
       case 'gender':
         return this.getDisplayableGender();
+      case 'wallet':
+        return this.getDisplayableWallet();
       default:
         return this.value;
     }
@@ -52,5 +55,17 @@ export class BasicCredentialEntry {
       return null;
 
     return GlobalTranslationService.instance.translateInstant(this.value);
+  }
+
+  private getDisplayableWallet(): string {
+    if (!this.value || this.value == "")
+      return null;
+
+    // TODO: If this wallet exists, display the wallet name.
+    if (this.value.length == 1) {
+      return GlobalTranslationService.instance.translateInstant('identity.wallet-one-address');
+    } else {
+      return GlobalTranslationService.instance.translateInstant('identity.wallet-addresses', { count: this.value.length});
+    }
   }
 }

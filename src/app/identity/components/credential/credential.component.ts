@@ -5,6 +5,7 @@ import FastAverageColor from 'fast-average-color';
 import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDDocument } from '../../model/diddocument.model';
 import { VerifiableCredential } from '../../model/verifiablecredential.model';
@@ -184,12 +185,21 @@ export class CredentialComponent {
             .filter((key) => key != "id")
             .sort()
             .map((prop) => {
+                let value = '';
+                if (prop == 'wallet') {
+                    if (subject[prop].length == 1) {
+                        value = GlobalTranslationService.instance.translateInstant('identity.wallet-one-address');
+                    } else {
+                        value = GlobalTranslationService.instance.translateInstant('identity.wallet-addresses', { count: subject[prop].length});
+                    }
+                } else {
+                    value = subject[prop] != ""
+                        ? subject[prop]
+                        : this.translate.instant("identity.not-set");
+                }
                 return {
                     name: prop,
-                    value:
-                        subject[prop] != ""
-                            ? subject[prop]
-                            : this.translate.instant("identity.not-set"),
+                    value: value
                 };
             });
     }

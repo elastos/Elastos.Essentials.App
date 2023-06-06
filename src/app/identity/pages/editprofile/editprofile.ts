@@ -21,8 +21,12 @@ import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
+import { AnyNetworkWallet } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
+import { WalletService } from "src/app/wallet/services/wallet.service";
 import { area } from "../../../../assets/identity/area/area";
 import { PictureComponent } from "../../components/picture/picture.component";
+import { WalletChooserComponent, WalletChooserComponentOptions } from "../../components/wallet-chooser/wallet-chooser.component";
+import { WalletCredentialComponent, WalletCredentialComponentOptions } from "../../components/wallet-credential/wallet-credential.component";
 import { BasicCredentialEntry } from "../../model/basiccredentialentry.model";
 import { CountryCodeInfo } from "../../model/countrycodeinfo";
 import { DIDURL } from "../../model/didurl.model";
@@ -152,6 +156,7 @@ export class EditProfilePage {
             let confirmed = await this.globalPopupService.showConfirmationPopup(this.translate.instant('identity.sensitive-title'), this.translate.instant('identity.sensitive-prompt'));
             if (!confirmed) {
               entry.isVisible = !visible; // Cancelled - revert user's UI toggle ot its previous state
+              this.updatingVisibility = false;
               return;
             }
           }
@@ -185,6 +190,7 @@ export class EditProfilePage {
       "email",
       "gender",
       "telephone",
+      "wallet",
     ];
     if (!specialEntries.includes(entry.key)) {
       return true;
@@ -308,6 +314,73 @@ export class EditProfilePage {
       }
     });
     await modal.present();
+  }
+
+    /********** For 'wallet' entry **********/
+    async selectWallet(entry: BasicCredentialEntry) {
+        let masterWalletId = await this.pickWallet();
+        if (masterWalletId) {
+            let addressList = await this.showWalletCredential(masterWalletId);
+            if (addressList) {
+                entry.value = addressList;
+                Logger.log('Identity', "Wallet Entry: " + entry);
+            }
+        }
+    }
+
+    /**
+     * Lets the user choose a wallet from the list but without further action.
+     */
+    async pickWallet(): Promise<string> {
+        let options: WalletChooserComponentOptions = {
+            currentNetworkWallet: WalletService.instance.activeNetworkWallet.value,
+            showActiveWallet: true
+        };
+
+        let modal = await this.modalCtrl.create({
+            component: WalletChooserComponent,
+            componentProps: options,
+        });
+
+        return new Promise(resolve => {
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+            modal.onWillDismiss().then(async (params) => {
+                Logger.log('Identity', 'Wallet selected:', params);
+                if (params.data && params.data.selectedMasterWalletId) {
+                    resolve(params.data.selectedMasterWalletId);
+                }
+                else
+                    resolve(null);
+            });
+            void modal.present();
+        });
+    }
+
+    /**
+     * Lets the user choose a wallet from the list but without further action.
+     */
+    async showWalletCredential(masterWalletId: string): Promise<AnyNetworkWallet> {
+      let options: WalletCredentialComponentOptions = {
+          masterWalletId: masterWalletId,
+      };
+
+      let modal = await this.modalCtrl.create({
+          component: WalletCredentialComponent,
+          componentProps: options,
+      });
+
+      return new Promise(resolve => {
+          // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+          modal.onWillDismiss().then(async (params) => {
+              Logger.log('Identity', 'Wallet addresses:', params);
+              if (params.data && params.data.addressList) {
+                  resolve(params.data.addressList);
+              }
+              else
+                  resolve(null);
+          });
+          void modal.present();
+      });
   }
 
   /**

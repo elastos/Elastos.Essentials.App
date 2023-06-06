@@ -60,6 +60,13 @@ export class BasicCredentialsService {
         addressType:"elastosmainchain",
         address: ""
       }, "https://ns.elastos.org/credentials/wallet/v1", "WalletCredential" */),
+
+      new BasicCredentialEntry("wallet", ""/* {
+        chain: "elastossmartchain",
+        network:"mainnet",
+        addressType:"elastosmainchain",
+        address: ""
+      }*/, "https://ns.elastos.org/credentials/wallet/v1", "WalletCredential", false, true),
     ];
   }
 

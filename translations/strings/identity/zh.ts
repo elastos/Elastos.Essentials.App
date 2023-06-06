@@ -98,6 +98,9 @@ export const zh = {
         'saving-picture-to-hive': '将图片保存到 Elastos Hive 存储',
         'save-avatar-error-title': "保存头像失败",
         'save-avatar-error-insufficient-space': "Hive 存储空间不足",
+        'select-wallet': '选择钱包',
+        'wallet-one-address': '1个地址',
+        'wallet-addresses': ' {{ count }} 个地址',
 
         // tabnav
         'home': '主页',
@@ -165,6 +168,12 @@ export const zh = {
         'sent': '在路上',
         'success-msg': '传递您的请求后，此应用程序将自动关闭。',
         'backup-success': '太好了，您的身份现在已备份！',
+
+        // component: wallet chooser
+        'wallet-chooser-note': '只支持单地址钱包',
+
+        // component: wallet chooser
+        'wallet-credential-info': 'TODO: Display intro text to explain what this is about ',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue
@@ -281,6 +290,7 @@ export const zh = {
         'credential-info-type-wechat': '微信',
         'credential-info-type-weibo': '微博',
         'credential-info-type-elaAddress': 'ELA地址',
+        'credential-info-type-wallet': '钱包地址',
         'credential-info-type-twitch': 'Twitch',
         'credential-info-type-tiktok': '抖音',
         'credential-info-type-paypal': 'Paypal',

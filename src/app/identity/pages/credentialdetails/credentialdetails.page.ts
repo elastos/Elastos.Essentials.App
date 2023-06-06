@@ -20,6 +20,7 @@ import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
+import { WalletAddressType } from "../../components/wallet-credential/wallet-credential.component";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
 import { CredentialsService } from "../../services/credentials.service";
@@ -311,6 +312,9 @@ export class CredentialDetailsPage implements OnInit {
   getDisplayableProperties() {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
     if (fragment === "avatar") return [];
+    if (fragment === 'wallet') {
+      return this.getWalletAddresses();
+    }
 
     let subject = this.credential.pluginVerifiableCredential.getSubject();
     return Object.keys(subject)
@@ -338,6 +342,45 @@ export class CredentialDetailsPage implements OnInit {
 
   getAvatar(): string {
     return this.avatarImg || transparentPixelIconDataUrl(); // Transparent pixel while loading
+  }
+
+  isWalletCred(): boolean {
+    let fragment = this.credential.pluginVerifiableCredential.getFragment();
+    if (fragment === "wallet") {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  getAddressTitle(type: WalletAddressType) {
+    switch (type) {
+      case WalletAddressType.WalletAddressType_btc_legacy:
+        return 'BTC';
+      case WalletAddressType.WalletAddressType_ela:
+        return 'ELA';
+      case WalletAddressType.WalletAddressType_evm:
+        return "EVM";
+      case WalletAddressType.WalletAddressType_iotex:
+        return 'IOTEX';
+      case WalletAddressType.WalletAddressType_tron:
+        return 'TVM';
+    }
+  }
+
+  getWalletAddresses() {
+    let subject = this.credential.pluginVerifiableCredential.getSubject();
+
+    let displayableProperties = [];
+    let addresses = subject['wallet'];
+    addresses.forEach(address => {
+      displayableProperties.push({
+        name: this.getAddressTitle(address.type),
+        value: address.address
+      })
+    });
+
+    return displayableProperties;
   }
 
   getCredIconSrc() {
@@ -407,6 +450,7 @@ export class CredentialDetailsPage implements OnInit {
       case "paypal":
         return "logo-paypal";
       case "elaAddress":
+      case 'wallet':
         return "wallet";
       default:
         return "finger-print";
