@@ -97,6 +97,9 @@ export const it = {
         'saving-picture-to-hive': 'Salvare l\'immagine nello spazio di archiviazione di Elastos Hive',
         'save-avatar-error-title': "Saving avatar error",
         'save-avatar-error-insufficient-space': "Hive Insufficient Space",
+        'select-wallet': 'Seleziona un portafoglio',
+        'wallet-one-address': 'one address',
+        'wallet-addresses': ' {{ count }} addresses',
 
         // tabnav
         'home': 'Home',
@@ -164,6 +167,12 @@ export const it = {
         'sent': 'sta arrivando',
         'success-msg': 'L\'applicazione verrà automaticamente chiusa quando la risposta arriverà a destinazione.',
         'backup-success': 'Ottimo, è stato eseguito il backup della tua identità!',
+
+        // component: wallet chooser
+        'wallet-chooser-note': 'Only single address wallets are supported',
+
+        // component: wallet chooser
+        'wallet-credential-info': 'TODO: Display intro text to explain what this is about ',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue
@@ -281,6 +290,7 @@ export const it = {
         'credential-info-type-wechat': 'Wechat',
         'credential-info-type-weibo': 'Weibo',
         'credential-info-type-elaAddress': 'Indirizzo ELA',
+        'credential-info-type-wallet': 'Indirizzo del portafoglio',
         'credential-info-type-twitch': 'Twitch',
         'credential-info-type-tiktok': 'TikTok',
         'credential-info-type-paypal': 'Paypal',

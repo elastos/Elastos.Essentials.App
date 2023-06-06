@@ -232,8 +232,12 @@ export class DID {
                     // eslint-disable-next-line no-useless-catch
                     try {
                         let entryCustomTypes: string[] = [];
-                        if (entry.context && entry.shortType)
+                        if (entry.context && entry.shortType) {
                             entryCustomTypes.push(`${entry.context}#${entry.shortType}`);
+                        }
+
+                        if (entry.isSensitive)
+                            entryCustomTypes.push('https://ns.elastos.org/credentials/v1#SensitiveCredential');
 
                         let credential = await this.upsertCredential(credentialId, props, password, true, entryCustomTypes);
                         Logger.log('Identity', "Credential added/updated:", credential);

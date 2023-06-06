@@ -20,7 +20,7 @@ export class Profile {
     // If the entry already exists, we just update it. Otherwise we add it first.
     let entry = this.getEntryByKey(basiccredentialentry.key);
     if (!entry) {
-      entry = new BasicCredentialEntry(basiccredentialentry.key, value, basiccredentialentry.context, basiccredentialentry.shortType, isVisible);
+      entry = new BasicCredentialEntry(basiccredentialentry.key, value, basiccredentialentry.context, basiccredentialentry.shortType, isVisible, basiccredentialentry.isSensitive);
       this.entries.push(entry);
     } else {
       entry.value = value;

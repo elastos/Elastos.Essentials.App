@@ -209,6 +209,32 @@
             (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
         </ion-col>
       </ion-row>
+
+      <ion-row *ngIf="entry.key === 'wallet'" class="ion-align-items-center main-row">
+        <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
+          <img
+            [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />
+        </ion-col>
+        <ion-col size="8.75">
+          <ion-grid>
+            <ion-row class="subject-col">
+              <ion-col>
+                <ion-label>{{ 'identity.credential-info-type-'+entry.key | translate }}</ion-label>
+              </ion-col>
+            </ion-row>
+            <ion-row class="edit-col">
+              <ion-col (click)="selectWallet(entry)">
+                <ion-text class="placeholder" *ngIf="!entry.value">{{ 'identity.select-wallet' | translate }}</ion-text>
+                <ion-text *ngIf="entry.value"> {{ entry.toDisplayString() }}</ion-text>
+              </ion-col>
+            </ion-row>
+          </ion-grid>
+        </ion-col>
+        <ion-col size="2" class="toggle-col">
+          <ion-toggle mode="ios" [disabled]="updatingVisibility" [(ngModel)]="entry.isVisible"
+            (ngModelChange)="onVisibilityChange($event, entry)" ngDefaultControl></ion-toggle>
+        </ion-col>
+      </ion-row>
     </div>
 
     <ion-row class="btn-row">
