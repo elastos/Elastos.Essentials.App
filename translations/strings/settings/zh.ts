@@ -135,6 +135,10 @@ export const zh = {
           'privacy-send-credential-toolbox-stats': '将有关DID使用情况的匿名信息发送到凭证工具箱(开发人员工具)。DID本身永远不会发送。',
           'privacy-dont-send-credential-toolbox-stats': '不要将有关DID使用情况的匿名信息发送到凭证工具箱(开发人员工具)。',
 
+          'privacy-enable-creation-redpacket': '启用创建红包',
+          'privacy-enable-creation-redpacket-description': '允许在Elastos Smart Chain上创建红包',
+          'privacy-disable-creation-redpacket-description': '禁止在Elastos Smart Chain上创建红包',
+
           /*********** Elastos API provider page ***********/
           'elastosapiprovider': 'Elastos API'
      }

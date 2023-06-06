@@ -7,6 +7,9 @@ import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, Ti
 import { App } from 'src/app/model/app.enum';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { Packet } from '../../model/packets.model';
 import { PacketService } from '../../services/packet.service';
@@ -36,7 +39,8 @@ export class HomePage {
   private publicPacketsSubscription: Subscription;
   public walletAddress: string;
 
-  public isIOS = false;
+  private isIOS = false;
+  public canCreateRedPacket = true;
 
   // Callbacks
   public titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -47,6 +51,7 @@ export class HomePage {
     public packetService: PacketService,
     private translate: TranslateService,
     private walletService: WalletService,
+    private prefs: GlobalPreferencesService,
     private platform: Platform
   ) {
     GlobalFirebaseService.instance.logEvent("redpackets_home_enter");
@@ -58,14 +63,18 @@ export class HomePage {
       this.isIOS = this.platform.platforms().indexOf('android') < 0;
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant("redpackets.red-packets"));
     this.titleBar.setBackgroundColor("#270707");
     this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
 
     this.walletAddress = this.getActiveWalletAddress();
 
-    if (this.walletAddress && !this.isIOS) {
+    if (this.isIOS) {
+        this.canCreateRedPacket = await this.prefs.getEnableCreatingOfRedPacket(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    }
+
+    if (this.walletAddress && this.canCreateRedPacket) {
       this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
         iconPath: 'assets/redpackets/images/ic-plus.svg',
         key: 'create-packet'

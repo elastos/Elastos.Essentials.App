@@ -1,4 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { App } from "src/app/model/app.enum";
@@ -22,6 +23,9 @@ export class PrivacyPage implements OnInit {
   public publishIdentityMedium = 'assist'; // assist or wallet
   public sendCredentialToolboxStats = true;
   public useHiveDataSync = false;
+  public enableCreatingRedPackets = false;
+
+  public isIOS = false;
 
   constructor(
     public settings: SettingsService,
@@ -29,16 +33,24 @@ export class PrivacyPage implements OnInit {
     public developer: DeveloperService,
     public translate: TranslateService,
     private nav: GlobalNavService,
-    private prefs: GlobalPreferencesService
+    private prefs: GlobalPreferencesService,
+    private platform: Platform
   ) { }
 
-  ngOnInit() { }
+  ngOnInit() {
+    // From 3.0.7, we remove the create red package button on iOS as apple complains about this.
+    // So we add a toggle to allow enabling the creation of red packets.
+    this.isIOS = this.platform.platforms().indexOf('android') < 0;
+  }
 
   async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.privacy'));
     await this.fetchUseBuiltInBrowser();
     await this.fetchPublishIdentityMedium();
     await this.fetchCredentialToolboxStats();
+    if (this.isIOS) {
+      await this.fetchEnableCreatingOfRedPacket()
+    }
     void this.fetchHiveDataSync();
   }
 
@@ -120,5 +132,22 @@ export class PrivacyPage implements OnInit {
   public async toggleHiveDataSync() {
     this.useHiveDataSync = !this.useHiveDataSync;
     await this.prefs.setUseHiveSync(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.useHiveDataSync);
+  }
+
+  private async fetchEnableCreatingOfRedPacket(): Promise<void> {
+    this.enableCreatingRedPackets = await this.prefs.getEnableCreatingOfRedPacket(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+  }
+
+  public getEnableCreatingOfRedPacketTitle(): string {
+    if (this.enableCreatingRedPackets) {
+      return this.translate.instant('settings.privacy-enable-creation-redpacket-description');
+    } else {
+      return this.translate.instant('settings.privacy-disable-creation-redpacket-description');
+    }
+  }
+
+  async toggleEnableCreationOfRedPacket(): Promise<void> {
+    this.enableCreatingRedPackets = !this.enableCreatingRedPackets;
+    await this.prefs.setEnableCreatingOfRedPacket(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.enableCreatingRedPackets);
   }
 }

@@ -135,6 +135,10 @@ export const fr = {
                 'privacy-send-credential-toolbox-stats': 'Envoyer des stats anonymes d\'utilisation des crédentiels DID vers la boîte à outils pour développeurs. Votre DID lui-même n\'est jamais envoyé.',
                 'privacy-dont-send-credential-toolbox-stats': 'Ne pas envoyer de stats anonymes d\'utilisation des crédentiels DID vers la boîte à outils pour développeurs.',
 
+                'privacy-enable-creation-redpacket': 'Enable red packets',
+                'privacy-enable-creation-redpacket-description': 'Enables the creation of red packets on the Elastos smart chain',
+                'privacy-disable-creation-redpacket-description': 'Disables the creation of red packets on the Elastos smart chain',
+
                 /*********** Elastos API provider page ***********/
                 'elastosapiprovider': 'API Elastos'
         }

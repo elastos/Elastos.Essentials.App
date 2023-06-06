@@ -68,5 +68,19 @@
         </div>
       </ion-col>
     </ion-row>
+
+    <!-- Enable create red packets on iOS -->
+    <ion-row class="section" *ngIf="isIOS">
+      <ion-col size="10.5" class="title-col">
+        <h1>{{ 'settings.privacy-enable-creation-redpacket' | translate }}</h1>
+        <h2 class="secondary-text">{{ getEnableCreatingOfRedPacketTitle() }}</h2>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <div (click)="toggleEnableCreationOfRedPacket()">
+          <ion-toggle *ngIf="enableCreatingRedPackets" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="!enableCreatingRedPackets" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>
