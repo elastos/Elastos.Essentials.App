@@ -137,6 +137,7 @@ export const en = {
 
                 'privacy-enable-creation-redpacket': 'Enable red packets',
                 'privacy-enable-creation-redpacket-description': 'Enables the creation of red packets on the Elastos smart chain',
+                'privacy-disable-creation-redpacket-description': 'Disables the creation of red packets on the Elastos smart chain',
 
                 /*********** Elastos API provider page ***********/
                 'elastosapiprovider': 'Elastos API'
