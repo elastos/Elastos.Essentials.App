@@ -1,4 +1,5 @@
 import type { json } from "@elastosfoundation/wallet-js-sdk";
+import { ecsign, privateToPublic, toRpcSig } from "ethereumjs-util";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -18,6 +19,8 @@ import { EVMSafe } from "./evm.safe";
 export class EVMWalletJSSafe extends Safe implements EVMSafe {
   private account = null;
   private evmAddress = null;
+  private privateKey = null;
+  private publicKey = null;
 
   constructor(protected masterWallet: StandardMasterWallet, protected chainId: number) {
     super(masterWallet);
@@ -29,7 +32,8 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     // Check if the address is already computed or not  (first time). If not, request the
     // master password to compute it
     this.evmAddress = await networkWallet.loadContextInfo("evmAddress");
-    if (!this.evmAddress) {
+    this.publicKey = await networkWallet.loadContextInfo("evmPublicKey");
+    if (!this.evmAddress || !this.publicKey) {
       await this.initJSWallet()
 
       if (this.account) {
@@ -38,35 +42,48 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
 
       if (this.evmAddress)
         await networkWallet.saveContextInfo("evmAddress", this.evmAddress);
+
+      if (this.publicKey)
+        await networkWallet.saveContextInfo("evmPublicKey", this.publicKey);
     }
   }
 
-  private async initJSWallet() {
+  private async initJSWallet(password = null) {
     if (this.account) return;
 
-    // No data - need to compute
-    let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
-    if (!payPassword)
-      return; // Can't continue without the wallet password - cancel the initialization
+    if (!password) {
+      // No data - need to compute
+      password = await AuthService.instance.getWalletPassword(this.masterWallet.id);
+      if (!password)
+        return; // Can't continue without the wallet password - cancel the initialization
+    }
 
-    let privateKey = null;
-    let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
+    let seed = await (this.masterWallet as StandardMasterWallet).getSeed(password);
     if (seed) {
       let jsWallet = await WalletUtil.getWalletFromSeed(seed);
-      privateKey = jsWallet.privateKey;
+      this.privateKey = jsWallet.privateKey;
+      // this.publicKey = jsWallet.publicKey; // this publickey startwith '0x04' which is hardcoded as 04 ethereum.
     }
     else {
       // No mnemonic - check if we have a private key instead
-      privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+      this.privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(password);
     }
 
-    if (privateKey) {
-      this.account = (await EVMService.instance.getWeb3(this.networkWallet.network)).eth.accounts.privateKeyToAccount(privateKey);
+    this.privateKey = this.privateKey.replace("0x", "");
+    this.publicKey = privateToPublic(Buffer.from(this.privateKey, "hex")).toString('hex'); // without 0x04
+
+
+    if (this.privateKey) {
+      this.account = (await EVMService.instance.getWeb3(this.networkWallet.network)).eth.accounts.privateKeyToAccount(this.privateKey);
     }
   }
 
   public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
     return [this.evmAddress];
+  }
+
+  public getPublicKey(): string {
+    return this.publicKey;
   }
 
   public createTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
@@ -75,6 +92,23 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
 
   public createContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<any> {
     return EVMService.instance.createUnsignedContractTransaction(contractAddress, amount, gasPrice, gasLimit, nonce, data);
+  }
+
+  public async signDigest(address: string, digest: string, password: string): Promise<string> {
+    if (!this.account) {
+      await this.initJSWallet(password);
+    }
+
+    try {
+      const msgSig = ecsign(Buffer.from(digest, "hex"), Buffer.from(this.privateKey, "hex"));
+      const rawMsgSig = toRpcSig(msgSig.v, msgSig.r, msgSig.s);
+      return rawMsgSig;
+    }
+    catch (e) {
+      Logger.warn('wallet', 'signDigest exception ', e)
+    }
+
+    return null;
   }
 
   public async signTransaction(subWallet: AnySubWallet, rawTransaction: json, transfer: Transfer, forcePasswordPrompt = true, visualFeedback = true): Promise<SignTransactionResult> {

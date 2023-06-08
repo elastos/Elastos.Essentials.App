@@ -41,10 +41,27 @@ export abstract class Safe {
   public abstract getAddresses(startIndex: number, count: number, internalAddresses: boolean, usage: AddressUsage | string): string[];
 
   /**
+   * Returns wallet's public key string.
+   */
+  public getPublicKey() {
+    return null; // Default implementation: pub key not provided for now.
+  }
+
+  /**
    * Returns wallet's extended public key (xpub...) string.
    */
   public getExtendedPublicKey() {
     return null; // Default implementation: ext pub key not provided for now.
+  }
+
+  /**
+   *
+   * @param address : Single address wallet does not require this parameter
+   * @param digest : SHA256
+   * @param password
+   */
+  public signDigest(address: string, digest: string, password: string): Promise<string> {
+    return null;
   }
 
   /**

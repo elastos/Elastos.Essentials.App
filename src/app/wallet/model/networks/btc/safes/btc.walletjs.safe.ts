@@ -100,6 +100,10 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         return [this.btcAddress];
     }
 
+    public async signDigest(address: string, digest: string, password: string): Promise<string> {
+      return null;
+    }
+
     public async createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {
         let txData: BTCTxData = {
             inputs: inputs,

@@ -1031,7 +1031,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public signDigest(address: string, digest: string, passwd: string): Promise<string> {
-        return (this.networkWallet.safe as any as ElastosMainChainSafe).signDigest(address, digest, passwd);
+        return (this.networkWallet.safe).signDigest(address, digest, passwd);
     }
 
     public signDigestWithOwnerKey(digest: string, passwd: string): Promise<string> {

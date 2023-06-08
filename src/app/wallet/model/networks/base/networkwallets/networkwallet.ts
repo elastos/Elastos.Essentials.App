@@ -339,10 +339,27 @@ export abstract class NetworkWallet<MasterWalletType extends MasterWallet, Walle
     public abstract getAddresses(): WalletAddressInfo[];
 
     /**
+     * Returns wallet's public key string.
+     */
+    public getPublicKey() {
+        return this.safe.getPublicKey();
+    }
+
+    /**
      * Returns wallet's extended public key (xpub...) string.
      */
     public getExtendedPublicKey() {
         return this.safe.getExtendedPublicKey();
+    }
+
+    /**
+     *
+     * @param address : Single address wallet does not require this parameter
+     * @param digest : SHA256
+     * @param password
+     */
+    public async signDigest(address: string, digest: string, passwd: string): Promise<string> {
+      return await this.safe.signDigest(address, digest, passwd);
     }
 
     /*
