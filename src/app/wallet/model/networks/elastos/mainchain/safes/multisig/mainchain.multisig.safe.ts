@@ -88,6 +88,10 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     return this.elaSubWallet.getPublicKeys(start, count, internal);
   }
 
+  public getPublicKey(): string {
+    return this.elaSubWallet.getPublicKeys(0, 1, false)[0];
+  }
+
   public signDigest(address: string, digest: string, passwd: string): Promise<string> {
     // TODO: Do not support.
     return null;

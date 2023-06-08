@@ -1,9 +1,9 @@
 import type {
-    CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
-    CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
-    CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, json, MainchainSubWallet, NormalProposalOwnerInfo,
-    PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
-    SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
+  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo,
+  CRCProposalInfo, CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo,
+  CRInfoJson, DPoSV2ClaimRewardInfo, EncodedTx, json, MainchainSubWallet, NormalProposalOwnerInfo,
+  PayloadStakeInfo, ProducerInfoJson, PublickeysInfo, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo, ReserveCustomIDOwnerInfo,
+  SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
 } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
 import { PubKeyInfo } from "src/app/wallet/model/elastos.types";
@@ -479,6 +479,10 @@ export class MainChainWalletJSSafe extends WalletJSSafe implements ElastosMainCh
 
   public verifyDigest(publicKey: string, digest: string, signature: string): boolean {
     return (<MainchainSubWallet>this.sdkSubWallet).verifyDigest(publicKey, digest, signature);
+  }
+
+  public getPublicKey() {
+    return (<MainchainSubWallet>this.sdkSubWallet).getPublicKeys(0, 1, false)[0];
   }
 
   /**
