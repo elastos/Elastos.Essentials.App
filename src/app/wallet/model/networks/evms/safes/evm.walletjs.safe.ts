@@ -1,5 +1,5 @@
 import type { json } from "@elastosfoundation/wallet-js-sdk";
-import { ecsign, privateToPublic, toRpcSig } from "ethereumjs-util";
+import { ecsign, toRpcSig } from "ethereumjs-util";
 import { Logger } from "src/app/logger";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
@@ -62,7 +62,6 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     if (seed) {
       let jsWallet = await WalletUtil.getWalletFromSeed(seed);
       this.privateKey = jsWallet.privateKey;
-      // this.publicKey = jsWallet.publicKey; // this publickey startwith '0x04' which is hardcoded as 04 ethereum.
     }
     else {
       // No mnemonic - check if we have a private key instead
@@ -70,8 +69,10 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
     }
 
     this.privateKey = this.privateKey.replace("0x", "");
-    this.publicKey = privateToPublic(Buffer.from(this.privateKey, "hex")).toString('hex'); // without 0x04
 
+    const secp256k1 = require('secp256k1');
+    // Get the compressed publickey.
+    this.publicKey = secp256k1.publicKeyCreate(Buffer.from(this.privateKey, "hex"), true).toString("hex");
 
     if (this.privateKey) {
       this.account = (await EVMService.instance.getWeb3(this.networkWallet.network)).eth.accounts.privateKeyToAccount(this.privateKey);
