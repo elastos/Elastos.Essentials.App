@@ -26,9 +26,9 @@ export class AboutPage implements OnInit {
     {
       type: 'settings.see-also',
       links: [
-        { title: 'settings.visit', link: 'https://www.elastos.org' },
+        { title: 'settings.visit', link: 'https://elastos.info' },
         { title: 'settings.join', link: 'https://www.cyberrepublic.org' },
-        { title: 'settings.build', link: 'https://docs.elastos.net' },
+        { title: 'settings.build', link: 'https://elastos.dev' },
         { title: 'Elastos Discord', link: 'https://discord.gg/FGdF7CRAZr' },
       ],
     },
