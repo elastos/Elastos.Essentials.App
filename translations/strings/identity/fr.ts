@@ -99,8 +99,6 @@ export const fr = {
         'save-avatar-error-title': "Erreur lors de l\'enregistrement de l\'avatar",
         'save-avatar-error-insufficient-space': "Espace de stockage hive insuffisant",
         'select-wallet': 'Sélectionnez un portefeuille',
-        'wallet-one-address': 'one address',
-        'wallet-addresses': ' {{ count }} addresses',
 
         // tabnav
         'home': 'Accueil',
@@ -172,8 +170,8 @@ export const fr = {
         // component: wallet chooser
         'wallet-chooser-note': 'Seuls les portefeuilles à adresse unique sont pris en charge',
 
-        // component: wallet chooser
-        'wallet-credential-info': 'TODO: Display intro text to explain what this is about ',
+        // component: wallet credential
+        'wallet-credential-info': 'Before you proceed, please note that you are about to generate a private credential that will contain a list of your wallet addresses along with a signed proof of ownership. This credential will serve as evidence of the relationship between your assets and your identity. Once created, the credential will be securely stored in Essentials until a third-party app requests it from you.',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue

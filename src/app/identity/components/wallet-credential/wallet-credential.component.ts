@@ -73,52 +73,81 @@ export class WalletCredentialComponent implements OnInit {
   }
 
   async getAddresses() {
-    let password = await AuthService.instance.getWalletPassword(this.options.masterWalletId, true, false); // Don't force password
+    await GlobalNativeService.instance.showLoading();
 
-    void GlobalNativeService.instance.showLoading();
-
-    if (this.networkService.isActiveNetworkElastosMainchain()) {
-      let address = this.networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress();
-      let publicKey = this.networkWallet.getPublicKey();
-      let payload = DIDSessionsStore.signedInDIDString + address; // with prex '0x'
-      let digest = SHA256.encodeToBuffer(Buffer.from(payload)).toString("hex");
-      let signature = await this.networkWallet.signDigest(address, digest, password);
-      this.addresses.push({type: WalletAddressType.WalletAddressType_ela, address: address, publicKey: publicKey, signature: signature});
-
-      this.networkWallet.getMainTokenSubWallet()
-
-      let escNetwork = await this.networkService.getNetworkByKey("elastossmartchain");
-      if (escNetwork) {
-        let escNetworkWallet = await escNetwork.createNetworkWallet(this.selectedMasterWallet, false);
-        let address = escNetworkWallet.getMainTokenSubWallet().getCurrentReceiverAddress();
-        let publicKey = escNetworkWallet.getPublicKey();
-        let payload = DIDSessionsStore.signedInDIDString + address; // with prex '0x'
-        let digest = SHA256.encodeToBuffer(Buffer.from(payload)).toString("hex");
-        let signature = await escNetworkWallet.signDigest('', digest, password);
-        this.addresses.push({type: WalletAddressType.WalletAddressType_evm, address: address, publicKey: publicKey, signature: signature});
-      }
-    }
-
-    if (this.networkService.isActiveNetworkEVM()) {
-      let address = this.networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress();
-      let publicKey = this.networkWallet.getPublicKey();
-      let payload = DIDSessionsStore.signedInDIDString + address; // with prex '0x'
-      let digest = SHA256.encodeToBuffer(Buffer.from(payload)).toString("hex");
-      let signature = await this.networkWallet.signDigest('', digest, password);
-      this.addresses.push({type: WalletAddressType.WalletAddressType_evm, address: address, publicKey: publicKey, signature: signature});
-
-      // tron,iotex
-    }
-
-    if (this.networkService.activeNetwork.value.key === 'btc') {
-      let address = this.networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress();
-      let publicKey = this.networkWallet.getPublicKey();
-      this.addresses.push({type: WalletAddressType.WalletAddressType_btc_legacy, address: address, publicKey: publicKey, signature:""});
+    try {
+      await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_ela);
+      await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_evm);
+      await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_btc_legacy);
+    } catch (e) {
+      Logger.log('identity', 'getAddresses exception', e);
     }
 
     void GlobalNativeService.instance.hideLoading();
 
     Logger.log('identity', 'Address list:', this.addresses)
+  }
+
+  async getAddressByNetworkKey(addressType: WalletAddressType) {
+    let networkKey = '';
+    switch (addressType) {
+      case WalletAddressType.WalletAddressType_ela:
+        networkKey = 'elastos';
+      break;
+      case WalletAddressType.WalletAddressType_evm:
+        networkKey = 'elastossmartchain';
+      break;
+      case WalletAddressType.WalletAddressType_btc_legacy:
+        networkKey = 'btc';
+      break;
+    }
+    let network = await this.networkService.getNetworkByKey(networkKey);
+    if (network) {
+      let networkWallet = await network.createNetworkWallet(this.selectedMasterWallet, false);
+      let address = networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress();
+      this.addresses.push({type: addressType, address: address, publicKey: '', signature: ''});
+    }
+  }
+
+  async getSignatureByNetworkKey(addressType: WalletAddressType, password: string) {
+    let networkKey = '';
+    switch (addressType) {
+      case WalletAddressType.WalletAddressType_ela:
+        networkKey = 'elastos';
+      break;
+      case WalletAddressType.WalletAddressType_evm:
+        networkKey = 'elastossmartchain';
+      break;
+      case WalletAddressType.WalletAddressType_btc_legacy:
+        networkKey = 'btc';
+      break;
+    }
+
+    let walletAddress = this.addresses.find( a => a.type === addressType);
+    if (walletAddress) {
+      let network = await this.networkService.getNetworkByKey(networkKey);
+      if (network) {
+        let networkWallet = await network.createNetworkWallet(this.selectedMasterWallet, false);
+        let publicKey = networkWallet.getPublicKey();
+        let payload = DIDSessionsStore.signedInDIDString + walletAddress.address; // with prex '0x'
+        let digest = SHA256.encodeToBuffer(Buffer.from(payload)).toString("hex");
+        let signature = await networkWallet.signDigest(walletAddress.address, digest, password);
+        if (signature) {
+          walletAddress.publicKey = publicKey;
+          walletAddress.signature = signature;
+        }
+      }
+    }
+  }
+
+  async getSignature() {
+    let password = await AuthService.instance.getWalletPassword(this.options.masterWalletId, true, false); // Don't force password
+
+    await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_ela, password);
+    await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_evm, password);
+    await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_btc_legacy, password);
+
+    Logger.log('identity', 'Address list with signature:', this.addresses)
   }
 
   getAddressTitle(type: WalletAddressType) {
@@ -136,12 +165,17 @@ export class WalletCredentialComponent implements OnInit {
     }
   }
 
-  confirm() {
-    // TODO: sign data here
+  async confirm() {
+    try {
+      await GlobalNativeService.instance.showLoading();
+      await this.getSignature();
+      void this.modalCtrl.dismiss({
+        addressList: this.addresses
+      });
+    } finally {
+      void GlobalNativeService.instance.hideLoading();
+    }
 
-    void this.modalCtrl.dismiss({
-      addressList: this.addresses
-    });
   }
 
   cancelOperation() {

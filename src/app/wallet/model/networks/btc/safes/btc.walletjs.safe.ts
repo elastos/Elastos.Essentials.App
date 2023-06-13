@@ -1,4 +1,5 @@
 import * as BTC from 'bitcoinjs-lib';
+import { Payment } from 'bitcoinjs-lib';
 import { bitcoin, testnet } from "bitcoinjs-lib/src/networks";
 import { Logger } from "src/app/logger";
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
@@ -13,11 +14,12 @@ import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
 import { BTCSafe } from "./btc.safe";
 
-const DefaultDerivationPath = "44'/0'/0'/0/0";
+const DefaultDerivationPath = "44'/0'/0'/0/0"; // TODO: maybe we should use "44'/1'/0'/0/0" for testnet
 const DUST = 550; // TODO: How to calculate the dust value?
 
 export class BTCWalletJSSafe extends Safe implements BTCSafe {
     private btcAddress = null;
+    private btcPublicKey = null;
     private btcNetwork = bitcoin;
 
     constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
@@ -34,23 +36,24 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         // Check if the address is already computed or not  (first time). If not, request the
         // master password to compute it
         this.btcAddress = await networkWallet.loadContextInfo("btcAddress");
-        if (!this.btcAddress) {
+        this.btcPublicKey = await networkWallet.loadContextInfo("btcPublicKey");
+        if (!this.btcAddress || !this.btcPublicKey) {
           await this.initJSWallet()
 
           if (this.btcAddress)
             await networkWallet.saveContextInfo("btcAddress", this.btcAddress);
+          if (this.btcPublicKey)
+            await networkWallet.saveContextInfo("btcPublicKey", this.btcPublicKey);
         }
     }
 
     private async initJSWallet() {
-        // No data - need to compute
-        let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id);
-        if (!payPassword)
-            return; // Can't continue without the wallet password - cancel the initialization
-
         try {
             let keypair = await this.getKeyPair(DefaultDerivationPath);
-            if (keypair) this.btcAddress = await this.getAddress(keypair);
+            if (keypair) {
+              this.btcAddress = await this.getAddress(keypair);
+              this.btcPublicKey = keypair.publicKey.toString('hex');
+            }
         } catch (e) {
             Logger.warn('wallet', 'initJSWallet exception:', e)
         }
@@ -78,30 +81,45 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
     }
 
     private async getAddress(keyPair, type = BTCAddressType.LEGACY) {
-        let address = null;
+        let payment: Payment = null;
         switch (type) {
             case BTCAddressType.LEGACY:
-                address = BTC.payments.p2pkh({ pubkey: keyPair.publicKey , network: this.btcNetwork});
+                payment = BTC.payments.p2pkh({ pubkey: keyPair.publicKey , network: this.btcNetwork});
             break;
             case BTCAddressType.SEGWIT:
                 // Native Segwit
-                address = BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork});
+                payment = BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork});
             break;
             case BTCAddressType.P2SH:
-                address =  BTC.payments.p2sh({
+                payment =  BTC.payments.p2sh({
                     redeem: BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork}),
                 })
             break;
         }
-        return address?.address;
+        return payment?.address;
     }
 
     public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
         return [this.btcAddress];
     }
 
+    public getPublicKey(): string {
+        return this.btcPublicKey;
+    }
+
     public async signDigest(address: string, digest: string, password: string): Promise<string> {
-      return null;
+      let keypair = await this.getKeyPair(DefaultDerivationPath, false);
+      if (!keypair) {
+          // User canceled the password
+          return null;
+      }
+
+      const secp256k1 = require('secp256k1');
+      let signObj = secp256k1.sign(Buffer.from(digest, "hex"), keypair.privateKey);
+      if (signObj) {
+        return signObj.signature.toString('hex');
+      }
+      else return null;
     }
 
     public async createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {

@@ -62,10 +62,6 @@ export class BasicCredentialEntry {
       return null;
 
     // TODO: If this wallet exists, display the wallet name.
-    if (this.value.length == 1) {
-      return GlobalTranslationService.instance.translateInstant('identity.wallet-one-address');
-    } else {
-      return GlobalTranslationService.instance.translateInstant('identity.wallet-addresses', { count: this.value.length});
-    }
+    return GlobalTranslationService.instance.translateInstant('common.wallet');
   }
 }
