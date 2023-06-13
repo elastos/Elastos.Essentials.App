@@ -187,11 +187,7 @@ export class CredentialComponent {
             .map((prop) => {
                 let value = '';
                 if (prop == 'wallet') {
-                    if (subject[prop].length == 1) {
-                        value = GlobalTranslationService.instance.translateInstant('identity.wallet-one-address');
-                    } else {
-                        value = GlobalTranslationService.instance.translateInstant('identity.wallet-addresses', { count: subject[prop].length});
-                    }
+                    value = GlobalTranslationService.instance.translateInstant('common.wallet');
                 } else {
                     value = subject[prop] != ""
                         ? subject[prop]

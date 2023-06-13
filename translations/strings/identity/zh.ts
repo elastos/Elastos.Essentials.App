@@ -99,8 +99,6 @@ export const zh = {
         'save-avatar-error-title': "保存头像失败",
         'save-avatar-error-insufficient-space': "Hive 存储空间不足",
         'select-wallet': '选择钱包',
-        'wallet-one-address': '1个地址',
-        'wallet-addresses': ' {{ count }} 个地址',
 
         // tabnav
         'home': '主页',
@@ -172,8 +170,8 @@ export const zh = {
         // component: wallet chooser
         'wallet-chooser-note': '只支持单地址钱包',
 
-        // component: wallet chooser
-        'wallet-credential-info': 'TODO: Display intro text to explain what this is about ',
+        // component: wallet credential
+        'wallet-credential-info': '在继续之前，请注意您将生成一个私人凭证，其中将包含您的钱包地址列表以及签名的所有权证明。该凭证将作为您的资产与身份之间关系的证据。创建后，凭据将安全地存储在 Essentials 中，直到第三方应用向您发起访问请求。',
 
         /******************** Intent Screens  ********************/
         // page: appidcredissue
