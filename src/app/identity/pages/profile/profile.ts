@@ -283,71 +283,11 @@ export class ProfilePage {
     switch (fragment) {
       case "avatar":
         return "image";
-      case "addresses":
-        return `/assets/identity/smallIcons/${skin}/wallet.svg`;
       default:
         return `/assets/identity/smallIcons/${skin}/${fragment}.svg`;
     }
   }
 
-  getCredIcon(entry: CredentialDisplayEntry): string {
-    let fragment = entry.credential.getFragment();
-    switch (fragment) {
-      case "avatar":
-        return "image";
-      case "wechat":
-        return "logo-whatsapp";
-      case "instagram":
-        return "logo-instagram";
-      case "facebook":
-        return "logo-facebook";
-      case "snapchat":
-        return "logo-snapchat";
-      case "twitter":
-        return "logo-twitter";
-      case "email":
-        return "mail";
-      case "birthDate":
-        return "calendar";
-      case "nationality":
-        return "flag";
-      case "gender":
-        return "transgender";
-      case "telephone":
-        return "call";
-      case "name":
-        return "person";
-      case "nickname":
-        return "glasses";
-      case "birthPlace":
-        return "globe";
-      case "occupation":
-        return "briefcase";
-      case "education":
-        return "school";
-      case "interests":
-        return "football";
-      case "description":
-        return "book";
-      case "url":
-        return "link";
-      case "telegram":
-        return "send";
-      case "tiktok":
-        return "logo-tiktok";
-      case "twitch":
-        return "logo-twitch";
-      case "venmo":
-        return "logo-venmo";
-      case "paypal":
-        return "logo-paypal";
-      case "elaAddress":
-      case "addresses":
-        return "wallet";
-      default:
-        return "finger-print";
-    }
-  }
   getIssuerIdFromVerifiableCredential(
     vc: DIDPlugin.VerifiableCredential
   ): string {
