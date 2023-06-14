@@ -210,7 +210,7 @@
         </ion-col>
       </ion-row>
 
-      <ion-row *ngIf="entry.key === 'wallet'" class="ion-align-items-center main-row">
+      <ion-row *ngIf="entry.key === 'addresses'" class="ion-align-items-center main-row">
         <ion-col size="1.25" class="icon-col" (click)="deleteProfileEntry(entry, $event)">
           <img
             [src]="theme.darkMode ? '/assets/identity/svg/white-circle-with-minus.svg' : '/assets/identity/svg/black-circle-with-minus.svg'" />

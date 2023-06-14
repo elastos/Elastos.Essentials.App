@@ -168,7 +168,7 @@ export const zh = {
         'backup-success': '太好了，您的身份现在已备份！',
 
         // component: wallet chooser
-        'wallet-chooser-note': '只支持单地址钱包',
+        'wallet-chooser-note': 'ELA 主链只支持单地址钱包',
 
         // component: wallet credential
         'wallet-credential-info': '在继续之前，请注意您将生成一个私人凭证，其中将包含您的钱包地址列表以及签名的所有权证明。该凭证将作为您的资产与身份之间关系的证据。创建后，凭据将安全地存储在 Essentials 中，直到第三方应用向您发起访问请求。',
@@ -288,7 +288,7 @@ export const zh = {
         'credential-info-type-wechat': '微信',
         'credential-info-type-weibo': '微博',
         'credential-info-type-elaAddress': 'ELA地址',
-        'credential-info-type-wallet': '钱包地址',
+        'credential-info-type-addresses': '钱包地址',
         'credential-info-type-twitch': 'Twitch',
         'credential-info-type-tiktok': '抖音',
         'credential-info-type-paypal': 'Paypal',

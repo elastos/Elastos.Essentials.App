@@ -9,6 +9,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { CoinType } from 'src/app/wallet/model/coin';
 import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
@@ -78,6 +79,7 @@ export class WalletCredentialComponent implements OnInit {
     try {
       await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_ela);
       await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_evm);
+      await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_iotex);
       await this.getAddressByNetworkKey(WalletAddressType.WalletAddressType_btc_legacy);
     } catch (e) {
       Logger.log('identity', 'getAddresses exception', e);
@@ -90,9 +92,12 @@ export class WalletCredentialComponent implements OnInit {
 
   async getAddressByNetworkKey(addressType: WalletAddressType) {
     let networkKey = '';
+    let addressUsage = AddressUsage.DEFAULT;
+    let isELAMainChain = false;
     switch (addressType) {
       case WalletAddressType.WalletAddressType_ela:
         networkKey = 'elastos';
+        isELAMainChain = true;
       break;
       case WalletAddressType.WalletAddressType_evm:
         networkKey = 'elastossmartchain';
@@ -100,12 +105,20 @@ export class WalletCredentialComponent implements OnInit {
       case WalletAddressType.WalletAddressType_btc_legacy:
         networkKey = 'btc';
       break;
+      case WalletAddressType.WalletAddressType_iotex:
+        networkKey = 'iotex';
+        addressUsage = AddressUsage.IOTEX;
+      break;
     }
     let network = await this.networkService.getNetworkByKey(networkKey);
     if (network) {
       let networkWallet = await network.createNetworkWallet(this.selectedMasterWallet, false);
-      let address = networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress();
-      this.addresses.push({type: addressType, address: address, publicKey: '', signature: ''});
+      if (networkWallet) {
+        if (!isELAMainChain || networkWallet.getNetworkOptions().singleAddress) {
+          let address = networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress(addressUsage);
+          this.addresses.push({type: addressType, address: address, publicKey: '', signature: ''});
+        }
+      }
     }
   }
 
@@ -120,6 +133,9 @@ export class WalletCredentialComponent implements OnInit {
       break;
       case WalletAddressType.WalletAddressType_btc_legacy:
         networkKey = 'btc';
+      break;
+      case WalletAddressType.WalletAddressType_iotex:
+        networkKey = 'iotex';
       break;
     }
 
@@ -145,6 +161,7 @@ export class WalletCredentialComponent implements OnInit {
 
     await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_ela, password);
     await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_evm, password);
+    await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_iotex, password);
     await this.getSignatureByNetworkKey(WalletAddressType.WalletAddressType_btc_legacy, password);
 
     Logger.log('identity', 'Address list with signature:', this.addresses)

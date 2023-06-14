@@ -312,7 +312,7 @@ export class CredentialDetailsPage implements OnInit {
   getDisplayableProperties() {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
     if (fragment === "avatar") return [];
-    if (fragment === 'wallet') {
+    if (fragment === 'addresses') {
       return this.getWalletAddresses();
     }
 
@@ -346,7 +346,7 @@ export class CredentialDetailsPage implements OnInit {
 
   isWalletCred(): boolean {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
-    if (fragment === "wallet") {
+    if (fragment === "addresses") {
       return true;
     } else {
       return false;
@@ -372,14 +372,20 @@ export class CredentialDetailsPage implements OnInit {
     let subject = this.credential.pluginVerifiableCredential.getSubject();
 
     let displayableProperties = [];
-    let addresses = subject['wallet'];
-    addresses.forEach(address => {
-      displayableProperties.push({
-        name: this.getAddressTitle(address.type),
-        value: address.address
-      })
-    });
-
+    let addresses = subject['addresses'];
+    if (addresses) {
+      addresses.forEach(address => {
+        displayableProperties.push({
+          name: this.getAddressTitle(address.type),
+          value: address.address
+        })
+      });
+    } else {
+      return [{
+        name: "Address",
+        value: this.translate.instant("identity.not-set"),
+      }]
+    }
     return displayableProperties;
   }
 
@@ -450,7 +456,7 @@ export class CredentialDetailsPage implements OnInit {
       case "paypal":
         return "logo-paypal";
       case "elaAddress":
-      case 'wallet':
+      case 'addresses':
         return "wallet";
       default:
         return "finger-print";

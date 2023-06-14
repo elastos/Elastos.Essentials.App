@@ -5,7 +5,6 @@ import FastAverageColor from 'fast-average-color';
 import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/helpers/picture.helpers';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
-import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDDocument } from '../../model/diddocument.model';
 import { VerifiableCredential } from '../../model/verifiablecredential.model';
@@ -186,8 +185,8 @@ export class CredentialComponent {
             .sort()
             .map((prop) => {
                 let value = '';
-                if (prop == 'wallet') {
-                    value = GlobalTranslationService.instance.translateInstant('common.wallet');
+                if (prop == 'addresses') {
+                    value = this.translate.instant('common.wallet');
                 } else {
                     value = subject[prop] != ""
                         ? subject[prop]

@@ -167,7 +167,7 @@ export const en = {
         'backup-success': 'Great, your identity is now backed up!',
 
         // component: wallet chooser
-        'wallet-chooser-note': 'Only single address wallets are supported',
+        'wallet-chooser-note': 'Only single address wallets are supported on the ELA main chain',
 
         // component: wallet credential
         'wallet-credential-info': 'Before you proceed, please note that you are about to generate a private credential that will contain a list of your wallet addresses along with a signed proof of ownership. This credential will serve as evidence of the relationship between your assets and your identity. Once created, the credential will be securely stored in Essentials until a third-party app requests it from you.',
@@ -288,7 +288,7 @@ export const en = {
         'credential-info-type-wechat': 'Wechat',
         'credential-info-type-weibo': 'Weibo',
         'credential-info-type-elaAddress': 'ELA Address',
-        'credential-info-type-wallet': 'Wallet Address',
+        'credential-info-type-addresses': 'Wallet Address',
         'credential-info-type-twitch': 'Twitch',
         'credential-info-type-tiktok': 'TikTok',
         'credential-info-type-paypal': 'Paypal',

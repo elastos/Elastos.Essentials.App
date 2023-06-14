@@ -21,6 +21,7 @@ import { GlobalNativeService } from "src/app/services/global.native.service";
 import { GlobalNavService } from "src/app/services/global.nav.service";
 import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
+import { WalletType } from "src/app/wallet/model/masterwallets/wallet.types";
 import { AnyNetworkWallet } from "src/app/wallet/model/networks/base/networkwallets/networkwallet";
 import { WalletService } from "src/app/wallet/services/wallet.service";
 import { area } from "../../../../assets/identity/area/area";
@@ -190,7 +191,7 @@ export class EditProfilePage {
       "email",
       "gender",
       "telephone",
-      "wallet",
+      "addresses",
     ];
     if (!specialEntries.includes(entry.key)) {
       return true;
@@ -318,7 +319,7 @@ export class EditProfilePage {
 
     /********** For 'wallet' entry **********/
     async selectWallet(entry: BasicCredentialEntry) {
-        let masterWalletId = await this.pickWallet();
+        let masterWalletId = await this.pickWallet(entry);
         if (masterWalletId) {
             let addressList = await this.showWalletCredential(masterWalletId);
             if (addressList) {
@@ -331,10 +332,26 @@ export class EditProfilePage {
     /**
      * Lets the user choose a wallet from the list but without further action.
      */
-    async pickWallet(): Promise<string> {
+    async pickWallet(entry: BasicCredentialEntry): Promise<string> {
+        let networkWallets = WalletService.instance.getNetworkWalletsList();
+
+        let networkWalletsAvailable = networkWallets.filter( n => {
+          switch (n.masterWallet.type) {
+            case WalletType.MULTI_SIG_STANDARD:
+            case WalletType.LEDGER:
+            case WalletType.MULTI_SIG_EVM_GNOSIS:
+                return false;
+            default:
+                return true;
+          }
+        })
+
+        if (networkWalletsAvailable && networkWalletsAvailable.length == 1) {
+          return networkWalletsAvailable[0].masterWallet.id;
+        }
+
         let options: WalletChooserComponentOptions = {
-            currentNetworkWallet: WalletService.instance.activeNetworkWallet.value,
-            showActiveWallet: true
+            addresses: entry.value
         };
 
         let modal = await this.modalCtrl.create({

@@ -117,6 +117,7 @@ export class WalletInitService extends GlobalService {
 
     await this.prefs.init();
 
+    await this.currencyService.init(); // Currency cache must be ready for other services
     // Networks init + registration
     await this.networkService.init();
     await this.customNetworkService.init();
@@ -128,7 +129,6 @@ export class WalletInitService extends GlobalService {
     this.registerNameResolvers();
 
     // Do not await.
-    await this.currencyService.init(); // Currency cache must be ready for other services
     void this.uniswapCurrencyService.init();
     void this.contactsService.init();
     void this.ethTransactionService.init();

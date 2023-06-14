@@ -231,12 +231,17 @@ export class ProfilePage {
       .filter((key) => key != "id")
       .sort()
       .map((prop) => {
+        let value = '';
+        if (prop == 'addresses') {
+            value = this.translate.instant('common.wallet');
+        } else {
+            value = subject[prop] != ""
+                ? subject[prop]
+                : this.translate.instant("identity.not-set");
+        }
         return {
-          name: prop,
-          value:
-            subject[prop] != ""
-              ? subject[prop]
-              : this.translate.instant("identity.not-set"),
+            name: prop,
+            value: value
         };
       });
   }
@@ -278,6 +283,8 @@ export class ProfilePage {
     switch (fragment) {
       case "avatar":
         return "image";
+      case "addresses":
+        return `/assets/identity/smallIcons/${skin}/wallet.svg`;
       default:
         return `/assets/identity/smallIcons/${skin}/${fragment}.svg`;
     }
@@ -335,6 +342,7 @@ export class ProfilePage {
       case "paypal":
         return "logo-paypal";
       case "elaAddress":
+      case "addresses":
         return "wallet";
       default:
         return "finger-print";
