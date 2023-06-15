@@ -592,8 +592,9 @@ export class CRCouncilService {
             let utxoArray = await GlobalElastosAPIService.instance.getAllUtxoByAddress(StandardCoinName.ELA, [depositAddress], UtxoType.Normal) as Utxo[];
             Logger.log(App.CRCOUNCIL_VOTING, "utxoArray:", utxoArray);
 
-            let utxo = await this.voteService.sourceSubwallet.getUtxoForSDK(utxoArray);
+            let utxo = await this.voteService.sourceSubwallet.getUtxoForSDKEx(utxoArray);
 
+            // TODO: We should reserve some, if we retrive all of the deposit, it may be due to accuracy issues that may cause errors.
             const rawTx = await this.voteService.sourceSubwallet.createRetrieveCRDepositTransaction(utxo, available, "");
             Logger.log(App.CRCOUNCIL_VOTING, 'rawTx', rawTx);
             await this.globalNative.hideLoading();

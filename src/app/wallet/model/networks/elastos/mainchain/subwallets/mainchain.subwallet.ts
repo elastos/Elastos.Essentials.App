@@ -856,6 +856,26 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return await utxoArrayForSDK;
     }
 
+    // Use toSELA  instead of accMul (Accuracy issues)
+    // If after complete testing, there is no problem with toSELA, the getUtxoForSDK can be deleted.
+    public async getUtxoForSDKEx(utxoArray: Utxo[] = null): Promise<UTXOInput[]> {
+        let utxoArrayForSDK = [];
+        if (utxoArray) {
+            for (let i = 0, len = utxoArray.length; i < len; i++) {
+                let utxoInput: UTXOInput = {
+                    Address: utxoArray[i].address,
+                    Amount: Util.toSELA(parseFloat(utxoArray[i].amount)),
+                    Index: utxoArray[i].vout,
+                    TxHash: utxoArray[i].txid
+                }
+                utxoArrayForSDK.push(utxoInput);
+            }
+        }
+
+        Logger.log('wallet', 'UTXO for transfer:', utxoArrayForSDK);
+        return await utxoArrayForSDK;
+    }
+
     private async getVotedContent(): Promise<RawVoteContent[]> {
         // We only consider the case of one utxo for voting.
         if (this.votingUtxoArray && (this.votingUtxoArray.length > 0)) {
@@ -1665,9 +1685,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createRetrieveDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) await this.throwUtxoNotEnoughError();
-
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),
@@ -1735,9 +1752,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createRetrieveCRDepositTransaction(utxo: UTXOInput[], amount: number, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
-        if (!au.utxo) await this.throwUtxoNotEnoughError();
-
         return await (this.networkWallet.safe as unknown as ElastosMainChainSafe).createRetrieveCRDepositTransaction(
             utxo,
             Util.accMul(amount, Config.SELA).toString(),

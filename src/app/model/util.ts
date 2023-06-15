@@ -3,6 +3,7 @@ import Base58 from 'base-58/Base58';
 import BigNumber from 'bignumber.js';
 import moment from 'moment';
 import { DIDService } from '../identity/services/did.service';
+import { Config } from '../wallet/config/Config';
 import { DIDSessionsStore } from './../services/stores/didsessions.store';
 
 
@@ -160,6 +161,8 @@ export class Util {
         return typeof num === 'number' && !isNaN(num);
     }
 
+    // TODO: Accuracy issues
+    // eg Util.accMul(5166.24809741, Config.SELA), the result is 516624809740
     public static accMul(arg1: number, arg2: number): number {
         if (!this.isNumber(arg1)) {
             arg1 = Number(arg1);
@@ -179,6 +182,10 @@ export class Util {
         try { m += s2.split(".")[1].length } catch (e) { }
 
         return Math.floor(Number(s1.replace(".", "")) * Number(s2.replace(".", "")) / Math.pow(10, m))
+    }
+
+    public static toSELA(ela: number): string {
+      return (new BigNumber(ela)).multipliedBy(Config.SELA).toFixed(0);
     }
 
     // ceil(12345, 1000) => 13000

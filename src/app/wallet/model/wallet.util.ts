@@ -133,6 +133,8 @@ export class WalletUtil {
             case ELAAddressPrefix.PrefixStandard:
             case ELAAddressPrefix.PrefixMultiSign:
             case ELAAddressPrefix.PrefixCRExpenses:
+            case ELAAddressPrefix.PrefixDeposit:
+            case ELAAddressPrefix.PrefixDestroy:
               return true;
             default:
               return false;
