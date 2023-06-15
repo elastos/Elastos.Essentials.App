@@ -26,6 +26,7 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { mnemonicToSeedSync } from "bip39";
 import { BehaviorSubject } from 'rxjs';
+import { WalletAddress } from 'src/app/identity/components/wallet-credential/wallet-credential.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -422,6 +423,20 @@ export class WalletService {
 
             return Object.values(this.networkWallets).filter(nw => nw?.masterWallet.supportsNetwork(nw.network));
         }
+    }
+
+    /**
+     * Get the networkWallet that matches the wallet credential.
+     */
+    public getNetworkWalletByWalletCredential(addresses: WalletAddress[]) {
+        return this.getNetworkWalletsList().find( n => {
+            let publicKey = n.getPublicKey();
+            if (publicKey) {
+                if (addresses.findIndex(a => a.publicKey == publicKey) != -1)
+                    return true;
+            }
+            return false;
+        })
     }
 
     /**
