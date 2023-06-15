@@ -191,7 +191,7 @@ export class EditProfilePage {
       "email",
       "gender",
       "telephone",
-      "addresses",
+      "wallet",
     ];
     if (!specialEntries.includes(entry.key)) {
       return true;

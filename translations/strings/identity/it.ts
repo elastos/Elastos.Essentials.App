@@ -288,7 +288,7 @@ export const it = {
         'credential-info-type-wechat': 'Wechat',
         'credential-info-type-weibo': 'Weibo',
         'credential-info-type-elaAddress': 'Indirizzo ELA',
-        'credential-info-type-addresses': 'Indirizzo del portafoglio',
+        'credential-info-type-wallet': 'Indirizzo del portafoglio',
         'credential-info-type-twitch': 'Twitch',
         'credential-info-type-tiktok': 'TikTok',
         'credential-info-type-paypal': 'Paypal',

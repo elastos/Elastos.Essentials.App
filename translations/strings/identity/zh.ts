@@ -288,7 +288,7 @@ export const zh = {
         'credential-info-type-wechat': '微信',
         'credential-info-type-weibo': '微博',
         'credential-info-type-elaAddress': 'ELA地址',
-        'credential-info-type-addresses': '钱包地址',
+        'credential-info-type-wallet': '钱包地址',
         'credential-info-type-twitch': 'Twitch',
         'credential-info-type-tiktok': '抖音',
         'credential-info-type-paypal': 'Paypal',

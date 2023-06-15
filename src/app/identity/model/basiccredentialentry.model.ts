@@ -24,7 +24,7 @@ export class BasicCredentialEntry {
         return this.getDisplayableDate();
       case 'gender':
         return this.getDisplayableGender();
-      case 'addresses':
+      case 'wallet':
         return this.getDisplayableWallet();
       default:
         return this.value;

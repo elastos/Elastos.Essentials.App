@@ -29,7 +29,7 @@ export enum WalletAddressType {
 }
 
 export type WalletAddress = {
-    type: WalletAddressType,
+    addressType: WalletAddressType,
     address: string,
     publicKey: string,
     signature: string, // result of signature of concat(did, wallet address)
@@ -116,7 +116,7 @@ export class WalletCredentialComponent implements OnInit {
       if (networkWallet) {
         if (!isELAMainChain || networkWallet.getNetworkOptions().singleAddress) {
           let address = networkWallet.getMainTokenSubWallet().getCurrentReceiverAddress(addressUsage);
-          this.addresses.push({type: addressType, address: address, publicKey: '', signature: ''});
+          this.addresses.push({addressType: addressType, address: address, publicKey: '', signature: ''});
         }
       }
     }
@@ -139,7 +139,7 @@ export class WalletCredentialComponent implements OnInit {
       break;
     }
 
-    let walletAddress = this.addresses.find( a => a.type === addressType);
+    let walletAddress = this.addresses.find( a => a.addressType === addressType);
     if (walletAddress) {
       let network = await this.networkService.getNetworkByKey(networkKey);
       if (network) {

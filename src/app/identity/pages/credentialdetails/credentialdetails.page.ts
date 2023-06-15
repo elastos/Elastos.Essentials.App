@@ -312,7 +312,7 @@ export class CredentialDetailsPage implements OnInit {
   getDisplayableProperties() {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
     if (fragment === "avatar") return [];
-    if (fragment === 'addresses') {
+    if (fragment === 'wallet') {
       return this.getWalletAddresses();
     }
 
@@ -346,7 +346,7 @@ export class CredentialDetailsPage implements OnInit {
 
   isWalletCred(): boolean {
     let fragment = this.credential.pluginVerifiableCredential.getFragment();
-    if (fragment === "addresses") {
+    if (fragment === "wallet") {
       return true;
     } else {
       return false;
@@ -372,11 +372,11 @@ export class CredentialDetailsPage implements OnInit {
     let subject = this.credential.pluginVerifiableCredential.getSubject();
 
     let displayableProperties = [];
-    let addresses = subject['addresses'];
+    let addresses = subject['wallet'];
     if (addresses) {
       addresses.forEach(address => {
         displayableProperties.push({
-          name: this.getAddressTitle(address.type),
+          name: this.getAddressTitle(address.addressType),
           value: address.address
         })
       });

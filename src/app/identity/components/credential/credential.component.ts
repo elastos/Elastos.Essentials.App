@@ -185,7 +185,7 @@ export class CredentialComponent {
             .sort()
             .map((prop) => {
                 let value = '';
-                if (prop == 'addresses') {
+                if (prop == 'wallet') {
                     value = this.translate.instant('common.wallet');
                 } else {
                     value = subject[prop] != ""
