@@ -8,6 +8,7 @@ import { TitleBarComponent } from "src/app/components/titlebar/titlebar.componen
 import { Logger } from "src/app/logger";
 import { GlobalEvents } from "src/app/services/global.events.service";
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { WalletService } from "src/app/wallet/services/wallet.service";
 import { ShowQRCodeComponent } from "../../components/showqrcode/showqrcode.component";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
@@ -234,6 +235,11 @@ export class ProfilePage {
         let value = '';
         if (prop == 'wallet') {
             value = this.translate.instant('common.wallet');
+
+            let networkWallet = WalletService.instance.getNetworkWalletByWalletCredential(subject[prop]);
+            if (networkWallet) {
+              value += ' - ' + networkWallet.masterWallet.name;
+            }
         } else {
             value = subject[prop] != ""
                 ? subject[prop]

@@ -6,6 +6,7 @@ import { rawImageToBase64DataUrl, transparentPixelIconDataUrl } from 'src/app/he
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { DIDDocument } from '../../model/diddocument.model';
 import { VerifiableCredential } from '../../model/verifiablecredential.model';
 import { CredentialsService } from '../../services/credentials.service';
@@ -187,6 +188,11 @@ export class CredentialComponent {
                 let value = '';
                 if (prop == 'wallet') {
                     value = this.translate.instant('common.wallet');
+
+                    let networkWallet = WalletService.instance.getNetworkWalletByWalletCredential(subject[prop]);
+                    if (networkWallet) {
+                      value += ' - ' + networkWallet.masterWallet.name;
+                    }
                 } else {
                     value = subject[prop] != ""
                         ? subject[prop]
