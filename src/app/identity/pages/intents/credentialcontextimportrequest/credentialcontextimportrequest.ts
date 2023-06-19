@@ -147,6 +147,9 @@ export class CredentialContextImportRequestPage {
       if (subjectEntryKey == "id") // Don't display the special subject id entry
         continue;
 
+      if (subjectEntryKey == "displayable") // Don't display the special subject displayable entry
+        continue;
+
       let displayableEntry: ImportedCredentialItem = {
         name: subjectEntryKey,
         value: subjectEntryValue,
