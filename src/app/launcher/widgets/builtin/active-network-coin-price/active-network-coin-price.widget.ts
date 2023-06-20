@@ -20,6 +20,7 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
   private coinPriceRoot: ElementRef;
   @ViewChild('coinPriceRoot', { static: false }) set content(_coinPriceRoot: ElementRef) {
     this.coinPriceRoot = _coinPriceRoot;
+    void this.prepare();
   }
 
   public activeNetwork: AnyNetwork = null;
