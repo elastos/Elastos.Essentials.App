@@ -193,11 +193,18 @@ export class CredentialComponent {
                     if (networkWallet) {
                       value += ' - ' + networkWallet.masterWallet.name;
                     }
+                } else if (prop == 'gender') {
+                    if (subject[prop] == 'M' || subject[prop] == 'male') {
+                        value = this.translate.instant("identity.male");
+                    } else if (subject[prop] == 'F' || subject[prop] == 'female') {
+                        value = this.translate.instant("identity.female");
+                    }
                 } else {
                     value = subject[prop] != ""
                         ? subject[prop]
                         : this.translate.instant("identity.not-set");
                 }
+
                 return {
                     name: prop,
                     value: value

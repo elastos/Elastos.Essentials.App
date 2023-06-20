@@ -93,6 +93,8 @@ export class EditProfilePage {
     // Get a profile object - higher level representation of basic credentials in the local DID document, for convenience.
     this.profile = Profile.fromProfile(this.profileService.getBasicProfile());
 
+    this.updateCredentialForCompatibility();
+
     // Get noticed when the avatar become ready
     this.profileService.getAvatarDataUrl().subscribe(dataUrl => {
       this.avatarDataUrl = dataUrl;
@@ -591,4 +593,20 @@ export class EditProfilePage {
     event.stopImmediatePropagation();
     this.profile.deleteEntry(entry);
   }
+
+  // Updating credential value for compatibility with old data,
+  updateCredentialForCompatibility() {
+    // gender: [male, female] => [M, F]
+    let gender = this.profile.entries.find( p => {
+      return p.key == 'gender'
+    })
+    if (gender) {
+      if (gender.value == 'male') {
+        gender.value = 'M';
+      } else if (gender.value == 'female') {
+        gender.value = 'F';
+      }
+    }
+  }
+
 }

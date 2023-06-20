@@ -77,7 +77,7 @@ export class Profile {
   isMale() {
     let genderEntry = this.getEntryByKey("gender");
     return (
-      !genderEntry || genderEntry.value == "" || genderEntry.value == "male"
+      !genderEntry || genderEntry.value == "" || genderEntry.value == "male" || genderEntry.value == "M"
     );
   }
 
