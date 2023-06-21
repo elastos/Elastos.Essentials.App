@@ -175,8 +175,12 @@ export class CredentialImportRequestPage {
    * NOTE: We can have several credentials passed at the same time. Each credential can have several entries in its subject.
    */
   organizeImportedCredentials() {
+    let didStoreId = this.didService.getCurDidStoreId();
+
     this.displayableCredentials = [];
     for (let key of Object.keys(this.receivedIntent.params.credentials)) {
+      // Set the didStoreId
+      this.receivedIntent.params.credentials[key].didStoreId = didStoreId;
       let importedCredential: DIDPlugin.VerifiableCredential = didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(this.receivedIntent.params.credentials[key]));
       Logger.log('Identity', "Received imported credential:", importedCredential);
 

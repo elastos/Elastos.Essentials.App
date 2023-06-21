@@ -133,7 +133,11 @@ export class CredentialContextImportRequestPage {
    * ready for UI.
    */
   organizeImportedCredential() {
+    let didStoreId = this.didService.getCurDidStoreId();
     let credential = this.receivedIntent.params.credential;
+
+    // Set the didStoreId
+    credential.didStoreId = didStoreId;
     let importedCredential: DIDPlugin.VerifiableCredential = didManager.VerifiableCredentialBuilder.fromJson(JSON.stringify(credential));
     Logger.log('Identity', "Received imported credential:", importedCredential);
 
