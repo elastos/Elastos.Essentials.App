@@ -176,7 +176,7 @@
     "@angular/compiler-cli": "13.1.1",
     "@angular/language-service": "13.1.1",
     "@elastosfoundation/elastos-connectivity-sdk-js": "^1.1.7",
-    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.51",
+    "@elastosfoundation/elastos-cordova-plugin-did": "^1.0.53",
     "@ionic/angular-toolkit": "^4.0.0",
     "@types/colors": "^1.2.1",
     "@types/create-hash": "^1.2.2",
