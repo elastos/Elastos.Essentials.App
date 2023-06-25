@@ -73,6 +73,9 @@
       ],
       "web3": [
         "./node_modules/web3/dist/web3.min.js"
+      ],
+      "querystring":[
+        "./node_modules/querystring-es3"
       ]
     }
   }

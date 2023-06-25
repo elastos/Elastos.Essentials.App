@@ -144,6 +144,7 @@
     "path-browserify": "^1.0.1",
     "promise-queue": "^2.2.5",
     "qr-scanner": "1.2.0",
+    "querystring-es3": "^0.2.1",
     "random-int": "^3.0.0",
     "rxjs": "^7.5.7",
     "smart-buffer": "^4.2.0",
@@ -232,7 +233,8 @@
     "http": false,
     "https": false,
     "os": false,
-    "fs": false
+    "fs": false,
+    "querystring": false
   },
   "browserslist": [
     "> 0.5%",
