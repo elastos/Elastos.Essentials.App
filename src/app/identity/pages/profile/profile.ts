@@ -235,10 +235,11 @@ export class ProfilePage {
         let value = '';
         if (prop == 'wallet') {
             value = this.translate.instant('common.wallet');
-
-            let networkWallet = WalletService.instance.getNetworkWalletByWalletCredential(subject[prop]);
-            if (networkWallet) {
-              value += ' - ' + networkWallet.masterWallet.name;
+            if (subject[prop]) {
+              let networkWallet = WalletService.instance.getNetworkWalletByWalletCredential(subject[prop]);
+              if (networkWallet) {
+                value += ' - ' + networkWallet.masterWallet.name;
+              }
             }
         } else {
             value = subject[prop] != ""
