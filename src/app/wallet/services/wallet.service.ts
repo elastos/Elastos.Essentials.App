@@ -429,6 +429,8 @@ export class WalletService {
      * Get the networkWallet that matches the wallet credential.
      */
     public getNetworkWalletByWalletCredential(addresses: WalletAddress[]) {
+        if (!addresses || addresses.length == 0) return null;
+
         return this.getNetworkWalletsList().find( n => {
             let publicKey = n.getPublicKey();
             if (publicKey) {
