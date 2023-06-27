@@ -433,6 +433,10 @@ export class GlobalElastosAPIService extends GlobalService {
         this._bestProvider = null;
         let testPromises: Promise<void>[] = this.availableProviders.map(p => this.callTestAPIOnProvider(p));
         await Promise.race(testPromises);
+
+        if (!this._bestProvider) {
+            this._bestProvider = this.availableProviders[0];
+        }
         Logger.log("elastosapi", "Got the best API provider", this._bestProvider);
 
         return this._bestProvider;

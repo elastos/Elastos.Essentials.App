@@ -201,6 +201,7 @@ export class IdentityService {
             // Automatically find and use the best elastos API provider
             let findProvider = await this.globalElastosAPIService.autoDetectTheBestProvider();
             if (!findProvider) {
+                await this.nativeService.hideLoading();
                 await this.uxService.toast_trans("common.network-or-server-error");
                 return;
             }
