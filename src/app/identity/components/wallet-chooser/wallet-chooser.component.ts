@@ -11,7 +11,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { WalletAddress } from '../wallet-credential/wallet-credential.component';
+import { WalletAddress, WalletAddressType } from '../wallet-credential/wallet-credential.component';
 
 
 /**
@@ -116,9 +116,16 @@ export class WalletChooserComponent implements OnInit {
     }
 
     let networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(wallet.id);
+
     let publicKey = networkWallet.getPublicKey();
-    if (this.addresses.findIndex(a => a.publicKey == publicKey) != -1)
-      return true;
+    if (this.addresses.findIndex(a => a.publicKey == publicKey) != -1) {
+      // Check if the wallet was created by mnemonic.
+      // If it was created by mnemonic, there must also be a btc in the address,
+      // otherwise it may have been created using a private key.
+      let createdByMnemonic = wallet.networkOptions.length > 0;
+      let hasBTCAddress = this.addresses.findIndex( a => a.addressType == WalletAddressType.WalletAddressType_btc_legacy) !== -1;
+      return createdByMnemonic ? hasBTCAddress : !hasBTCAddress;
+    }
 
     return false;
   }
