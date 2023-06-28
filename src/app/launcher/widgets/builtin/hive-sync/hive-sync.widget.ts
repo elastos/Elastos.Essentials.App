@@ -32,13 +32,16 @@ export class HiveSyncWidget extends WidgetBase implements OnInit, OnDestroy {
     void this.globalHiveService.getSyncDataToHiveWasPrompted().then(prompted => {
       this.needToPromptHiveSync = !prompted
 
-      this.notifyReadyToDisplay();
+      // this.notifyReadyToDisplay();
     });
 
     // Watch edition mode change to show this widget in edition even if not showing in live mode.
     WidgetsServiceEvents.editionMode.subscribe(editing => {
       this.editing = editing;
     });
+
+    // In order to display the main page as soon as possible, don't wait for getSyncDataToHiveWasPrompted().
+    this.notifyReadyToDisplay();
   }
 
   ngOnDestroy(): void {

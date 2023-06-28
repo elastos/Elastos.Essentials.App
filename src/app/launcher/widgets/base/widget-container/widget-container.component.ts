@@ -1,6 +1,6 @@
 import {
-    animate, state,
-    style, transition, trigger
+  animate, state,
+  style, transition, trigger
 } from '@angular/animations';
 import { DragDrop, DragRef, DropListRef } from '@angular/cdk/drag-drop';
 import { Component, ComponentRef, Input, NgZone, OnInit, TemplateRef, ViewChild, ViewContainerRef, ViewRef } from '@angular/core';
@@ -138,9 +138,10 @@ export class WidgetContainerComponent implements OnInit {
             holder.instance.widgetComponent.onReadyToDisplay.subscribe(ready => {
               this.zone.run(() => {
                 this.widgetsReadyToDisplay[holder.instance.widgetComponent.widgetState.id] = ready; // Widget not ready yet
-
-                // NOTE: settimeout to solve the "Expression has changed after it was checked" error
-                setTimeout(() => { this.checkAllWidgetsReady(); }, 0);
+                if (ready) {
+                  // NOTE: settimeout to solve the "Expression has changed after it was checked" error
+                  setTimeout(() => { this.checkAllWidgetsReady(); }, 0);
+                }
               });
             });
           }

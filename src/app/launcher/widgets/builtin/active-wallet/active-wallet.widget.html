@@ -12,7 +12,7 @@
   </ion-row>
 
   <!-- Widget with background -->
-  <ion-row class="wallets-row">
+  <ion-row class="wallets-row" *ngIf="initializationComplete">
     <ion-col size="12" class="wallets-col">
       <div *ngIf="masterWalletWithNetworkWalletList.length == 0" (click)="openWallet()" class="no-wallet">
         {{ 'launcher.touch-to-create-wallet' | translate }}
@@ -72,6 +72,19 @@
         <div class="bullet" *ngFor="let wallet of masterWalletWithNetworkWalletList; let i = index" [class.active]="i === activeWalletIndex" (click)="goToWalletIndex(i)"></div>
         <!-- <ion-icon name="chevron-back-outline" class="left" (click)="prevWallet()"></ion-icon>
         <ion-icon name="chevron-forward-outline" class="right" (click)="nextWallet()"></ion-icon> -->
+      </div>
+    </ion-col>
+  </ion-row>
+
+  <ion-row class="wallets-row" *ngIf="!initializationComplete">
+    <ion-col size="12" class="wallets-col">
+      <div class="wallet-loading-row ripple ion-activatable" [style.background]="backgroundGradient">
+        <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
+        <ion-row class="card-label-row" >
+          <div class="main-content">
+            <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
+          </div>
+        </ion-row>
       </div>
     </ion-col>
   </ion-row>

@@ -32,6 +32,7 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
   public activeWalletEntry: MasterWalletWithNetworkWallet = null;
   public activeWalletIndex = -1;
   private activatingWallet = false;
+  public initializationComplete = false;
 
   private popover: HTMLIonPopoverElement = null;
   public masterWalletWithNetworkWalletList: MasterWalletWithNetworkWallet[] = []
@@ -67,7 +68,8 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     this.walletServiceSub = this.walletService.walletServiceStatus.subscribe((initializationComplete) => {
       //console.log("walletServiceStatus", initializationComplete)
       if (initializationComplete) {
-        this.notifyReadyToDisplay();
+        this.initializationComplete = true;
+        // this.notifyReadyToDisplay();
         void this.updateWidgetMainWallet();
       }
     });
@@ -80,12 +82,18 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     });
 
     this.activeNetworkSub = this.walletNetworkService.activeNetwork.subscribe(networkName => {
-      //console.log("activeNetwork", networkName, this.walletService.walletServiceStatus.value)
-      if (this.walletService.walletServiceStatus.value) {
-        void this.updateWidgetMainWallet();
+      //console.log("networkName", networkName)
+      // Background gradient color
+      if (this.walletNetworkService.activeNetwork.value) {
+        let networkColor = this.walletNetworkService.activeNetwork.value.getMainColor(); // RRGGBB
+        let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
+        this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
       }
     });
 
+    // The initialization of the wallet service takes several seconds,
+    // In order to display the main page as soon as possible, don't wait for the wallet service initialization to be completed.
+    this.notifyReadyToDisplay();
     return;
   }
 
@@ -138,11 +146,11 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     }
 
     // Background gradient color
-    if (this.walletNetworkService.activeNetwork.value) {
-      let networkColor = this.walletNetworkService.activeNetwork.value.getMainColor(); // RRGGBB
-      let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
-      this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
-    }
+    // if (this.walletNetworkService.activeNetwork.value) {
+    //   let networkColor = this.walletNetworkService.activeNetwork.value.getMainColor(); // RRGGBB
+    //   let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
+    //   this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
+    // }
 
     this.networkWalletsList = networkWalletsList;
     this.masterWalletWithNetworkWalletList = masterWalletWithNetworkWalletList;

@@ -189,4 +189,34 @@ ion-slides {
             }
         }
     }
+
+    .wallet-loading-row {
+      position: relative;
+      border-radius: 14px;
+      padding: 5px 10px 10px;
+      background-repeat: no-repeat;
+      background-size: cover;
+      width: 100%;
+      height: 110px;
+
+      .card-label-row {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+          position: relative;
+          height: 100%;
+
+          .main-content {
+              margin-left: 70px;
+              text-align: left;
+              width: 100%;
+
+              ion-skeleton-text {
+                height: 20px;
+                --background-rgb: 77, 77, 77;
+              }
+          }
+      }
+  }
 }
