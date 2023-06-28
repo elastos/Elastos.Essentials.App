@@ -11,7 +11,7 @@ import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
-import { WalletAddress, WalletAddressType } from '../wallet-credential/wallet-credential.component';
+import { WalletAddress, WalletAddressType } from '../../model/walletCredential';
 
 
 /**

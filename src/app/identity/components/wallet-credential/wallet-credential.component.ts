@@ -15,25 +15,12 @@ import { AuthService } from 'src/app/wallet/services/auth.service';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
+import { WalletAddress, WalletAddressType } from '../../model/walletCredential';
 
 export type WalletCredentialComponentOptions = {
   masterWalletId: string;
 }
 
-export enum WalletAddressType {
-  WalletAddressType_btc_legacy = 'btclegacy',
-  WalletAddressType_ela = 'elastosmainchain',
-  WalletAddressType_evm = 'evm',
-  WalletAddressType_iotex = 'iotex',
-  WalletAddressType_tron = 'tron',
-}
-
-export type WalletAddress = {
-    addressType: WalletAddressType,
-    address: string,
-    publicKey: string,
-    signature: string, // result of signature of concat(did, wallet address)
-}
 
 /**
  * This dialog shows the list of all master wallets so that user can pick one.

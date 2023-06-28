@@ -26,7 +26,7 @@ import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { mnemonicToSeedSync } from "bip39";
 import { BehaviorSubject } from 'rxjs';
-import { WalletAddress } from 'src/app/identity/components/wallet-credential/wallet-credential.component';
+import { WalletAddress, WalletAddressType } from 'src/app/identity/model/walletCredential';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -434,8 +434,16 @@ export class WalletService {
         return this.getNetworkWalletsList().find( n => {
             let publicKey = n.getPublicKey();
             if (publicKey) {
-                if (addresses.findIndex(a => a.publicKey == publicKey) != -1)
-                    return true;
+                if (addresses.findIndex(a => a.publicKey == publicKey) != -1) {
+                  // Check if the wallet was created by mnemonic.
+                  // If it was created by mnemonic, there must also be a btc in the address,
+                  // otherwise it may have been created using a private key.
+                  let createdByMnemonic = n.masterWallet.networkOptions.length > 0;
+                  let hasBTCAddress = addresses.findIndex( a => a.addressType == WalletAddressType.WalletAddressType_btc_legacy) !== -1;
+                  return createdByMnemonic ? hasBTCAddress : !hasBTCAddress;
+                }
+
+                return false;
             }
             return false;
         })
