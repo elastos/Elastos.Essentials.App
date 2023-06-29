@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/cor
 import { Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import marked from 'marked';
+import { marked } from 'marked';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';

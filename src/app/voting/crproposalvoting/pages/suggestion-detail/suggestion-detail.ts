@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import marked from 'marked';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
@@ -14,6 +13,7 @@ import { UXService } from '../../../services/ux.service';
 import { SuggestionDetail, SuggestionSearchResult } from '../../model/suggestion-model';
 import { CRCommandType, CROperationsService } from '../../services/croperations.service';
 // import { DraftService } from '../../services/draft.service';
+import { marked } from 'marked';
 import { SuggestionService } from '../../services/suggestion.service';
 
 type MergedSuggestionInfo = SuggestionSearchResult & SuggestionDetail;
