@@ -63,6 +63,9 @@ export class SuggestionService {
 
     public async fetchSuggestions(status: SuggestionStatus, page: number, results = 10): Promise<SuggestionSearchResult[]> {
         try {
+            if (results < 10) {
+                results = 10;
+            }
             var url = this.getCrRpcApi() + '/api/v2/suggestion/all_search?page=' + page + '&results=' + results;
             if (status != SuggestionStatus.ALL) {
                 url = url + '&status=' + status;

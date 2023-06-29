@@ -54,6 +54,9 @@ export class ProposalService {
 
     public async fetchProposals(status: ProposalStatus, page: number, results = 10): Promise<ProposalSearchResult[]> {
         try {
+            if (results < 10) {
+                results = 10;
+            }
             var url = this.getCrRpcApi() + '/api/v2/proposal/all_search?status=' + status + '&page=' + page + '&results=' + results;
             let result = await this.jsonRPCService.httpGet(url);
             Logger.log(App.CRPROPOSAL_VOTING, "fetchProposals", url, result);

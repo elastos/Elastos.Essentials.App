@@ -88,7 +88,7 @@ export class SuggestionListPage implements OnInit {
             this.showSearch = true;
             this.fetchPage = Math.floor(this.suggestions.length / 10) + 1;
             this.titleBar.setTitle(this.translate.instant('crproposalvoting.suggestions'));
-            Logger.log(App.CRSUGGESTION, 'fetchProposals', this.suggestions);
+            Logger.log(App.CRSUGGESTION, 'fetchSuggestions', this.suggestions);
         }
         catch (err) {
             Logger.error(App.CRSUGGESTION, 'fetchSuggestions error:', err)
