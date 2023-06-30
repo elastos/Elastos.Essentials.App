@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { DIDHelper } from 'src/app/helpers/did.helper';
 import { Logger } from 'src/app/logger';
 import { DIDURL } from './didurl.model';
@@ -79,7 +80,9 @@ export class DID {
             try {
                 Logger.log('didsessions', "Asking DIDService to create the credential with id "+credentialId);
                 // the max validity days is 5*365 (5 years).
-                credential = await this.createPluginCredential(credentialId, types, 5*365, props, password);
+                let dateCurrent = moment();
+                let validityDays = moment().add(5, 'year').diff(dateCurrent, 'day');
+                credential = await this.createPluginCredential(credentialId, types, validityDays, props, password);
                 Logger.log('didsessions', "Created credential:",JSON.parse(JSON.stringify(credential)));
             }
             catch (e) {

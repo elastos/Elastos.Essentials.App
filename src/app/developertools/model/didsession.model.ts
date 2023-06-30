@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Logger } from "src/app/logger";
 import { DIDPublicationStatus, GlobalPublicationService } from "src/app/services/global.publication.service";
 
@@ -99,7 +100,8 @@ export class DIDSession {
     private updateDIDDocumentsWithApplicationCredential(credentialName: string, properties: any, credentialType: string): Promise<void> {
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         return new Promise((resolve, reject) => {
-            let validityDays: any = 5 * 365; // 5 years
+            let dateCurrent = moment();
+            let validityDays: any = moment().add(5, 'year').diff(dateCurrent, 'day'); // 5 years
 
             // Create a new credential that contains all the app info, in our local DID
             // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
