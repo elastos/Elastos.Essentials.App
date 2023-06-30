@@ -46,7 +46,8 @@
                 (click)="openRecent(recentApp)">
                 <ion-col class="left-col" size="2">
                     <div class="icon-container">
-                        <img [cache]="recentApp.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg">
+                        <img *ngIf="recentApp.iconUrl.startsWith('/assets')" [src]="recentApp.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg">
+                        <img *ngIf="!recentApp.iconUrl.startsWith('/assets')" [cache]="recentApp.iconUrl" src-fallback="/assets/launcher/apps/app-icons/browser.svg">
                     </div>
                 </ion-col>
                 <ion-col class="middle-col" size="8">
