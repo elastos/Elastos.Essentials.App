@@ -121,6 +121,8 @@ export class CredentialAccessRequestPage {
   public publishedDidRequested = false;
   public publishingDidRequired = false;
 
+  private alert = null;
+
   public mandatoryItems: ClaimRequest[] = [];
   public optionalItems: ClaimRequest[] = [];
 
@@ -178,8 +180,8 @@ export class CredentialAccessRequestPage {
       if (status.checked) {
         this.publishStatusFetched = true;
         this.didNeedsToBePublished = status.document == null;
-
-        void this.handleRequiresPublishing();
+        if (!this.alert)
+          void this.handleRequiresPublishing();
       }
     });
 
@@ -356,7 +358,9 @@ export class CredentialAccessRequestPage {
   }
 
   async alertDidNeedsPublishing() {
-    const alert = await this.alertCtrl.create({
+    if (this.alert) return; // already be shown.
+
+    this.alert = await this.alertCtrl.create({
       mode: 'ios',
       header: this.translate.instant('identity.credaccess-alert-publish-required-title'),
       message: this.translate.instant('identity.credaccess-alert-publish-required-msg'),
@@ -370,12 +374,13 @@ export class CredentialAccessRequestPage {
                 { jwt: null },
                 this.receivedIntent.intentId
               );
+              this.alert = null;
             });
           }
         }
       ]
     });
-    await alert.present();
+    await this.alert.present();
   }
 
   /**

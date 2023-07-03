@@ -118,6 +118,7 @@ export class RequestCredentialsPage {
   public didNeedsToBePublished = false;
   public publishingDidRequired = false;
   public claimsHaveBeenOrganized = false;
+  private alert = null;
 
   public organizedClaims: ClaimDisplayEntry[] = [];
 
@@ -185,7 +186,8 @@ export class RequestCredentialsPage {
         this.publishStatusFetched = true;
         this.didNeedsToBePublished = status.document == null;
 
-        void this.handleRequiresPublishing();
+        if (!this.alert)
+          void this.handleRequiresPublishing();
       }
     });
 
@@ -476,7 +478,9 @@ export class RequestCredentialsPage {
   } */
 
   async alertDidNeedsPublishing() {
-    const alert = await this.alertCtrl.create({
+    if (this.alert) return; // already be shown.
+
+    this.alert = await this.alertCtrl.create({
       mode: 'ios',
       header: this.translate.instant('identity.credaccess-alert-publish-required-title'),
       message: this.translate.instant('identity.credaccess-alert-publish-required-msg'),
@@ -490,12 +494,13 @@ export class RequestCredentialsPage {
                 { jwt: null },
                 this.receivedIntent.intentId
               );
+              this.alert = null;
             });
           }
         }
       ]
     });
-    await alert.present();
+    await this.alert.present();
   }
 
   /**
