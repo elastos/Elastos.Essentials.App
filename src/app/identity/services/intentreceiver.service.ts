@@ -332,6 +332,7 @@ export class IntentReceiverService {
 
         let requestCredentialsIntent: RequestCredentialsIntent = intent;
         // TODO: check some internal field here
+        requestCredentialsIntent.params.request.didMustBePublished = requestCredentialsIntent.params.request.didMustBePublished || true;
         this.receivedIntent = requestCredentialsIntent;
 
         return true;
