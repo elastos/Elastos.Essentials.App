@@ -72,23 +72,36 @@ export class SentryErrorHandler implements ErrorHandler {
     if (stringifiedError.indexOf("Missing or invalid topic field") >= 0)
       return true;
 
+    // walletconnect connect error.
+    if (stringifiedError.indexOf("socket stalled when trying to connect to") >= 0)
+      return true;
+
     return false;
   }
 
-    // Some dapps use localStorage.
-    private handleQuotaExceededError(error) {
-        let stringifiedError = "" + error;
-        if (stringifiedError.indexOf("QuotaExceededError") >= 0) {
-            Logger.warn("Sentry", "QuotaExceededError, clear all localStorage");
-            localStorage.clear();
-            lottie.splashscreen.show();
-            void GlobalServiceManager.getInstance().emitUserSignOut();
-            window.location.href = "/";
-            return true;
-        }
+  // Some dapps use localStorage.
+  private handleQuotaExceededError(error) {
+      let stringifiedError = "" + error;
+      if (stringifiedError.indexOf("QuotaExceededError") >= 0) {
+          Logger.warn("Sentry", "QuotaExceededError, clear all localStorage");
+          localStorage.clear();
+          lottie.splashscreen.show();
+          void GlobalServiceManager.getInstance().emitUserSignOut();
+          window.location.href = "/";
+          return true;
+      }
 
-        return false;
+      return false;
+  }
+
+  private handleNetworkError(error) {
+    let stringifiedError = "" + error;
+    if (stringifiedError.indexOf("Network error") >= 0) {
+        return true;
     }
+
+    return false;
+  }
 
   handleError(error) {
     if (this.shouldHandleAsSilentError(error)) {
@@ -98,8 +111,13 @@ export class SentryErrorHandler implements ErrorHandler {
 
     // In case of
     if (this.handleQuotaExceededError(error)) {
-        Logger.warn("Sentry", "Globally catched exception (QuotaExceededError):", error);
-        return;
+      Logger.warn("Sentry", "Globally catched exception (QuotaExceededError):", error);
+      return;
+    }
+
+    if (this.handleNetworkError(error)) {
+      GlobalNativeService.instance.genericToast('common.network-or-server-error', 5000);
+      return;
     }
 
     Logger.error("Sentry", "Globally catched exception:", error);
