@@ -29,6 +29,7 @@ import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titl
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { MainCoinSubWallet } from 'src/app/wallet/model/networks/base/subwallets/maincoin.subwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -165,7 +166,7 @@ export class WalletAssetPage implements OnDestroy {
                         }
                     }
 
-                    let subWallets = await this.getSubwalletsShouldShowOn(networkWallet, updateBalance);
+                    let subWallets = await this.getSubwalletsShouldShowOn(networkWallet, stakedBalance, updateBalance);
                     if ((subWallets.length > 0) || (stakingData.length > 0)) {
                         // getDisplayBalanceInActiveCurrency including the staked assets.
                         let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
@@ -237,7 +238,7 @@ export class WalletAssetPage implements OnDestroy {
     }
 
     // Get all subwallets that the balance is bigger than the threshold.
-    private async getSubwalletsShouldShowOn(networkWallet: AnyNetworkWallet, updateBalance = false) {
+    private async getSubwalletsShouldShowOn(networkWallet: AnyNetworkWallet, stakedBalance: number, updateBalance = false) {
         let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
         if (!updateBalance) {
             this.totalSubwalletCount += showSubwalets.length;
@@ -254,6 +255,9 @@ export class WalletAssetPage implements OnDestroy {
             }
 
             let usdBalance = showSubwalets[index].getUSDBalance();
+            if (showSubwalets[index] instanceof MainCoinSubWallet) {
+                usdBalance = usdBalance.plus(stakedBalance);
+            }
             if (usdBalance.gte(this.minAmount)) {
                 subWallets.push(showSubwalets[index]);
             }
