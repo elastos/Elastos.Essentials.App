@@ -89,8 +89,9 @@
                               </div>
                           </ion-col>
                           <ion-col [size]="5" class="middle-col">
-                              <h1>{{ network.name }}</h1>
-                              <!-- <p>{{ uiService.getSubwalletSubtitle(subWallet) }}</p> -->
+                            <!-- subWallets[0] is the MainCoinSubWallet -->
+                            <h1>{{ uiService.getSubwalletTitle(network.subWallets[0]) }}</h1>
+                            <p>{{ uiService.getSubwalletSubtitle(network.subWallets[0]) }}</p>
                           </ion-col>
                           <ion-col [size]="5" class="right-col">
                               <p>
