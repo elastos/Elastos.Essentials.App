@@ -25,7 +25,6 @@ export class StakePage {
     public signingAndTransacting = false;
     public maxStake = 0;
     public amount = 0;
-    public isSingleAddressWallet = false;
 
     constructor(
         public uxService: UXService,
@@ -44,7 +43,7 @@ export class StakePage {
 
         this.dataFetched = false;
 
-        this.maxStake = await this.stakeService.getBalanceByFirstAddress();
+        this.maxStake = (await this.stakeService.getBalance()).toNumber();
         if (this.maxStake >= 1) {
             this.maxStake = this.maxStake - 1;
         }
@@ -52,8 +51,6 @@ export class StakePage {
             this.maxStake = 0;
         }
         this.dataFetched = true;
-
-        this.isSingleAddressWallet = this.voteService.networkWallet.getNetworkOptions().singleAddress;
     }
 
     async stake() {
