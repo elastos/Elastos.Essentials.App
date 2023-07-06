@@ -1821,10 +1821,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // BPoS
     // amount: sela
     public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
-        // Use the first external address.
-        let firstExternalAddress = this.getCurrentReceiverAddress();
-
-        let au = await this.getAvailableUtxo(amount + 20000, firstExternalAddress);
+        let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(
@@ -1838,8 +1835,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
-        let firstExternalAddress = this.getCurrentReceiverAddress();
-        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
+        let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(au.utxo, payload, '10000', memo);
@@ -1850,8 +1846,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createDPoSV2ClaimRewardTransaction(payload: DPoSV2ClaimRewardInfo, memo = ""): Promise<EncodedTx> {
-        let firstExternalAddress = this.getCurrentReceiverAddress();
-        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
+        let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2ClaimRewardTransaction(au.utxo, payload, '10000', memo);
@@ -1862,8 +1857,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createUnstakeTransaction(payload: UnstakeInfo, memo = ""): Promise<EncodedTx> {
-        let firstExternalAddress = this.getCurrentReceiverAddress();
-        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
+        let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnstakeTransaction(au.utxo, payload, '10000', memo);
