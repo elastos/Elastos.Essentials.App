@@ -234,6 +234,7 @@ export const it = {
         'credimport-intro2': 'Si prega di rivedere i seguenti dati:',
         'credimport-success-title': 'Credenziali importate',
         'credimport-success': 'Ottimo, la credenziale è stata aggiunta al tuo profilo DID.',
+        'credimport-success2': 'Ottimo, {{count}} credenziali sono stata aggiunta al tuo profilo DID.',
         'credimport-success-done': 'Fatto',
         'credimport-note': 'NOTA: L\'applicazione richiede la pubblicazione delle credenziali. Diventeranno parte del tuo profilo DID pubblico.',
         'credimport-wrong-did': 'Siamo spiacenti, la credenziale che stai tentando di importare non è per questa identità.',

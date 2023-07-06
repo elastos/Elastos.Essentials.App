@@ -314,7 +314,8 @@ export class CredentialImportRequestPage {
   }
 
   private finalizeRequest(importedCredentials: string[]) {
-    void this.globalPopupService.ionicAlert('identity.credimport-success-title', 'identity.credimport-success', 'identity.credimport-success-done').then(async () => {
+    let messageContent = importedCredentials.length == 1 ? 'identity.credimport-success' : this.translate.instant('identity.credimport-success2', { count: importedCredentials.length });
+    void this.globalPopupService.ionicAlert('identity.credimport-success-title', messageContent, 'identity.credimport-success-done').then(async () => {
       Logger.log('Identity', "Sending credimport intent response for intent id " + this.receivedIntent.intentId)
       await this.sendIntentResponse({
         importedcredentials: importedCredentials

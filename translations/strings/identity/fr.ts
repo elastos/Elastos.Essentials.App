@@ -235,6 +235,7 @@ export const fr = {
         'credimport-intro2': 'Veuillez vérifier le contenu suivant:',
         'credimport-success-title': 'Informations importées',
         'credimport-success': 'Les informations ont été ajoutées à votre profil DID.',
+        'credimport-success2': 'Les informations ont été ajoutées à votre profil DID.',
         'credimport-success-done': 'Terminer',
         'credimport-note': 'NOTE: l\'application requiert que votre DID soit re-publié dès maintenant. Ces nouvelles informations feront partie de votre profil public',
         'credimport-wrong-did': 'Le crédentiel ue vous essayez d\'importer n\'est pas déstiné à cette identité.',

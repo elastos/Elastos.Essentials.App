@@ -234,6 +234,7 @@ export const en = {
         'credimport-intro2': 'Please review the following data:',
         'credimport-success-title': 'Credential imported',
         'credimport-success': 'Great, the credential has been added to your DID profile.',
+        'credimport-success2': 'Great, {{count}} credentials have been added to your DID profile.',
         'credimport-success-done': 'Done',
         'credimport-note': 'NOTE: The application is requesting to publish the credentials. They will become part of your public DID profile.',
         'credimport-wrong-did': 'Sorry, the credential you are trying to import is not for this identity.',
