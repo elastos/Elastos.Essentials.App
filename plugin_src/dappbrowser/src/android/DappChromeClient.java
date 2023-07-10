@@ -24,6 +24,7 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import android.graphics.Bitmap;
 import android.os.Message;
 import android.webkit.JsPromptResult;
 import android.webkit.PermissionRequest;
@@ -204,5 +205,11 @@ public class DappChromeClient extends WebChromeClient {
     @Override
     public void onReceivedTitle(WebView view, String title) {
         LOG.d(LOG_TAG, "onReceivedTitle: " + title);
+    }
+
+    @Override
+    public Bitmap getDefaultVideoPoster() {
+        LOG.d(LOG_TAG, "getDefaultVideoPoster");
+        return Bitmap.createBitmap(1, 1, android.graphics.Bitmap.Config.ARGB_8888);
     }
 }
