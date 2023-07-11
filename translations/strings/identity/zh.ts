@@ -78,8 +78,8 @@ export const zh = {
         'delete-credential': '删除凭证',
         'delete-credential-info': '此凭证将从您的身份中删除。此操作无法撤消。',
         'issuer-not-found-info': "在公共注册表上找不到创建此凭证的人员或服务。他的 DID 很可能没有发布。",
-        'credential-details-conform': '此凭证是符合可被任何应用共享的已知类型。',
-        'credential-details-not-conform': '此凭证不符合已知的凭证格式，并且很难被许多应用重用。',
+        'credential-details-conform': '此凭证符合可被其它应用共享的已知类型。',
+        'credential-details-not-conform': '此凭证不符合已知的凭证格式，很难被其它应用重用。',
 
         // Credentiallist
         'publish-changes': '发布更新',
