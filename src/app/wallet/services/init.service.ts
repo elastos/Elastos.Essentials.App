@@ -19,6 +19,8 @@ import { BSCMainNetNetwork } from '../model/networks/bsc/network/bsc.mainnet.net
 import { BSCTestNetNetwork } from '../model/networks/bsc/network/bsc.testnet.network';
 import { BTCMainNetNetwork } from '../model/networks/btc/network/btc.mainnet.network';
 import { BTCTestNetNetwork } from '../model/networks/btc/network/btc.testnet.network';
+import { BttcMainNetNetwork } from '../model/networks/bttc/network/bttc.mainnet.network';
+import { BttcTestNetNetwork } from '../model/networks/bttc/network/bttc.testnet.network';
 import { CeloMainNetNetwork } from '../model/networks/celo/network/celo.mainnet.network';
 import { CeloTestNetNetwork } from '../model/networks/celo/network/celo.testnet.network';
 import { CronosMainNetNetwork } from '../model/networks/cronos/network/cronos.mainnet.network';
@@ -179,6 +181,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new TronMainNetNetwork());
     await this.createAndRegisterNetwork(new CeloMainNetNetwork());
     // await this.createAndRegisterNetwork(new AtomMainNetNetwork());
+    await this.createAndRegisterNetwork(new BttcMainNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);
@@ -201,6 +204,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new TronShastaTestNetNetwork());
     await this.createAndRegisterNetwork(new CeloTestNetNetwork());
     // await this.createAndRegisterNetwork(new AtomTestNetNetwork());
+    await this.createAndRegisterNetwork(new BttcTestNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosLRWNetwork(), networkTemplate === "LRW");
 
