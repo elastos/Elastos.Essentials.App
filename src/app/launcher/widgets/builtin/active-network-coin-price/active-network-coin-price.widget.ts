@@ -82,7 +82,11 @@ export class ActiveNetworkCoinPriceWidget extends WidgetBase implements OnInit, 
     if (this.activeNetwork) {
       let coinPrice = this.currencyService.getMainTokenValue(new BigNumber(1), this.activeNetwork, 'USD'); // TODO: Use user currency from wallet settings
       if (coinPrice && !coinPrice.isNaN()) {
-        this.coinDisplayPrice = this.currencyService.usdToCurrencyAmount(coinPrice).decimalPlaces(this.currencyService.selectedCurrency.decimalplace, BigNumber.ROUND_DOWN).toFixed() + ' ' + this.currencyService.selectedCurrency.symbol;
+        let decimalPlaces = this.currencyService.selectedCurrency.decimalplace;
+        if (coinPrice.isLessThan(0.01)) {
+          decimalPlaces = -coinPrice.e + 1;
+        }
+        this.coinDisplayPrice = this.currencyService.usdToCurrencyAmount(coinPrice).decimalPlaces(decimalPlaces, BigNumber.ROUND_DOWN).toFixed() + ' ' + this.currencyService.selectedCurrency.symbol;
       } else {
         this.coinDisplayPrice = '--'
       }
