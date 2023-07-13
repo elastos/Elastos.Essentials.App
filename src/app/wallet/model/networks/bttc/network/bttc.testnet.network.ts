@@ -4,7 +4,7 @@ import { BttcBaseNetwork } from "./bttc.base.network";
 export class BttcTestNetNetwork extends BttcBaseNetwork {
   constructor() {
     super(
-      "celo",
+      "bttc",
       "BTTC-testnet",
       "BTTC-testnet",
       "assets/wallet/networks/bittorrent.svg",

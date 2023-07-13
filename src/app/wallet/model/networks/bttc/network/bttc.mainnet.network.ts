@@ -22,8 +22,8 @@ export class BttcMainNetNetwork extends BttcBaseNetwork {
 
     this.averageBlocktime = 5;
 
-    // Register a limitator to limit api requests speed on Celo> Mostly because of the free API key
-    // rate limitation of CELOSCAN: there is a rate limit of 5 calls per sec/IP.
+    // Register a limitator to limit api requests speed on BTTC> Mostly because of the free API key
+    // rate limitation of BTTSCAN: there is a rate limit of 5 calls per sec/IP.
     GlobalJsonRPCService.instance.registerLimitator(this.key, {
       minRequestsInterval: 220 // 5 req per sec max = 1 request / 200 ms + some margin
     });
