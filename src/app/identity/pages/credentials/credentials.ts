@@ -6,10 +6,12 @@ import { Subscription } from "rxjs";
 import { TitleBarComponent } from "src/app/components/titlebar/titlebar.component";
 import { GlobalCredentialTypesService } from "src/app/services/credential-types/global.credential.types.service";
 import { GlobalEvents } from "src/app/services/global.events.service";
+import { GlobalPopupService } from "src/app/services/global.popup.service";
 import { GlobalThemeService } from "src/app/services/theming/global.theme.service";
 import { CredentialDisplayEntry } from "../../model/credentialdisplayentry.model";
 import { DIDDocument } from "../../model/diddocument.model";
 import { VerifiableCredential } from "../../model/verifiablecredential.model";
+import { CredentialsService } from "../../services/credentials.service";
 import { DIDService } from "../../services/did.service";
 import { DIDDocumentsService } from "../../services/diddocuments.service";
 import { Native } from "../../services/native";
@@ -58,7 +60,9 @@ export class CredentialsPage {
     public actionSheetController: ActionSheetController,
     public profileService: ProfileService,
     private didDocumentsService: DIDDocumentsService,
-    private globalCredentialTypesService: GlobalCredentialTypesService
+    private globalCredentialTypesService: GlobalCredentialTypesService,
+    private globalPopupService: GlobalPopupService,
+    private credentialsService: CredentialsService,
   ) {
     this.init();
   }
@@ -208,5 +212,14 @@ export class CredentialsPage {
     void this.native.go("/identity/credentialdetails", {
       credentialId: entry.credential.getId(),
     });
+  }
+
+  async deleteCredential(entry: CredentialDisplayEntry) {
+    let deletionConfirmed = await this.globalPopupService.showConfirmationPopup(this.translate.instant('identity.delete-credential'), this.translate.instant('identity.delete-credential-info'));
+    if (!deletionConfirmed)
+      return; // Cancelled
+
+    // Delete
+    await this.credentialsService.deleteCredential(entry.credential);
   }
 }
