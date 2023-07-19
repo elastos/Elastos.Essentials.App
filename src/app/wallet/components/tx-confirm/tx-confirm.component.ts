@@ -190,15 +190,16 @@ export class TxConfirmComponent implements OnInit {
     if (!this.gasLimit || !this.evmNativeFee) return true;
 
     let totalCost = null;
-    if ((this.txInfo.coinType == CoinType.ERC20) || (this.txInfo.coinType == CoinType.TRC20) || this.txInfo.sendAll) {
-        totalCost = this.evmNativeFee;
+    if ((this.txInfo.coinType == CoinType.ERC20) || (this.txInfo.coinType == CoinType.TRC20)
+        || (this.txInfo.type == TransferType.SEND_NFT) || this.txInfo.sendAll || !this.txInfo.amount) {
+      totalCost = this.evmNativeFee;
     } else {
-        totalCost = this.evmNativeFee.plus(new BigNumber(this.txInfo.amount));
+      totalCost = this.evmNativeFee.plus(new BigNumber(this.txInfo.amount));
     }
 
     if (!this.mainTokenSubWallet.isBalanceEnough(totalCost)) {
-        this.native.toast_trans('wallet.insufficient-balance', 4000);
-        return false;
+      this.native.toast_trans('wallet.insufficient-balance', 4000);
+      return false;
     }
     return true;
   }
