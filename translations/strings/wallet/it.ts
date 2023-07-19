@@ -167,6 +167,7 @@ export const it = {
         "coin-op-dpos2-reward-withdraw": "BPoS reward withdraw",
         "coin-op-dpos2-node-claim-reward": "BPoS Node Claim reward",
         "coin-op-dpos2-node-reward-withdraw": "BPoS Node reward withdraw",
+        "coin-op-dpos2-mint-nft": "Mint NFT",
         "coin-op-voting-cancel": "Vote Cancellation",
         "coin-op-coin-base": "Coinbase Transaction",
         "coin-op-freeze": "Freeze",
@@ -489,6 +490,7 @@ export const it = {
         'nft-no-properties-yet': 'La visualizzazione delle proprietà sarà presto disponibile.',
         'nft-assets-owned': 'NFT posseduti',
         'nft-attributes': 'Attributes',
+        'nft-bpos-info': 'Informazioni sul voto BPoS NFT',
 
         /************
         * Claim BPoS NFT pages *

@@ -40,6 +40,16 @@
                 <div class="info-value asset-description">{{ getAttributeValue(attribute)}}</div>
             </div>
         </div>
+
+        <!-- BPoS NFT -->
+        <div class="card-row attributes" *ngIf="asset.bPoSNFTInfo">
+          <div class="title">{{ 'wallet.nft-bpos-info' | translate }}</div>
+
+          <div class="attribute info-block" *ngFor="let attribute of bposNFTInfos">
+              <div class="info-title">{{ attribute.title }}</div>
+              <div class="info-value asset-description">{{ attribute.value }}</div>
+          </div>
+      </div>
     </ion-grid>
 
     <div class="footer" ngxHideOnScroll *ngIf="nft && canSendReceive()">

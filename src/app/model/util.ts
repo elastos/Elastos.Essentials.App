@@ -149,6 +149,9 @@ export class Util {
     }
 
     public static reverseHexToBE(digest: string): string {
+        if (digest.startsWith('0x')) {
+          digest = digest.substring(2);
+        }
         let buf = Buffer.from(digest, "hex");
         return buf.reverse().toString("hex");
     }
@@ -186,6 +189,10 @@ export class Util {
 
     public static toSELA(ela: number): string {
       return (new BigNumber(ela)).multipliedBy(Config.SELA).toFixed(0);
+    }
+
+    public static toELA(ela: number): string {
+      return (new BigNumber(ela)).dividedBy(Config.SELA).toString();
     }
 
     // ceil(12345, 1000) => 13000

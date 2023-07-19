@@ -1829,6 +1829,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let au = await this.getAvailableUtxo(20000);
         if (!au.utxo) return;
 
-        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000', 'MintNFT');
+        return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000', memo);
     }
 }

@@ -87,6 +87,11 @@ export class MyVotesPage implements OnInit, OnDestroy {
                 ReferKey: node.referkey,
                 StakeAddress: this.voteService.sourceSubwallet.getOwnerStakeAddress(),
                 GenesisBlockHash: Config.ETHSC_GENESISBLOCKHASH,
+                StartHeight: node.blockheight,
+                EndHeight: node.locktime,
+                Votes: Util.toSELA(node.votes),
+                VoteRights: Util.toSELA(node.voteRights),
+                TargetOwnerKey: node.candidate
             };
 
             Logger.log(App.DPOS2, "mintBPosNFT payload:", payload);
@@ -97,7 +102,6 @@ export class MyVotesPage implements OnInit, OnDestroy {
             Logger.log(App.DPOS2, "rawTx:", rawTx);
 
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
-            Logger.log(App.DPOS2, "signAndSendRawTransaction:", ret);
             if (ret) {
                 this.voteService.toastSuccessfully('dposvoting.update-vote');
 
@@ -129,17 +133,19 @@ export class MyVotesPage implements OnInit, OnDestroy {
         let addressEx = receiver.startsWith('0x') ? receiver.substring(2) : receiver;
 
         let data = Util.reverseHexToBE(txidEx) + addressEx;
-        let digest = SHA256.encodeToBuffer(Buffer.from(data)).toString('hex');
+        let digest = SHA256.encodeToBuffer(Buffer.from(data, 'hex')).toString('hex');
 
         const password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId);
         if (password === null) {// cancelled by user
             return;
         }
 
-        let signature = await this.voteService.sourceSubwallet.signDigestWithOwnerKey(digest, password);
-        let publicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
-
-        // save
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "bposvoting", "bposnft-" + txid, {signature, publicKey});
+        // Sign data with the public key of the first external address that has the same public key as stake address.
+        let firstExternalAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
+        let signature = await this.voteService.sourceSubwallet.signDigest(firstExternalAddress, digest, password);
+        let publicKeys = this.voteService.sourceSubwallet.getPublicKeys(0, 1, false);
+        if (publicKeys && publicKeys[0]) {
+            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "bposvoting", "bposnft-" + txid, {signature, publicKey: publicKeys[0]});
+        }
     }
 }

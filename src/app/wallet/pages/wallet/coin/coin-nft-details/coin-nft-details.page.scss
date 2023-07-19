@@ -54,7 +54,7 @@
     .card-row {
         position: relative;
         border-radius: 20px;
-        padding: 25px 20px 15px;
+        padding: 5px 20px 15px;
         margin-bottom: 32px;
         background: var(--essentials-box-color);
 
@@ -207,8 +207,9 @@
         .attribute {
             width: 48%;
             padding: 15px;
-            background: #f5f6f8;
+            background: var(--essentials-button-background-color);;
             border-radius: 13px;
+            color: var(--essentials-button-text-color);
         }
     }
 

@@ -4,6 +4,18 @@ export type NFTAssetAttribute = {
   display_type?: "number" | "date" | "boost_number" | "boost_percentage";
 }
 
+// BPoS NFT
+export type BPoSNFTInfo = {
+  endHeight: string;
+  genesisBlockHash: string;
+  referKey: string;
+  stakeAddress: string;
+  startHeight: string;
+  targetOwnerKey: string;
+  voteRights: string;
+  votes: string; // sela
+}
+
 /**
  * Represents one asset minted by a NFT contract.
  */
@@ -22,4 +34,6 @@ export class NFTAsset {
   public attributes?: NFTAssetAttribute[];
   /** Opensea/Rarible project url standard */
   public externalURL?: string;
+  /** ESC BPoS NFT */
+  public bPoSNFTInfo?: BPoSNFTInfo;
 }

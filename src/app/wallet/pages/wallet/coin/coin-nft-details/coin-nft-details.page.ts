@@ -27,8 +27,10 @@ import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
+import { GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { UXService } from 'src/app/voting/services/ux.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
@@ -51,6 +53,10 @@ export class CoinNFTDetailsPage implements OnInit {
     public networkWallet: AnyNetworkWallet = null;
     public nft: NFT = null;
     public asset: NFTAsset = null;
+    public bposNFTInfos: {
+      title: string,
+      value: string
+    }[] = [];
 
     constructor(
         public router: Router,
@@ -63,7 +69,8 @@ export class CoinNFTDetailsPage implements OnInit {
         private erc721service: ERC721Service,
         private coinTransferService: CoinTransferService,
         public uiService: UiService,
-        private storage: LocalStorage
+        private storage: LocalStorage,
+        private uxService: UXService,
     ) {
         this.init();
     }
@@ -90,6 +97,9 @@ export class CoinNFTDetailsPage implements OnInit {
             // Retrieve the NFT asset
             let assetID = navigation.extras.state.assetID;
             this.asset = this.nft.getAssetById(assetID);
+            if (this.asset.bPoSNFTInfo) {
+                void this.prepareForBPoSNFTDisplay();
+            }
 
             Logger.log("wallet", "Initialization complete for NFT details", this.networkWallet, this.nft, this.asset);
         }
@@ -157,5 +167,42 @@ export class CoinNFTDetailsPage implements OnInit {
         this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
         this.coinTransferService.subWalletId = this.networkWallet.getMainEvmSubWallet().id;
         this.native.go('/wallet/coin-receive');
+    }
+
+    private async prepareForBPoSNFTDisplay() {
+      this.bposNFTInfos = [];
+      // votes
+      this.bposNFTInfos.push({
+        title: this.translate.instant('dposvoting.input-votes'),
+        value: this.uxService.toThousands(Util.toELA(parseInt(this.asset.bPoSNFTInfo.votes))),
+      })
+
+      // voterights
+      this.bposNFTInfos.push({
+        title: this.translate.instant('voting.vote-rights'),
+        value: this.uxService.toThousands(Util.toELA(parseInt(this.asset.bPoSNFTInfo.voteRights))),
+      })
+
+      // endHeight
+      let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+      let currentBlockTimestamp = moment().valueOf() / 1000;
+      let stakeTimestamp = (parseInt(this.asset.bPoSNFTInfo.endHeight) - currentHeight) * 720 + currentBlockTimestamp;
+
+      this.bposNFTInfos.push({
+        title: this.translate.instant('dposvoting.stake-until'),
+        value: this.uxService.formatDate(stakeTimestamp),
+      })
+
+      // bpos node
+      let targetNode = null;
+      let targetOwnerKey = this.asset.bPoSNFTInfo.targetOwnerKey.startsWith('0x') ? this.asset.bPoSNFTInfo.targetOwnerKey.substring(2) : this.asset.bPoSNFTInfo.targetOwnerKey;
+      const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
+      if (result && !Util.isEmptyObject(result.producers)) {
+          targetNode = result.producers.find( n => n.ownerpublickey == targetOwnerKey);
+      }
+      this.bposNFTInfos.push({
+        title: this.translate.instant('dposvoting.node-name'),
+        value: targetNode? targetNode.nickname : targetOwnerKey,
+      })
     }
 }
