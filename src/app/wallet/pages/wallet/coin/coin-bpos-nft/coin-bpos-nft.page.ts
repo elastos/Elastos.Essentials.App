@@ -72,9 +72,9 @@ export class CoinBPoSNFTPage {
 
 
     // public nfts = []
-    public nfts = ['0xb0a74ec70919a6813bab26b30b705bc71a69cfc4a12606f06f0c7b57795c71d9',
-                  '0x563389528b25c16822876a3e105b7db574e51fc52af0f2e2cc08f8ae3f8a796c',
-                  '0xd20a66168f82d8139fe3db29dd84b524102b0d01706a5eb0eab4fac748d71375'];
+    public nfts = ['0x24a7d99720b459d18314f4d98878119b9c3f67d5af375a92504694b13aac8919',
+                  '0x29bc4dcd756d3c9f6b507cf7f97b833e749b4e8245c6f97513c2150ce6e414be',
+                  '0xc34a6a6d70678d7e645a9ca95a8b03e90491e89075c186b922b2cab41f093a36'];
 
 
     constructor(
@@ -110,7 +110,7 @@ export class CoinBPoSNFTPage {
     }
 
     async claimBPosNFT(index: number, node: any) {
-        Logger.log('wallet', 'claimBPosNFT', this.nfts[index])
+        Logger.log('wallet', 'claimBPosNFT', this.nfts[index], this.receiverAddress)
 
         this.isExecuting = true;
         try {
@@ -139,6 +139,7 @@ export class CoinBPoSNFTPage {
         } catch (e) {
             this.isExecuting = false;
             await this.native.hideLoading();
+            Logger.warn('wallet', 'claimBPosNFT exception:', e);
         }
     }
 
@@ -146,8 +147,7 @@ export class CoinBPoSNFTPage {
         Logger.log('wallet', 'getNFTSignatureFromMainChain', txid, receiver);
 
         let data = this.getSignatureData(txid, receiver);
-        let digest = SHA256.encodeToBuffer(Buffer.from(data)).toString('hex');
-        Logger.log('wallet', 'Signature data', digest);
+        let digest = SHA256.encodeToBuffer(Buffer.from(data, 'hex')).toString('hex');
         const password = await AuthService.instance.getWalletPassword(this.masterWalletId);
         if (password === null) {// cancelled by user
             return null;
@@ -159,16 +159,23 @@ export class CoinBPoSNFTPage {
             return null;
         }
 
+        // Sign data with the public key of the first external address that has the same public key as stake address.
         let subWallet = elaMainChainNetworkWallet.getMainTokenSubWallet() as MainChainSubWallet;
-        let signature = await subWallet.signDigestWithOwnerKey(digest, password);
-        let publicKey = subWallet.getOwnerPublicKey();
+        let firstExternalAddress = subWallet.getCurrentReceiverAddress();
+        let signature = await subWallet.signDigest(firstExternalAddress, digest, password);
 
+        let publicKey = null;
+        let publicKeys = subWallet.getPublicKeys(0, 1, false);
+        if (publicKeys && publicKeys[0]) {
+            publicKey = publicKeys[0]
+        }
         return {signature, publicKey};
     }
 
     getSignatureData(txid: string, address: string) {
         let txidEx = txid.startsWith('0x') ? txid.substring(2) : txid;
         let addressEx = address.startsWith('0x') ? address.substring(2) : address;
+
         return Util.reverseHexToBE(txidEx) + addressEx;
     }
 
@@ -184,7 +191,6 @@ export class CoinBPoSNFTPage {
       try {
           const rawTx = await this.escTxBuilder.createClaimBPoSNFTTransaction(txid, address, signature, publicKey, 1, this.gasPrice, this.gasLimit);
           await this.native.hideLoading();
-          Logger.log('wallet', 'Created raw transaction', rawTx);
           if (rawTx) {
               const transfer = new Transfer();
               Object.assign(transfer, {
@@ -195,15 +201,13 @@ export class CoinBPoSNFTPage {
                   intentId: null,
               });
               const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer);
-              Logger.log('wallet', 'signAndSendRawTransaction result:', result);
-
               if (result.published) {
                   void this.storage.deleteSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "bposvoting", "bposnft-" + txid);
               }
           }
       }
       catch (e) {
-          Logger.warn('wallet', 'exception:', e);
+          Logger.warn('wallet', 'createClaimBPoSNFTTransaction exception:', e);
           await this.native.hideLoading();
           await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
       }

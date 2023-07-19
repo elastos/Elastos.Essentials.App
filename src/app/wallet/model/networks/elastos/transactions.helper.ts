@@ -215,6 +215,9 @@ export class ElastosTransactionsHelper {
             case RawTransactionType.DposV2ClaimReward:
                 transactionName = "wallet.coin-op-dpos2-claim-reward";
             break;
+            case RawTransactionType.MintNFT:
+                transactionName = "wallet.coin-op-dpos2-mint-nft";
+            break;
             default:
                 transactionName = "wallet.coin-op-transfered-token";
             break;

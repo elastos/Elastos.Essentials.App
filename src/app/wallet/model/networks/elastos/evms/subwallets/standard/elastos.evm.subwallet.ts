@@ -131,4 +131,35 @@ export class ElastosEVMSubWallet extends MainCoinEVMSubWallet<ElastosMainChainWa
     Logger.log('wallet', 'createWithdrawTransaction gasPrice:', gasPrice.toString(), ' toAmountSend:', toAmountSend, ' nonce:', nonce, ' withdrawContractAddress:', this.withdrawContractAddress);
     return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(this.withdrawContractAddress, toAmountSend, gasPrice, gasLimit, nonce, method.encodeABI());
   }
+
+  public async canClaim(elaHash: string) {
+    const contractAbi = [{
+        "inputs": [
+            {
+                "internalType": "bytes32",
+                "name": "elaHash",
+                "type": "bytes32"
+            }
+        ],
+        "name": "canClaim",
+        "outputs": [
+            {
+                "internalType": "uint256",
+                "name": "tokenID",
+                "type": "uint256"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    }];
+    let canClaimContract = new ((await this.getWeb3(true)).eth.Contract)(contractAbi, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+    try {
+      let hash = '0x' + Util.reverseHexToBE(elaHash);
+      let ret = await canClaimContract.methods.canClaim(hash).call();
+      Logger.log('wallet', 'canClaim ela hash:', hash, ret)
+    }
+    catch (e) {
+      Logger.warn('wallet', 'canClaim exception', e)
+    }
+  }
 }
