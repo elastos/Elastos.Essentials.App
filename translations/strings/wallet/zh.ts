@@ -167,6 +167,7 @@ export const zh = {
         "coin-op-dpos2-reward-withdraw": "BPoS 奖励提现",
         "coin-op-dpos2-node-claim-reward": "领取BPoS节点奖励",
         "coin-op-dpos2-node-reward-withdraw": "BPoS节点奖励提现",
+        "coin-op-dpos2-mint-nft": "铸造NFT",
         "coin-op-voting-cancel": "取消投票",
         "coin-op-coin-base": "创币交易",
         "coin-op-freeze": "冻结",
@@ -499,6 +500,7 @@ export const zh = {
         'nft-no-properties-yet': '属性显示尚不支持，即将推出',
         'nft-assets-owned': '项资产',
         'nft-attributes': '属性',
+        'nft-bpos-info': 'BPoS NFT 投票信息',
 
         /************
         * Claim BPoS NFT pages *

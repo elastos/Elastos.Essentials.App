@@ -4,7 +4,7 @@ import { Config } from "src/app/wallet/config/Config";
 import { EVMSafe } from "../../../../evms/safes/evm.safe";
 import { EVMTransactionBuilder } from "../../../../evms/tx-builders/evm.txbuilder";
 
-const clainBPoSNFTAbi = [
+const claimBPoSNFTAbi = [
     {
         "inputs": [
             {
@@ -54,11 +54,15 @@ export class ESCTransactionBuilder extends EVMTransactionBuilder {
      * @returns
      */
     public async createClaimBPoSNFTTransaction(elaHash: string, to: string, signature: string, publicKey: string, multi_m: number, gasPriceArg: string = null, gasLimitArg: string = null): Promise<string> {
-        const claimBPoSNFTContract = new ((await this.getWeb3()).eth.Contract)(clainBPoSNFTAbi as any, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+        const claimBPoSNFTContract = new ((await this.getWeb3()).eth.Contract)(claimBPoSNFTAbi as any, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
 
-        Logger.log('wallet', 'createClainBPoSNFTTransaction elaHash:', elaHash, ' to:', to, ' signature:', signature, ' publicKey', publicKey);
-
-        claimBPoSNFTContract.options.address = to;// can remove it?
+        Logger.log('wallet', 'createClainBPoSNFTTransaction tx:', {
+          elaHash,
+          to,
+          signature,
+          publicKey,
+          multi_m
+        });
         const method = claimBPoSNFTContract.methods.claim(elaHash, to, [signature], [publicKey], multi_m);
 
         let gasPrice = gasPriceArg;
@@ -77,15 +81,14 @@ export class ESCTransactionBuilder extends EVMTransactionBuilder {
         return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, '0', gasPrice, gasLimit, nonce, method.encodeABI());
     }
 
-    public async estimateGas(elaHash: string, to: string, signatures: string, publicKey: string, multi_m: number, gasPriceArg: string = null, gasLimitArg: string = null) {
-        const claimBPoSNFTContract = new ((await this.getWeb3()).eth.Contract)(clainBPoSNFTAbi as any, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
-        claimBPoSNFTContract.options.address = to;// can remove it?
-        const method = claimBPoSNFTContract.methods.claim(elaHash, to, [signatures], [publicKey], multi_m);
+    public async estimateGas(elaHash: string, to: string, signature: string, publicKey: string, multi_m: number, gasPriceArg: string = null, gasLimitArg: string = null) {
+        const claimBPoSNFTContract = new ((await this.getWeb3()).eth.Contract)(claimBPoSNFTAbi as any, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+        const method = claimBPoSNFTContract.methods.claim(elaHash, to, [signature], [publicKey], multi_m);
         return await this.estimateGasByMethod(method);
     }
 
     private async estimateGasByMethod(method) {
-        let gasLimit = 200000;
+        let gasLimit = 1500000;
         try {
             // Estimate gas cost
             let gasLimitTemp = await method.estimateGas();
