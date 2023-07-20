@@ -56,8 +56,13 @@ export class ESCTransactionBuilder extends EVMTransactionBuilder {
     public async createClaimBPoSNFTTransaction(elaHash: string, to: string, signature: string, publicKey: string, multi_m: number, gasPriceArg: string = null, gasLimitArg: string = null): Promise<string> {
         const claimBPoSNFTContract = new ((await this.getWeb3()).eth.Contract)(claimBPoSNFTAbi as any, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
 
-        claimBPoSNFTContract.options.address = to;// can remove it?
-
+        Logger.log('wallet', 'createClainBPoSNFTTransaction tx:', {
+          elaHash,
+          to,
+          signature,
+          publicKey,
+          multi_m
+        });
         const method = claimBPoSNFTContract.methods.claim(elaHash, to, [signature], [publicKey], multi_m);
 
         let gasPrice = gasPriceArg;
@@ -76,10 +81,9 @@ export class ESCTransactionBuilder extends EVMTransactionBuilder {
         return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, '0', gasPrice, gasLimit, nonce, method.encodeABI());
     }
 
-    public async estimateGas(elaHash: string, to: string, signatures: string, publicKey: string, multi_m: number, gasPriceArg: string = null, gasLimitArg: string = null) {
+    public async estimateGas(elaHash: string, to: string, signature: string, publicKey: string, multi_m: number, gasPriceArg: string = null, gasLimitArg: string = null) {
         const claimBPoSNFTContract = new ((await this.getWeb3()).eth.Contract)(claimBPoSNFTAbi as any, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
-        claimBPoSNFTContract.options.address = to;// can remove it?
-        const method = claimBPoSNFTContract.methods.claim(elaHash, to, [signatures], [publicKey], multi_m);
+        const method = claimBPoSNFTContract.methods.claim(elaHash, to, [signature], [publicKey], multi_m);
         return await this.estimateGasByMethod(method);
     }
 
@@ -90,12 +94,6 @@ export class ESCTransactionBuilder extends EVMTransactionBuilder {
             let gasLimitTemp = await method.estimateGas();
             //'* 1.5': Make sure the gaslimit is big enough.
             gasLimit = Util.ceil(gasLimitTemp * 1.5);
-
-            // TODO: estimateGas return the wrong value.
-            if (gasLimit < 1500000) {
-                gasLimit = 1500000;
-                Logger.warn('wallet', 'ESCTransactionBuilder: The value returned by estimateGas is too small, using the default value 1500000');
-            }
         } catch (error) {
             Logger.warn('wallet', 'ESCTransactionBuilder estimateGas error:', error);
         }
