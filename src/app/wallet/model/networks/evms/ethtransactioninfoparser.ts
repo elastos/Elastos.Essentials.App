@@ -18,6 +18,7 @@ import { AnyMainCoinEVMSubWallet } from "./subwallets/evm.subwallet";
 
 export enum ETHOperationType {
   ERC20_TOKEN_APPROVE = "erc20_token_approve", // The contract seems to be a request to approve a caller to spend ERC20 tokens on behalf of the user
+  ERC721_TOKEN_APPROVE = "erc721_token_approve", // The contract seems to be a request to approve a caller to spend ERC721 tokens on behalf of the user
   SEND_ERC20 = "send_erc20",
   SEND_NFT = "send_nft",
   SWAP = "swap",
@@ -221,14 +222,26 @@ export class ETHTransactionInfoParser {
           txInfo.operation = operation;
         }
         catch (e) {
-          txInfo.type = ETHOperationType.ERC20_TOKEN_APPROVE;
+          try {
+            let coinInfo = await this.getERC721TokenInfoOrThrow(txTo);
+            let operation = {
+              description: 'wallet.ext-tx-info-type-approve-erc20', descriptionTranslationParams: { symbol: coinInfo.name },
+              tokenName: coinInfo.name,
+            }
 
-          let operation: ApproveERC20Operation = {
-            description: 'wallet.ext-tx-info-type-approve-token',
-            tokenName: null,
-            symbol: null
+            txInfo.type = ETHOperationType.ERC721_TOKEN_APPROVE;
+            txInfo.operation = operation;
           }
-          txInfo.operation = operation;
+          catch (e) {
+            txInfo.type = ETHOperationType.ERC20_TOKEN_APPROVE;
+
+            let operation: ApproveERC20Operation = {
+              description: 'wallet.ext-tx-info-type-approve-token',
+              tokenName: null,
+              symbol: null
+            }
+            txInfo.operation = operation;
+          }
         }
         break;
 

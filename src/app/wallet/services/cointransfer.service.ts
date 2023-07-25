@@ -78,12 +78,12 @@ export enum TransferType {
     DESTROY_NFT = 11
 }
 export class ContractPayloadParam {
-    data: string = null;
-    from: string = null;
-    gas: string = null;
-    gasPrice: string = null;
-    to: string = null;
-    value: string = null;
+    data?: string = null;
+    from?: string = null;
+    gas?: string = null;
+    gasPrice?: string = null;
+    to?: string = null;
+    value?: string = null;
 }
 
 type NFTTransfer = {

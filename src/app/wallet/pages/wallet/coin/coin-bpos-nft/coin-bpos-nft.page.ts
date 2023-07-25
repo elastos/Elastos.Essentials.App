@@ -104,8 +104,6 @@ export class CoinBPoSNFTPage {
             this.receiverAddress = this.sourceSubwallet.getCurrentReceiverAddress();
         }
 
-        // TODO: Get BPoS nft hash by rpc.
-
         let txList = this.sourceSubwallet.getUnClaimedTxs();
         for (let i = 0; i < txList.length; i++) {
           let ret = await BPoSERC721Service.instance.canClaim(txList[i].txid);

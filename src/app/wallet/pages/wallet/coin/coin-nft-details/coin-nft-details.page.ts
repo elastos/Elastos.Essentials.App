@@ -26,7 +26,6 @@ import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
@@ -34,18 +33,15 @@ import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
-import { TxConfirmComponent } from 'src/app/wallet/components/tx-confirm/tx-confirm.component';
 import { Config } from 'src/app/wallet/config/Config';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ESCTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/esc/tx-builders/esc.txbuilder';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
-import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { CoinTransferService, Transfer, TransferType } from 'src/app/wallet/services/cointransfer.service';
 import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
-import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -68,12 +64,6 @@ export class CoinNFTDetailsPage implements OnInit {
       title: string,
       value: string
     }[] = [];
-
-    private publicationStatusSub: Subscription;
-
-    // User can set gas price and limit.
-    private gasPrice: string = null;
-    private gasLimit: string = null;
 
     constructor(
         public router: Router,
@@ -204,7 +194,7 @@ export class CoinNFTDetailsPage implements OnInit {
       let stakeAddress = elaMainChainSubwallet.getOwnerStakeAddress();
 
       // approve
-      let ret = await this.approveTransaction(Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+      let ret = await this.approveNFT();
       if (!ret) return;
 
       try {
@@ -221,10 +211,7 @@ export class CoinNFTDetailsPage implements OnInit {
                   action: null,
                   intentId: null,
               });
-              const result = await mainEvmSubwallet.signAndSendRawTransaction(rawTx, transfer);
-              Logger.log('wallet', 'destroyBPoSNFT signAndSendRawTransaction:', result);
-              if (result.published) {
-              }
+              await mainEvmSubwallet.signAndSendRawTransaction(rawTx, transfer);
           }
       }
       catch (e) {
@@ -287,103 +274,33 @@ export class CoinNFTDetailsPage implements OnInit {
       })
     }
 
-    public waitForTransactionToBeConfirmed() {
-      return new Promise(async (resolve, reject) => {
-        this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
-          Logger.log('wallet', 'CoinNFTDetailsPage ethTransactionStatus:', status)
-          switch (status.status) {
-              case ETHTransactionStatus.PACKED:
-                  this.publicationStatusSub.unsubscribe();
-                  resolve(true);
-                  break;
-              // case ETHTransactionStatus.CANCEL:
-              //     resolve(false);
-              //     this.publicationStatusSub.unsubscribe();
-              //     break;
-              default:
-                  this.publicationStatusSub.unsubscribe();
-                  resolve(false);
-                  break;
-          }
-        });
-      });
-    }
+    async approveNFT() {
+      let methodData = await this.erc721service.approve(this.nft.contractAddress, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, this.asset.id);
 
-    async approveTransaction(address: string) {
-      let mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
+      await this.native.hideLoading();
 
-      // approve
-      let unsignedTx = await this.erc721service.approve(mainEvmSubwallet, this.nft.contractAddress, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, this.asset.id);
-      if (unsignedTx) {
-        Logger.log("wallet", "Signing and sending transaction", unsignedTx);
-
-        await this.native.hideLoading();
-        let ret = await this.showConfirm(TransferType.APPROVE);
-        if (!ret) return false;
-
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.networkWallet.id,
-            subWalletId: mainEvmSubwallet.id,
-        });
-        let sendResult = await mainEvmSubwallet.signAndSendRawTransaction(unsignedTx, transfer, false, false, false);
-        Logger.log("wallet", "approve Transaction result:", sendResult);
-
-        // Wait for block validation
-        let approved = await this.waitForTransactionToBeConfirmed();
-        if (!approved) {
-          Logger.warn('wallet', 'destroyBPoSNFT: failed to call approve');
-          return false;
+      if (methodData) {
+        this.coinTransferService.masterWalletId = this.networkWallet.id;
+        this.coinTransferService.payloadParam = {
+            data: methodData,
+            to: this.nft.contractAddress
         }
+
+        void this.native.go("/wallet/intents/esctransaction", {intentMode: false});
+
+        return new Promise<boolean>((resolve) => {
+          let approveSubscription: Subscription = this.events.subscribe("esctransaction", (ret) => {
+
+            approveSubscription.unsubscribe();
+            if (ret.result.published) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          })
+        });
       }
 
       return true;
-    }
-
-    async showConfirm(type: TransferType) {
-        let mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
-        let address = mainEvmSubwallet.getCurrentReceiverAddress();
-
-        const txInfo = {
-            type: type,
-            transferFrom: address,
-            transferTo: address,
-            toChainId: null,
-            amount: 0,
-            sendAll: false,
-            precision: mainEvmSubwallet.tokenDecimals,
-            memo: null,
-            tokensymbol: mainEvmSubwallet.getDisplayTokenName(),
-            fee: null,
-            gasLimit: this.gasLimit,
-            coinType: mainEvmSubwallet.type
-        }
-
-        this.native.popup = await this.native.popoverCtrl.create({
-            mode: 'ios',
-            cssClass: 'wallet-tx-component',
-            component: TxConfirmComponent,
-            componentProps: {
-                txInfo: txInfo
-            }
-        });
-
-        return new Promise(async resolve => {
-            this.native.popup.onWillDismiss().then((params) => {
-              this.native.popup = null;
-              Logger.log('wallet', 'Confirm tx params', params);
-              if (params.data && params.data.confirm) {
-                  if (params.data.gasPrice) this.gasPrice = params.data.gasPrice;
-                  if (params.data.gasLimit) this.gasLimit = params.data.gasLimit;
-                  // void this.transaction();
-                  resolve(true);
-              } else resolve(false);
-          });
-
-          // Wait for the keyboard to close if needed, otherwise the popup is not centered.
-          await sleep(500);
-
-          await this.native.popup.present();
-        });
     }
 }
