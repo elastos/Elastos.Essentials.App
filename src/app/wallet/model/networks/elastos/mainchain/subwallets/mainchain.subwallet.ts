@@ -16,7 +16,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
-import { Candidates, VoteTypeString } from 'src/app/wallet/model/elastos.types';
+import { Candidates, MintBPoSNFTTxInfo, MintBPoSNFTTxStatus, VoteTypeString } from 'src/app/wallet/model/elastos.types';
 import { ElastosMainChainWalletNetworkOptions, WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { MultiSigSafe } from 'src/app/wallet/model/safes/multisig.safe';
@@ -75,6 +75,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     private stakedBalanceKeyInCache = null;
     private stakedBalance = 0;
 
+    private mintNFTTxCache: TimeBasedPersistentCache<any> = null;
+    private mintNFTTxKeyInCache = null;
+    private mintNFTTxIDs: MintBPoSNFTTxInfo[] = [];
+
     constructor(networkWallet: AnyNetworkWallet) {
         super(networkWallet, StandardCoinName.ELA);
 
@@ -86,6 +90,19 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         await super.initialize();
 
         await this.loadStakedBalanceFromCache();
+        await this.loadMintNFTTxFromCache();
+    }
+
+    // TODO: delete all data when delete masterwallet.
+    public async destroy() {
+        await super.destroy();
+
+        // delete cache
+        if (this.stakedBalanceCache)
+          await this.stakedBalanceCache.delete();
+
+        if (this.mintNFTTxCache)
+          await this.mintNFTTxCache.delete();
     }
 
     public supportsCrossChainTransfers(): boolean {
@@ -209,7 +226,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             default:
                 break;
         }
-
+        if (transaction.txtype == RawTransactionType.MintNFT) {
+          this.saveMintNFTTx(transaction);
+        }
         return await transactionInfo;
     }
 
@@ -1019,6 +1038,26 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         const timestamp = (new Date()).valueOf();
         this.stakedBalanceCache.set('stakedbalance', this.stakedBalance, timestamp);
         await this.stakedBalanceCache.save();
+    }
+
+    public async saveMintNFTTx(tx: ElastosTransaction) {
+      if (!this.mintNFTTxCache.get(tx.txid)) {
+        this.saveMintNFTTxToCache({txid: tx.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
+      }
+    }
+
+    private async loadMintNFTTxFromCache() {
+        if (!this.mintNFTTxCache) {
+          this.mintNFTTxKeyInCache = this.masterWallet.id + '-mintbposnft';
+        }
+        this.mintNFTTxCache = await TimeBasedPersistentCache.loadOrCreate(this.mintNFTTxKeyInCache);
+        Logger.log('wallet', 'loadMintNFTTxFromCache this.mintNFTTxCache', this.mintNFTTxCache)
+    }
+
+    public async saveMintNFTTxToCache(data: MintBPoSNFTTxInfo): Promise<void> {
+        const timestamp = (new Date()).valueOf();
+        this.mintNFTTxCache.set(data.txid, data, timestamp);
+        await this.mintNFTTxCache.save();
     }
 
     public getOwnerAddress(): string {

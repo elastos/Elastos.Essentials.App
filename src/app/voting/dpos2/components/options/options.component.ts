@@ -21,6 +21,11 @@ export enum NodesActionType {
   CheckDPoSStatus = 3,
 }
 
+export enum MyVotesActionType {
+  Update = 0,
+  MintNFT = 1,
+}
+
 @Component({
   selector: 'app-options',
   templateUrl: './options.component.html',

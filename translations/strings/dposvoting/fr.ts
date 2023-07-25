@@ -125,6 +125,7 @@ export const fr = {
         'vote-about-exprie': 'Your votes for BPoS are about to expire. Please click to update your votes.',
         'dpos1-update-warning': 'Do you want to upgrade to a BPoS node? A minor transaction fee is paid for the DPoS node upgrade.',
         'dpos1-withdraw-warning': 'Do you want to withdraw node deposit?',
+        'dpos2-mint-bpos-nft': 'Mint BPoS NFT',
 
         'dpos2-node-info': 'BPoS Node Info',
         'node2-details': 'BPoS Node Details',

@@ -254,7 +254,7 @@ export const zh = {
         "confirm-transaction-title": "确认交易",
         "transfer-transaction-type": "充值交易",
         "send-transaction-type": "转账交易",
-        "bpos-nft-title-transaction-type": "领取 BPoS NFT",
+        "claim-bpos-nft-transaction-type": "申领 BPoS NFT",
 
         /***********************************
         * Transaction Successful Component *
@@ -399,7 +399,7 @@ export const zh = {
         "wallet-settings-multisig-extended-public-keys-subtitle": "显示所有联合签名人的扩展公钥",
         "wallet-settings-switch-address-type-title": "切换地址类型",
         "wallet-settings-bpos-nft": "BPoS NFT",
-        "wallet-settings-bpos-nft-subtitle": "查看是否有可以领取的 BPoS NFT",
+        "wallet-settings-bpos-nft-subtitle": "查看是否有可以申领的 BPoS NFT",
 
         /************************
         * Wallet Edit Name Page *
@@ -501,6 +501,7 @@ export const zh = {
         'nft-assets-owned': '项资产',
         'nft-attributes': '属性',
         'nft-bpos-info': 'BPoS NFT 投票信息',
+        'nft-destroy': '销毁',
 
         /************
         * Claim BPoS NFT pages *
@@ -508,6 +509,8 @@ export const zh = {
         'bpos-nft-title': '申领 BPoS NFT',
         'bpos-nft-claim': '申领',
         'bpos-nft-no-nft': '没有可申领的 BPoS NFT',
+        "notification-found-one-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 1 个可申领的 BPos NFT！",
+        "notification-found-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 {{ count }} 个可申领的 BPos NFT！",
 
         /********************************************** Intent Screens ***********************************************/
 

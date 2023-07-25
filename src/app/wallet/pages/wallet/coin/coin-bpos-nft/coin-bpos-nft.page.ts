@@ -68,14 +68,10 @@ export class CoinBPoSNFTPage {
     public fee: BigNumber = null; // WEI
     public feeDisplay = ''; // ELA
 
+    public dataFetched = false;
     public isExecuting = false;
 
-
-    // public nfts = []
-    public nfts = ['0x24a7d99720b459d18314f4d98878119b9c3f67d5af375a92504694b13aac8919',
-                  '0x29bc4dcd756d3c9f6b507cf7f97b833e749b4e8245c6f97513c2150ce6e414be',
-                  '0xc34a6a6d70678d7e645a9ca95a8b03e90491e89075c186b922b2cab41f093a36'];
-
+    public claimableNfts = [];
 
     constructor(
         public router: Router,
@@ -97,36 +93,39 @@ export class CoinBPoSNFTPage {
     async init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
-            // Retrieve the master wallet
             this.masterWalletId = navigation.extras.state.masterWalletId;
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
-            this.sourceSubwallet = this.networkWallet.getMainTokenSubWallet() as EscSubWallet;
-            this.escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
-
-            this.receiverAddress = this.sourceSubwallet.getCurrentReceiverAddress();
+        } else {
+            this.networkWallet = this.walletManager.getActiveNetworkWallet();
+            this.masterWalletId = this.networkWallet.masterWallet.id;
         }
 
-        // TODO: Get BPoS nft hash by rpc.
+        this.sourceSubwallet = this.networkWallet.getMainTokenSubWallet() as EscSubWallet;
+        this.escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
+
+        this.receiverAddress = this.sourceSubwallet.getCurrentReceiverAddress();
+
+        this.claimableNfts = (await this.sourceSubwallet.getClaimableTxs()).map(t => {
+            return t.txid;
+        });
+
+        this.dataFetched = true;
     }
 
     async claimBPosNFT(index: number, node: any) {
-        Logger.log('wallet', 'claimBPosNFT', this.nfts[index], this.receiverAddress)
+        Logger.log('wallet', 'claimBPosNFT', this.claimableNfts[index], this.receiverAddress)
 
         this.isExecuting = true;
         try {
             await this.native.showLoading(this.translate.instant('common.please-wait'));
 
-            let txid = this.nfts[index].startsWith('0x') ? this.nfts[index].substring(2) : this.nfts[index];
-            let ret = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "bposvoting", "bposnft-" + txid, {signature: null, publicKey: null});
-            if (!ret.signature || !ret.publicKey) {
-                ret = await this.getNFTSignatureFromMainChain(this.nfts[index], this.receiverAddress);
-                if (!ret) { // cancelled by user
-                    this.isExecuting = false;
-                    await this.native.hideLoading();
-                    return;
-                }
+            let txid = this.claimableNfts[index].startsWith('0x') ? this.claimableNfts[index].substring(2) : this.claimableNfts[index];
+            let ret = await this.getNFTSignatureFromMainChain(this.claimableNfts[index], this.receiverAddress);
+            if (!ret) { // cancelled by user
+                this.isExecuting = false;
+                await this.native.hideLoading();
+                return;
             }
-            Logger.log('wallet', 'signature data:', ret);
 
             this.txid = '0x' + Util.reverseHexToBE(txid);
 
@@ -180,8 +179,7 @@ export class CoinBPoSNFTPage {
     }
 
     async estimateGas(txid: string, address: string, signature: string, publicKey: string) {
-        // this.gasPrice = await this.escTxBuilder.getGasPrice();
-        this.gasLimit = await this.escTxBuilder.estimateGas(txid, address, signature, publicKey, 1);
+        this.gasLimit = await this.escTxBuilder.estimateClaimBPoSNFTGas(txid, address, signature, publicKey, 1);
     }
 
     async createClaimBPoSNFTTransaction(txid: string, address: string, signature: string, publicKey: string) {

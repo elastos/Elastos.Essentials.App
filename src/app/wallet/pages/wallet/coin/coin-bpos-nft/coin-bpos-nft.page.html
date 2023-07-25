@@ -1,7 +1,11 @@
 <ion-content>
     <app-titlebar></app-titlebar>
 
-    <ion-row class="ion-no-padding row-list" *ngFor="let node of nfts; index as i">
+    <div *ngIf="!dataFetched">
+      <ion-spinner></ion-spinner>
+    </div>
+
+    <ion-row class="ion-no-padding row-list" *ngFor="let node of claimableNfts; index as i">
         <ion-col size="0.5" class="index">
             <p>{{ i + 1 }}</p>
         </ion-col>
@@ -13,7 +17,7 @@
         </ion-col>
     </ion-row>
 
-    <ion-row class="empty-container" *ngIf="nfts.length == 0">
+    <ion-row class="empty-container" *ngIf="dataFetched && (claimableNfts.length == 0)">
         <p> {{ 'wallet.bpos-nft-no-nft' | translate }}</p>
     </ion-row>
 

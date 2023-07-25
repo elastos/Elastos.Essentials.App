@@ -52,6 +52,7 @@ import type { MainCoinEVMSubWallet } from '../model/networks/evms/subwallets/evm
 import type { AnyNetwork } from '../model/networks/network';
 import { AuthService } from './auth.service';
 import type { Transfer } from './cointransfer.service';
+import { BPoSERC721Service } from './evm/bpos.erc721.service';
 import { ERC1155Service } from './evm/erc1155.service';
 import { ERC721Service } from './evm/erc721.service';
 import { MultiSigService } from './multisig.service';
@@ -129,6 +130,7 @@ export class WalletService {
         public localStorage: LocalStorage,
         private erc721Service: ERC721Service,
         private erc1155Service: ERC1155Service,
+        private bposERC721Service: BPoSERC721Service, // Keep this - init
         private authService: AuthService,
         private prefs: GlobalPreferencesService,
         private safeService: SafeService, // Keep this - init

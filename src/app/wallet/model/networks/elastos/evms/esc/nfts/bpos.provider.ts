@@ -1,5 +1,5 @@
 import { Logger } from "src/app/logger";
-import { Config } from "src/app/wallet/config/Config";
+import { BPoSERC721Service } from "src/app/wallet/services/evm/bpos.erc721.service";
 import { EVMService } from "src/app/wallet/services/evm/evm.service";
 import { WalletNetworkService } from "src/app/wallet/services/network.service";
 import type Web3 from "web3";
@@ -78,8 +78,7 @@ export class ElastosBPoSERC721Provider extends ERC721Provider {
 
   public async fetchNFTAssetInformation(erc721Contract: Contract, asset: NFTAsset, tokenURI: string, accountAddress: string): Promise<void> {
     try {
-        let getInfoContract = new ((await this.getWeb3()).eth.Contract)(getInfoAbi, Config.ETHSC_BPoSNFT_CONTRACTADDRESS);
-        let ret = await getInfoContract.methods.getInfo(asset.id).call();
+        let ret = await BPoSERC721Service.instance.getBPoSNFTInfo(asset.id);
         Logger.log('wallet', 'ElastosBPoSERC721Provider getInfo ', ret)
         if (ret) {
           asset.bPoSNFTInfo = {

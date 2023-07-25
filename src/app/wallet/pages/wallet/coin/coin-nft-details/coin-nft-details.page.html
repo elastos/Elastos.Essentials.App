@@ -54,16 +54,21 @@
 
     <div class="footer" ngxHideOnScroll *ngIf="nft && canSendReceive()">
         <ion-row class="card-btn-row">
-            <ion-col [size]="6">
-                <ebutton class="btn-box" (clicked)="sendNFT()" topicon="assets/wallet/buttons/curcol-send.svg"
-                    [title]="'wallet.coin-action-send' | translate">
-                </ebutton>
-            </ion-col>
-            <ion-col [size]="6">
-                <ebutton class="btn-box" (clicked)="receiveNFT()" topicon="assets/wallet/buttons/curcol-receive.svg"
-                    [title]="'wallet.coin-action-receive' | translate">
-                </ebutton>
-            </ion-col>
-        </ion-row>
+          <ion-col [size]="getColumnSize()">
+              <ebutton class="btn-box" (clicked)="sendNFT()" topicon="assets/wallet/buttons/curcol-send.svg"
+                  [title]="'wallet.coin-action-send' | translate">
+              </ebutton>
+          </ion-col>
+          <ion-col [size]="getColumnSize()">
+              <ebutton class="btn-box" (clicked)="receiveNFT()" topicon="assets/wallet/buttons/curcol-receive.svg"
+                  [title]="'wallet.coin-action-receive' | translate">
+              </ebutton>
+          </ion-col>
+          <ion-col [size]="getColumnSize()" *ngIf="asset.bPoSNFTInfo">
+            <ebutton class="btn-box" (clicked)="destroyBPoSNFT()" topicon="assets/wallet/buttons/curcol-cross.svg"
+                [title]="'wallet.nft-destroy' | translate">
+            </ebutton>
+        </ion-col>
+      </ion-row>
     </div>
 </ion-content>

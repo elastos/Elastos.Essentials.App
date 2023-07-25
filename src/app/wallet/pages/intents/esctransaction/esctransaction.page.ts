@@ -21,6 +21,7 @@
  */
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from "bignumber.js";
 import { Subscription } from 'rxjs';
@@ -28,6 +29,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
+import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -76,7 +78,9 @@ export class EscTransactionPage implements OnInit {
 
   public signingAndTransacting = false;
 
-  public currentNetworkName = ''
+  public currentNetworkName = '';
+
+  private intentMode = true;
 
   public spendingCap = '--'; // for erc20 token approve
 
@@ -93,8 +97,15 @@ export class EscTransactionPage implements OnInit {
     public theme: GlobalThemeService,
     private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
     public uiService: UiService,
-    private ethTransactionService: EVMService
+    private ethTransactionService: EVMService,
+    private router: Router,
+    public events: GlobalEvents,
   ) {
+
+    const navigation = this.router.getCurrentNavigation();
+    if (!Util.isEmptyObject(navigation.extras.state)) {
+        this.intentMode = false;
+    }
   }
 
   ngOnInit() {
@@ -155,9 +166,14 @@ export class EscTransactionPage implements OnInit {
     this.currentNetworkName = this.targetNetwork.name;
 
     this.intentTransfer = this.coinTransferService.intentTransfer;
-    let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
-    this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    //this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
+
+    let activeNetworkWalelt = this.walletManager.getActiveNetworkWallet();
+    if (this.coinTransferService.masterWalletId != activeNetworkWalelt.masterWallet.id) {
+      let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+      this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
+    } else {
+      this.networkWallet = activeNetworkWalelt;
+    }
     if (!this.networkWallet) return;
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
@@ -273,7 +289,14 @@ export class EscTransactionPage implements OnInit {
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
     this.alreadySentIntentResponse = true;
-    await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
+    if (this.intentMode) {
+      await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
+    } else {
+      this.events.publish("esctransaction", {
+        result: result,
+      });
+      this.native.pop();
+    }
   }
 
   goTransaction() {
@@ -406,6 +429,10 @@ export class EscTransactionPage implements OnInit {
       return "";
 
     let approveOperation = <ApproveERC20Operation>transactionInfo.operation;
-    return `${approveOperation.symbol} (${approveOperation.tokenName})`;
+    if (approveOperation.symbol) {
+      return `${approveOperation.symbol} (${approveOperation.tokenName})`;
+    } else {
+      return approveOperation.tokenName; // ERC721
+    }
   }
 }

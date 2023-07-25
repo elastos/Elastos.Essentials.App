@@ -254,7 +254,7 @@ export const en = {
         "confirm-transaction-title": "Confirm Transaction",
         "transfer-transaction-type": "Transfer Transaction",
         "send-transaction-type": "Send Transaction",
-        "bpos-nft-title-transaction-type": "Claim BPoS NFT",
+        "claim-bpos-nft-transaction-type": "Claim BPoS NFT",
 
         /***********************************
         * Transaction Successful Component *
@@ -502,6 +502,7 @@ export const en = {
         'nft-assets-owned': 'assets owned',
         'nft-attributes': 'Attributes',
         'nft-bpos-info': 'BPoS NFT voting information',
+        'nft-destroy': 'DESTROY',
 
         /************
         * Claim BPoS NFT pages *
@@ -509,6 +510,8 @@ export const en = {
         'bpos-nft-title': 'Claim BPoS NFT',
         'bpos-nft-claim': 'Claim',
         'bpos-nft-no-nft': 'No BPoS NFT available to claim',
+        "notification-found-one-claimable-nft": "Wallet {{walletname}} has a BPos NFT that can be claimed on Elastos Smart Chain.",
+        "notification-found-claimable-nfts": "Wallet {{walletname}} has {{count}} BPos NFTs that can be claimed on Elastos Smart Chain.",
 
         /********************************************** Intent Screens ***********************************************/
 

@@ -114,3 +114,14 @@ export type StakeInfo = {
     },
     remainvoteright: string[],
 };
+
+export enum MintBPoSNFTTxStatus {
+  Claimable = "Claimable",
+  Claimed = "Claimed",
+  Unconfirmed = "Unconfirmed",
+}
+
+export type MintBPoSNFTTxInfo = {
+  txid: string,
+  status: MintBPoSNFTTxStatus,
+};

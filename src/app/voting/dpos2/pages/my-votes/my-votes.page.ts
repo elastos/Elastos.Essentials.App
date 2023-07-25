@@ -1,22 +1,18 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { CreateNFTInfo } from '@elastosfoundation/wallet-js-sdk';
+import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { SHA256 } from 'src/app/helpers/crypto/sha256';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import { GlobalStorageService } from 'src/app/services/global.storage.service';
-import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
-import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
-import { AuthService } from 'src/app/wallet/services/auth.service';
-import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { MyVotesActionType, OptionsComponent } from '../../components/options/options.component';
 import { DPoS2Service } from '../../services/dpos2.service';
 
 @Component({
@@ -43,7 +39,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
         public translate: TranslateService,
         public popupProvider: GlobalPopupService,
         public uxService: UXService,
-        private storage: GlobalStorageService
+        private popoverCtrl: PopoverController,
     ) { }
 
     async ngOnInit() {
@@ -64,6 +60,41 @@ export class MyVotesPage implements OnInit, OnDestroy {
         void this.initData();
     }
 
+    async showOptions(ev: any, index: number, node: any) {
+        let actionOptions = [{
+          type: MyVotesActionType.Update,
+          title: this.translate.instant("common.update"),
+        }, {
+          type: MyVotesActionType.MintNFT,
+          title: this.translate.instant("dposvoting.dpos2-mint-bpos-nft"),
+        }]
+        let popover = await this.popoverCtrl.create({
+            mode: 'ios',
+            component: OptionsComponent,
+            componentProps: {
+              options: actionOptions,
+            },
+            cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'options-component' : 'options-component-dark',
+            event: ev,
+            translucent: false
+        });
+        popover.onWillDismiss().then((ret) => {
+            void this.doActionAccordingToOptions(ret.data, index, node);
+        });
+        return await popover.present();
+    }
+
+    doActionAccordingToOptions(type: MyVotesActionType, index: number, node: any) {
+      switch (type) {
+          case MyVotesActionType.Update:
+              void this.showUpdateNode(index, node);
+          break;
+          case MyVotesActionType.MintNFT:
+              void this.mintBPosNFT(index, node);
+          break;
+      }
+    }
+
     showUpdateNode(index: number, node: any) {
         if ((node.locktime - node.blockheight) >= 720000) {
             return GlobalNativeService.instance.genericToast('voting.vote-max-deadline');
@@ -75,7 +106,9 @@ export class MyVotesPage implements OnInit, OnDestroy {
     }
 
     async mintBPosNFT(index: number, node: any) {
-      try {
+        try {
+            // TODO: Check if the node is active
+
             this.signingAndTransacting = true;
             await GlobalNativeService.instance.showLoading(this.translate.instant('common.please-wait'));
 
@@ -104,13 +137,6 @@ export class MyVotesPage implements OnInit, OnDestroy {
             let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
             if (ret) {
                 this.voteService.toastSuccessfully('dposvoting.update-vote');
-
-                let escNetworks = WalletNetworkService.instance.getNetworkByKey('elastossmartchain');
-                if (escNetworks) {
-                    let escNetworkWallet = await escNetworks.createNetworkWallet(this.voteService.networkWallet.masterWallet, false);
-                    let address = escNetworkWallet.getMainEvmSubWallet().getCurrentReceiverAddress();
-                    await this.createNFTSignature(ret.txid, address);
-                }
             }
         }
         catch (e) {
@@ -121,31 +147,10 @@ export class MyVotesPage implements OnInit, OnDestroy {
             this.signingAndTransacting = false;
         }
 
-        // Update votes or hide the vote that minted.
+        // TODO: Update votes or hide the vote that minted.
     }
 
     onClick(index: number) {
         this.showNode = false;
-    }
-
-    async createNFTSignature(txid: string, receiver: string) {
-        let txidEx = txid.startsWith('0x') ? txid.substring(2) : txid;
-        let addressEx = receiver.startsWith('0x') ? receiver.substring(2) : receiver;
-
-        let data = Util.reverseHexToBE(txidEx) + addressEx;
-        let digest = SHA256.encodeToBuffer(Buffer.from(data, 'hex')).toString('hex');
-
-        const password = await AuthService.instance.getWalletPassword(this.voteService.masterWalletId);
-        if (password === null) {// cancelled by user
-            return;
-        }
-
-        // Sign data with the public key of the first external address that has the same public key as stake address.
-        let firstExternalAddress = this.voteService.sourceSubwallet.getCurrentReceiverAddress();
-        let signature = await this.voteService.sourceSubwallet.signDigest(firstExternalAddress, digest, password);
-        let publicKeys = this.voteService.sourceSubwallet.getPublicKeys(0, 1, false);
-        if (publicKeys && publicKeys[0]) {
-            await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "bposvoting", "bposnft-" + txid, {signature, publicKey: publicKeys[0]});
-        }
     }
 }

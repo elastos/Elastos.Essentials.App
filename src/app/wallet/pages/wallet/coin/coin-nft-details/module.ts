@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { GlobalDirectivesModule } from 'src/app/helpers/directives/module';
+import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { CoinNFTDetailsPage } from './coin-nft-details.page';
 
 @NgModule({
@@ -13,6 +14,7 @@ import { CoinNFTDetailsPage } from './coin-nft-details.page';
     imports: [
         SharedComponentsModule,
         CommonModule,
+        ComponentsModule,
         FormsModule,
         IonicModule,
         TranslateModule,

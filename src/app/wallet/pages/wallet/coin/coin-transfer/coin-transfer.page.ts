@@ -191,6 +191,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     public actionIsGoing = false;
 
+    private navigateHomeAfterCompletion = true;
+
     constructor(
         public route: ActivatedRoute,
         public walletManager: WalletService,
@@ -212,7 +214,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         private nameResolvingService: NameResolvingService,
         private erc721Service: ERC721Service,
         private erc1155Service: ERC1155Service,
-        private ethTransactionService: EVMService
+        private ethTransactionService: EVMService,
+        private erc721service: ERC721Service,
     ) {
     }
 
@@ -274,7 +277,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 Logger.log('wallet', 'CoinTransferPage ethTransactionStatus:', status)
                 switch (status.status) {
                     case ETHTransactionStatus.PACKED:
-                        this.walletManager.native.setRootRouter('/wallet/wallet-home');
+                        if (this.navigateHomeAfterCompletion) {
+                          this.walletManager.native.setRootRouter('/wallet/wallet-home');
+                        }
                         if (this.intentId) {
                             let result = {
                                 published: true,
@@ -601,6 +606,15 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     async createSendNFTTransaction() {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
+
+        // BPoS NFT need call approve
+        if (this.coinTransferService.nftTransfer.needApprove) {
+          this.navigateHomeAfterCompletion = false;
+          // approve
+          let ret = await this.approveNFT(this.toAddress);
+          this.navigateHomeAfterCompletion = true;
+          if (!ret) return;
+        }
 
         let rawTx = null;
         try {
@@ -1082,7 +1096,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         // this.addressName = suggestedAddress.getDisplayName();
         this.addressName = suggestedAddress.name;
 
-
         // Hide/reset suggestions
         this.suggestedAddresses = [];
         await this.contactsService.addContact(suggestedAddress);
@@ -1446,5 +1459,36 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             this.conditionalShowToast(message, true);
             return false;
         }
+    }
+
+    // BPoS NFT need call approve.
+    async approveNFT(targetAddress: string) {
+      let methodData = await this.erc721service.approve(this.nft.contractAddress, targetAddress, this.nftAsset.id);
+
+      await this.native.hideLoading();
+
+      if (methodData) {
+        this.coinTransferService.masterWalletId = this.networkWallet.id;
+        this.coinTransferService.payloadParam = {
+            data: methodData,
+            to: this.nft.contractAddress
+        }
+
+        void this.native.go("/wallet/intents/esctransaction", {intentMode: false});
+
+        return new Promise<boolean>((resolve) => {
+          let approveSubscription: Subscription = this.events.subscribe("esctransaction", (ret) => {
+
+            approveSubscription.unsubscribe();
+            if (ret.result.published) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          })
+        });
+      }
+
+      return true;
     }
 }

@@ -62,7 +62,6 @@ import { PushBitcoinTxPage } from './pushbitcointx/pushbitcointx.page';
             { path: 'personalsign', component: PersonalSignPage },
             { path: 'insecureethsign', component: EthSignPage },
             { path: 'dposvote', component: DPoSVotePage },
-            { path: 'access', component: AccessPage },
             { path: 'select-subwallet', component: SelectSubwalletPage },
             { path: 'multisigtx', component: MultiSigTxPage },
             { path: 'pushbitcointx', component: PushBitcoinTxPage },

@@ -290,6 +290,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
       switch (extInfo.evm.txInfo.type) {
         case ETHOperationType.ERC20_TOKEN_APPROVE: return '/assets/wallet/tx/approve-token.svg';
+        case ETHOperationType.ERC721_TOKEN_APPROVE: return '/assets/wallet/tx/approve-token.svg';
         case ETHOperationType.SEND_NFT: return '/assets/wallet/tx/send-nft.svg';
         case ETHOperationType.SWAP: return '/assets/wallet/tx/swap-tokens.svg';
         case ETHOperationType.ADD_LIQUIDITY: return '/assets/wallet/tx/add-liquidity.svg';
