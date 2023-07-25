@@ -73,20 +73,23 @@ export enum TransferType {
     FREEZE = 6,
     UNFREEZE = 7,
     TRONWITHDRAW = 8,
-    CLAIM_NFT = 9
+    CLAIM_NFT = 9,
+    APPROVE = 10,
+    DESTROY_NFT = 11
 }
 export class ContractPayloadParam {
-    data: string = null;
-    from: string = null;
-    gas: string = null;
-    gasPrice: string = null;
-    to: string = null;
-    value: string = null;
+    data?: string = null;
+    from?: string = null;
+    gas?: string = null;
+    gasPrice?: string = null;
+    to?: string = null;
+    value?: string = null;
 }
 
 type NFTTransfer = {
     nft: NFT; // Mostly, the NFT contract address
     assetID: string; // Asset ID inside the contract, to be transferred
+    needApprove?: boolean; // Need approve for BPoS NFT.
 }
 @Injectable({
     providedIn: 'root'
