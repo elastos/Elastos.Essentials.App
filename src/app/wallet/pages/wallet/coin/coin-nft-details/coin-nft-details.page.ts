@@ -24,18 +24,29 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
+import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
+import { sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
+import { TxConfirmComponent } from 'src/app/wallet/components/tx-confirm/tx-confirm.component';
+import { Config } from 'src/app/wallet/config/Config';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { ESCTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/esc/tx-builders/esc.txbuilder';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
 import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
-import { CoinTransferService, TransferType } from 'src/app/wallet/services/cointransfer.service';
+import { CoinTransferService, Transfer, TransferType } from 'src/app/wallet/services/cointransfer.service';
 import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
+import { EVMService } from 'src/app/wallet/services/evm/evm.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { LocalStorage } from '../../../../services/storage.service';
@@ -58,6 +69,12 @@ export class CoinNFTDetailsPage implements OnInit {
       value: string
     }[] = [];
 
+    private publicationStatusSub: Subscription;
+
+    // User can set gas price and limit.
+    private gasPrice: string = null;
+    private gasLimit: string = null;
+
     constructor(
         public router: Router,
         public walletManager: WalletService,
@@ -71,6 +88,7 @@ export class CoinNFTDetailsPage implements OnInit {
         public uiService: UiService,
         private storage: LocalStorage,
         private uxService: UXService,
+        public globalPopupService: GlobalPopupService,
     ) {
         this.init();
     }
@@ -146,7 +164,7 @@ export class CoinNFTDetailsPage implements OnInit {
         return this.nft && (this.nft.type === NFTType.ERC721 || this.nft.type === NFTType.ERC1155);
     }
 
-    public sendNFT() {
+    public async sendNFT() {
         if (!this.nft || !this.asset)
             return;
 
@@ -155,7 +173,8 @@ export class CoinNFTDetailsPage implements OnInit {
         this.coinTransferService.transferType = TransferType.SEND_NFT;
         this.coinTransferService.nftTransfer = {
             nft: this.nft,
-            assetID: this.asset.id
+            assetID: this.asset.id,
+            needApprove: this.asset.bPoSNFTInfo ? true : false, // approve for bpos nft
         }
         this.native.go('/wallet/coin-transfer');
     }
@@ -167,6 +186,68 @@ export class CoinNFTDetailsPage implements OnInit {
         this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
         this.coinTransferService.subWalletId = this.networkWallet.getMainEvmSubWallet().id;
         this.native.go('/wallet/coin-receive');
+    }
+
+    public async destroyBPoSNFT() {
+      Logger.log('wallet', 'destroyBPoSNFT', this);
+
+      await this.native.showLoading(this.translate.instant('common.please-wait'));
+
+      let mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
+
+      // get stake address
+      let elaMainChainSubwallet = await this.getELAMainChainSubwallet();
+      if (!elaMainChainSubwallet) {
+          return this.native.toast('wallet.nft-no-ela-mainchain-wallet');
+      }
+
+      let stakeAddress = elaMainChainSubwallet.getOwnerStakeAddress();
+
+      // approve
+      let ret = await this.approveTransaction(Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+      if (!ret) return;
+
+      try {
+          let escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
+
+          const rawTx = await escTxBuilder.burnBPoSNFT(this.asset.id, stakeAddress);
+          await this.native.hideLoading();
+          if (rawTx) {
+              const transfer = new Transfer();
+              Object.assign(transfer, {
+                  masterWalletId: this.networkWallet.id,
+                  subWalletId: mainEvmSubwallet.id,
+                  payPassword: '',
+                  action: null,
+                  intentId: null,
+              });
+              const result = await mainEvmSubwallet.signAndSendRawTransaction(rawTx, transfer);
+              Logger.log('wallet', 'destroyBPoSNFT signAndSendRawTransaction:', result);
+              if (result.published) {
+              }
+          }
+      }
+      catch (e) {
+          Logger.warn('wallet', 'destroyBPoSNFT exception:', e);
+          await this.native.hideLoading();
+          await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
+      }
+    }
+
+    async getELAMainChainSubwallet() {
+      let network = WalletNetworkService.instance.getNetworkByKey('elastos');
+      let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+      return networkWallet?.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
+    }
+
+    /**
+     * Returns the ion-col size for the send/receive/destroy row, based on the available features.
+     */
+    public getColumnSize(): number {
+      if (this.asset.bPoSNFTInfo)
+          return 4; // 3 columns - 3x4 = 12
+      else
+          return 6; // 2 columns - 2x6 = 12
     }
 
     private async prepareForBPoSNFTDisplay() {
@@ -204,5 +285,105 @@ export class CoinNFTDetailsPage implements OnInit {
         title: this.translate.instant('dposvoting.node-name'),
         value: targetNode? targetNode.nickname : targetOwnerKey,
       })
+    }
+
+    public waitForTransactionToBeConfirmed() {
+      return new Promise(async (resolve, reject) => {
+        this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
+          Logger.log('wallet', 'CoinNFTDetailsPage ethTransactionStatus:', status)
+          switch (status.status) {
+              case ETHTransactionStatus.PACKED:
+                  this.publicationStatusSub.unsubscribe();
+                  resolve(true);
+                  break;
+              // case ETHTransactionStatus.CANCEL:
+              //     resolve(false);
+              //     this.publicationStatusSub.unsubscribe();
+              //     break;
+              default:
+                  this.publicationStatusSub.unsubscribe();
+                  resolve(false);
+                  break;
+          }
+        });
+      });
+    }
+
+    async approveTransaction(address: string) {
+      let mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
+
+      // approve
+      let unsignedTx = await this.erc721service.approve(mainEvmSubwallet, this.nft.contractAddress, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, this.asset.id);
+      if (unsignedTx) {
+        Logger.log("wallet", "Signing and sending transaction", unsignedTx);
+
+        await this.native.hideLoading();
+        let ret = await this.showConfirm(TransferType.APPROVE);
+        if (!ret) return false;
+
+        const transfer = new Transfer();
+        Object.assign(transfer, {
+            masterWalletId: this.networkWallet.id,
+            subWalletId: mainEvmSubwallet.id,
+        });
+        let sendResult = await mainEvmSubwallet.signAndSendRawTransaction(unsignedTx, transfer, false, false, false);
+        Logger.log("wallet", "approve Transaction result:", sendResult);
+
+        // Wait for block validation
+        let approved = await this.waitForTransactionToBeConfirmed();
+        if (!approved) {
+          Logger.warn('wallet', 'destroyBPoSNFT: failed to call approve');
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    async showConfirm(type: TransferType) {
+        let mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
+        let address = mainEvmSubwallet.getCurrentReceiverAddress();
+
+        const txInfo = {
+            type: type,
+            transferFrom: address,
+            transferTo: address,
+            toChainId: null,
+            amount: 0,
+            sendAll: false,
+            precision: mainEvmSubwallet.tokenDecimals,
+            memo: null,
+            tokensymbol: mainEvmSubwallet.getDisplayTokenName(),
+            fee: null,
+            gasLimit: this.gasLimit,
+            coinType: mainEvmSubwallet.type
+        }
+
+        this.native.popup = await this.native.popoverCtrl.create({
+            mode: 'ios',
+            cssClass: 'wallet-tx-component',
+            component: TxConfirmComponent,
+            componentProps: {
+                txInfo: txInfo
+            }
+        });
+
+        return new Promise(async resolve => {
+            this.native.popup.onWillDismiss().then((params) => {
+              this.native.popup = null;
+              Logger.log('wallet', 'Confirm tx params', params);
+              if (params.data && params.data.confirm) {
+                  if (params.data.gasPrice) this.gasPrice = params.data.gasPrice;
+                  if (params.data.gasLimit) this.gasLimit = params.data.gasLimit;
+                  // void this.transaction();
+                  resolve(true);
+              } else resolve(false);
+          });
+
+          // Wait for the keyboard to close if needed, otherwise the popup is not centered.
+          await sleep(500);
+
+          await this.native.popup.present();
+        });
     }
 }

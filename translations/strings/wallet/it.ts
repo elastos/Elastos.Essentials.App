@@ -245,7 +245,7 @@ export const it = {
         "confirm-transaction-title": "Conferma transazione",
         "transfer-transaction-type": "Trasferimento di denaro",
         "send-transaction-type": "Invia denaro",
-        "bpos-nft-title-transaction-type": "Claim BPoS NFT",
+        "claim-bpos-nft-transaction-type": "Claim BPoS NFT",
 
         /***********************************
         * Transaction Successful Component *
@@ -491,6 +491,7 @@ export const it = {
         'nft-assets-owned': 'NFT posseduti',
         'nft-attributes': 'Attributes',
         'nft-bpos-info': 'Informazioni sul voto BPoS NFT',
+        'nft-destroy': 'DESTROY',
 
         /************
         * Claim BPoS NFT pages *

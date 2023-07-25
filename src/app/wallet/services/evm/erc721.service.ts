@@ -32,6 +32,8 @@ import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { NFTAsset } from '../../model/networks/evms/nfts/nftasset';
 import type { NFTResolvedInfo } from '../../model/networks/evms/nfts/resolvedinfo';
 import type { EVMSafe } from '../../model/networks/evms/safes/evm.safe';
+import { AnyMainCoinEVMSubWallet } from '../../model/networks/evms/subwallets/evm.subwallet';
+import { AddressUsage } from '../../model/safes/addressusage';
 import { WalletNetworkService } from '../network.service';
 import { EVMService } from './evm.service';
 
@@ -523,4 +525,34 @@ export class ERC721Service {
 
         return rawTransaction;
     }
+
+    /**
+     * BPoS NFT: need to call approve before tranfer and burn.
+     * @param mainCoinSubWallet
+     * @param contractAddress
+     * @param allowedAddress
+     * @param tokenID
+     * @returns
+     */
+    public async approve(mainCoinSubWallet: AnyMainCoinEVMSubWallet, contractAddress: string, allowedAddress: string, tokenID: string) {
+      const erc721Contract = new (await this.getWeb3()).eth.Contract(this.erc721ABI, contractAddress);
+
+      const approvedAddress = await erc721Contract.methods.getApproved(tokenID).call();
+      if (approvedAddress == allowedAddress) {
+          Logger.log("wallet", "ERC721 already approved for:", allowedAddress);
+          return null;
+      }
+
+      let network = mainCoinSubWallet.networkWallet.network;
+      let accountAddress = await mainCoinSubWallet.getAccountAddress(AddressUsage.EVM_CALL);
+
+      const approveMethod = await erc721Contract.methods.approve(allowedAddress, tokenID);
+
+      const { gasLimit, nonce } = await this.evmService.methodGasAndNonce(approveMethod, network, accountAddress, "0");
+
+      const gasPrice = await this.evmService.getGasPrice(network);
+
+      let safe = <EVMSafe><unknown>mainCoinSubWallet.networkWallet.safe;
+      return safe.createContractTransaction(contractAddress, "0", gasPrice, gasLimit, nonce, approveMethod.encodeABI());
+  }
 }
