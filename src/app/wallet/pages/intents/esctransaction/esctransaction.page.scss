@@ -4,13 +4,14 @@
     display: flex;
     flex-direction: column;
     min-height: 105%; // Ensure that the page can be scrolled and the bottom element is not covered by the button.
-    padding: 10px 10px;
+    padding: 0px 10px;
     object-fit: cover;
 
     ion-card {
         ion-card-header {
             position: relative;
             margin: 50px 10px 10px;
+
             background: var(--essentials-box-color);
             display: flex;
             flex-direction: column;

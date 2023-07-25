@@ -182,7 +182,7 @@
         align-items: center;
         min-height: 100%;
         margin: 0;
-        padding: 30px;
+        padding: 20px 30px;
 
         .header-img {
             width: 75px;
@@ -409,7 +409,6 @@
             border-radius: 20px;
             padding: 15px;
             margin-top: 10px;
-            margin-bottom: 32px;
             background: var(--essentials-box-color);
             width: 100%;
 
@@ -464,7 +463,6 @@
     }
 
     .footer-container {
-        margin-top: 20px;
         padding: 0 10px;
 
         .btn-container {
