@@ -150,6 +150,10 @@ export class ERC721Service {
                 // Retrieve how many assets are owned by this account
                 const assetsNumber = await erc721Contract.methods.balanceOf(accountAddress).call();
                 Logger.log("wallet", "ERC721 assets number:", assetsNumber);
+                if (0 == assetsNumber) {
+                  subject.complete();
+                  return;
+                }
 
                 // Iterate over tokenOfOwnerByIndex() to get more info. If an exception occurs this probably
                 // means that tokenOfOwnerByIndex() is not implemented (not an enumerable ERC721).
@@ -465,11 +469,14 @@ export class ERC721Service {
         const erc721Contract = new web3.eth.Contract(this.erc721ABI, nftAddress, {
             from: senderAddress
         });
+
         /**
          * IMPORTANT NOTES:
          * We use a fake destination address just to estimate the transfer cost.
+         * For some contracts, the destination address and from address cannot be the same .
          */
-        const transferMethod = erc721Contract.methods.safeTransferFrom(senderAddress, senderAddress, nftAssetId);
+        let toAddress = "0x298163B65453Dcd05418A9a5333E4605eDA6D998";
+        const transferMethod = erc721Contract.methods.safeTransferFrom(senderAddress, toAddress, nftAssetId);
 
         var gasLimit = 3000000; // Default value
         try {

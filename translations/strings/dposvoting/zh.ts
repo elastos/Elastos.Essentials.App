@@ -123,6 +123,7 @@ export const zh = {
         'vote-about-exprie': '您的 BPoS 投票即将过期，请点击更新投票。',
         'dpos1-update-warning': '您是否想升级为BPoS节点？升级交易需要花费少量的交易费。',
         'dpos1-withdraw-warning': '您要取回节点的押金吗?',
+        'dpos2-mint-bpos-nft': '铸造 BPoS NFT',
 
         'dpos2-node-info': 'BPoS 节点信息',
         'node2-details': 'BPoS 节点详情',
