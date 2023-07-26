@@ -34,14 +34,12 @@ import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { TxConfirmComponent } from 'src/app/wallet/components/tx-confirm/tx-confirm.component';
-import { MintBPoSNFTTxStatus } from 'src/app/wallet/model/elastos.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EscSubWallet } from 'src/app/wallet/model/networks/elastos/evms/esc/subwallets/esc.evm.subwallet';
 import { ESCTransactionBuilder } from 'src/app/wallet/model/networks/elastos/evms/esc/tx-builders/esc.txbuilder';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { Transfer, TransferType } from 'src/app/wallet/services/cointransfer.service';
-import { BPoSERC721Service } from 'src/app/wallet/services/evm/bpos.erc721.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
@@ -95,34 +93,22 @@ export class CoinBPoSNFTPage {
     async init() {
         const navigation = this.router.getCurrentNavigation();
         if (!Util.isEmptyObject(navigation.extras.state)) {
-            // Retrieve the master wallet
             this.masterWalletId = navigation.extras.state.masterWalletId;
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId);
-            this.sourceSubwallet = this.networkWallet.getMainTokenSubWallet() as EscSubWallet;
-            this.escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
-
-            this.receiverAddress = this.sourceSubwallet.getCurrentReceiverAddress();
+        } else {
+            this.networkWallet = this.walletManager.getActiveNetworkWallet();
+            this.masterWalletId = this.networkWallet.masterWallet.id;
         }
 
-        let txList = this.sourceSubwallet.getUnClaimedTxs();
-        for (let i = 0; i < txList.length; i++) {
-          let ret = await BPoSERC721Service.instance.canClaim(txList[i].txid);
-          Logger.log('wallet', 'canClaim ', txList[i], ret);
-          if (null == ret) {
-            // Do nothing
-            // TODO: remove useless txid?
-          } else if ('0' == ret) {
-            txList[i].status = MintBPoSNFTTxStatus.Claimed;
-            this.sourceSubwallet.updateMintNFTTx(txList[i]);
-          } else {
-            txList[i].status = MintBPoSNFTTxStatus.Claimable;
-            this.sourceSubwallet.updateMintNFTTx(txList[i]);
-          }
-        }
+        this.sourceSubwallet = this.networkWallet.getMainTokenSubWallet() as EscSubWallet;
+        this.escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
 
-        this.claimableNfts = txList.filter( t => t.status == MintBPoSNFTTxStatus.Claimable).map( t => {
-          return t.txid;
+        this.receiverAddress = this.sourceSubwallet.getCurrentReceiverAddress();
+
+        this.claimableNfts = (await this.sourceSubwallet.getClaimableTxs()).map(t => {
+            return t.txid;
         });
+
         this.dataFetched = true;
     }
 
@@ -135,12 +121,11 @@ export class CoinBPoSNFTPage {
 
             let txid = this.claimableNfts[index].startsWith('0x') ? this.claimableNfts[index].substring(2) : this.claimableNfts[index];
             let ret = await this.getNFTSignatureFromMainChain(this.claimableNfts[index], this.receiverAddress);
-              if (!ret) { // cancelled by user
-                  this.isExecuting = false;
-                  await this.native.hideLoading();
-                  return;
-              }
-            Logger.log('wallet', 'signature data:', ret);
+            if (!ret) { // cancelled by user
+                this.isExecuting = false;
+                await this.native.hideLoading();
+                return;
+            }
 
             this.txid = '0x' + Util.reverseHexToBE(txid);
 

@@ -17,6 +17,7 @@ import { GlobalCosmosService } from './services/global.cosmos.service';
 import { GlobalDIDSessionsService } from './services/global.didsessions.service';
 import { GlobalELAUtxoService } from './services/global.ela.utxo.service';
 import { GlobalElastosAPIService } from './services/global.elastosapi.service';
+import { GlobalESCBPoSNFTService } from './services/global.esc.bposnft.service';
 import { GlobalEthereumRPCService } from './services/global.ethereum.service';
 import { GlobalFirebaseService } from './services/global.firebase.service';
 import { GlobalHiveService } from './services/global.hive.service';
@@ -79,6 +80,7 @@ export class AppComponent {
     private credentialToolboxService: GlobalCredentialToolboxService,
     private globalSecurityService: GlobalSecurityService,
     private globalELAUtxoService: GlobalELAUtxoService,
+    private globalESCBPoSNFTService: GlobalESCBPoSNFTService,
     private globalNativeService: GlobalNativeService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private firebase: FirebaseX,
     private widgetsService: WidgetsService,
@@ -129,6 +131,7 @@ export class AppComponent {
       await this.credentialToolboxService.init();
       void this.globalFirebaseService.init();
       void this.globalELAUtxoService.init();
+      void this.globalESCBPoSNFTService.init();
       // Init after globalNetworksService.init()
       void this.globalBTCService.init();
       void this.globalTronGridService.init();

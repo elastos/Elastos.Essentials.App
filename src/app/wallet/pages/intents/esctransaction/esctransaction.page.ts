@@ -162,9 +162,14 @@ export class EscTransactionPage implements OnInit {
     this.currentNetworkName = this.targetNetwork.name;
 
     this.intentTransfer = this.coinTransferService.intentTransfer;
-    let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
-    this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    //this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
+
+    let activeNetworkWalelt = this.walletManager.getActiveNetworkWallet();
+    if (this.coinTransferService.masterWalletId != activeNetworkWalelt.masterWallet.id) {
+      let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+      this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
+    } else {
+      this.networkWallet = activeNetworkWalelt;
+    }
     if (!this.networkWallet) return;
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
