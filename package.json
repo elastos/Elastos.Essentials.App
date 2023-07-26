@@ -54,7 +54,7 @@
     "@cosmjs/stargate": "^0.30.1",
     "@elastosfoundation/did-js-sdk": "^2.2.12",
     "@elastosfoundation/hive-js-sdk": "^2.9.4",
-    "@elastosfoundation/wallet-js-sdk": "^1.0.8",
+    "@elastosfoundation/wallet-js-sdk": "^1.0.9",
     "@ensdomains/ensjs": "3.0.0-alpha.20",
     "@ethereumjs/common": "^2.6.5",
     "@ethereumjs/tx": "^3.5.2",
