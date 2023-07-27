@@ -17,8 +17,8 @@ import { WalletInitService } from 'src/app/wallet/services/init.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { AppmanagerService } from '../../services/appmanager.service';
 import {
-    LauncherNotification,
-    LauncherNotificationType, NotificationManagerService
+  LauncherNotification,
+  LauncherNotificationType, NotificationManagerService
 } from '../../services/notificationmanager.service';
 import { TipsService } from '../../services/tips.service';
 
@@ -157,7 +157,8 @@ export class NotificationsPage implements OnInit {
                         if (WalletNetworkService.instance.activeNetwork.value.key !== networkKey) {
                             let targetNetwork =
                                 WalletNetworkService.instance.getNetworkByKey(networkKey);
-                            await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+                            let networkSwitched =  await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
+                            if (!networkSwitched) return;
                         }
                     }
                 }

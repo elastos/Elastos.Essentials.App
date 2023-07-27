@@ -33,6 +33,7 @@ export const zh = {
         'aborted': '已终止',
 
         'not-enough-ela-for-vote': '当前钱包余额不足，请充值或选择其他钱包',
+        'not-enough-ela-on-first-address-for-vote': '此钱包第一个地址的余额不足，请给此地址至少充值 0.0002 ELA',
         'multi-sign-reject-voting': '多签钱包不能投票。',
         'ledger-reject-voting': 'Ledger钱包暂不能投票。',
 

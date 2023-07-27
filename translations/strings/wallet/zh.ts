@@ -255,6 +255,8 @@ export const zh = {
         "transfer-transaction-type": "充值交易",
         "send-transaction-type": "转账交易",
         "claim-bpos-nft-transaction-type": "申领 BPoS NFT",
+        "burn-bpos-nft-transaction-type": "销毁 BPoS NFT",
+        "burn-bpos-nft-transaction-prompt": "BPoS NFT 销毁后，对应的BPoS投票 将转至 Elastos 主链",
 
         /***********************************
         * Transaction Successful Component *
@@ -509,8 +511,8 @@ export const zh = {
         'bpos-nft-title': '申领 BPoS NFT',
         'bpos-nft-claim': '申领',
         'bpos-nft-no-nft': '没有可申领的 BPoS NFT',
-        "notification-found-one-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 1 个可申领的 BPos NFT！",
-        "notification-found-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 {{ count }} 个可申领的 BPos NFT！",
+        "notification-found-one-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 1 个可申领的 BPoS NFT！",
+        "notification-found-claimable-nfts": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 {{ count }} 个可申领的 BPoS NFT！",
 
         /********************************************** Intent Screens ***********************************************/
 
@@ -809,7 +811,9 @@ export const zh = {
         'ext-tx-info-type-mint': '创建',
         'ext-tx-info-type-redeem': '赎回',
         'ext-tx-info-type-lock': '锁币',
-        'ext-tx-info-type-claim-tokens': '申请代币',
+        'ext-tx-info-type-claim-tokens': '申领代币',
+        'ext-tx-info-type-claim-bpos-nft': '申领 BPoS NFT',
+        'ext-tx-info-type-destroy-bpos-nft': '销毁 BPoS NFT',
         'ext-tx-info-type-withdraw-to-mainchain': '主链提现',
         'ext-tx-info-type-harvest': '收获',
         'ext-tx-info-type-buy-nft': '购买 NFT',

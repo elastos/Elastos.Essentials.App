@@ -125,10 +125,16 @@ export class ESCTransactionBuilder extends EVMTransactionBuilder {
         }
 
         let nonce = await this.getNonce();
-        Logger.log('wallet', 'burnBPoSNFT gasPrice:', gasPrice, ' nonce:', nonce, ' ContractAddress:', Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+        Logger.log('wallet', 'burnBPoSNFT gasPrice:', gasPrice, ' gasLimit:', gasLimit, ' nonce:', nonce, ' ContractAddress:', Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
 
         return (this.networkWallet.safe as unknown as EVMSafe).createContractTransaction(Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, '0', gasPrice, gasLimit, nonce, method.encodeABI());
     }
+
+    public async estimateBurnBPoSNFTGas(tokenId: string, stakeAddress: string) {
+      const burnTickContract = new ((await this.getWeb3()).eth.Contract)(burnTickAbi, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS);
+      const method = await burnTickContract.methods.burnTick(tokenId, stakeAddress);
+      return await this.estimateGasByMethod(method);
+  }
 
     private async estimateGasByMethod(method) {
         let gasLimit = 1500000;
