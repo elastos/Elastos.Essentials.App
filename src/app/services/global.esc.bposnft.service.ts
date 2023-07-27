@@ -80,7 +80,7 @@ export class GlobalESCBPoSNFTService extends GlobalService {
 
     if (this.walletNetworkService.activeNetwork.value.key === 'elastossmartchain') {
       this.escSubwallet = this.activeNetworkWallet.getMainEvmSubWallet() as unknown as EscSubWallet;
-      if (this.escSubwallet.getUnClaimedTxs().length > 0) {
+      if (this.escSubwallet && this.escSubwallet.getUnClaimedTxs().length > 0) {
         this.getClaimableNFTTimer = setTimeout(() => {
           void this.checkEscBPoSNFT();
         }, 20000);
