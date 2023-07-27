@@ -254,7 +254,7 @@ export class CoinNFTDetailsPage implements OnInit {
       // endHeight
       let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
       let currentBlockTimestamp = moment().valueOf() / 1000;
-      let stakeTimestamp = (parseInt(this.asset.bPoSNFTInfo.endHeight) - currentHeight) * 720 + currentBlockTimestamp;
+      let stakeTimestamp = (parseInt(this.asset.bPoSNFTInfo.endHeight) - currentHeight) * 120 + currentBlockTimestamp;
 
       this.bposNFTInfos.push({
         title: this.translate.instant('dposvoting.stake-until'),
