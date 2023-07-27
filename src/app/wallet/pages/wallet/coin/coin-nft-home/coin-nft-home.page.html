@@ -19,10 +19,12 @@
         </ion-row>
         <ion-row class="list-title-row">
             <h1>{{ 'wallet.nft-assets' | translate }}</h1>
+
+            <div *ngIf="refreshingAssets" class="refreshing-spinner">
+              <ion-spinner></ion-spinner>
+            </div>
         </ion-row>
-        <ion-row *ngIf="refreshingAssets" class="refreshing-spinner">
-            <ion-spinner></ion-spinner>
-        </ion-row>
+
         <div *ngIf="assets.length > 0">
             <ion-row class="item-row ripple ion-activatable" *ngFor="let asset of assets"
                 (click)="showAssetDetails(asset)">

@@ -255,6 +255,8 @@ export const en = {
         "transfer-transaction-type": "Transfer Transaction",
         "send-transaction-type": "Send Transaction",
         "claim-bpos-nft-transaction-type": "Claim BPoS NFT",
+        "burn-bpos-nft-transaction-type": "Burn BPoS NFT",
+        "burn-bpos-nft-transaction-prompt": "After the BPoS NFT is burned, the corresponding BPoS voting will be transferred to the Elastos main chain",
 
         /***********************************
         * Transaction Successful Component *
@@ -510,8 +512,8 @@ export const en = {
         'bpos-nft-title': 'Claim BPoS NFT',
         'bpos-nft-claim': 'Claim',
         'bpos-nft-no-nft': 'No BPoS NFT available to claim',
-        "notification-found-one-claimable-nft": "Wallet {{walletname}} has a BPos NFT that can be claimed on Elastos Smart Chain.",
-        "notification-found-claimable-nfts": "Wallet {{walletname}} has {{count}} BPos NFTs that can be claimed on Elastos Smart Chain.",
+        "notification-found-one-claimable-nft": "Wallet {{walletname}} has a BPoS NFT that can be claimed on Elastos Smart Chain.",
+        "notification-found-claimable-nfts": "Wallet {{walletname}} has {{count}} BPoS NFTs that can be claimed on Elastos Smart Chain.",
 
         /********************************************** Intent Screens ***********************************************/
 
@@ -811,6 +813,8 @@ export const en = {
         'ext-tx-info-type-redeem': 'Redeem',
         'ext-tx-info-type-lock': 'Lock',
         'ext-tx-info-type-claim-tokens': 'Claim tokens',
+        'ext-tx-info-type-claim-bpos-nft': 'Claim BPoS NFT',
+        'ext-tx-info-type-destroy-bpos-nft': 'Burn BPoS NFT',
         'ext-tx-info-type-withdraw-to-mainchain': 'To Main Chain',
         'ext-tx-info-type-harvest': 'Harvest',
         'ext-tx-info-type-buy-nft': 'Buy NFT',
