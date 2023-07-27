@@ -7,14 +7,14 @@
     ion-card {
         ion-card-header {
             position: relative;
-            margin: 30px 10px;
+            margin: 35px 10px 20px;
             background: var(--essentials-box-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-radius: 15px;
-            padding: 25px 15px 30px;
+            padding: 25px 5px 30px;
             overflow: visible;
             box-shadow: none;
 
@@ -31,7 +31,7 @@
                 font-size: 21px;
                 font-weight: 600;
                 line-height: 1.29;
-                margin: 40px 15px 10px;
+                margin: 40px 5px 10px;
             }
 
             ion-card-subtitle {
@@ -39,14 +39,14 @@
                 text-transform: none;
                 font-size: 16px;
                 font-weight: 300;
-                margin: 0 15px;
+                margin: 0 20px;
                 color: var(--ion-text-color);
             }
         }
     }
 
     .section {
-        margin-bottom: 30px;
+        margin-bottom: 20px;
 
         .section-title-row {
             margin-bottom: 10px;
