@@ -134,10 +134,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
             await GlobalNativeService.instance.hideLoading();
             Logger.log(App.DPOS2, "rawTx:", rawTx);
 
-            let ret = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
-            if (ret) {
-                this.voteService.toastSuccessfully('dposvoting.update-vote');
-            }
+            await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);
