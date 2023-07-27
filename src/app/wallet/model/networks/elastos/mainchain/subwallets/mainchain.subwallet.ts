@@ -162,7 +162,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return ElastosTransactionsHelper.getTransactionName(transaction, this);
     }
 
-    protected isSingleAddress(): boolean {
+    public isSingleAddress(): boolean {
         if (!this.networkWallet.getNetworkOptions())
             return false;
 
@@ -227,7 +227,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 break;
         }
         if (transaction.txtype == RawTransactionType.MintNFT) {
-          this.saveMintNFTTx(transaction);
+            this.saveMintNFTTxToCache({txid: transaction.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
         }
         return await transactionInfo;
     }
@@ -639,7 +639,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         if (this.lastUnConfirmedTransactionId && !findLastUnConfirmedTx) {
             let tx = await this.getTransactionDetails(this.lastUnConfirmedTransactionId);
-            if (tx.confirmations < 1) {
+            if (tx && tx.confirmations < 1) {
                 pendingTransactions.push(this.lastUnConfirmedTransactionId);
             } else {
                 this.lastUnConfirmedTransactionId = null;
@@ -1040,12 +1040,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         await this.stakedBalanceCache.save();
     }
 
-    public async saveMintNFTTx(tx: ElastosTransaction) {
-      if (!this.mintNFTTxCache.get(tx.txid)) {
-        this.saveMintNFTTxToCache({txid: tx.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
-      }
-    }
-
     private async loadMintNFTTxFromCache() {
         if (!this.mintNFTTxCache) {
           this.mintNFTTxKeyInCache = this.masterWallet.id + '-mintbposnft';
@@ -1055,9 +1049,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async saveMintNFTTxToCache(data: MintBPoSNFTTxInfo): Promise<void> {
-        const timestamp = (new Date()).valueOf();
-        this.mintNFTTxCache.set(data.txid, data, timestamp);
-        await this.mintNFTTxCache.save();
+        if (!this.mintNFTTxCache.get(data.txid)) {
+            const timestamp = (new Date()).valueOf();
+            this.mintNFTTxCache.set(data.txid, data, timestamp);
+            await this.mintNFTTxCache.save();
+        }
     }
 
     public getOwnerAddress(): string {
@@ -1821,6 +1817,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // BPoS
     // amount: sela
     public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
+        // Support for multiple addresses, no need for all utxo in the first external address.
         let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
@@ -1835,7 +1832,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
+        // Use the first external address.
+        let firstExternalAddress = this.getCurrentReceiverAddress();
+
+        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2VoteTransaction(au.utxo, payload, '10000', memo);
@@ -1846,7 +1846,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createDPoSV2ClaimRewardTransaction(payload: DPoSV2ClaimRewardInfo, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
+        // Use the first external address.
+        let firstExternalAddress = this.getCurrentReceiverAddress();
+
+        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createDPoSV2ClaimRewardTransaction(au.utxo, payload, '10000', memo);
@@ -1857,7 +1860,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async createUnstakeTransaction(payload: UnstakeInfo, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
+        let firstExternalAddress = this.getCurrentReceiverAddress();
+        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createUnstakeTransaction(au.utxo, payload, '10000', memo);
@@ -1865,7 +1869,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
     // BPoS NFT
     public async createMintNFTTransaction(payload: CreateNFTInfo, memo = ""): Promise<EncodedTx> {
-        let au = await this.getAvailableUtxo(20000);
+        let firstExternalAddress = this.getCurrentReceiverAddress();
+        let au = await this.getAvailableUtxo(20000, firstExternalAddress);
         if (!au.utxo) return;
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createMintNFTTransaction(au.utxo, payload, '10000', memo);

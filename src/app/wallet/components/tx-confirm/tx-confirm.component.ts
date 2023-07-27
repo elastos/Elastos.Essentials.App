@@ -90,6 +90,10 @@ export class TxConfirmComponent implements OnInit {
             this.txHeader = this.translate.instant('wallet.claim-bpos-nft-transaction-type');
             this.txIcon = '/assets/wallet/tx/transfer.svg';
         break;
+        case TransferType.DESTROY_NFT:
+            this.txHeader = this.translate.instant('wallet.burn-bpos-nft-transaction-type');
+            this.txIcon = '/assets/wallet/tx/transfer.svg';
+        break;
         default:
             this.txHeader = this.translate.instant('wallet.send-transaction-type');
             this.txIcon = '/assets/wallet/tx/send.svg';

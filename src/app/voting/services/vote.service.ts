@@ -289,9 +289,17 @@ export class VoteService implements GlobalService {
             return false;
         }
 
-        let enoughBalance = await this.sourceSubwallet.isAvailableBalanceEnough(new BigNumber(20000));
-        if (!enoughBalance) {
-            await this.globalPopupService.ionicAlert('wallet.insufficient-balance', 'voting.not-enough-ela-for-vote');
+        // BPOS transactions use the ELA of the first external address as the fee.
+        let firstExternalAddress = this.sourceSubwallet.getCurrentReceiverAddress();
+        let au = await this.sourceSubwallet.getAvailableUtxo(20000, firstExternalAddress);
+        if (!au.utxo) {
+            let message = '';
+            if (this.sourceSubwallet.isSingleAddress()) {
+                message = 'voting.not-enough-ela-for-vote';
+            } else {
+                message = 'voting.not-enough-ela-on-first-address-for-vote';
+            }
+            await this.globalPopupService.ionicAlert('wallet.insufficient-balance', message);
             return false;
         }
 

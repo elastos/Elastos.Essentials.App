@@ -153,24 +153,14 @@
         margin-bottom: 10px;
         margin-left: 5px;
 
-        h1,
-        h2 {
+        h1 {
             margin: 0;
             font-weight: 500;
             line-height: 0.8;
             letter-spacing: -0.45px;
-        }
 
-        h1 {
             font-size: 18px;
             text-align: left;
-        }
-
-        h2 {
-            letter-spacing: 0.32px;
-            font-size: 12px;
-            margin-top: 5px;
-            margin-left: 10px;
         }
     }
 
@@ -178,6 +168,14 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
+        margin-top: -20px;
+        width: 100%;
+        height: 20px;
+
+        ion-spinner {
+          margin: 0px;
+        }
     }
 
     .item-row {
