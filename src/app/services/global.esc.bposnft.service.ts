@@ -109,7 +109,7 @@ export class GlobalESCBPoSNFTService extends GlobalService {
       message = GlobalLanguageService.instance.translate('wallet.notification-found-one-claimable-nft',
       { walletname: this.escSubwallet.masterWallet.name })
     } else {
-      message = GlobalLanguageService.instance.translate('wallet.notification-found-claimable-nft',
+      message = GlobalLanguageService.instance.translate('wallet.notification-found-claimable-nfts',
       { walletname: this.escSubwallet.masterWallet.name, count: claimableNFTCount })
     }
     const notification = {
@@ -117,7 +117,7 @@ export class GlobalESCBPoSNFTService extends GlobalService {
       key: 'claimable-nft-' + this.escSubwallet.masterWallet.id,
       title: GlobalLanguageService.instance.translate('wallet.wallet-settings-bpos-nft'),
       message: message,
-      url: '/wallet/coin-bpos-nft'
+      url: '/wallet/coin-bpos-nft' + '?network=' + this.activeNetworkWallet.network.key,
     };
     void GlobalNotificationsService.instance.sendNotification(notification);
   }
