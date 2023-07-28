@@ -12,6 +12,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { MyVotesActionType, OptionsComponent } from '../../components/options/options.component';
 import { DPoS2Service } from '../../services/dpos2.service';
 
@@ -32,6 +33,8 @@ export class MyVotesPage implements OnInit, OnDestroy {
     public dataFetched = false;
     public signingAndTransacting = false;
 
+    public canMintBPoSNFT = true;
+
     constructor(
         public dpos2Service: DPoS2Service,
         public voteService: VoteService,
@@ -49,6 +52,10 @@ export class MyVotesPage implements OnInit, OnDestroy {
     }
 
     async initData() {
+        if (WalletType.STANDARD !== this.voteService.sourceSubwallet.masterWallet.type) {
+            this.canMintBPoSNFT = false;
+        }
+
         this.dataFetched = false;
         await this.dpos2Service.init();
         this.votes = await this.dpos2Service.geMyVoteds();
