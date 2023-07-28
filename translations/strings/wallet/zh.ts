@@ -500,7 +500,7 @@ export const zh = {
         'bpos-nft-claim': '申领',
         'bpos-nft-no-nft': '没有可申领的 BPoS NFT',
         "notification-found-one-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 1 个可申领的 BPoS NFT！",
-        "notification-found-claimable-nft": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 {{ count }} 个可申领的 BPoS NFT！",
+        "notification-found-claimable-nfts": "钱包 {{ walletname }} 在 Elastos Smart Chain 上有 {{ count }} 个可申领的 BPoS NFT！",
 
         /********************************************** Intent Screens ***********************************************/
 
