@@ -447,6 +447,14 @@ export class ETHTransactionInfoParser {
         txInfo.operation = { description: "wallet.ext-tx-info-type-claim-tokens" };
         break;
 
+      // BPoS NFT
+      case '0xbeb6ff65': // Claim BPoS NFT
+        txInfo.operation = { description: "wallet.ext-tx-info-type-claim-bpos-nft" };
+        break;
+      case '0x11656f55':
+        txInfo.operation = { description: "wallet.ext-tx-info-type-destroy-bpos-nft" };
+        break;
+
       case '0x67d630fa': // receivePayload(string _addr, uint256 _amount, uint256 _fee), Send ela from side chain to main chain
         txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw-to-mainchain" };
         break;

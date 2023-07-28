@@ -778,6 +778,8 @@ export const it = {
         'ext-tx-info-type-redeem': 'Redeem',
         'ext-tx-info-type-lock': 'Lock',
         'ext-tx-info-type-claim-tokens': 'Claim tokens',
+        'ext-tx-info-type-claim-bpos-nft': 'Claim BPoS NFT',
+        'ext-tx-info-type-destroy-bpos-nft': 'Burn BPoS NFT',
         'ext-tx-info-type-withdraw-to-mainchain': 'A Main Chain',
         'ext-tx-info-type-harvest': 'Harvest',
         'ext-tx-info-type-buy-nft': 'Buy NFT',
