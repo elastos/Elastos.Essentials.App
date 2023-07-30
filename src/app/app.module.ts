@@ -76,6 +76,14 @@ export class SentryErrorHandler implements ErrorHandler {
     if (stringifiedError.indexOf("socket stalled when trying to connect to") >= 0)
       return true;
 
+    // walletconnect connect error.
+    if (stringifiedError.indexOf("WebSocket connection failed for host") >= 0)
+      return true;
+
+    // walletconnect connect error for some apps. (switch network from evm network to non evm mainchain)
+    if (stringifiedError.indexOf("Unsupported accounts. update() namespace, account eip155:1") >= 0)
+      return true;
+
     return false;
   }
 
