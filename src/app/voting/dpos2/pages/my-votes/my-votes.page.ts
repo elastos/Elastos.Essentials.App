@@ -12,6 +12,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
 import { Config } from 'src/app/wallet/config/Config';
+import { MintBPoSNFTTxStatus } from 'src/app/wallet/model/elastos.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { MyVotesActionType, OptionsComponent } from '../../components/options/options.component';
 import { DPoS2Service } from '../../services/dpos2.service';
@@ -141,7 +142,10 @@ export class MyVotesPage implements OnInit, OnDestroy {
             await GlobalNativeService.instance.hideLoading();
             Logger.log(App.DPOS2, "rawTx:", rawTx);
 
-            await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
+            let result = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
+            if (result && result.published) {
+                this.voteService.sourceSubwallet.saveMintNFTTxToCache({txid: result.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
+            }
         }
         catch (e) {
             await this.voteService.popupErrorMessage(e);

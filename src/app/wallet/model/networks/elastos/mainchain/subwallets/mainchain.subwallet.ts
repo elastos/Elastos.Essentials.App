@@ -231,7 +231,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 break;
         }
         if (transaction.txtype == RawTransactionType.MintNFT) {
-          this.saveMintNFTTx(transaction);
+            this.saveMintNFTTxToCache({txid: transaction.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
         }
         return await transactionInfo;
     }
@@ -639,7 +639,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         if (this.lastUnConfirmedTransactionId && !findLastUnConfirmedTx) {
             let tx = await this.getTransactionDetails(this.lastUnConfirmedTransactionId);
-            if (tx.confirmations < 1) {
+            if (tx && tx.confirmations < 1) {
                 pendingTransactions.push(this.lastUnConfirmedTransactionId);
             } else {
                 this.lastUnConfirmedTransactionId = null;
@@ -1038,12 +1038,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         await this.stakedBalanceCache.save();
     }
 
-    public async saveMintNFTTx(tx: ElastosTransaction) {
-      if (!this.mintNFTTxCache.get(tx.txid)) {
-        this.saveMintNFTTxToCache({txid: tx.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
-      }
-    }
-
     private async loadMintNFTTxFromCache() {
         if (!this.mintNFTTxCache) {
           this.mintNFTTxKeyInCache = this.masterWallet.id + '-mintbposnft';
@@ -1053,9 +1047,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async saveMintNFTTxToCache(data: MintBPoSNFTTxInfo): Promise<void> {
-        const timestamp = (new Date()).valueOf();
-        this.mintNFTTxCache.set(data.txid, data, timestamp);
-        await this.mintNFTTxCache.save();
+        if (!this.mintNFTTxCache.get(data.txid)) {
+            const timestamp = (new Date()).valueOf();
+            this.mintNFTTxCache.set(data.txid, data, timestamp);
+            await this.mintNFTTxCache.save();
+        }
     }
 
     public getOwnerAddress(): string {
