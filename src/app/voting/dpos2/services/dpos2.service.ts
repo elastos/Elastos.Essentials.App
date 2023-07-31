@@ -249,8 +249,9 @@ export class DPoS2Service {
 
     async fetchNodes() {
         let ownerPublicKey = '';
-        //The wallet imported by private key has no ELA subwallet.
-        if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
+        // The wallet imported by private key has no ELA subwallet.
+        // Currently, multi-sign wallet can not register nodes.
+        if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA) && !this.voteService.isMuiltWallet()) {
             ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
         }
 
