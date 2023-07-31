@@ -7,6 +7,7 @@ import { App } from 'src/app/model/app.enum';
 import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -49,6 +50,7 @@ export class NodeSliderComponent implements OnInit {
         public theme: GlobalThemeService,
         public translate: TranslateService,
         private globalNative: GlobalNativeService,
+        public popupProvider: GlobalPopupService,
         public voteService: VoteService,
     ) {
     }
@@ -94,6 +96,18 @@ export class NodeSliderComponent implements OnInit {
             this.globalNative.genericToast('voting.vote-max-deadline');
             return;
         }
+
+        if (node.nodeState != 'Active') {
+            let confirmed = await this.popupProvider.showConfirmationPopup(
+                this.translate.instant('dposvoting.confirm-update-title'),
+                this.translate.instant('dposvoting.confirm-update-prompt'),
+                this.translate.instant('common.update'),
+                "/assets/identity/default/publishWarning.svg");
+            if (!confirmed) {
+                return;
+            }
+        }
+
 
         this.signingAndTransacting = true;
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));

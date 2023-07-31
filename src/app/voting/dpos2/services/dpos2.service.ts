@@ -470,7 +470,7 @@ export class DPoS2Service {
             var index = 0;
             var expired30 = 720 * 30;
             for (const vote of result) {
-                for (const node of this.activeNodes) {
+                for (const node of this.dposList) {
                     if (vote.producerownerkey ==  node.ownerpublickey) {
                         let locktime = vote.info.locktime - this.currentHeight;
                         var item =  {
@@ -487,6 +487,7 @@ export class DPoS2Service {
                             nodeStakeDays: node.stakeDays,
                             voteRights: vote.DPoSV2VoteRights,
                             blockheight: vote.blockheight, // The block height of start pledging.
+                            nodeState: node.state
                         } as any;
                         item.inputStakeDays = item.lockDays;
 
