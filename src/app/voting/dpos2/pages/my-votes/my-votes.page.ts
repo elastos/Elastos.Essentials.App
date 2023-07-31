@@ -115,7 +115,16 @@ export class MyVotesPage implements OnInit, OnDestroy {
 
     async mintBPosNFT(index: number, node: any) {
         try {
-            // TODO: Check if the node is active
+            if (node.nodeState != 'Active') {
+                let confirmed = await this.popupProvider.showConfirmationPopup(
+                    this.translate.instant('dposvoting.confirm-mintnft-title'),
+                    this.translate.instant('dposvoting.confirm-mintnft-prompt'),
+                    this.translate.instant('common.continue'),
+                    "/assets/identity/default/publishWarning.svg");
+                if (!confirmed) {
+                    return;
+                }
+            }
 
             this.signingAndTransacting = true;
             await GlobalNativeService.instance.showLoading(this.translate.instant('common.please-wait'));

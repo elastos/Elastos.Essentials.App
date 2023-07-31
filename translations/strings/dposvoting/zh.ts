@@ -158,6 +158,9 @@ export const zh = {
         'confirm-update-title': '确认更新',
         'confirm-update-prompt': '此节点未激活，是否继续更新投票？',
 
+        'confirm-mintnft-title': '确认铸造 BPoS NFT',
+        'confirm-mintnft-prompt': '此节点未激活，是否继续铸造 BPoS NFT？',
+
         'vote-warning': '此节点已经有大量的投票，因此您将获得较少的奖励。票权越接近8万，奖励就越多',
 
         /********** Sort **********/
