@@ -154,6 +154,9 @@ export const zh = {
         'confirm-prompt': '投票后，质押的ELA将在选定的天数内锁定，不能撤回',
         'confirm-button-text': '投票',
 
+        'confirm-update-title': '确认更新',
+        'confirm-update-prompt': '此节点未激活，是否继续更新投票？',
+
         'vote-warning': '此节点已经有大量的投票，因此您将获得较少的奖励。票权越接近8万，奖励就越多',
 
         /********** Sort **********/

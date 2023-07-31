@@ -153,6 +153,9 @@ export const fr = {
         'confirm-prompt': 'After voting, the pledged ELA will be locked during the chosen number of days and cannot withdrawn.',
         'confirm-button-text': 'Vote',
 
+        'confirm-update-title': 'Confirm update',
+        'confirm-update-prompt': 'This node is not activated. Do you want to continue updating the voting?',
+
         'vote-warning': 'This node already has a large number of votes so you will get less rewards. The closer above 80k votes, the more rewards.',
 
         /********** Sort **********/
