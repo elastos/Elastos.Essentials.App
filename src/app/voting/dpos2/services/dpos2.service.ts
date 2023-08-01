@@ -294,14 +294,6 @@ export class DPoS2Service {
                 this._nodes = result.producers as DPoS2Node[];
 
                 for (const node of this._nodes) {
-                    if (node.ownerpublickey == ownerPublicKey) {
-                        this.dposInfo = node;
-
-                        if (node.ownerpublickey == node.nodepublickey) {
-                            this.nodePublicKeyNotSet = this.translate.instant('dposvoting.node-unbind');
-                        }
-                    }
-
                     if (!node.identity || node.identity && node.identity == "DPoSV1") {
                         continue;
                     }
@@ -309,6 +301,14 @@ export class DPoS2Service {
                     node.index += 1;
 
                     if (node.state === 'Active' || (node.state === 'Inactive')) {
+                        if (node.ownerpublickey == ownerPublicKey) {
+                            this.dposInfo = node;
+
+                            if (node.ownerpublickey == node.nodepublickey) {
+                                this.nodePublicKeyNotSet = this.translate.instant('dposvoting.node-unbind');
+                            }
+                        }
+
                         //Check stake Until
                         let until = node.stakeuntil - this.currentHeight;
                         node.stakeDays = Math.ceil(until / 720);
