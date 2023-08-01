@@ -77,6 +77,7 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     this.networkWalletSub = this.walletService.activeNetworkWallet.subscribe(networkWallet => {
       //console.log("activeNetworkWallet", networkWallet, this.walletService.walletServiceStatus.value)
       if (this.walletService.walletServiceStatus.value) {
+        // Note: maybe some networkwallets are not created.
         void this.updateWidgetMainWallet();
       }
     });
@@ -85,6 +86,9 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
       //console.log("networkName", networkName)
       // Background gradient color
       if (this.walletNetworkService.activeNetwork.value) {
+        // All networkwallets are created, load all.
+        void this.updateWidgetMainWallet();
+
         let networkColor = this.walletNetworkService.activeNetwork.value.getMainColor(); // RRGGBB
         let gradientColor = networkColor || "5D37C0"; // Default color, if none defined by network.
         this.backgroundGradient = `linear-gradient(90deg, #${gradientColor}BB 0%, #${gradientColor}00 80%)`;
