@@ -297,7 +297,7 @@ export class VoteService implements GlobalService {
             if (this.sourceSubwallet.isSingleAddress()) {
                 message = 'voting.not-enough-ela-for-vote';
             } else {
-                message = 'voting.not-enough-ela-on-first-addrerss-for-vote';
+                message = 'voting.not-enough-ela-on-first-address-for-vote';
             }
             await this.globalPopupService.ionicAlert('wallet.insufficient-balance', message);
             return false;
