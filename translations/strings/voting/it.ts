@@ -34,6 +34,7 @@ export const it = {
         'aborted': 'Interrotto',
 
         'not-enough-ela-for-vote': 'The active wallet balance is insufficient. Please recharge or select another Wallet',
+        'not-enough-ela-on-first-addrerss-for-vote': 'The balance of the first address in this wallet is insufficient. Please recharge this address with at least 0.002 ELA',
         'multi-sign-reject-voting': 'Vota contro con Multi sign.',
         'ledger-reject-voting': 'Ledger wallet does not support voting.',
     }

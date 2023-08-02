@@ -166,7 +166,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return ElastosTransactionsHelper.getTransactionName(transaction, this);
     }
 
-    protected isSingleAddress(): boolean {
+    public isSingleAddress(): boolean {
         if (!this.networkWallet.getNetworkOptions())
             return false;
 
