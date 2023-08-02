@@ -206,7 +206,7 @@ export class CoinTxInfoPage implements OnInit {
 
     async getTransactionDetails() {
         // TODO: To Improve
-        if ((this.networkWallet instanceof ElastosMainChainStandardNetworkWallet) && (this.subWallet.id === StandardCoinName.ELA)) {
+        if (this.subWallet.id === StandardCoinName.ELA) {
             const transaction = await (this.subWallet as MainChainSubWallet).getTransactionDetails(this.transactionInfo.txid);
             if (transaction) {
                 this.transactionInfo.confirmStatus = transaction.confirmations;
