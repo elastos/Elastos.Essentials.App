@@ -151,7 +151,7 @@ export const en = {
         'no-voting': 'No voting data',
 
         'confirm-title': 'Confirm votes',
-        'confirm-prompt': 'After voting, the pledged ELA will be locked during the chosen number of days and cannot withdrawn.',
+        'confirm-prompt': 'After voting, the pledged ELA will be locked during the chosen number of days and cannot be withdrawn.',
         'confirm-button-text': 'Vote',
 
         'confirm-update-title': 'Confirm update',
