@@ -574,15 +574,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     async createSendNFTTransaction() {
         await this.native.showLoading(this.translate.instant('common.please-wait'));
 
-        // BPoS NFT need call approve
-        if (this.coinTransferService.nftTransfer.needApprove) {
-          this.navigateHomeAfterCompletion = false;
-          // approve
-          let ret = await this.approveNFT(this.toAddress);
-          this.navigateHomeAfterCompletion = true;
-          if (!ret) return;
-        }
-
         let rawTx = null;
         try {
             let fromAddress = this.fromSubWallet.getCurrentReceiverAddress(AddressUsage.EVM_CALL);
@@ -863,6 +854,16 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (this.transferType === TransferType.PAY) {
                 await this.transaction();
             } else {
+                if (this.transferType == TransferType.SEND_NFT) {
+                    // BPoS NFT need call approve
+                    if (this.coinTransferService.nftTransfer.needApprove) {
+                        this.navigateHomeAfterCompletion = false;
+                        // approve
+                        let ret = await this.approveNFT(this.toAddress);
+                        this.navigateHomeAfterCompletion = true;
+                        if (!ret) return;
+                    }
+                }
                 void this.showConfirm();
             }
         } catch (error) {
