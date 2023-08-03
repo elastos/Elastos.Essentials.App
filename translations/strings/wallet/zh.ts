@@ -246,6 +246,8 @@ export const zh = {
         "transfer-transaction-type": "充值交易",
         "send-transaction-type": "转账交易",
         "claim-bpos-nft-transaction-type": "申领 BPoS NFT",
+        "burn-bpos-nft-transaction-type": "销毁 BPoS NFT",
+        "burn-bpos-nft-transaction-prompt": "BPoS NFT 销毁后，对应的BPoS投票 将转至 Elastos 主链",
 
         /***********************************
         * Transaction Successful Component *

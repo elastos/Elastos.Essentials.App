@@ -246,6 +246,8 @@ export const en = {
         "transfer-transaction-type": "Transfer Transaction",
         "send-transaction-type": "Send Transaction",
         "claim-bpos-nft-transaction-type": "Claim BPoS NFT",
+        "burn-bpos-nft-transaction-type": "Burn BPoS NFT",
+        "burn-bpos-nft-transaction-prompt": "After the BPoS NFT is burned, the corresponding BPoS voting will be transferred to the Elastos main chain",
 
         /***********************************
         * Transaction Successful Component *
