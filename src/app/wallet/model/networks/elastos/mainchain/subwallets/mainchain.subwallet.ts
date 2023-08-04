@@ -1811,10 +1811,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // BPoS
     // amount: sela
     public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
-        // Use the first external address.
-        let firstExternalAddress = this.getCurrentReceiverAddress();
-
-        let au = await this.getAvailableUtxo(amount + 20000, firstExternalAddress);
+        // Support for multiple addresses, no need for all utxo in the first external address.
+        let au = await this.getAvailableUtxo(amount + 20000);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(
