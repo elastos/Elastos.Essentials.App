@@ -206,7 +206,13 @@ export class TxConfirmComponent implements OnInit {
     }
 
     if (!this.mainTokenSubWallet.isBalanceEnough(totalCost)) {
-      this.native.toast_trans('wallet.insufficient-balance', 4000);
+      let message = '';
+      if (this.txInfo.coinType == CoinType.STANDARD) {
+        message = 'wallet.insufficient-balance';
+      } else {
+        message = this.translate.instant("wallet.eth-insuff-balance", { coinName: WalletService.instance.activeNetworkWallet.value.getDisplayTokenName() })
+      }
+      this.native.toast_trans(message, 4000);
       return false;
     }
     return true;
