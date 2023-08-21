@@ -76,7 +76,10 @@
       ],
       "querystring":[
         "./node_modules/querystring-es3"
-      ]
+      ],
+      "zlib": [
+        "./node_modules/browserify-zlib"
+      ],
     }
   }
 }
