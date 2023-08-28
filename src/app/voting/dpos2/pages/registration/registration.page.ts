@@ -8,6 +8,7 @@ import { Util } from 'src/app/model/util';
 import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
+import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from 'src/app/voting/services/ux.service';
 import { VoteService } from 'src/app/voting/services/vote.service';
@@ -61,6 +62,7 @@ export class DPoS2RegistrationPage implements OnInit {
         public jsonRPCService: GlobalJsonRPCService,
         public dpos2Service: DPoS2Service,
         private globalNative: GlobalNativeService,
+        public popupProvider: GlobalPopupService,
     ) {
 
     }
@@ -199,6 +201,31 @@ export class DPoS2RegistrationPage implements OnInit {
     async confirm() {
         try {
             this.isExecuting = true;
+
+            let showConfirmDialog = true;
+            let confirmTitle = null;
+
+            // update
+            if (this.dposInfo.state == 'Active' || this.dposInfo.identity == "Inactive") {
+              if (this.dposInfo.inputStakeDays == this.originInfo.stakeDays) {
+                showConfirmDialog = false;
+              } else {
+                confirmTitle = this.translate.instant('dposvoting.confirm-update-title')
+              }
+            } else {
+              confirmTitle = this.translate.instant('dposvoting.registration-confirm-title')
+            }
+
+            if (showConfirmDialog) {
+              let confirmed = await this.popupProvider.showConfirmationPopup(
+                confirmTitle,
+                this.translate.instant('dposvoting.registration-confirm-prompt', {days: this.dposInfo.inputStakeDays}),
+                this.translate.instant('common.continue'), "/assets/identity/default/publishWarning.svg");
+              if (!confirmed) {
+                  return;
+              }
+            }
+
             await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             if (this.dposInfo.state == 'Unregistered' && this.dposInfo.identity != "DPoSV1") {
                 await this.register();

@@ -132,6 +132,10 @@ export class VotePage implements OnInit, OnDestroy {
         try {
             this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let votedCandidates = [];
+
+            let stakeDaysExceedingSixMonths = false;
+            const stakeDaysWarningThreshold = 180;
+            let maxStakeDays = 0;
             for (const node of this.selectedNodes) {
                 if (node.userVotes > 0) {
                     if (node.userStakeDays < 10) {
@@ -155,6 +159,11 @@ export class VotePage implements OnInit, OnDestroy {
                             this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
                             return;
                         }
+                    }
+
+                    if (userStakeDays > stakeDaysWarningThreshold) {
+                      stakeDaysExceedingSixMonths = true;
+                      maxStakeDays = maxStakeDays > userStakeDays ? maxStakeDays : userStakeDays;
                     }
 
                     // let userVotes = node.userVotes * 100000000;
@@ -186,6 +195,20 @@ export class VotePage implements OnInit, OnDestroy {
                 this.showConfirmPopup = false;
                 if (!confirmed) {
                     return;
+                }
+
+                // if the vote duration is longer than 6 months, need to double confirm
+                if (stakeDaysExceedingSixMonths) {
+                  this.showConfirmPopup = true;
+                  let confirmed = await this.popupProvider.showConfirmationPopup(
+                          this.translate.instant('dposvoting.double-confirm-title'),
+                          this.translate.instant('dposvoting.pledge-period-too-long-confirm-prompt', {days: maxStakeDays}),
+                          this.translate.instant('common.continue'),
+                          "/assets/identity/default/publishWarning.svg");
+                  this.showConfirmPopup = false;
+                  if (!confirmed) {
+                      return;
+                  }
                 }
 
                 Logger.log(App.DPOS2, votedCandidates);

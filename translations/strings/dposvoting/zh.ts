@@ -106,6 +106,9 @@ export const zh = {
         'text-registration-no-confirm': "上次注册还没确认，请等待。",
         'text-update-no-confirm': "上次更新还没确认，请等待。",
 
+        'registration-confirm-title': '确认注册',
+        'registration-confirm-prompt': '质押的ELA将被锁定 {{ days }} 天，不能撤回',
+
         //BPoS
         'stake': '质押',
         'stake-until': '质押至',
@@ -153,6 +156,9 @@ export const zh = {
         'confirm-title': '确认投票',
         'confirm-prompt': '投票后，质押的ELA将在选定的天数内锁定，不能撤回',
         'confirm-button-text': '投票',
+
+        'double-confirm-title': '再次确认投票',
+        'pledge-period-too-long-confirm-prompt': '您的投票质押时间为 {{ days }} 天，在此期间您的ELA将被锁定。请确认继续',
 
         'confirm-update-title': '确认更新',
         'confirm-update-prompt': '此节点未激活，是否继续更新投票？',

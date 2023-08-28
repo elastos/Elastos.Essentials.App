@@ -106,6 +106,9 @@ export const en = {
         'text-registration-no-confirm': "The last registration is not confirmed, please wait.",
         'text-update-no-confirm': "The last update is not confirmed, please wait.",
 
+        'registration-confirm-title': 'Confirm Registration',
+        'registration-confirm-prompt': 'The pledged ELA will be locked for {{ days }} days and cannot be withdrawn.',
+
         //BPoS
         'stake': 'Stake',
         'stake-until': 'Stake until',
@@ -153,6 +156,9 @@ export const en = {
         'confirm-title': 'Confirm votes',
         'confirm-prompt': 'After voting, the pledged ELA will be locked during the chosen number of days and cannot be withdrawn.',
         'confirm-button-text': 'Vote',
+
+        'double-confirm-title': 'Double confirm',
+        'pledge-period-too-long-confirm-prompt': 'You are voting for a duration of {{ days }} days during which your ELA will be locked. Please confirm to continue',
 
         'confirm-update-title': 'Confirm update',
         'confirm-update-prompt': 'This node is not activated. Do you want to continue updating the voting?',

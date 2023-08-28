@@ -108,21 +108,39 @@ export class NodeSliderComponent implements OnInit {
             }
         }
 
-
         this.signingAndTransacting = true;
         await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
 
         try {
+            const stakeDaysWarningThreshold = 180;
+            let stakeDays = 0;
+
             this.currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
             let locktime;
             if (this.useMaxStakeDays) { // Max
                 locktime = node.userLocktime;
+                stakeDays = Math.ceil((node.userLocktime - this.currentHeight) / 720);
             } else {
+                stakeDays = node.inputStakeDays;
                 locktime = this.currentHeight + node.inputStakeDays * 720;
                 if (locktime > node.stakeuntil) {
                     this.globalNative.genericToast('dposvoting.stake-days-more-than-stakeuntil');
                     return;
                 }
+            }
+
+            // if the vote duration is longer than 6 months, need to double confirm
+            if (stakeDays > stakeDaysWarningThreshold) {
+              await this.globalNative.hideLoading();
+              let confirmed = await this.popupProvider.showConfirmationPopup(
+                      this.translate.instant('dposvoting.double-confirm-title'),
+                      this.translate.instant('dposvoting.pledge-period-too-long-confirm-prompt', {days: stakeDays}),
+                      this.translate.instant('common.continue'),
+                      "/assets/identity/default/publishWarning.svg");
+              if (!confirmed) {
+                  return;
+              }
+              await this.globalNative.showLoading(this.translate.instant('common.please-wait'));
             }
 
             if (!await this.voteService.checkWalletAvailableForVote()) {
