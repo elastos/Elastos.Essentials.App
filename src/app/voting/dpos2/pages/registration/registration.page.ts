@@ -206,7 +206,7 @@ export class DPoS2RegistrationPage implements OnInit {
             let confirmTitle = null;
 
             // update
-            if (this.dposInfo.state == 'Active' || this.dposInfo.identity == "Inactive") {
+            if (this.dposInfo.state == 'Active' || this.dposInfo.state == "Inactive") {
               if (this.dposInfo.inputStakeDays == this.originInfo.stakeDays) {
                 showConfirmDialog = false;
               } else {
