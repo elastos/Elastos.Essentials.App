@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
@@ -10,9 +11,10 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
+import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../../config/Config';
-import { Coin, CoinType } from '../../../../model/coin';
+import { Coin, CoinType, ERC20Coin } from '../../../../model/coin';
 import { MasterWallet } from '../../../../model/masterwallets/masterwallet';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
@@ -39,10 +41,11 @@ export class CoinListPage implements OnInit, OnDestroy {
     private network: EVMNetwork;
     coinList: EditableCoinInfo[] = [];
     newCoinList: EditableCoinInfo[] = [];
-    coinListCache = {};
+    coinBalanceCache = {};
     payPassword = "";
     singleAddress = false;
     currentCoin: any;
+    walletAddress = null;
 
     // Helpers
     public WalletUtil = WalletUtil;
@@ -138,6 +141,7 @@ export class CoinListPage implements OnInit, OnDestroy {
 
         this.masterWallet = this.networkWallet.masterWallet;
         this.network = (<EVMNetwork>this.networkWallet.network);
+        this.walletAddress = this.networkWallet.getMainEvmSubWallet().getCurrentReceiverAddress();
         // TODO: Navigate to this page from a notification, and maybe the active network does not support ERC20 Coins.
         if (this.network.supportsERC20Coins() || this.network.supportsTRC20Coins()) {
             this.updateSubscription = this.events.subscribe("error:update", () => {
@@ -154,6 +158,8 @@ export class CoinListPage implements OnInit, OnDestroy {
             });
 
             await this.refreshCoinList();
+
+            void this.fetchCoinsBalance();
         }
 
         void this.native.hideLoading();
@@ -266,5 +272,26 @@ export class CoinListPage implements OnInit, OnDestroy {
         if ((item.coin.getType() === CoinType.ERC20) || (item.coin.getType() === CoinType.TRC20)) {
             this.native.go('/wallet/coin-erc20-details', { masterWalletId: this.networkWallet.masterWallet.id, coinId: item.coin.getID() });
         }
+    }
+
+    private fetchCoinsBalance() {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-foreach/no-async-foreach
+        this.coinList.forEach(async (c) => {
+            if ((c.coin.getType() === CoinType.ERC20) || (c.coin.getType() === CoinType.TRC20)) {
+                let tokenContractAddress = c.coin.getID();
+                try {
+                  let balance = await ERC20CoinService.instance.fetchERC20TokenBalance(this.network, tokenContractAddress, this.walletAddress);
+                  if (balance) {
+                      this.coinBalanceCache[tokenContractAddress] = balance.dividedBy(new BigNumber(10).pow((c.coin as ERC20Coin).decimals)).toString();
+                  }
+                } catch (e) {
+                  // Do nothing
+                }
+            }
+        })
+    }
+
+    public getCoinBalance(item: EditableCoinInfo) {
+        return this.coinBalanceCache[item.coin.getID()]
     }
 }

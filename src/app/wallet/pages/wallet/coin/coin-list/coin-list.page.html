@@ -57,6 +57,7 @@
         <p>{{ getCoinSubtitle(item) }}</p>
       </ion-col>
       <ion-col size="2" class="right-col">
+        <p> {{ getCoinBalance(item) }} </p>
         <ion-toggle mode="ios" *ngIf="item.coin.canBeRemoved()" [(ngModel)]="item.isOpen"
           (ngModelChange)="onSelect(item)" [disabled]="clickOngoing">
         </ion-toggle>
@@ -91,6 +92,7 @@
         <p>{{ getCoinSubtitle(item) }}</p>
       </ion-col>
       <ion-col size="2" class="right-col">
+        <p> {{ getCoinBalance(item) }} </p>
         <ion-toggle mode="ios" *ngIf="item.coin.canBeRemoved()" [(ngModel)]="item.isOpen"
           (ngModelChange)="onSelect(item)" [disabled]="clickOngoing">
         </ion-toggle>
