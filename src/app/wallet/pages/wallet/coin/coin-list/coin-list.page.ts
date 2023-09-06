@@ -282,7 +282,7 @@ export class CoinListPage implements OnInit, OnDestroy {
                 try {
                   let balance = await ERC20CoinService.instance.fetchERC20TokenBalance(this.network, tokenContractAddress, this.walletAddress);
                   if (balance) {
-                      this.coinBalanceCache[tokenContractAddress] = balance.dividedBy(new BigNumber(10).pow((c.coin as ERC20Coin).decimals)).toString();
+                      this.coinBalanceCache[tokenContractAddress] = this.uiService.getFixedBalance(balance.dividedBy(new BigNumber(10).pow((c.coin as ERC20Coin).decimals)));
                   }
                 } catch (e) {
                   // Do nothing
