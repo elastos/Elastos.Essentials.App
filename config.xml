@@ -32,6 +32,8 @@
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc: https://wallet.web3essentials.io/wc:" />
     <preference name="CustomSchemeFilters" value="wc:" />
     <preference name="LoadUrlTimeoutValue" value="50000" />
+    <preference name="GradlePluginGoogleServicesEnabled" value="true" />
+    <preference name="GradlePluginGoogleServicesVersion" value="4.3.14" />
     <platform name="android">
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidXEnabled" value="true" />
