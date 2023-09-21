@@ -150,6 +150,11 @@ export class ChaingeWeb3Provider extends EventEmitter implements AbstractProvide
           this.callbacks.delete(payload.id as any);
           this.wrapResults.delete(payload.id);
 
+          // Some servers will reject requests without jsonrpc
+          if (!payload.jsonrpc) {
+            payload.jsonrpc = "2.0";
+          }
+
           this.callJsonRPC(payload).then(response => {
             wrapResult ? resolve(response) : resolve(response.result);
           }).catch(e => {
