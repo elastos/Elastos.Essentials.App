@@ -74,12 +74,13 @@ export class ChaingeSwapService {
       case "fusion": return "FSN";
       case "ethereum": return "ETH";
       case "bsc": return "BSC";
-      case "heco": return "HECO";
+      // case "heco": return "HECO";
       case "polygon": return "MATIC";
       case "avalanchecchain": return "AVAX";
       case "arbitrum": return "ARB";
       case "cronos": return "CRO";
       case "fantom": return "FTM";
+      case "telos": return "TELOS";
       // TOO HIGH SLIPPAGE - NO LIQUIDITY - RESTORE WHEN LIQUIDITY PROBLEM SOLVED - case "elastossmartchain": return "ELA";
       default: return null;
     }
@@ -90,12 +91,13 @@ export class ChaingeSwapService {
       case "FSN": return "fusion";
       case "ETH": return "ethereum";
       case "BSC": return "bsc";
-      case "HECO": return "heco";
+      // case "HECO": return "heco";
       case "MATIC": return "polygon";
       case "AVAX": return "avalanchecchain";
       case "ARB": return "arbitrum";
       case "CRO": return "cronos";
       case "FTM": return "fantom";
+      case "TELOS": return "telos";
       // TOO HIGH SLIPPAGE - NO LIQUIDITY - RESTORE WHEN LIQUIDITY PROBLEM SOLVED - case "ELA": return "elastossmartchain";
       default: return null;
     }
@@ -128,7 +130,7 @@ export class ChaingeSwapService {
         chaingeToChain,
         from.getSymbol()
       );
-      Logger.warn('chainge', 'getCrossChainQuote', quote);
+      Logger.warn('ChaingeSwap', 'getCrossChainQuote', quote);
 
       fees = quote.fee + quote.gas;
       slippage = null;
@@ -137,7 +139,7 @@ export class ChaingeSwapService {
     else {
       // More complex operation than a simple bridge
       let quote = await chainge.getAggregateQuote(ESSENTIALS_SWAP_FEES, amountIn.toString(10), from.getSymbol(), chaingeToChain, to.getSymbol());
-      Logger.warn('chainge', 'getAggregateQuote ', quote);
+      Logger.warn('ChaingeSwap', 'getAggregateQuote ', quote);
 
       fees = quote.fee + quote.gas;
       slippage = quote.slippage;
@@ -179,7 +181,7 @@ export class ChaingeSwapService {
       if (sameToken) {
         // Same token, just crossing chain
         let ret = await chainge.executeCrossChain(ESSENTIALS_SWAP_FEES, amountIn.toString(10), chaingeFromChain, from.getSymbol(), chaingeToChain, (result, action) => {
-          Logger.warn('chainge', 'executeCrossChain callback', result, action);
+          Logger.warn('ChaingeSwap', 'executeCrossChain callback', result, action);
 
           // TODO: handle errors as well
           if (result.certHash && !resolved) {
@@ -187,16 +189,16 @@ export class ChaingeSwapService {
             resolve(result.certHash);
           }
         });
-        Logger.warn('chainge', 'executeCrossChain ret', ret);
+        Logger.warn('ChaingeSwap', 'executeCrossChain ret', ret);
       }
       else {
         // More complex operation than a simple bridge
         await chainge.executeAggregate(ESSENTIALS_SWAP_FEES, amountIn.toString(10), chaingeFromChain, from.getSymbol(), chaingeToChain, to.getSymbol(), (result, action) => {
-          Logger.log('chainge', 'executeAggregate submit order callback:', result, action);
+          Logger.log('ChaingeSwap', 'executeAggregate submit order callback:', result, action);
 
           /// TODO IMPORTANT: handle errors here in case or error during submission
         }, result => {
-          Logger.log('chainge', 'executeAggregate track order progress callback:', result);
+          Logger.log('ChaingeSwap', 'executeAggregate track order progress callback:', result);
 
           // Return the order SN (ID) as soon as we get it.
           if (!resolved) {
@@ -210,7 +212,7 @@ export class ChaingeSwapService {
             }
           }
         });
-        Logger.log('chainge', 'executeAggregate returns');
+        Logger.log('ChaingeSwap', 'executeAggregate returns');
       }
     });
   }
