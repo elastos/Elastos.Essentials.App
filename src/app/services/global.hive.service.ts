@@ -297,7 +297,7 @@ export class GlobalHiveService extends GlobalService {
         Logger.log("GlobalHiveService", "Calling an api on the hive vault to make sure everything is fine");
 
         vaultServices = await this.hiveAuthHelper.getVaultServices(didString);
-        let nodeInfo = await vaultServices.getNodeInfo();
+        let nodeInfo = await vaultServices.getServiceContext().getNodeInfo();
 
         if (!nodeInfo) {
           Logger.error("GlobalHiveService", "Error while calling a test hive vault API. No data returned");
@@ -338,9 +338,9 @@ export class GlobalHiveService extends GlobalService {
         checkState: VaultStatusState.NOT_CHECKED,
         vaultInfo,
         publishedInfo: {
-          vaultAddress: await activeUserVaultServices.getProviderAddress(),
+          vaultAddress: await activeUserVaultServices.getServiceContext().getProviderAddress(),
           vaultName: "Unknown Vault Name",
-          vaultVersion: await (await activeUserVaultServices.getNodeVersion()).toString()
+          vaultVersion: await (await activeUserVaultServices.getServiceContext().getNodeVersion()).toString()
         },
         vaultServices: activeUserVaultServices
       });

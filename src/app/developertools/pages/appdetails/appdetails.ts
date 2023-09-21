@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AggregatedExecutable, Executable, ExecutableType } from '@elastosfoundation/hive-js-sdk';
+import { AggregatedExecutable, FileDownloadExecutable } from '@elastosfoundation/hive-js-sdk';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
@@ -370,14 +370,14 @@ export class AppDetailsPage {
       let randomPictureID = new Date().getTime();
       let appIconFileName = "developertools/appicons/" + randomPictureID;
       let avatarData = Buffer.from(rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
-      let uploadResponse = await this.globalHiveService.getActiveVaultServices().getFilesService().upload(appIconFileName, avatarData, false);
+      let uploadResponse = await this.globalHiveService.getActiveVaultServices().getFilesService().upload(appIconFileName, avatarData, null, false);
       Logger.log('developertools', "Completed app icon upload to hive", uploadResponse);
 
       // Create a script to make this picture available to everyone
       let scriptName = "getAppIcon" + randomPictureID;
       let couldCreateScript = await this.globalHiveService.getActiveVaultServices().getScriptingService().registerScript(scriptName, new AggregatedExecutable(
         "appIconDownload",
-        [new Executable('download', ExecutableType.FILE_DOWNLOAD, { path: appIconFileName })]
+        [new FileDownloadExecutable('download', appIconFileName)]
       ), null, true, true);
       Logger.log('developertools', "Could create avatar script?", couldCreateScript);
 

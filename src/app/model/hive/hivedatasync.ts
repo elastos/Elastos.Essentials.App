@@ -671,12 +671,12 @@ export class HiveDataSync {
 
     // Convenient promise-based way to save a setting in the app manager
     private saveSettingsEntry(key: string, value: any): Promise<void> {
-        return GlobalStorageService.instance.setSetting(this.userVault.getUserDid(), NetworkTemplateStore.networkTemplate, "hivedatasync", key, value);
+        return GlobalStorageService.instance.setSetting(this.userVault.getServiceContext().getUserDid(), NetworkTemplateStore.networkTemplate, "hivedatasync", key, value);
     }
 
     // Convenient promise-based way to get a setting from the app manager
     private loadSettingsEntry(key: string): Promise<any> {
-        return GlobalStorageService.instance.getSetting(this.userVault.getUserDid(), NetworkTemplateStore.networkTemplate, "hivedatasync", key, null);
+        return GlobalStorageService.instance.getSetting(this.userVault.getServiceContext().getUserDid(), NetworkTemplateStore.networkTemplate, "hivedatasync", key, null);
     }
 
     private log(message: any, ...params: any) {

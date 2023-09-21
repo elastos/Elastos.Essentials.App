@@ -29,6 +29,6 @@ export class OrderComponent implements OnInit {
     }
 
     public getPricingPlanName(): string {
-        return this.order.getPricingName();
+        return this.order.getPricingPlan();
     }
 }

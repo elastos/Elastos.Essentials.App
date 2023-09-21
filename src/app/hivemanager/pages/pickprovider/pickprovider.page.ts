@@ -305,7 +305,7 @@ export class PickProviderPage implements OnInit {
   private async revokeHiveAuthToken() {
     Logger.log("HiveManager", "Revoking main user vault authentication token");
     // Revoke the vualt auth token
-    await (await this.globalHiveService.getActiveUserVaultServices()).getAccessToken().invalidate();
+    (await this.globalHiveService.getActiveUserVaultServices()).getServiceContext().getAccessToken().invalidate();
     // Also remove the app instance DID because it contains data (app did) we may want to renew.
     // Setting the active connector to null will clenaup its context, including the app instance DID.
     await connectivity.setActiveConnector(null);
