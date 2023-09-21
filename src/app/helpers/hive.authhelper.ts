@@ -56,8 +56,8 @@ export class InternalHiveAuthHelper {
       getLocalDataDir: (): string => {
         return "/";
       },
-      getAppInstanceDocument: (): Promise<DIDDocument> => {
-        return Promise.resolve(didDocument);
+      getAppInstanceDocument: (): DIDDocument => {
+        return didDocument;
       },
       getAuthorization: (authenticationChallengeJWtCode: string): Promise<string> => {
         /**

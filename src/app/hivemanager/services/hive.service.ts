@@ -14,7 +14,7 @@ import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.st
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 export type PaidIncompleteOrder = {
-  orderId: string;
+  orderId: number;
   transactionId: string;
   vaultAddress: string;
   planName: string;
@@ -105,7 +105,7 @@ export class HiveService {
 
         if (transactionID) {
           // Save the payment information locally.
-          await this.savePaidIncompleteOrder(order, transactionID, await this.getActiveVault().getProviderAddress());
+          await this.savePaidIncompleteOrder(order, transactionID, await this.getActiveVault().getServiceContext().getProviderAddress());
 
           await this.notifyProviderOfPaidOrder(order, transactionID);
 
@@ -136,8 +136,8 @@ export class HiveService {
     return new Promise(async (resolve, reject) => {
       try {
         let data: { result: { txid: string } } = await this.globalIntentService.sendIntent("https://wallet.web3essentials.io/pay", {
-          amount: order.getElaAmount(),
-          receiver: order.getElaAddress(),
+          amount: order.getPaymentAmount(),
+          receiver: order.getReceivingAddress(),
           currency: "ELA"
         });
 
@@ -166,7 +166,7 @@ export class HiveService {
 
     // Let the vault provider know which transaction IDs have been generated for the payment of this order.
     Logger.log("HiveManager", "Paying order on vault for transaction ID", transactionID);
-    await subscriptionService.payOrder(order.getOrderId(), transactionID);
+    await subscriptionService.settleOrder(order.getOrderId());
 
     Logger.log("HiveManager", "Order paid on the vault provider");
 
@@ -247,7 +247,7 @@ export class HiveService {
     }
   }
 
-  public async getPaidIncompleteOrderByOrderId(orderId: string): Promise<PaidIncompleteOrder> {
+  public async getPaidIncompleteOrderByOrderId(orderId: number): Promise<PaidIncompleteOrder> {
     let pendingPaidOrders = await this.getPaidIncompleteOrders();
     return pendingPaidOrders.find(o => o.orderId === orderId) || null;
   }
@@ -258,7 +258,7 @@ export class HiveService {
       orderId: order.getOrderId(),
       transactionId: transactionId,
       vaultAddress: vaultAddress,
-      planName: order.getPricingName()
+      planName: order.getPricingPlan()
     });
     await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'hivemanager', "pendingPaidOrders", pendingPaidOrders);
   }
@@ -282,7 +282,7 @@ export class HiveService {
   public async getOrdersAwaitingPayment(): Promise<Order[]> {
     let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
 
-    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrders());
     Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o) => {
@@ -303,7 +303,7 @@ export class HiveService {
   public async getOrdersAwaitingPaymentValidation(): Promise<Order[]> {
     let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
 
-    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrders());
     Logger.log("HiveManager", "All orders:", orders);
 
     let awaitingOrders = orders.filter((o) => {
@@ -320,7 +320,7 @@ export class HiveService {
   public async getActiveOrders(): Promise<Order[]> {
     let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
 
-    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrders());
     Logger.log("HiveManager", "All orders:", orders);
 
     let activeOrders = orders.filter((o) => {
@@ -336,7 +336,7 @@ export class HiveService {
   public async getFriendlyOrderState(order: Order): Promise<string> {
     let subscriptionService = await this.globalHiveService.getActiveUserSubscriptionServices();
 
-    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrderList());
+    let orders = this.sortOrdersByMostRecentFirst(await subscriptionService.getOrders());
 
     return "To do"; // TMP
 

@@ -1,6 +1,6 @@
 import { Component, NgZone, ViewChild } from "@angular/core";
 import { Router } from "@angular/router";
-import { AggregatedExecutable, Executable, ExecutableType } from "@elastosfoundation/hive-js-sdk";
+import { AggregatedExecutable, FileDownloadExecutable } from "@elastosfoundation/hive-js-sdk";
 import { AlertController, IonInput, ModalController, Platform } from "@ionic/angular";
 import { TranslateService } from "@ngx-translate/core";
 import { Subscription } from "rxjs";
@@ -272,7 +272,7 @@ export class EditProfilePage {
           let scriptName = "getMainIdentityAvatar" + randomPictureID;
           await (await this.globalHiveService.getActiveUserVaultServices()).getScriptingService().registerScript(scriptName, new AggregatedExecutable(
             "getMainIdentityAvatar",
-            [new Executable('download', ExecutableType.FILE_DOWNLOAD, { path: avatarFileName })]
+            [new FileDownloadExecutable('download', avatarFileName )]
           ), null, true, true);
 
           let currentUserDID = this.didService.getActiveDid().getDIDString();
