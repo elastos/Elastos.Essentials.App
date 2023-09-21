@@ -105,6 +105,10 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
         // In order to not force the NFT services to call getPastEvents() to discover token IDs (as there are limitations in blocks
         // count such as max 50k or 10k at a time), we call tokentx here for each contract, to retrieve more details about the NFTs,
         // including the token IDs. Token IDs will be stored and NFT display can then be fast later.
+        if (!(rawResults instanceof Array)) {
+          Logger.warn('wallet', 'fetchTransactions error:', rawResults)
+          return null;
+        }
 
         for (let rawResult of rawResults) {
           if (rawResult.type === TokenType.ERC_20) {
