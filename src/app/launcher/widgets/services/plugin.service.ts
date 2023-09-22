@@ -1,11 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import type { JSONObject } from '@elastosfoundation/did-js-sdk';
 import moment from 'moment';
 import PromiseQueue from 'promise-queue';
 import { Subject } from 'rxjs';
 import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { JSONObject } from 'src/app/model/json';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';

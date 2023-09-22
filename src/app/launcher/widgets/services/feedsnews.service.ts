@@ -209,7 +209,8 @@ export class WidgetsFeedsNewsService implements GlobalService {
         if (!RuntimeContext.isInitialized()) {
             let provider = await this.globalHiveService.getRawHiveContextProvider(GlobalConfig.FEEDS_APP_DID, signedInUserDid);
             let didResolverUrl = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.EID_RPC);
-            RuntimeContext.createInstance(provider, signedInUserDid, didResolverUrl);
+            // TODO: feeds js sdk need to upgrade did js sdk(^2.3).
+            // RuntimeContext.createInstance(provider, signedInUserDid, didResolverUrl);
         }
 
         return RuntimeContext.getInstance();
