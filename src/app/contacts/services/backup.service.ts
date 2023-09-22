@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import type { JSONObject } from '@elastosfoundation/did-js-sdk';
 import type { Vault } from '@elastosfoundation/hive-js-sdk';
 import { Subscription } from 'rxjs';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { HiveDataSync } from 'src/app/model/hive/hivedatasync';
+import { JSONObject } from 'src/app/model/json';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';

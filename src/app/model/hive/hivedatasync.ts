@@ -1,10 +1,10 @@
-import type { JSONObject } from '@elastosfoundation/did-js-sdk';
 import type { Vault } from '@elastosfoundation/hive-js-sdk';
 import Queue from 'promise-queue';
 import { lazyElastosHiveSDKImport } from 'src/app/helpers/import.helper';
 import { Logger } from "src/app/logger";
 import { GlobalStorageService } from "src/app/services/global.storage.service";
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { JSONObject } from '../json';
 
 export class SyncContext {
     name: string;
