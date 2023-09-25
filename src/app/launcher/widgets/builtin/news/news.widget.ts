@@ -10,7 +10,7 @@ import { NewsContent, PluginConfig } from '../../base/pluginconfig';
 import { WidgetHolderComponent } from '../../base/widget-holder/widget-holder.component';
 import { WidgetBase } from '../../base/widgetbase';
 import type { WidgetState } from '../../base/widgetstate';
-import { FeedsChannel, WidgetsFeedsNewsService } from '../../services/feedsnews.service';
+import { FeedsChannel } from '../../services/feedsnews.service';
 import { NewsSource, WidgetsNewsService } from '../../services/news.service';
 import { WidgetsServiceEvents } from '../../services/widgets.events';
 import { WidgetsService } from '../../services/widgets.service';
@@ -51,7 +51,7 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
     public notificationService: NotificationManagerService,
     private widgetsService: WidgetsService,
     private widgetsNewsService: WidgetsNewsService,
-    private widgetsFeedsNewsService: WidgetsFeedsNewsService,
+    // private widgetsFeedsNewsService: WidgetsFeedsNewsService,
     private dappBrowserService: DappBrowserService,
     private popoverCtrl: PopoverController,
     private modalController: ModalController,
@@ -89,15 +89,16 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
       this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
     });
 
+    // Hide feeds
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.widgetsFeedsNewsService.channels.subscribe(async channels => {
-      this.feedsChannels = channels;
-      this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
-    });
+    // this.widgetsFeedsNewsService.channels.subscribe(async channels => {
+    //   this.feedsChannels = channels;
+    //   this.news = await NewsHelper.prepareNews(this.newsSources, this.feedsChannels);
+    // });
 
-    this.widgetsFeedsNewsService.fetchingChannels.subscribe(fetching => {
-      this.refreshingFeedsChannels = fetching;
-    });
+    // this.widgetsFeedsNewsService.fetchingChannels.subscribe(fetching => {
+    //   this.refreshingFeedsChannels = fetching;
+    // });
   }
 
   attachHolder(holder: WidgetHolderComponent) {
@@ -220,7 +221,7 @@ export class NewsWidget extends WidgetBase implements OnInit, OnDestroy {
   public refreshAllNews(event?: MouseEvent) {
     event?.stopImmediatePropagation();
     void this.widgetsService.refreshWidgetPluginContent(this.widgetState);
-    void this.widgetsFeedsNewsService.fetchedSubscribedChannels(false); // Force refreshing all channels
+    // void this.widgetsFeedsNewsService.fetchedSubscribedChannels(false); // Force refreshing all channels
   }
 
   public tryFeeds() {
