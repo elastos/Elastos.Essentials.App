@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { WidgetsFeedsNewsService } from 'src/app/launcher/widgets/services/feedsnews.service';
 import { WidgetsNewsService } from 'src/app/launcher/widgets/services/news.service';
 import { WidgetPluginsService } from 'src/app/launcher/widgets/services/plugin.service';
 import { Logger } from 'src/app/logger';
@@ -31,7 +30,7 @@ export class NewsConfiguratorComponent implements OnInit {
   constructor(
     public theme: GlobalThemeService,
     private widgetsNewsService: WidgetsNewsService,
-    private widgetFeedsNewsService: WidgetsFeedsNewsService,
+    // private widgetFeedsNewsService: WidgetsFeedsNewsService,
     private widgetPluginsService: WidgetPluginsService
   ) { }
 
@@ -41,9 +40,10 @@ export class NewsConfiguratorComponent implements OnInit {
       void this.initSources();
     });
 
-    this.widgetFeedsNewsService.channels.subscribe(() => {
-      void this.initFeedsChannels();
-    });
+    // Hide feeds
+    // this.widgetFeedsNewsService.channels.subscribe(() => {
+    //   void this.initFeedsChannels();
+    // });
   }
 
   private async initSources() {
@@ -64,22 +64,23 @@ export class NewsConfiguratorComponent implements OnInit {
     Logger.log("widgets", "Generated sources:", this.sources);
   }
 
-  private initFeedsChannels() {
-    let channels: DisplayableChannel[] = [];
-    for (let channel of this.widgetFeedsNewsService.channels.value) {
-      let source: DisplayableChannel = {
-        icon: channel.avatar,
-        name: channel.name,
-        enabled: channel.enabled,
-        channelId: channel.id
-      }
+  // Hide feeds
+  // private initFeedsChannels() {
+  //   let channels: DisplayableChannel[] = [];
+  //   for (let channel of this.widgetFeedsNewsService.channels.value) {
+  //     let source: DisplayableChannel = {
+  //       icon: channel.avatar,
+  //       name: channel.name,
+  //       enabled: channel.enabled,
+  //       channelId: channel.id
+  //     }
 
-      channels.push(source);
-    }
+  //     channels.push(source);
+  //   }
 
-    this.feedsChannels = channels;
-    Logger.log("widgets", "Generated feeds channels:", this.feedsChannels);
-  }
+  //   this.feedsChannels = channels;
+  //   Logger.log("widgets", "Generated feeds channels:", this.feedsChannels);
+  // }
 
   public toggleSourceEnabled(source: DisplayableSource) {
     source.enabled = !source.enabled;
@@ -94,10 +95,11 @@ export class NewsConfiguratorComponent implements OnInit {
     return this.sources.reduce((prev, curr) => curr.enabled ? prev + 1 : prev, 0);
   }
 
-  public toggleFeedsChannelEnabled(channel: DisplayableChannel) {
-    channel.enabled = !channel.enabled;
-    void this.widgetFeedsNewsService.setChannelEnabled(channel.channelId, channel.enabled);
-  }
+  // Hide feeds
+  // public toggleFeedsChannelEnabled(channel: DisplayableChannel) {
+  //   channel.enabled = !channel.enabled;
+  //   void this.widgetFeedsNewsService.setChannelEnabled(channel.channelId, channel.enabled);
+  // }
 
   public getSelectedFeedsChannelsCount(): number {
     return this.feedsChannels.reduce((prev, curr) => curr.enabled ? prev + 1 : prev, 0);

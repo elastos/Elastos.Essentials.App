@@ -265,7 +265,7 @@ export class EditProfilePage {
           let randomPictureID = new Date().getTime();
           let avatarFileName = "identity/avatar/" + randomPictureID;
           let avatarData = Buffer.from(PictureComponent.shared.rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
-          let uploadResponse = await (await this.globalHiveService.getActiveUserVaultServices()).getFilesService().upload(avatarFileName, avatarData, null, false);
+          let uploadResponse = await (await this.globalHiveService.getActiveUserVaultServices()).getFilesService().upload(avatarFileName, avatarData);
           Logger.log('identity', "Completed avatar upload to hive", uploadResponse);
 
           // Create a script to make this picture available to everyone

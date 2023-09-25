@@ -370,7 +370,7 @@ export class AppDetailsPage {
       let randomPictureID = new Date().getTime();
       let appIconFileName = "developertools/appicons/" + randomPictureID;
       let avatarData = Buffer.from(rawBase64ImageOut, "base64"); // Raw picture data, not base64 encoded
-      let uploadResponse = await this.globalHiveService.getActiveVaultServices().getFilesService().upload(appIconFileName, avatarData, null, false);
+      let uploadResponse = await this.globalHiveService.getActiveVaultServices().getFilesService().upload(appIconFileName, avatarData);
       Logger.log('developertools', "Completed app icon upload to hive", uploadResponse);
 
       // Create a script to make this picture available to everyone

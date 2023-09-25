@@ -6,7 +6,7 @@ import moment from 'moment';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { DappBrowserService } from 'src/app/dappbrowser/services/dappbrowser.service';
-import { FeedsChannel, WidgetsFeedsNewsService } from 'src/app/launcher/widgets/services/feedsnews.service';
+import { FeedsChannel } from 'src/app/launcher/widgets/services/feedsnews.service';
 import { NewsSource, WidgetsNewsService } from 'src/app/launcher/widgets/services/news.service';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -40,7 +40,7 @@ export class FullNewsPage implements OnInit {
     public theme: GlobalThemeService,
     public translate: TranslateService,
     private widgetsNewsService: WidgetsNewsService,
-    private widgetsFeedsNewsService: WidgetsFeedsNewsService,
+    // private widgetsFeedsNewsService: WidgetsFeedsNewsService,
     private dappBrowserService: DappBrowserService,
     private globalIntentService: GlobalIntentService
   ) {
@@ -53,11 +53,12 @@ export class FullNewsPage implements OnInit {
       void NewsHelper.prepareNews(this.newsSources, this.feedsChannels).then(news => this.news = news);
     });
 
+    // Hide feeds
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.widgetsFeedsNewsService.channels.subscribe(channels => {
-      this.feedsChannels = channels;
-      void NewsHelper.prepareNews(this.newsSources, this.feedsChannels).then(news => this.news = news);
-    });
+    // this.widgetsFeedsNewsService.channels.subscribe(channels => {
+    //   this.feedsChannels = channels;
+    //   void NewsHelper.prepareNews(this.newsSources, this.feedsChannels).then(news => this.news = news);
+    // });
   }
 
   ionViewWillEnter() {
