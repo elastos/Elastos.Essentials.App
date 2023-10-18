@@ -448,8 +448,12 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         void this.networkWallet.getOrFetchExtendedTxInfo(transaction.hash).then(async extInfo => {
             // Got a partial info, now compute more things (main contract operation type, events...) then save
             if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
-                extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
-                await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
+                try {
+                    extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
+                    await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
+                } catch (e) {
+                  // Silent catch
+                }
                 transactionInfo.name = await this.getTransactionName(transaction);
                 transactionInfo.payStatusIcon = await this.getTransactionIconPath(transaction);
             }
