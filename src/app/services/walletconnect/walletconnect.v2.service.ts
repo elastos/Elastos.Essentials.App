@@ -200,7 +200,7 @@ export class WalletConnectV2Service implements GlobalService {
         // Accounts and chains are provided to the "session", not to "pairings".
         void this.signClient.update({
           topic: session.topic,
-          namespaces: await this.buildNamespaces(ethAccounts, session.requiredNamespaces)
+          namespaces: await this.buildNamespaces(ethAccounts, session.requiredNamespaces, session.optionalNamespaces)
         });
       }
       catch (e) {
@@ -293,6 +293,7 @@ export class WalletConnectV2Service implements GlobalService {
         }
       }
     });
+
   }
 
   private getAllTopics(): string[] {
@@ -487,7 +488,7 @@ export class WalletConnectV2Service implements GlobalService {
     // Approve session proposal, use id from session proposal event and respond with namespace(s) that satisfy dapps request and contain approved accounts
     const { topic: sessionTopic, acknowledged } = await this.signClient.approve({
       id: proposal.id,
-      namespaces: await this.buildNamespaces(ethAccountAddresses, proposal.requiredNamespaces)
+      namespaces: await this.buildNamespaces(ethAccountAddresses, proposal.requiredNamespaces, proposal.optionalNamespaces)
     });
 
     //console.log("Topic", topic);
@@ -510,7 +511,7 @@ export class WalletConnectV2Service implements GlobalService {
     await walletConnectStore.saveSessionExtension(instance.id, sessionExtension);
   }
 
-  private async buildNamespaces(ethAccountAddresses: string[], requiredNamespaces: ProposalTypes.RequiredNamespaces): Promise<SessionTypes.Namespaces> {
+  private async buildNamespaces(ethAccountAddresses: string[], requiredNamespaces: ProposalTypes.RequiredNamespaces, optionNamespaces: ProposalTypes.OptionalNamespaces = null): Promise<SessionTypes.Namespaces> {
     let activeNetwork = await this.walletNetworkService.activeNetwork.value;
     let chainId: number;
 
@@ -522,11 +523,26 @@ export class WalletConnectV2Service implements GlobalService {
       accounts.push(`${chain}:${ethAccountAddresses}`)
     }
 
+    let methods: string[] = [];
+    let events: string[] = [];
+    // We also need to add option namespaces, some optional methods may also be executed.
+    // If we don't add option namespaces, the app may directly think that this wallet does not support this method, and does not sent the request.
+    if (optionNamespaces && optionNamespaces["eip155"]) {
+      for (let chain of optionNamespaces["eip155"].chains) {
+        accounts.push(`${chain}:${ethAccountAddresses}`)
+      }
+      methods = requiredNamespaces["eip155"].methods.concat(optionNamespaces["eip155"].methods);
+      events = requiredNamespaces["eip155"].events.concat(optionNamespaces["eip155"].events);
+    } else {
+      methods = requiredNamespaces["eip155"].methods;
+      events = requiredNamespaces["eip155"].events;
+    }
+
     let namespaces: SessionTypes.Namespaces = { // Approved namespaces should match the request, based on our wallet capabilities
       eip155: {
         accounts,
-        methods: requiredNamespaces["eip155"].methods, // We have checked that we can support the requested methods earlier, so we return everything that was required here.
-        events: requiredNamespaces["eip155"].events,
+        methods: methods, // We have checked that we can support the requested methods earlier, so we return everything that was required here.
+        events: events,
         /* extension: [
           {
             accounts: ["eip:137"],
