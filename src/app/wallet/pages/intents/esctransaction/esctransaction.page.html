@@ -103,7 +103,7 @@
       (clicked)="cancelOperation()"
       [title]="(!balanceIsEnough() ? 'wallet.insufficient-balance' : 'common.cancel') | translate">
     </ebutton>
-    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" (clicked)="goTransaction()"
+    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" [disabled]="signingAndTransacting" (clicked)="goTransaction()"
       [title]="'common.confirm' | translate"></ebutton>
   </ion-grid>
 </ion-content>

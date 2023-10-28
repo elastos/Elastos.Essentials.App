@@ -74,6 +74,8 @@ export class EscTransactionPage implements OnInit {
 
   private alreadySentIntentResponse = false;
 
+  public signingAndTransacting = false;
+
   public currentNetworkName = ''
 
   // Titlebar
@@ -327,6 +329,7 @@ export class EscTransactionPage implements OnInit {
   async createEscTransaction() {
     Logger.log('wallet', "Calling createEscTransaction(): ", this.coinTransferService.payloadParam);
 
+    this.signingAndTransacting = true;
     let nonce = await this.evmSubWallet.getNonce();
     const rawTx =
       await (this.evmSubWallet.networkWallet.safe as unknown as EVMSafe).createContractTransaction(
@@ -372,6 +375,8 @@ export class EscTransactionPage implements OnInit {
         );
       }
     }
+
+    this.signingAndTransacting = false;
   }
 
   public editGasPrice() {
