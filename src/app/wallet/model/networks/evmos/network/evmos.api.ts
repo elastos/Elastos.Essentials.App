@@ -11,7 +11,7 @@ export class EvmosAPI {
     switch (networkTemplate) {
       case MAINNET_TEMPLATE:
         switch (type) {
-          case EvmosApiType.RPC: return 'https://eth.bd.evmos.org:8545';
+          case EvmosApiType.RPC: return 'https://evmos.lava.build';
           case EvmosApiType.ETHERSCAN_API: return 'https://evm.evmos.org/api';
           case EvmosApiType.BLOCK_EXPLORER: return 'https://evm.evmos.org';
           default:
@@ -19,7 +19,7 @@ export class EvmosAPI {
         }
       case TESTNET_TEMPLATE:
         switch (type) {
-          case EvmosApiType.RPC: return 'https://eth.bd.evmos.dev:8545';
+          case EvmosApiType.RPC: return 'https://evmos-testnet.lava.build';
           case EvmosApiType.ETHERSCAN_API: return 'https://evm.evmos.dev/api';
           case EvmosApiType.BLOCK_EXPLORER: return 'https://evm.evmos.dev';
           default:
