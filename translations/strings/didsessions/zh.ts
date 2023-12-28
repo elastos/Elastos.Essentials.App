@@ -19,6 +19,7 @@ export const zh = {
     'mnemonic-invalid': '助记词无效',
     'mnemonic-invalid-prompt': '请检查助记词...',
     'mnemonicpasscheck-question': '是否有助记词密码？',
+    'mnemonicpassword-warning': '注意：助记词密码不是主密码或支付密码',
     'mnemonicpasscheck-have-passphrase': '有助记词密码',
     'mnemonicpasscheck-no-passphrase': '没有助记词密码',
     'mnemonicpassword-intro': '输入您的助记词密码',

@@ -19,6 +19,7 @@ export const en = {
     'mnemonic-invalid': 'Mnemonic invalid',
     'mnemonic-invalid-prompt': 'Please check the mnemonic... ',
     'mnemonicpasscheck-question': 'Mnemonic Passphrase?',
+    'mnemonicpassword-warning': 'Note: The mnemonic passphrase is not the master password or payment password',
     'mnemonicpasscheck-have-passphrase': 'I Have a Passphrase',
     'mnemonicpasscheck-no-passphrase': 'I Don\'t Have a Passphrase',
     'mnemonicpassword-intro': 'Type Your Passphrase',

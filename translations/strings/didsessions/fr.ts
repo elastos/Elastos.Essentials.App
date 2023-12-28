@@ -19,6 +19,7 @@ export const fr = {
     'mnemonic-invalid': 'Mnémonique invalide',
     'mnemonic-invalid-prompt': 'Vérifiez le mnémonique...',
     'mnemonicpasscheck-question': 'Avez-vous un mot de passe pour votre mnémonique?',
+    'mnemonicpassword-warning': 'Remarque : Le mot de passe pour votre mnémonique n\'est pas le mot de passe principal ni le mot de passe de paiement.',
     'mnemonicpasscheck-have-passphrase': 'J\'ai une phrase secrète',
     'mnemonicpasscheck-no-passphrase': 'Je n\'en ai pas',
     'mnemonicpassword-intro': 'Entrez le mot de passe du mnémonique',
