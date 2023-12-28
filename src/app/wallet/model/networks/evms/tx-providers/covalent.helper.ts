@@ -135,7 +135,7 @@ export class CovalentHelper {
     let txListUrl = covalentApiUrl;
     txListUrl += chainId;
     txListUrl += '/address/' + accountAddress;
-    txListUrl += '/transactions_v2/?page-number=' + page;
+    txListUrl += "/transactions_v3/?page-number=" + page;
     txListUrl += '&page-size=' + pageSize;
     txListUrl += '&key=' + API_KEY;
 
