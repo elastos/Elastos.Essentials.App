@@ -51,18 +51,19 @@
     </div>
   </div>
 
+  <div class="redpacket-container ion-text-center">
+    <p *ngIf="myPackets.length === 0">{{ 'redpackets.no-my-packet' | translate }}</p>
+    <ion-button (click)="navigateToNewPacket()" class="redpacket-button" *ngIf="walletAddress && canCreateRedPacket">
+      {{ 'redpackets.create-new-packet' | translate }}
+    </ion-button>
+  </div>
+
   <ion-grid *ngIf="myPackets.length > 0" style="padding: 0">
     <packet-preview *ngFor="let packet of (myPackets ? myPackets.slice(0,3) : [])" [packet]="packet"
       (click)="navigateToPacketDetails(packet)">
     </packet-preview>
   </ion-grid>
 
-  <div class="redpacket-container ion-text-center" *ngIf="myPackets.length === 0">
-    <p>{{ 'redpackets.no-my-packet' | translate }}</p>
-    <ion-button (click)="navigateToNewPacket()" class="redpacket-button" *ngIf="walletAddress && canCreateRedPacket">
-      {{ 'redpackets.create-new-packet' | translate }}
-    </ion-button>
-  </div>
 </ng-template>
 
 

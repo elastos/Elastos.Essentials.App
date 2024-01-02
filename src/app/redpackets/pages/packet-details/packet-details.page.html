@@ -242,7 +242,7 @@
 <ng-template #footer>
   <!-- For the creator: if packet is not active, go to "pay" -->
   <div class="redpacket-footer-container sticky-bottom-container"
-    *ngIf="!fetchingPacket && packet && activeWalletIsCreator() && !packet.isActive && !packet.isCancelled">
+    *ngIf="!fetchingPacket && packet && activeWalletIsCreator() && !packet.isActive && !packet.isCancelled && !packet.isExpired()">
     <div class="redpacket-footer-button">
       <ion-button (click)="finalizePayment()">
         <ion-label>{{ 'redpackets.complete-payment' | translate }}</ion-label>
