@@ -238,8 +238,8 @@ export class WalletConnectV2Service implements GlobalService {
         relayUrl,
         metadata: {
           description: "Essentials",
-          url: "https://www.trinity-tech.io/essentials",
-          icons: ["https://www.trinity-tech.io/images/apps/Essentials.svg"],
+          url: "https://d.web3essentials.io/",
+          icons: ["https://download.elastos.io/app/elastos-essentials/Essentials.svg"],
           name: "Essentials"
         }
       });

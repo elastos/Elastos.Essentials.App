@@ -147,8 +147,8 @@ export class WalletConnectV1Service extends GlobalService {
         storageId: "" + Math.random(), // Using a different storage ID for every sessions seems to be necessary to deal with cache/multi-sessions issues
         clientMeta: {
           description: "Essentials",
-          url: "https://www.trinity-tech.io/essentials",
-          icons: ["https://www.trinity-tech.io/images/apps/Essentials.svg"],
+          url: "https://d.web3essentials.io/",
+          icons: ["https://download.elastos.io/app/elastos-essentials/Essentials.svg"],
           name: "Essentials",
         },
       },

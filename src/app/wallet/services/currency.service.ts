@@ -100,8 +100,8 @@ export class CurrencyService {
 
   public selectedCurrency: DisplayableCurrency;
 
-  private trinityPriceUrl = 'https://assist.pasarprotocol.io/api/v1/price';
-  private usdExchangeRateUrl = 'https://currencies.trinity-tech.io/latest?from=USD';
+  private tokenPriceUrl = 'https://essentials-api.elastos.io/api/v1/price';
+  private usdExchangeRateUrl = 'https://currencies.elastos.io/latest?from=USD';
 
   constructor(
     private http: HttpClient,
@@ -217,13 +217,13 @@ export class CurrencyService {
   }
 
   /**
-   * Fetches prices from the trinity price api and returns only a target item
+   * Fetches prices from the price api and returns only a target item
    */
   private fetchTokenStatsFromPriceService(): Promise<boolean> {
-    Logger.log("wallet", "Fetching trinity api prices");
+    Logger.log("wallet", "Fetching token prices");
 
     return new Promise(resolve => {
-      this.http.get<any>(this.trinityPriceUrl).subscribe(async (res: TrinityPriceAPITokenStats[]) => {
+      this.http.get<any>(this.tokenPriceUrl).subscribe(async (res: PriceAPITokenStats[]) => {
         if (res) {
           for (let tokenSymbol in this.networkMainTokenPrice) {
             let tokenStats = res[tokenSymbol];
@@ -338,7 +338,7 @@ export class CurrencyService {
       priceUpdated = true;
     }
     else {
-      Logger.log("wallet", "No currency in trinity API for", network.getMainTokenSymbol(), ". Trying other methods");
+      Logger.log("wallet", "No currency in token API for", network.getMainTokenSymbol(), ". Trying other methods");
       if (network.isEVMNetwork()) {
         if ((<EVMNetwork>network).getUniswapCurrencyProvider()) {
             // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
@@ -512,6 +512,6 @@ type CurrenciesExchangeRate = {
   };
 }
 
-type TrinityPriceAPITokenStats = {
+type PriceAPITokenStats = {
   [symbol: string]: string
 }

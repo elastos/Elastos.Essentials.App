@@ -44,7 +44,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
         if (uri.startsWith("pasar:json:")) // Dirty hack for the non connected feeds/pasar IPFS gateways...
           metadataUrl = `https://ipfs.pasarprotocol.io/ipfs/${assetJsonMetadataUri}`;
         else
-          metadataUrl = `https://ipfs.trinity-tech.io/ipfs/${assetJsonMetadataUri}`;
+          metadataUrl = `https://ipfs.elastos.io/ipfs/${assetJsonMetadataUri}`;
 
         let jsonMetadataResponse = await fetch(metadataUrl);
         if (jsonMetadataResponse && jsonMetadataResponse.ok) {
@@ -66,7 +66,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
             let thumbnailUri = jsonMetadata["thumbnail"] as string;
             // Expected uri format: "feeds:imgage:QmSZjdUSu8qmgD8sng3TiVTKsTKzAggpaR4dt88Ekd5FuL"
             if (thumbnailUri.startsWith("feeds:imgage") || thumbnailUri.startsWith("feeds:image")) {
-              asset.imageURL = `https://ipfs.trinity-tech.io/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
+              asset.imageURL = `https://ipfs.elastos.io/ipfs/${thumbnailUri.substr(thumbnailUri.lastIndexOf(":") + 1)}`;
             }
           }
           else if ("thumbnail" in dataEntry) {
@@ -89,7 +89,7 @@ export class ElastosPasarERC1155Provider extends ERC1155Provider {
       Logger.warn("wallet", "Failed to retrieve extended info for pasar ERC1155", e);
     }
     // --> feeds:json:QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh
-    //      --> https://ipfs.trinity-tech.io/ipfs/QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh
+    //      --> https://ipfs.elastos.io/ipfs/QmQcxY1YXNRTETzE4aDPcZpKBtRHJyyAjsBFgXavXtRvRh
 
 
   }

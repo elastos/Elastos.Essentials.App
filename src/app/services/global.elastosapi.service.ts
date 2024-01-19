@@ -29,12 +29,10 @@ export enum ElastosApiUrlType {
     ELA_RPC = "mainChainRPC",
     // ESC chain
     ETHSC_RPC = "escRPC",
-    ETHSC_MISC = "escMiscRPC",
     ETHSC_ORACLE = "escOracleRPC",
     ETHSC_BROWSER = "escBrowserRPC",
     // DID 2.0 EID chain
     EID_RPC = "eidChainRPC",
-    EID_MISC = "eidMiscRPC",
     EID_BROWSER = "eidBrowserRPC",
     // Cyber republic
     CR_RPC = "crRPC",
@@ -58,16 +56,14 @@ export type ElastosAPIProvider = {
             // ELA mainchain
             mainChainRPC: string;
             // DID 1.0 deprecated ID chain
-            idChainRPC: string;
+            // idChainRPC: string;
             // DID 2.0 ID chain (EVM)
             eidChainRPC: string;
-            eidMiscRPC: string;
             eidBrowserRPC: string;
             eidOracleRPC: string;
             // Elastos Smart Contract (ESC) chain
             escRPC: string;
             escOracleRPC: string;
-            escMiscRPC: string;
             escBrowserRPC: string;
             // Cyber Republic
             crRPC: string;
@@ -103,8 +99,6 @@ export type ImageInfo = {
 /**
  * Service reponsible for switching between different API providers for elastos features,
  * such as Elastos ESCRPC, CyberRepublic listings, etc.
- *
- * Ex: elastos.io VS trinity-tech.io
  */
 @Injectable({
     providedIn: 'root'
@@ -158,17 +152,15 @@ export class GlobalElastosAPIService extends GlobalService {
             {
                 key: "elastosio",
                 name: "elastos.io",
-                description: this.translate.instant('settings.elastos-io-des'),
+                description: '', //this.translate.instant('settings.elastos-io-des'),
                 endpoints: {
                     "MainNet": {
                         mainChainRPC: 'https://api.elastos.io/ela',
-                        idChainRPC: 'https://api.elastos.io/did',
+                        // idChainRPC: 'https://api.elastos.io/did',
                         eidChainRPC: 'https://api.elastos.io/eid',
-                        eidMiscRPC: 'https://api.elastos.io/eid-misc',
                         eidBrowserRPC: 'https://eid.elastos.io/api',
                         eidOracleRPC: 'https://api.elastos.io/eid-oracle',
                         escRPC: 'https://api.elastos.io/esc',
-                        escMiscRPC: 'https://api.elastos.io/misc',
                         escOracleRPC: 'https://api.elastos.io/esc-oracle',
                         escBrowserRPC: 'https://esc.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org',
@@ -180,14 +172,12 @@ export class GlobalElastosAPIService extends GlobalService {
                     },
                     "TestNet": {
                         mainChainRPC: 'https://api-testnet.elastos.io/ela',
-                        idChainRPC: 'https://api-testnet.elastos.io/did',
+                        // idChainRPC: 'https://api-testnet.elastos.io/did',
                         eidChainRPC: 'https://api-testnet.elastos.io/eid',
-                        eidMiscRPC: 'https://api-testnet.elastos.io/eid-misc',
                         eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
                         eidOracleRPC: 'https://api-testnet.elastos.io/eid-oracle',
                         escRPC: 'https://api-testnet.elastos.io/esc',
                         escOracleRPC: 'https://api-testnet.elastos.io/esc-oracle',
-                        escMiscRPC: 'https://api-testnet.elastos.io/misc',
                         escBrowserRPC: 'https://esc-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org',
                         elaBlockExplorer: 'https://blockchain-testnet.elastos.io',
@@ -198,14 +188,12 @@ export class GlobalElastosAPIService extends GlobalService {
                     },
                     "LRW": {
                         mainChainRPC: 'https://dpos2.cpolar.top',
-                        idChainRPC: 'https://did1rpc.longrunweather.com:18443',
+                        // idChainRPC: 'https://did1rpc.longrunweather.com:18443',
                         eidChainRPC: 'https://eid02.longrunweather.com:18443',
-                        eidMiscRPC: '',
                         eidBrowserRPC: '',
                         eidOracleRPC: '',
                         escRPC: '',
                         escOracleRPC: '',
-                        escMiscRPC: '',
                         escBrowserRPC: '',
                         crRPC: 'https://crapi.longrunweather.com:18443',
                         elaBlockExplorer: '',
@@ -217,63 +205,57 @@ export class GlobalElastosAPIService extends GlobalService {
                 }
             },
             {
-                key: "ttechcn",
-                name: "trinity-tech.io",
-                description: this.translate.instant('settings.trinity-tech-io-des'),
+                key: "elastosio2",
+                name: "elastos.io 2",
+                description: '', //this.translate.instant('settings.trinity-tech-io-des'),
                 endpoints: {
                     "MainNet": {
-                        mainChainRPC: 'https://api.trinity-tech.io/ela',
-                        idChainRPC: 'https://api.trinity-tech.io/did',
-                        eidChainRPC: 'https://api.trinity-tech.io/eid',
-                        eidMiscRPC: 'https://api.trinity-tech.io/eid-misc',
+                        mainChainRPC: 'https://api2.elastos.io/ela',
+                        // idChainRPC: 'https://api2.elastos.io/did',
+                        eidChainRPC: 'https://api2.elastos.io/eid',
                         eidBrowserRPC: 'https://eid.elastos.io/api',
-                        eidOracleRPC: 'https://api.trinity-tech.io/eid-oracle',
-                        escRPC: 'https://api.trinity-tech.io/esc',
-                        escOracleRPC: 'https://api.trinity-tech.io/esc-oracle',
-                        escMiscRPC: 'https://api.trinity-tech.io/esc-misc',
+                        eidOracleRPC: 'https://api2.elastos.io/eid-oracle',
+                        escRPC: 'https://api2.elastos.io/esc',
+                        escOracleRPC: 'https://api2.elastos.io/esc-oracle',
                         escBrowserRPC: 'https://esc.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org',
                         elaBlockExplorer: 'https://blockchain.elastos.io',
                         escBlockExplorer: 'https://esc.elastos.io',
                         eidBlockExplorer: 'https://eid.elastos.io',
-                        widgets: 'https://api.trinity-tech.io/widgets',
-                        images: 'https://api.trinity-tech.io/images',
+                        widgets: 'https://api2.elastos.io/widgets',
+                        images: 'https://api2.elastos.io/images',
                     },
                     "TestNet": {
-                        mainChainRPC: 'https://api-testnet.trinity-tech.io/ela',
-                        idChainRPC: 'https://api-testnet.trinity-tech.io/did',
-                        eidChainRPC: 'https://api-testnet.trinity-tech.io/eid',
-                        eidMiscRPC: 'https://api-testnet.trinity-tech.io/eid-misc',
+                        mainChainRPC: 'https://api2-testnet.elastos.io/ela',
+                        // idChainRPC: 'https://api2-testnet.elastos.io/did',
+                        eidChainRPC: 'https://api2-testnet.elastos.io/eid',
                         eidBrowserRPC: 'https://eid-testnet.elastos.io/api',
-                        eidOracleRPC: 'https://api-testnet.trinity-tech.io/eid-oracle',
-                        escRPC: 'https://api-testnet.trinity-tech.io/esc',
-                        escOracleRPC: 'https://api-testnet.trinity-tech.io/esc-oracle',
-                        escMiscRPC: 'https://api-testnet.trinity-tech.io/esc-misc',
+                        eidOracleRPC: 'https://api2-testnet.elastos.io/eid-oracle',
+                        escRPC: 'https://api2-testnet.elastos.io/esc',
+                        escOracleRPC: 'https://api2-testnet.elastos.io/esc-oracle',
                         escBrowserRPC: 'https://esc-testnet.elastos.io/api',
                         crRPC: 'https://api.cyberrepublic.org',
                         elaBlockExplorer: 'https://blockchain-testnet.elastos.io',
                         escBlockExplorer: 'https://esc-testnet.elastos.io',
                         eidBlockExplorer: 'https://eid-testnet.elastos.io',
-                        widgets: 'https://api-testnet.trinity-tech.io/widgets',
-                        images: 'https://api.trinity-tech.io/images',
+                        widgets: 'https://api2-testnet.elastos.io/widgets',
+                        images: 'https://api2.elastos.io/images',
                     },
                     "LRW": {
                         mainChainRPC: 'https://crc1rpc.longrunweather.com:18443',
-                        idChainRPC: 'https://did1rpc.longrunweather.com:18443',
+                        // idChainRPC: 'https://did1rpc.longrunweather.com:18443',
                         eidChainRPC: 'https://eid02.longrunweather.com:18443',
-                        eidMiscRPC: '',
                         eidBrowserRPC: '',
                         eidOracleRPC: '',
                         escRPC: '',
                         escOracleRPC: '',
-                        escMiscRPC: '',
                         escBrowserRPC: '',
                         crRPC: 'https://crapi.longrunweather.com:18443',
                         elaBlockExplorer: '',
                         escBlockExplorer: '',
                         eidBlockExplorer: '',
-                        widgets: 'https://api.trinity-tech.io/widgets',
-                        images: 'https://api.trinity-tech.io/images',
+                        widgets: 'https://api.elastos.io/widgets',
+                        images: 'https://api.elastos.io/images',
                     },
                 }
                 /*
@@ -538,23 +520,6 @@ export class GlobalElastosAPIService extends GlobalService {
             default:
                 throw new Error('RPC can not support elastos chain code ' + elastosChainCode);
         }
-    }
-
-    // TODO: Remove it, Use browser api not misc.
-    public getApiUrlTypeForMisc(elastosChainCode: string) {
-        let apiUrlType = null;
-        switch (elastosChainCode) {
-            case StandardCoinName.ETHSC:
-                apiUrlType = ElastosApiUrlType.ETHSC_MISC;
-                break;
-            case StandardCoinName.ETHDID:
-                apiUrlType = ElastosApiUrlType.EID_MISC;
-                break;
-            default:
-                Logger.log("elastosapi", 'Elastos API: Misc can not support ' + elastosChainCode);
-                break;
-        }
-        return apiUrlType;
     }
 
     public getApiUrlTypeForBrowser(elastosChainCode: string) {

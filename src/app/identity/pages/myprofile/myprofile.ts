@@ -408,7 +408,7 @@ export class MyProfilePage {
   }
 
   public launchKYCVerification() {
-    const kycMeDAppUrl = "https://kyc-me.trinity-tech.io";
+    const kycMeDAppUrl = "https://kyc-me.io";
     void this.dAppBrowserService.open(kycMeDAppUrl, "Identity Verification");
   }
 }

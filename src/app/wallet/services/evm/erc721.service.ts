@@ -437,7 +437,7 @@ export class ERC721Service {
             // So we remove the duplicate ipfs/ as we are adding our own just after.
             anyUrl = anyUrl.replace("ipfs://ipfs/", "ipfs://");
 
-            return `https://ipfs.trinity-tech.io/ipfs/${anyUrl.replace("ipfs://", "")}`;
+            return `https://ipfs.elastos.io/ipfs/${anyUrl.replace("ipfs://", "")}`;
         }
 
         // Replace IPFS gateways potentially harcoded by NFTs, with the ipfs.io gateway, to reduce
@@ -445,7 +445,7 @@ export class ERC721Service {
         // NOTE: not working well, maybe IPFS hashes can't be fetched (eg getting a vitrim or bunny hash through ttech.io gateway often times out)
         for (let gateway of IPFSGatewayPrefixesToReplace) {
             if (anyUrl.startsWith(gateway)) {
-                anyUrl = anyUrl.replace(gateway, "https://ipfs.trinity-tech.io/ipfs");
+                anyUrl = anyUrl.replace(gateway, "https://ipfs.elastos.io/ipfs");
                 break; // Don't search further
             }
         }

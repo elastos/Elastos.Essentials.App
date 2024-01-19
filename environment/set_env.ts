@@ -15,7 +15,7 @@ if (existsSync(localEnvPath)) {
 const prodEnv = {
   production: true,
   EssentialsAPI: {
-    serviceUrl: 'https://essentials-api.trinity-tech.io/api/v1'
+    serviceUrl: 'https://essentials-api.elastos.io/api/v1'
   },
   RedPackets: {
     webUrl: 'https://packet.fun',

@@ -18,9 +18,9 @@ export class AboutPage implements OnInit {
     {
       type: 'settings.developer',
       links: [
-        { title: 'Trinity Tech Co. Ltd', link: null },
-        { title: 'common.website', link: 'https://www.trinity-tech.io' },
-        { title: 'common.email', link: 'contact@trinity-tech.io' },
+        { title: 'Elaphant Limited', link: null },
+        { title: 'common.website', link: 'https://d.web3essentials.io/' },
+        { title: 'common.email', link: 'contact@elaphant.app' },
       ]
     },
     {

@@ -7,7 +7,7 @@ import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subw
 
 export class ChaingeSwap {
     private static config = {
-        signUrl: 'https://essentials-api.trinity-tech.io/api/v1/swaps/chainge/signpayload',
+        signUrl: 'https://essentials-api.elastos.io/api/v1/swaps/chainge/signpayload',
         expireTime: 5000, // option. The default value is 5000 ms, range 1000 ~ 20000
         appKey: '2zF3XRCyWJxbZxgdYGzZqVqf7LKFCr2bBHgcRVU9y3kio4CRpxFKpq4KbpDvfckE'
     }
