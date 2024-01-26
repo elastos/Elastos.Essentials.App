@@ -768,6 +768,11 @@ export const zh = {
         'ext-tx-info-type-buy-nft': '购买 NFT',
         'ext-tx-info-type-sell-nft': '出售 NFT',
         'ext-tx-info-type-nft-tx': 'NFT 交易',
+        'ext-tx-info-type-inscription': '铭文交易',
+        'ext-tx-info-type-inscription-deploy': '部署铭文',
+        'ext-tx-info-type-inscription-mint': '铭刻铭文',
+        'ext-tx-info-type-inscription-transfer': '发送铭文',
+        'ext-tx-info-type-inscription-list': '铭文挂单',
 
         /********************************
         * Tron Resource page *

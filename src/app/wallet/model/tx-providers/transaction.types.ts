@@ -35,6 +35,7 @@ export enum TransactionInfoType {
     TOKENSYMBOL = 'tokenSymbol',
     TXID = 'txId',
     VOTES = 'votes',
+    INSCRIPTION = 'inscription',
   }
 
 export enum ContractType {

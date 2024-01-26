@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import type { VotesContentInfo } from '@elastosfoundation/wallet-js-sdk';
 import { RenewalVotesContentInfo } from '@elastosfoundation/wallet-js-sdk/typings/transactions/payload/Voting';
@@ -21,6 +21,10 @@ import { ExtendedTransactionInfo } from 'src/app/wallet/model/extendedtxinfo';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { ElastosMainChainStandardNetworkWallet } from 'src/app/wallet/model/networks/elastos/mainchain/networkwallets/standard/mainchain.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { ETHOperationType } from "src/app/wallet/model/networks/evms/ethtransactioninfoparser";
+
+import { InscriptionUtil } from "src/app/wallet/model/inscription";
+
 import { EthTransaction } from 'src/app/wallet/model/networks/evms/evm.types';
 import { AddressUsage } from 'src/app/wallet/model/safes/addressusage';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -120,6 +124,7 @@ export class CoinTxInfoPage implements OnInit {
         private offlineTransactionsService: OfflineTransactionsService,
         private nav: GlobalNavService,
         public dappbrowserService: DappBrowserService,
+        private zone: NgZone,
     ) {
     }
 
@@ -200,6 +205,9 @@ export class CoinTxInfoPage implements OnInit {
             void this.getTransactionDetails();
             void this.networkWallet.getExtendedTxInfo(this.transactionInfo.txid).then(extTxInfo => {
                 this.extendedTxInfo = extTxInfo;
+                if (this.extendedTxInfo?.evm?.txInfo.type == ETHOperationType.INSCRIPTION) {
+                  void this.getInscriptionInfo(this.transactionInfo.txid);
+                }
             });
         }
     }
@@ -728,5 +736,25 @@ export class CoinTxInfoPage implements OnInit {
 
         Logger.log('wallet', 'getCRCouncilVoteInfo ', voteList);
         return voteList;
+    }
+
+    private async getInscriptionInfo(txid: string) {
+      try {
+        // TODO: Avoid repeated calls getTransactionDetails
+        const transaction = await (this.subWallet as ElastosEVMSubWallet).getTransactionDetails(txid);
+        let info = await InscriptionUtil.getInscriptionData(transaction.input);
+
+        this.zone.run(() => {
+          this.txDetails.unshift(
+            {
+                type: TransactionInfoType.INSCRIPTION,
+                title: 'wallet.ext-tx-info-type-inscription',
+                value: info,
+                show: true,
+            })
+        })
+      } catch (e) {
+        // Silent catch
+      }
     }
 }
