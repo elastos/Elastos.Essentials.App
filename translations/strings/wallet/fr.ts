@@ -768,6 +768,11 @@ export const fr = {
         'ext-tx-info-type-buy-nft': 'Buy NFT',
         'ext-tx-info-type-sell-nft': 'Sell NFT',
         'ext-tx-info-type-nft-tx': 'NFT transaction',
+        'ext-tx-info-type-inscription': 'Inscription transaction',
+        'ext-tx-info-type-inscription-deploy': 'Deploy Inscription',
+        'ext-tx-info-type-inscription-mint': 'Mint Inscription',
+        'ext-tx-info-type-inscription-transfer': 'Transfer Inscription',
+        'ext-tx-info-type-inscription-list': 'List Inscription',
 
         /********************************
         * Tron Resource page *

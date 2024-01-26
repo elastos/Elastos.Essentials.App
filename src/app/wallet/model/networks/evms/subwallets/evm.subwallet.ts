@@ -331,6 +331,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
         case ETHOperationType.DEPOSIT: return TransactionDirection.SENT;
         case ETHOperationType.GET_REWARDS: return TransactionDirection.RECEIVED;
         case ETHOperationType.STAKE: return TransactionDirection.SENT;
+        case ETHOperationType.INSCRIPTION: return TransactionDirection.SENT;
         case ETHOperationType.SWAP: {
           let operation = extInfo.evm.txInfo.operation as SwapExactTokensOperation;
           if (operation.type === TransactionType.RECEIVED) {

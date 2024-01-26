@@ -64,6 +64,15 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     networks: ["elastossmartchain"]
   },
   {
+    icon: '/assets/browser/dapps/escription.svg',
+    title: 'EScription',
+    description: 'Inscription marketplace on Elastos ESC.',
+    url: 'https://escription.io/',
+    useExternalBrowser: false,
+    walletConnectSupported: false,
+    networks: ["elastossmartchain"]
+  },
+  {
     icon: '/assets/browser/dapps/anyswap.svg',
     title: 'AnySwap',
     description: 'Anyswap is a fully decentralized cross chain swap protocol, based on Fusion DCRM technology, with automated pricing and liquidity system.',

@@ -67,7 +67,7 @@ export class ElastosEvmSubWalletProvider extends SubWalletTransactionProvider<El
         this.canFetchMore = false;
       }
 
-      console.log("ESC transactions", transactions)
+      // Logger.log('wallet', "ESC transactions", transactions)
 
       await this.saveTransactions(transactions);
     } catch (e) {

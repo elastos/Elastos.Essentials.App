@@ -7,6 +7,7 @@ import { ERC721Service } from "src/app/wallet/services/evm/erc721.service";
 import { TRC20CoinService } from "src/app/wallet/services/tvm/trc20coin.service";
 import type { TransactionReceipt } from "web3-core";
 import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
+import { InscriptionOperation, InscriptionUtil } from "../../inscription";
 import { TransactionType } from "../../tx-providers/transaction.types";
 import type { AnyNetwork } from "../network";
 import { TronNetworkBase } from "../tron/network/tron.base.network";
@@ -28,6 +29,7 @@ export enum ETHOperationType {
   DEPOSIT = "deposit",
   GET_REWARDS = "get_rewards",
   STAKE = "stake",
+  INSCRIPTION = "inscription",
   // TODO: ERC721 and ERC1155 approve methods
   OTHER_CONTRACT_CALL = "other_contract_call", // Generic / undetected transaction type
   NOT_A_CONTRACT_CALL = "not_a_contract_call" // Standard transfer, no contract data payload
@@ -459,6 +461,32 @@ export class ETHTransactionInfoParser {
           catch (e) {
             txInfo.operation = { description: "wallet.ext-tx-info-type-nft-tx" };
           }
+        break;
+      case '0x64617461': // inscription
+        try {
+          txInfo.type = ETHOperationType.INSCRIPTION;
+          let inscriptionInfo = await InscriptionUtil.parseData(txData)
+          switch (inscriptionInfo.operation) {
+            case InscriptionOperation.Deploy:
+              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-deploy" };
+              break;
+            case InscriptionOperation.Mint:
+              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-mint" };
+              break;
+            case InscriptionOperation.Transfer:
+              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-transfer" };
+              break;
+            case InscriptionOperation.List:
+              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-list" };
+              break;
+            default:
+              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription" };
+              break;
+          }
+        }
+        catch (e) {
+          txInfo.operation = { description: "wallet.ext-tx-info-type-inscription" };
+        }
         break;
 
       // Known signatures but no clear way to display information about them = consider as generic contract call
