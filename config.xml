@@ -4,8 +4,8 @@
     <description>
         Essentials web3 wallet
     </description>
-    <author email="contact@trinity-tech.io" href="https://www.trinity-tech.io">
-        Trinity Tech Co., Ltd.
+    <author email="contact@elastos.io" href="https://d.web3essentials.io">
+        Elaphant Limited.
     </author>
     <content src="index.html" />
     <access origin="*" />
