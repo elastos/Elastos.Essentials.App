@@ -3,6 +3,20 @@
     "apps": [],
     "details": [
       {
+        "appID": "X2ZZSKA63B.org.elastos.essentials.app",
+        "paths": [
+          "*"
+        ],
+        "appIDs": [
+          "X2ZZSKA63B.org.elastos.essentials.app"
+        ],
+        "components": [
+          {
+            "/": "/*"
+          }
+        ]
+      },
+      {
         "appID": "TUP2T7Y63R.org.elastos.essentials.app",
         "paths": [
           "*"
