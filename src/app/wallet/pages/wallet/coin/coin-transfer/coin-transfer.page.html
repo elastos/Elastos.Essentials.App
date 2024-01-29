@@ -290,7 +290,7 @@
         </div>
 
         <div class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode">
-            <p *ngIf="!valuesReady(false)">{{ 'wallet.insufficient-balance' | translate }}</p>
+            <p *ngIf="!checkValuesReady(false)">{{ 'wallet.insufficient-balance' | translate }}</p>
             <ion-row class="btn-row">
                 <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
                     <ion-label>{{ 'common.cancel' | translate }}</ion-label>
