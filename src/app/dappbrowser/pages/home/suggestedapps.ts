@@ -9,15 +9,15 @@ export type DAppMenuEntry = {
 }
 
 export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
-  {
-    icon: '/assets/browser/dapps/feeds.png',
-    title: 'Feeds',
-    description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
-    url: 'https://feeds.feedsnetwork.io/',
-    useExternalBrowser: true,
-    walletConnectSupported: true,
-    networks: ["elastossmartchain"]
-  },
+  // {
+  //   icon: '/assets/browser/dapps/feeds.png',
+  //   title: 'Feeds',
+  //   description: 'Feeds is a decentralized social platform where users remain in full control of their data.',
+  //   url: 'https://feeds.feedsnetwork.io/',
+  //   useExternalBrowser: true,
+  //   walletConnectSupported: true,
+  //   networks: ["elastossmartchain"]
+  // },
   {
     icon: '/assets/browser/dapps/glidefinance.png',
     title: 'Glide Finance',
@@ -36,24 +36,24 @@ export const suggestedDApps = (darkMode: boolean): DAppMenuEntry[] => [
     walletConnectSupported: true,
     networks: ["elastossmartchain"]
   },
-  {
-    icon: '/assets/browser/dapps/pasar.png',
-    title: 'Pasar Protocol',
-    description: 'Web3.0 Decentralized Marketplace (DeMKT) and Data Exchange',
-    url: 'https://pasarprotocol.io/',
-    useExternalBrowser: false,
-    walletConnectSupported: true,
-    networks: ["elastossmartchain"]
-  },
-  {
-    icon: '/assets/browser/dapps/meteast.png',
-    title: 'MetEast',
-    description: 'Decentralized NFT marketplace on Elastos ESC, with better liquidity, autonomous governance and friendly interactions.',
-    url: 'https://meteast.io/',
-    useExternalBrowser: false,
-    walletConnectSupported: true,
-    networks: ["elastossmartchain"]
-  },
+  // {
+  //   icon: '/assets/browser/dapps/pasar.png',
+  //   title: 'Pasar Protocol',
+  //   description: 'Web3.0 Decentralized Marketplace (DeMKT) and Data Exchange',
+  //   url: 'https://pasarprotocol.io/',
+  //   useExternalBrowser: false,
+  //   walletConnectSupported: true,
+  //   networks: ["elastossmartchain"]
+  // },
+  // {
+  //   icon: '/assets/browser/dapps/meteast.png',
+  //   title: 'MetEast',
+  //   description: 'Decentralized NFT marketplace on Elastos ESC, with better liquidity, autonomous governance and friendly interactions.',
+  //   url: 'https://meteast.io/',
+  //   useExternalBrowser: false,
+  //   walletConnectSupported: true,
+  //   networks: ["elastossmartchain"]
+  // },
   {
     icon: '/assets/browser/dapps/cyberrepublic.svg',
     title: 'Cyber Republic',
