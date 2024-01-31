@@ -23,7 +23,8 @@
     <allow-navigation href="ionic://*" />
     <preference name="LottieFullScreen" value="true" />
     <preference name="LottieAnimationLocation" value="www/assets/essentials_anim.json" />
-    <preference name="LottieBackgroundColor" value="000000" />
+    <preference name="LottieBackgroundColorDark" value="0" />
+    <preference name="LottieBackgroundColorLight" value="0" />
     <preference name="LottieCacheDisabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResizeMode" value="ionic" />
