@@ -5,20 +5,24 @@ import { Logger } from "src/app/logger";
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { BTCOutputData, BTCTxData, BTCUTXO } from "../../../btc.types";
-import { BTCAddressType } from "../../../ledger/btc.ledgerapp";
+import { BTCAddressType, BTCOutputData, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS } from "../../../btc.types";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
-import { SignTransactionResult } from "../../../safes/safe.types";
+import { SignTransactionResult } from '../../../safes/safe.types';
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
-import { AnySubWallet } from "../../base/subwallets/subwallet";
+import { AnySubWallet } from '../../base/subwallets/subwallet';
 import { BTCSafe } from "./btc.safe";
 
 const DefaultDerivationPath = "44'/0'/0'/0/0"; // TODO: maybe we should use "44'/1'/0'/0/0" for testnet
 const DUST = 550; // TODO: How to calculate the dust value?
 
+const toXOnly = (pubKey: Buffer) =>
+  pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
+
 export class BTCWalletJSSafe extends Safe implements BTCSafe {
     private btcAddress = null;
+    private btcAddressType = BTCAddressType.Legacy;
+    // private btcAddressType = BTCAddressType.Taproot;
     private btcPublicKey = null;
     private btcNetwork = bitcoin;
 
@@ -49,10 +53,11 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
     private async initJSWallet() {
         try {
-            let keypair = await this.getKeyPair(DefaultDerivationPath);
+            let keypair = await this.getKeyPair(BTC_MAINNET_PATHS[this.btcAddressType]);
             if (keypair) {
               this.btcAddress = await this.getAddress(keypair);
               this.btcPublicKey = keypair.publicKey.toString('hex');
+
             }
         } catch (e) {
             Logger.warn('wallet', 'initJSWallet exception:', e)
@@ -71,6 +76,9 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
             // wrap the bip32 library
             const bip32 = BIP32Wrapper(ecc);
 
+            // For taproot
+            BTC.initEccLib(ecc)
+
             let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
             const root = bip32.fromSeed(Buffer.from(seed, "hex"), this.btcNetwork)
             const keyPair = root.derivePath(path)
@@ -80,20 +88,23 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         }
     }
 
-    private async getAddress(keyPair, type = BTCAddressType.LEGACY) {
+    private getAddress(keyPair) {
         let payment: Payment = null;
-        switch (type) {
-            case BTCAddressType.LEGACY:
+        switch (this.btcAddressType) {
+            case BTCAddressType.Legacy:
                 payment = BTC.payments.p2pkh({ pubkey: keyPair.publicKey , network: this.btcNetwork});
             break;
-            case BTCAddressType.SEGWIT:
+            case BTCAddressType.NativeSegwit:
                 // Native Segwit
                 payment = BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork});
             break;
-            case BTCAddressType.P2SH:
-                payment =  BTC.payments.p2sh({
+            case BTCAddressType.P2sh:
+                payment = BTC.payments.p2sh({
                     redeem: BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork}),
                 })
+            break;
+            case BTCAddressType.Taproot:
+                payment = BTC.payments.p2tr({internalPubkey: toXOnly(Buffer.from(keyPair.publicKey as Uint8Array)), network: this.btcNetwork})
             break;
         }
         return payment?.address;
@@ -122,15 +133,15 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
       else return null;
     }
 
-    public async createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {
+    public createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {
         let txData: BTCTxData = {
             inputs: inputs,
             outputs: outputs,
             changeAddress: changeAddress,
             feePerKB: feePerKB,
             fee: fee
-          }
-          return Promise.resolve(txData);
+        }
+        return Promise.resolve(txData);
     }
 
     public async signTransaction(subWallet: AnySubWallet, rawTransaction: BTCTxData, transfer: Transfer): Promise<SignTransactionResult> {

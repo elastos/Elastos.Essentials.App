@@ -36,8 +36,9 @@ import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { BTCAddressType } from 'src/app/wallet/model/btc.types';
 import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
-import { BTCAddressType, BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
+import { BTCLedgerApp } from 'src/app/wallet/model/ledger/btc.ledgerapp';
 import { ELAAddressType, ELALedgerApp } from 'src/app/wallet/model/ledger/ela.ledgerapp';
 import { EVMAddressType, EVMLedgerApp } from 'src/app/wallet/model/ledger/evm.ledgerapp';
 import { AnyLedgerAccount, LedgerAddressType, LedgerApp } from 'src/app/wallet/model/ledger/ledgerapp';
@@ -370,7 +371,7 @@ export class LedgerConnectPage implements OnInit {
         switch (this.selectedNetwork.key) {
             case BTCNetworkBase.networkKey:
                 this.shouldPickAddressType = true;
-                this.addressType = BTCAddressType.SEGWIT;
+                this.addressType = BTCAddressType.NativeSegwit;
                 this.ledgerApp = new BTCLedgerApp(this.transport);
                 let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
                 if (network === MAINNET_TEMPLATE) {
@@ -401,7 +402,7 @@ export class LedgerConnectPage implements OnInit {
             {
                 title: "Native Segwit",
                 routeOrAction: () => {
-                    this.addressType = BTCAddressType.SEGWIT;
+                    this.addressType = BTCAddressType.NativeSegwit;
                     // Reset addresses
                     this.addresses = [];
                     void this.refreshAddressesWithTimeout();
@@ -410,7 +411,7 @@ export class LedgerConnectPage implements OnInit {
             {
                 title: "Legacy",
                 routeOrAction: () => {
-                    this.addressType = BTCAddressType.LEGACY;
+                    this.addressType = BTCAddressType.Legacy;
                     // Reset addresses
                     this.addresses = [];
                     void this.refreshAddressesWithTimeout();
@@ -442,8 +443,8 @@ export class LedgerConnectPage implements OnInit {
 
     public getDisplayableAddressType(): string {
         switch (this.addressType) {
-            case BTCAddressType.SEGWIT: return "Native Segwit";
-            case BTCAddressType.LEGACY: return "Legacy";
+            case BTCAddressType.NativeSegwit: return "Native Segwit";
+            case BTCAddressType.Legacy: return "Legacy";
         }
     }
 

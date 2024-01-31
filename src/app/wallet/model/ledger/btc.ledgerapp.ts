@@ -2,25 +2,22 @@ import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import Transport from "@ledgerhq/hw-transport";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
+import { BTCAddressType } from "../btc.types";
 import { LedgerAccountType } from "../ledger.types";
 import { AnyLedgerAccount, LedgerApp } from "./ledgerapp";
 
-export enum BTCAddressType {
-  SEGWIT = "segwit",
-  LEGACY = "legacy",
-  P2SH = "p2sh"
-}
-
 const btc_mainnet_paths = {
-  "segwit": "84'/0'/x'/0/0",
   "legacy": "44'/0'/x'/0/0",
   "p2sh": "49'/0'/x'/0/0",
+  "nativesegwit": "84'/0'/x'/0/0",
+  "taproot": "86'/0'/x'/0/0",
 };
 
 const btc_testnet_paths = {
-  "segwit": "84'/1'/x'/0/0",
   "legacy": "44'/1'/x'/0/0",
   "p2sh": "49'/1'/x'/0/0",
+  "nativesegwit": "84'/1'/x'/0/0",
+  "taproot": "86'/1'/x'/0/0",
 };
 
 const formats: {
@@ -76,8 +73,8 @@ export class BTCLedgerApp extends LedgerApp<BTCAddressType> {
 
   public getDisplayableAddressType(addressType: BTCAddressType): string {
     switch (addressType) {
-      case BTCAddressType.SEGWIT: return "Native Segwit";
-      case BTCAddressType.LEGACY: return "Legacy";
+      case BTCAddressType.NativeSegwit: return "Native Segwit";
+      case BTCAddressType.Legacy: return "Legacy";
       default: return null;
     }
   }

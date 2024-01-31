@@ -1,5 +1,26 @@
 import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
+export enum BTCAddressType {
+  Legacy = "legacy",
+  P2sh = "p2sh",
+  NativeSegwit = "nativesegwit",
+  Taproot = 'taproot'
+}
+
+export const BTC_MAINNET_PATHS = {
+  "legacy": "44'/0'/0'/0/0",
+  "p2sh": "49'/0'/0'/0/0",
+  "nativesegwit": "84'/0'/0'/0/0",
+  "taproot": "86'/0'/0'/0/0",
+};
+
+export const BTC_TESTNET_PATHS = {
+  "legacy": "44'/1'/0'/0/0",
+  "p2sh": "49'/1'/0'/0/0",
+  "nativesegwit": "84'/1'/0'/0/0",
+  "taproot": "86'/1'/0'/0/0",
+};
+
 export type BalanceHistory = {
     received: string;
     sent: string;

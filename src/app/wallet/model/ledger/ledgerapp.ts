@@ -1,6 +1,6 @@
 import Transport from "@ledgerhq/hw-transport";
+import { BTCAddressType } from "../btc.types";
 import { LedgerAccountType } from "../ledger.types";
-import { BTCAddressType } from "./btc.ledgerapp";
 import { ELAAddressType } from "./ela.ledgerapp";
 import { EVMAddressType } from "./evm.ledgerapp";
 
