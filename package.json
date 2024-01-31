@@ -204,7 +204,7 @@
     "cordova-plugin-firebasex": "14.2.1-cli",
     "cordova-plugin-ionic-keyboard": "2.2.0",
     "cordova-plugin-ionic-webview": "5.0.0",
-    "cordova-plugin-lottie-splashscreen": "^0.10.0",
+    "cordova-plugin-lottie-splashscreen": "^0.9.6",
     "cordova-plugin-printer": "0.8.0",
     "cordova-plugin-qrscanner": "3.0.1",
     "cordova-plugin-screen-orientation": "3.0.2",
