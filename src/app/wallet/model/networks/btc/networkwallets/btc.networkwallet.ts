@@ -1,3 +1,4 @@
+import { BitcoinAddressType } from "../../../btc.types";
 import { StandardCoinName } from "../../../coin";
 import { MasterWallet } from "../../../masterwallets/masterwallet";
 import { WalletNetworkOptions } from "../../../masterwallets/wallet.types";
@@ -16,6 +17,7 @@ import { BTCTransactionProvider } from "../tx-providers/btc.transaction.provider
 export abstract class BTCNetworkWallet <MasterWalletType extends MasterWallet, WalletNetworkOptionsType extends WalletNetworkOptions> extends NetworkWallet<MasterWalletType, WalletNetworkOptionsType> {
     constructor(public masterWallet: MasterWalletType,
                 public network: AnyNetwork,
+                public bitcoinAddressType: BitcoinAddressType,
                 safe: Safe) {
         super(
             masterWallet,

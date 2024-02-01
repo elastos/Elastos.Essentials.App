@@ -15,6 +15,7 @@ export class StandardBTCNetworkWallet<WalletNetworkOptionsType extends WalletNet
         super(
             masterWallet,
             network,
+            bitcoinAddressType,
             new BTCWalletJSSafe(masterWallet, "BTC", bitcoinAddressType),
         );
     }

@@ -57,7 +57,7 @@ export class WalletCredentialComponent implements OnInit {
     this.options = this.navParams.data;
     this.selectedMasterWallet = this.walletService.getMasterWallet(this.options.masterWalletId);
     this.networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(this.options.masterWalletId);
-    this.getAddresses();
+    void this.getAddresses();
   }
 
   async getAddresses() {

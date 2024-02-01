@@ -47,7 +47,7 @@
           <div class="single-address"
             *ngIf="activeWalletEntry.networkWallet && getWalletAddresses(activeWalletEntry.networkWallet).length === 1"
             (click)="copySingleAddressToClipboard($event, getWalletAddresses(activeWalletEntry.networkWallet)[0].address)">
-            <div class="title">{{ 'launcher.address' | translate }}</div>
+            <div class="title">{{ getWalletAddresses(activeWalletEntry.networkWallet)[0].title }} {{ 'launcher.address' | translate }}</div>
             <div class="bottom">
               <div class="address">
                 {{getReducedWalletAddress(getWalletAddresses(activeWalletEntry.networkWallet)[0].address)}}
@@ -59,7 +59,7 @@
 
           <!-- Several addresses - need to open a popup to select -->
           <div class="addresses"
-            *ngIf="activeWalletEntry.networkWallet &&getWalletAddresses(activeWalletEntry.networkWallet).length > 1"
+            *ngIf="activeWalletEntry.networkWallet && getWalletAddresses(activeWalletEntry.networkWallet).length > 1"
             (click)="pickWalletAddress($event, activeWalletEntry.networkWallet)">
             {{ 'launcher.addresses' | translate }}
             <img

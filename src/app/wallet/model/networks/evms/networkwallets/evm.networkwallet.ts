@@ -38,7 +38,8 @@ export abstract class EVMNetworkWallet<MasterWalletType extends MasterWallet, Wa
     public getAddresses(): WalletAddressInfo[] {
         return [
             {
-                title: this.mainTokenSubWallet.getFriendlyName(),
+                // title: this.mainTokenSubWallet.getFriendlyName(),
+                title: "EVM",
                 address: this.mainTokenSubWallet.getAccountAddress()
             }
         ];

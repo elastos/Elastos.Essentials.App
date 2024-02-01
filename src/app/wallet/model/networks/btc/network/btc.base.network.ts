@@ -5,6 +5,7 @@ import { CoinID, StandardCoinName } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
 import { SwapProvider } from "../../../earn/swapprovider";
+import { LedgerAccountType } from "../../../ledger.types";
 import type { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
@@ -41,17 +42,27 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
   }
 
   public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
+    // TODO: Get btc address type from masterWallet.networkOptions ?
+    let bitcoinAddressType = BitcoinAddressType.Legacy;
     switch (masterWallet.type) {
       case WalletType.STANDARD:
         const StandardBTCNetworkWallet = (await import("../networkwallets/standard/standard.btc.networkwallet")).StandardBTCNetworkWallet;
-        // TODO: Get btc address type from masterWallet.networkOptions
-        let bitcoinAddressType = BitcoinAddressType.Legacy;
         return new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this, bitcoinAddressType);
       case WalletType.LEDGER:
         // The address and derivePath are saved in masterWallet.accountOptions.
         // Ledger wallet currently does not support switching address types.
         const LedgerBTCNetworkWallet = (await import("../networkwallets/ledger/ledger.btc.networkwallet")).LedgerBTCNetworkWallet;
-        return new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this);
+
+        // TODO: save to masterWallet.networkOptions ?
+        let option = (<LedgerMasterWallet>masterWallet).accountOptions.find((option) => {
+          return option.type === LedgerAccountType.BTC
+        })
+        if (option.accountPath.startsWith("84'")) {
+          bitcoinAddressType = BitcoinAddressType.NativeSegwit;
+        } else if (option.accountPath.startsWith("86'")) {
+          bitcoinAddressType = BitcoinAddressType.Taproot;
+        }
+        return new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this, bitcoinAddressType);
       default:
         Logger.warn('wallet', 'BTC does not support ', masterWallet.type);
         return null;

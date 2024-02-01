@@ -5,7 +5,7 @@ import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
-import { BTCOutputData, BTCTransaction, BTCUTXO } from '../../../btc.types';
+import { BTCOutputData, BTCTransaction, BTCUTXO, BitcoinAddressType } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
@@ -15,6 +15,7 @@ import { WalletUtil } from '../../../wallet.util';
 import { NetworkAPIURLType } from '../../base/networkapiurltype';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
+import { AnyBTCNetworkWallet } from '../networkwallets/btc.networkwallet';
 import { BTCSafe } from '../safes/btc.safe';
 
 const TRANSACTION_LIMIT = 50;
@@ -59,7 +60,16 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     public getFriendlyName(): string {
-        return 'BTC';
+      switch ((this.networkWallet as AnyBTCNetworkWallet).bitcoinAddressType) {
+        case BitcoinAddressType.Legacy:
+          return 'Legacy';
+        case BitcoinAddressType.NativeSegwit:
+          return 'Native Segwit'
+        case BitcoinAddressType.Taproot:
+          return "Taproot"
+        default:
+          return 'BTC';
+      }
     }
 
     public getDisplayTokenName(): string {
