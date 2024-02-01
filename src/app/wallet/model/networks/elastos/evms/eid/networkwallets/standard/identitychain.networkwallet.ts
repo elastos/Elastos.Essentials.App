@@ -40,7 +40,8 @@ export class ElastosIdentityChainStandardNetworkWallet extends ElastosStandardEV
     // No ETHDID in LRW.
     if (this.subWallets[StandardCoinName.ETHDID]) {
       addresses.push({
-        title: this.subWallets[StandardCoinName.ETHDID].getFriendlyName(),
+        // title: this.subWallets[StandardCoinName.ETHDID].getFriendlyName(),
+        title: "EVM",
         address: this.subWallets[StandardCoinName.ETHDID].getCurrentReceiverAddress()
       });
     }

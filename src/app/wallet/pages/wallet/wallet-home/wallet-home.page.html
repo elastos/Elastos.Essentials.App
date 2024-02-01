@@ -75,6 +75,28 @@
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h5>
                     </div>
+
+                    <!-- Single address - directly copy -->
+                    <div class="single-address"
+                      *ngIf="networkWallet && walletAddresses.length === 1"
+                      (click)="copySingleAddressToClipboard($event, walletAddresses[0].address)">
+                      <div class="bottom">
+                        <div class="address">
+                          {{ walletAddresses[0].title }} {{ 'launcher.address' | translate }} {{getReducedWalletAddress(walletAddresses[0].address)}}
+                        </div>
+                        <img
+                          [src]="theme.darkMode ? 'assets/launcher/icons/dark_mode/copy.svg' : 'assets/launcher/icons/copy.svg'">
+                      </div>
+                    </div>
+
+                    <!-- Several addresses - need to open a popup to select -->
+                    <div class="addresses"
+                      *ngIf="networkWallet && walletAddresses.length > 1"
+                      (click)="pickWalletAddress($event)">
+                      {{ 'launcher.addresses' | translate }}
+                      <img
+                        [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/down-arrow.svg' : 'assets/wallet/icons/down-arrow.svg'">
+                    </div>
                 </ion-row>
             </ion-row>
 

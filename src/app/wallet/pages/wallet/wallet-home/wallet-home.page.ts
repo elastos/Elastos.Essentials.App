@@ -21,12 +21,14 @@
 */
 
 import { Component, NgZone, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { IonSlides } from '@ionic/angular';
+import { IonSlides, PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import BigNumber from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import { reducedWalletAddress } from 'src/app/helpers/wallet.helper';
+import { WalletAddressChooserComponent } from 'src/app/launcher/components/wallet-address-chooser/wallet-address-chooser.component';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -35,7 +37,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { CoinType } from 'src/app/wallet/model/coin';
 import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
-import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { AnyNetworkWallet, WalletAddressInfo } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { NFT } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
@@ -72,6 +74,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;
 
+    private walletAddresses: WalletAddressInfo[] = null;
+
     public stakedBalance = null; // Staked on ELA main chain or Tron
 
     public refreshingStakedAssets = false;
@@ -104,8 +108,11 @@ export class WalletHomePage implements OnInit, OnDestroy {
     // Titlebar
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
+    private popover: HTMLIonPopoverElement = null;
+
     constructor(
         public native: Native,
+        private popoverCtrl: PopoverController,
         public globalPopupService: GlobalPopupService,
         public walletManager: WalletService,
         public networkService: WalletNetworkService,
@@ -134,6 +141,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
             this.stakedBalance = null;
 
             if (activeNetworkWallet) {
+                this.walletAddresses = this.networkWallet.getAddresses();
+
                 this.checkLedgerWallet();
 
                 this.isEVMNetworkWallet = this.networkWallet.getMainEvmSubWallet() ? true : false;
@@ -502,5 +511,42 @@ export class WalletHomePage implements OnInit, OnDestroy {
         let balance = CurrencyService.instance.getMainTokenValue(new BigNumber(this.stakedBalance),
             this.networkWallet.network, this.currencyService.selectedCurrency.symbol);
         return WalletUtil.getFriendlyBalance(balance);
+    }
+
+    public async pickWalletAddress(event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      this.popover = await this.popoverCtrl.create({
+        mode: 'ios',
+        component: WalletAddressChooserComponent,
+        componentProps: {
+          addresses: this.walletAddresses
+        },
+        cssClass: !this.theme.activeTheme.value.config.usesDarkMode ? 'launcher-address-chooser-component' : 'launcher-address-chooser-component-dark',
+        event: event,
+        translucent: false
+      });
+      void this.popover.onWillDismiss().then((resp) => {
+        this.popover = null;
+      });
+      return await this.popover.present();
+    }
+
+    public getReducedWalletAddress(address: string) {
+      return reducedWalletAddress(address);
+    }
+
+    /**
+     * Copies the first and only wallet address for the active wallet.
+     * Address is copied to the clipboard and a toast confirmation is shown.
+     */
+    public copySingleAddressToClipboard(event, address: string) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      let confirmationMessage = this.translate.instant('launcher.address-copied-to-clipboard', { address });
+      this.native.toast(confirmationMessage);
+      void this.native.copyClipboard(address);
     }
 }
