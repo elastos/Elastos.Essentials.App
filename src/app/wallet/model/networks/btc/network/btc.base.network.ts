@@ -1,5 +1,6 @@
 import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
 import { Logger } from "src/app/logger";
+import { BitcoinAddressType } from "../../../btc.types";
 import { CoinID, StandardCoinName } from "../../../coin";
 import { BridgeProvider } from "../../../earn/bridgeprovider";
 import { EarnProvider } from "../../../earn/earnprovider";
@@ -43,8 +44,12 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
     switch (masterWallet.type) {
       case WalletType.STANDARD:
         const StandardBTCNetworkWallet = (await import("../networkwallets/standard/standard.btc.networkwallet")).StandardBTCNetworkWallet;
-        return new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this);
+        // TODO: Get btc address type from masterWallet.networkOptions
+        let bitcoinAddressType = BitcoinAddressType.Legacy;
+        return new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this, bitcoinAddressType);
       case WalletType.LEDGER:
+        // The address and derivePath are saved in masterWallet.accountOptions.
+        // Ledger wallet currently does not support switching address types.
         const LedgerBTCNetworkWallet = (await import("../networkwallets/ledger/ledger.btc.networkwallet")).LedgerBTCNetworkWallet;
         return new LedgerBTCNetworkWallet(masterWallet as LedgerMasterWallet, this);
       default:

@@ -1,10 +1,10 @@
 import Transport from "@ledgerhq/hw-transport";
-import { BTCAddressType } from "../btc.types";
+import { BitcoinAddressType } from "../btc.types";
 import { LedgerAccountType } from "../ledger.types";
 import { ELAAddressType } from "./ela.ledgerapp";
 import { EVMAddressType } from "./evm.ledgerapp";
 
-export type LedgerAddressType = BTCAddressType | ELAAddressType | EVMAddressType;
+export type LedgerAddressType = BitcoinAddressType | ELAAddressType | EVMAddressType;
 
 export type LedgerAccount<AddressType extends LedgerAddressType> = {
   type: LedgerAccountType;

@@ -1,11 +1,12 @@
 import * as BTC from 'bitcoinjs-lib';
 import { Payment } from 'bitcoinjs-lib';
 import { bitcoin, testnet } from "bitcoinjs-lib/src/networks";
+import { toXOnly } from "bitcoinjs-lib/src/psbt/bip371";
 import { Logger } from "src/app/logger";
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { BTCAddressType, BTCOutputData, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS } from "../../../btc.types";
+import { BTCOutputData, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS, BitcoinAddressType } from "../../../btc.types";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from '../../../safes/safe.types';
@@ -13,20 +14,14 @@ import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from '../../base/subwallets/subwallet';
 import { BTCSafe } from "./btc.safe";
 
-const DefaultDerivationPath = "44'/0'/0'/0/0"; // TODO: maybe we should use "44'/1'/0'/0/0" for testnet
 const DUST = 550; // TODO: How to calculate the dust value?
-
-const toXOnly = (pubKey: Buffer) =>
-  pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);
 
 export class BTCWalletJSSafe extends Safe implements BTCSafe {
     private btcAddress = null;
-    private btcAddressType = BTCAddressType.Legacy;
-    // private btcAddressType = BTCAddressType.Taproot;
     private btcPublicKey = null;
     private btcNetwork = bitcoin;
 
-    constructor(protected masterWallet: StandardMasterWallet, protected chainId: string) {
+    constructor(protected masterWallet: StandardMasterWallet, protected chainId: string, protected bitcoinAddressType = BitcoinAddressType.Legacy) {
         super(masterWallet);
     }
 
@@ -53,7 +48,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
     private async initJSWallet() {
         try {
-            let keypair = await this.getKeyPair(BTC_MAINNET_PATHS[this.btcAddressType]);
+            let keypair = await this.getKeyPair();
             if (keypair) {
               this.btcAddress = await this.getAddress(keypair);
               this.btcPublicKey = keypair.publicKey.toString('hex');
@@ -64,7 +59,11 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         }
     }
 
-    private async getKeyPair(path: string, forceShowMasterPrompt = false) {
+    private getDerivePath() {
+      return BTC_MAINNET_PATHS[this.bitcoinAddressType];
+    }
+
+    private async getKeyPair(forceShowMasterPrompt = false) {
         let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id, true, forceShowMasterPrompt);
         if (!payPassword)
             return;
@@ -81,7 +80,9 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
             let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
             const root = bip32.fromSeed(Buffer.from(seed, "hex"), this.btcNetwork)
-            const keyPair = root.derivePath(path)
+
+            let derivePath = this.getDerivePath();
+            const keyPair = root.derivePath(derivePath)
             return keyPair;
         } catch (e) {
             Logger.warn('wallet', 'getKeyPair exception:', e)
@@ -90,20 +91,20 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
     private getAddress(keyPair) {
         let payment: Payment = null;
-        switch (this.btcAddressType) {
-            case BTCAddressType.Legacy:
+        switch (this.bitcoinAddressType) {
+            case BitcoinAddressType.Legacy:
                 payment = BTC.payments.p2pkh({ pubkey: keyPair.publicKey , network: this.btcNetwork});
             break;
-            case BTCAddressType.NativeSegwit:
+            case BitcoinAddressType.NativeSegwit:
                 // Native Segwit
                 payment = BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork});
             break;
-            case BTCAddressType.P2sh:
+            case BitcoinAddressType.P2sh:
                 payment = BTC.payments.p2sh({
                     redeem: BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork}),
                 })
             break;
-            case BTCAddressType.Taproot:
+            case BitcoinAddressType.Taproot:
                 payment = BTC.payments.p2tr({internalPubkey: toXOnly(Buffer.from(keyPair.publicKey as Uint8Array)), network: this.btcNetwork})
             break;
         }
@@ -119,7 +120,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
     }
 
     public async signDigest(address: string, digest: string, password: string): Promise<string> {
-      let keypair = await this.getKeyPair(DefaultDerivationPath, false);
+      let keypair = await this.getKeyPair(false);
       if (!keypair) {
           // User canceled the password
           return null;
@@ -150,7 +151,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         }
         Logger.log('wallet', 'BTCWalletJSSafe signTransaction ', rawTransaction)
 
-        let keypair = await this.getKeyPair(DefaultDerivationPath, true);
+        let keypair = await this.getKeyPair(true);
         if (!keypair) {
             // User canceled the password
             return signTransactionResult;

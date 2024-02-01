@@ -2,7 +2,7 @@ import Btc, { AddressFormat } from "@ledgerhq/hw-app-btc";
 import Transport from "@ledgerhq/hw-transport";
 import { Logger } from "src/app/logger";
 import { GlobalNetworksService, TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { BTCAddressType } from "../btc.types";
+import { BitcoinAddressType } from "../btc.types";
 import { LedgerAccountType } from "../ledger.types";
 import { AnyLedgerAccount, LedgerApp } from "./ledgerapp";
 
@@ -30,7 +30,7 @@ const formats: {
 
 //tb1qqyww579uw3zj8wsfgrngxgyqjkjka0m7m2mkz6
 
-export class BTCLedgerApp extends LedgerApp<BTCAddressType> {
+export class BTCLedgerApp extends LedgerApp<BitcoinAddressType> {
   private btcApp: Btc = null;
 
   constructor(protected transport: Transport) {
@@ -39,7 +39,7 @@ export class BTCLedgerApp extends LedgerApp<BTCAddressType> {
     this.btcApp = new Btc(this.transport);
   }
 
-  public async getAddressesByType(startIndex: number, count: number, type: BTCAddressType): Promise<AnyLedgerAccount[]> {
+  public async getAddressesByType(startIndex: number, count: number, type: BitcoinAddressType): Promise<AnyLedgerAccount[]> {
     let addresses = [];
 
     let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
@@ -67,14 +67,14 @@ export class BTCLedgerApp extends LedgerApp<BTCAddressType> {
     return addresses;
   }
 
-  public async getAddresses(addressType: BTCAddressType, startIndex: number, count: number, internalAddresses: boolean): Promise<AnyLedgerAccount[]> {
+  public async getAddresses(addressType: BitcoinAddressType, startIndex: number, count: number, internalAddresses: boolean): Promise<AnyLedgerAccount[]> {
     return await this.getAddressesByType(startIndex, count, addressType)
   }
 
-  public getDisplayableAddressType(addressType: BTCAddressType): string {
+  public getDisplayableAddressType(addressType: BitcoinAddressType): string {
     switch (addressType) {
-      case BTCAddressType.NativeSegwit: return "Native Segwit";
-      case BTCAddressType.Legacy: return "Legacy";
+      case BitcoinAddressType.NativeSegwit: return "Native Segwit";
+      case BitcoinAddressType.Legacy: return "Legacy";
       default: return null;
     }
   }

@@ -1,6 +1,6 @@
 import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
-export enum BTCAddressType {
+export enum BitcoinAddressType {
   Legacy = "legacy",
   P2sh = "p2sh",
   NativeSegwit = "nativesegwit",
