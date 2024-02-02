@@ -8,13 +8,13 @@ import { SwapProvider } from "../../../earn/swapprovider";
 import { LedgerAccountType } from "../../../ledger.types";
 import type { LedgerMasterWallet } from "../../../masterwallets/ledger.masterwallet";
 import type { MasterWallet, StandardMasterWallet } from "../../../masterwallets/masterwallet";
-import { PrivateKeyType, WalletNetworkOptions, WalletType } from "../../../masterwallets/wallet.types";
+import { BTCWalletNetworkOptions, PrivateKeyType, WalletType } from "../../../masterwallets/wallet.types";
 import { WalletCreateType } from "../../../walletaccount";
 import type { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import type { ERC20SubWallet } from "../../evms/subwallets/erc20.subwallet";
 import { Network } from "../../network";
 
-export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
+export abstract class BTCNetworkBase extends Network<BTCWalletNetworkOptions> {
   public static networkKey = "btc";
 
   constructor(
@@ -35,15 +35,16 @@ export abstract class BTCNetworkBase extends Network<WalletNetworkOptions> {
       bridgeProviders);
   }
 
-  public getDefaultWalletNetworkOptions(): WalletNetworkOptions {
+  public getDefaultWalletNetworkOptions(): BTCWalletNetworkOptions {
     return {
-      network: this.key
+      network: this.key,
+      bitcoinAddressType: BitcoinAddressType.Legacy
     }
   }
 
   public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
-    // TODO: Get btc address type from masterWallet.networkOptions ?
-    let bitcoinAddressType = BitcoinAddressType.Legacy;
+    // Get btc address type from masterWallet.networkOptions
+    let bitcoinAddressType = (masterWallet as StandardMasterWallet).getBitcoinAddressType();
     switch (masterWallet.type) {
       case WalletType.STANDARD:
         const StandardBTCNetworkWallet = (await import("../networkwallets/standard/standard.btc.networkwallet")).StandardBTCNetworkWallet;

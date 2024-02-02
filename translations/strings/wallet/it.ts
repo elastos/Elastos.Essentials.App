@@ -386,6 +386,7 @@ export const it = {
         "wallet-settings-extended-public-keys-subtitle": "Special keys required to create multi-signature wallets",
         "wallet-settings-multisig-extended-public-keys-title": "Multi-signature wallet extension public key information",
         "wallet-settings-multisig-extended-public-keys-subtitle": "Display extension public keys for all signers",
+        "wallet-settings-switch-address-type-title": "Switch address type",
 
         /************************
         * Wallet Edit Name Page *

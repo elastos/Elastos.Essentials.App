@@ -26,7 +26,7 @@ const TRANSACTION_LIMIT = 50;
  * specialized class exists.
  */
 export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
-    private legacyAddress: string = null;
+    private btcAddress: string = null;
     private transactionsList: string[] = null;
     private totalTransactionCount = 0;
     private explorerApiUrl = null;
@@ -40,6 +40,10 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         this.getRootPaymentAddress();
 
         this.explorerApiUrl = this.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.NOWNODE_EXPLORER);
+    }
+
+    public getUniqueIdentifierOnNetwork(): string {
+        return this.id + '-' + (this.networkWallet as AnyBTCNetworkWallet).bitcoinAddressType;
     }
 
     public async startBackgroundUpdates(): Promise<void> {
@@ -81,10 +85,10 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     public getRootPaymentAddress(): string {
-        if (!this.legacyAddress) {
-            this.legacyAddress = this.getCurrentReceiverAddress();
+        if (!this.btcAddress) {
+            this.btcAddress = this.getCurrentReceiverAddress();
         }
-        return this.legacyAddress;
+        return this.btcAddress;
     }
 
     public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
@@ -196,7 +200,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     //satoshi
     public async getAvailableUtxo(amount: number) {
         let utxoArrayForSDK: BTCUTXO[] = [];
-        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.legacyAddress);
+        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.btcAddress);
         let getEnoughUTXO = false;
         if (utxoArray) {
             let totalAmount = 0;
@@ -287,7 +291,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return (this.networkWallet.safe as any as BTCSafe).createBTCPaymentTransaction(
             utxo,
             outputs,
-            this.legacyAddress,
+            this.btcAddress,
             feerate.toString(),
             fee);
     }
@@ -317,7 +321,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
      */
     private async updateBTCSubWalletInfo() {
         // Get the latest info.
-        let btcInfo = await GlobalBTCRPCService.instance.address(this.explorerApiUrl, this.legacyAddress, TRANSACTION_LIMIT, 1);
+        let btcInfo = await GlobalBTCRPCService.instance.address(this.explorerApiUrl, this.btcAddress, TRANSACTION_LIMIT, 1);
         if (btcInfo) {
             if (btcInfo.balance) {
                 // the unconfirmedBalance is negative for unconfirmed sending transaction.

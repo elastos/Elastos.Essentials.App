@@ -331,9 +331,9 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
 
   public getTransactionsCacheKey(transactionListType = TransactionListType.NORMAL): string {
     if (transactionListType === TransactionListType.NORMAL) {
-      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-transactions";
+      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.getUniqueIdentifierOnNetwork() + "-transactions";
     } else {
-      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.id + "-internaltransactions";
+      return this.masterWallet.id + "-" + this.networkWallet.network.key + "-" + this.getUniqueIdentifierOnNetwork() + "-internaltransactions";
     }
   }
 

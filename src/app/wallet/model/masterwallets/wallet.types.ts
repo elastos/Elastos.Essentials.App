@@ -32,6 +32,13 @@ export type ElastosMainChainWalletNetworkOptions = WalletNetworkOptions & {
   singleAddress: boolean;
 }
 
+export type BTCWalletNetworkOptions = WalletNetworkOptions & {
+  network: string,
+
+  bitcoinAddressType: string; // eg: legacy, nativesegwit, taproot
+}
+
+
 export type Theme = {
   background: string,
   color: string

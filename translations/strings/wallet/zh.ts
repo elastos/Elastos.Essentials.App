@@ -386,6 +386,7 @@ export const zh = {
         "wallet-settings-extended-public-keys-subtitle": "创建多签钱包所需的特殊密钥",
         "wallet-settings-multisig-extended-public-keys-title": "多签钱包扩展公钥信息",
         "wallet-settings-multisig-extended-public-keys-subtitle": "显示所有联合签名人的扩展公钥",
+        "wallet-settings-switch-address-type-title": "切换地址类型",
 
         /************************
         * Wallet Edit Name Page *

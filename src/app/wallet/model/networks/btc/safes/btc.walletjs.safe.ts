@@ -16,6 +16,20 @@ import { BTCSafe } from "./btc.safe";
 
 const DUST = 550; // TODO: How to calculate the dust value?
 
+type AccountInfo = {
+  address: string;
+  publicKey: string;
+};
+
+type BtcAccountInfos = {
+  [addressType: string]: AccountInfo // "legacy":  {"address":"xxx", "publicKey": "xxx"}
+};
+
+const SupportedBtcAddressTypes = [BitcoinAddressType.Legacy,
+                                  BitcoinAddressType.NativeSegwit,
+                                  // BitcoinAddressType.P2sh,
+                                  BitcoinAddressType.Taproot]
+
 export class BTCWalletJSSafe extends Safe implements BTCSafe {
     private btcAddress = null;
     private btcPublicKey = null;
@@ -34,36 +48,50 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
         // Check if the address is already computed or not  (first time). If not, request the
         // master password to compute it
-        this.btcAddress = await networkWallet.loadContextInfo("btcAddress");
-        this.btcPublicKey = await networkWallet.loadContextInfo("btcPublicKey");
-        if (!this.btcAddress || !this.btcPublicKey) {
-          await this.initJSWallet()
-
-          if (this.btcAddress)
-            await networkWallet.saveContextInfo("btcAddress", this.btcAddress);
-          if (this.btcPublicKey)
-            await networkWallet.saveContextInfo("btcPublicKey", this.btcPublicKey);
+        let accounts = await networkWallet.loadContextInfo("btcAccounts");
+        if (accounts && accounts[this.bitcoinAddressType]) {
+            this.btcAddress = accounts[this.bitcoinAddressType].address;
+            this.btcPublicKey = accounts[this.bitcoinAddressType].publicKey;
+        } else {
+            accounts = await this.initJSWallet()
+            if (accounts && accounts[this.bitcoinAddressType]) {
+                this.btcAddress = accounts[this.bitcoinAddressType].address;
+                this.btcPublicKey = accounts[this.bitcoinAddressType].publicKey;
+                await networkWallet.saveContextInfo("btcAccounts", accounts);
+            }
         }
+
+        Logger.warn('wallet', 'BTC accounts', accounts)
     }
 
-    private async initJSWallet() {
+    private async initJSWallet(): Promise<BtcAccountInfos> {
         try {
-            let keypair = await this.getKeyPair();
-            if (keypair) {
-              this.btcAddress = await this.getAddress(keypair);
-              this.btcPublicKey = keypair.publicKey.toString('hex');
+            let accountInfos: BtcAccountInfos = {};
+            const root = await this.getRoot();
 
+            let types = [BitcoinAddressType.Legacy, BitcoinAddressType.NativeSegwit, BitcoinAddressType.P2sh, BitcoinAddressType.Taproot]
+            for (let i = 0; i < SupportedBtcAddressTypes.length; i++) {
+                let derivePath = this.getDerivePath(SupportedBtcAddressTypes[i]);
+                const keypair = root.derivePath(derivePath)
+                let btcAddress = await this.getAddress(keypair, SupportedBtcAddressTypes[i]);
+                let btcPublicKey = keypair.publicKey.toString('hex');
+                accountInfos[SupportedBtcAddressTypes[i]] = {
+                    address: btcAddress,
+                    publicKey: btcPublicKey
+                }
             }
+
+            return accountInfos;
         } catch (e) {
             Logger.warn('wallet', 'initJSWallet exception:', e)
         }
     }
 
-    private getDerivePath() {
-      return BTC_MAINNET_PATHS[this.bitcoinAddressType];
+    private getDerivePath(addressType) {
+        return BTC_MAINNET_PATHS[addressType];
     }
 
-    private async getKeyPair(forceShowMasterPrompt = false) {
+    private async getRoot(forceShowMasterPrompt = false) {
         let payPassword = await AuthService.instance.getWalletPassword(this.masterWallet.id, true, forceShowMasterPrompt);
         if (!payPassword)
             return;
@@ -79,19 +107,28 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
             BTC.initEccLib(ecc)
 
             let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
-            const root = bip32.fromSeed(Buffer.from(seed, "hex"), this.btcNetwork)
-
-            let derivePath = this.getDerivePath();
-            const keyPair = root.derivePath(derivePath)
-            return keyPair;
+            return bip32.fromSeed(Buffer.from(seed, "hex"), this.btcNetwork)
         } catch (e) {
             Logger.warn('wallet', 'getKeyPair exception:', e)
         }
     }
 
-    private getAddress(keyPair) {
+    private async getKeyPair(forceShowMasterPrompt = false) {
+        try {
+            const root = await this.getRoot(forceShowMasterPrompt)
+            if (root) {
+              let derivePath = this.getDerivePath(this.bitcoinAddressType);
+              const keyPair = root.derivePath(derivePath)
+              return keyPair;
+            }
+        } catch (e) {
+            Logger.warn('wallet', 'getKeyPair exception:', e)
+        }
+    }
+
+    private getAddress(keyPair, addressType) {
         let payment: Payment = null;
-        switch (this.bitcoinAddressType) {
+        switch (addressType) {
             case BitcoinAddressType.Legacy:
                 payment = BTC.payments.p2pkh({ pubkey: keyPair.publicKey , network: this.btcNetwork});
             break;

@@ -2,23 +2,27 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
+import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WarningComponent } from 'src/app/wallet/components/warning/warning.component';
+import { BitcoinAddressType } from 'src/app/wallet/model/btc.types';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { StandardMultiSigMasterWallet } from 'src/app/wallet/model/masterwallets/standard.multisig.masterwallet';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { StandardBTCNetworkWallet } from 'src/app/wallet/model/networks/btc/networkwallets/standard/standard.btc.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { Utxo } from 'src/app/wallet/model/tx-providers/transaction.types';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
 import { Transfer } from 'src/app/wallet/services/cointransfer.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { Config } from '../../../config/Config';
-import { MasterWallet } from '../../../model/masterwallets/masterwallet';
+import { MasterWallet, StandardMasterWallet } from '../../../model/masterwallets/masterwallet';
 import { AuthService } from '../../../services/auth.service';
 import { CurrencyService } from '../../../services/currency.service';
 import { Native } from '../../../services/native.service';
@@ -178,6 +182,20 @@ export class WalletSettingsPage implements OnInit {
                     });
                 }
             }
+
+            // TODO: Support to change address type for Ledger wallet.
+            if (this.networkWallet instanceof StandardBTCNetworkWallet) {
+                this.settings.push({
+                  type: 'wallet-switch-address-type',
+                  navCallback: () => {
+                      void this.pickAddressType();
+                  },
+                  title: this.translate.instant("wallet.wallet-settings-switch-address-type-title"),
+                  subtitle: this.networkWallet.getAddresses()[0]?.title,
+                  icon: '/assets/wallet/icons/change-wallet.svg',
+                  iconDarkmode: '/assets/wallet/icons/darkmode/change-wallet.svg'
+              });
+            }
         }
 
         this.settings.push({
@@ -331,5 +349,53 @@ export class WalletSettingsPage implements OnInit {
         } catch (e) {
             Logger.error('wallet', 'WalletSettingsPage getWalletPassword error:' + e);
         }
+    }
+
+    // For Btc address type
+    private buildBTCAddressTypeMenuItems(): MenuSheetMenu[] {
+        return [
+            {
+                title: "Native Segwit",
+                routeOrAction: () => {
+                  void this.switchBTCAddressType(BitcoinAddressType.NativeSegwit);
+                }
+            },
+            {
+                title: "Legacy",
+                routeOrAction: () => {
+                  void this.switchBTCAddressType(BitcoinAddressType.Legacy);
+                }
+            },
+            // TODO: Open it when support Taproot TX.
+            // {
+            //     title: "Taproot",
+            //     routeOrAction: () => {
+            //       void this.switchBTCAddressType(BitcoinAddressType.Taproot);
+            //     }
+            // }
+        ]
+    }
+
+    private async switchBTCAddressType(addressType: BitcoinAddressType) {
+        let bitcoinAddressType = (this.masterWallet as StandardMasterWallet).getBitcoinAddressType();
+        if (bitcoinAddressType != addressType) {
+            await (this.masterWallet as StandardMasterWallet).setBitcoinAddressType(addressType);
+            await this.walletManager.activateMasterWallet(this.masterWallet);
+            this.native.setRootRouter("/wallet/wallet-home");
+        }
+    }
+
+    /**
+     * Choose an address type
+     */
+    public pickAddressType() {
+        let menuItems: MenuSheetMenu[] = this.buildBTCAddressTypeMenuItems();
+
+        let menu: MenuSheetMenu = {
+            title: GlobalTranslationService.instance.translateInstant("wallet.ledger-choose-address-type"),
+            items: menuItems
+        };
+
+        void this.globalNative.showGenericBottomSheetMenuChooser(menu);
     }
 }

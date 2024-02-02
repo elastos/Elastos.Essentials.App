@@ -4,9 +4,11 @@ import { AESDecrypt, AESEncrypt } from '../../../helpers/crypto/aes';
 import { WalletNetworkService } from '../../services/network.service';
 import { SafeService, StandardWalletSafe } from '../../services/safe.service';
 import { LocalStorage } from '../../services/storage.service';
+import { BitcoinAddressType } from '../btc.types';
+import { BTCNetworkBase } from '../networks/btc/network/btc.base.network';
 import { WalletJSSDKHelper } from '../networks/elastos/wallet.jssdk.helper';
 import { AnyNetwork } from '../networks/network';
-import { PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
+import { BTCWalletNetworkOptions, PrivateKeyType, SerializedMasterWallet, SerializedStandardMasterWallet, Theme, WalletCreator, WalletNetworkOptions, WalletType } from './wallet.types';
 
 export const defaultWalletName = (): string => {
     return 'Anonymous wallet';
@@ -269,5 +271,34 @@ export class StandardMasterWallet extends MasterWallet {
         let derivePath = path ? path : defaultPath;
         let hdWalelt = new Wallet(HDNode.fromSeed(seedByte).derivePath(derivePath));
         return hdWalelt.privateKey;
+    }
+
+    public getBitcoinAddressType(): BitcoinAddressType {
+        let btcNetworkOptions = this.getNetworkOptions(BTCNetworkBase.networkKey) as BTCWalletNetworkOptions;
+        if (btcNetworkOptions && btcNetworkOptions.bitcoinAddressType) {
+          return btcNetworkOptions.bitcoinAddressType as BitcoinAddressType;
+        }
+        return BitcoinAddressType.Legacy; // default
+    }
+
+    /**
+     * Set bitcoin address type and save
+     * @param addressType
+     * @returns
+     */
+    public async setBitcoinAddressType(addressType: BitcoinAddressType) {
+        let btcNetworkOptions = this.networkOptions.find(no => no.network === BTCNetworkBase.networkKey) as BTCWalletNetworkOptions;
+        if (btcNetworkOptions) {
+          if (btcNetworkOptions.bitcoinAddressType == addressType) return;
+
+          btcNetworkOptions.bitcoinAddressType = addressType;
+        } else {
+          let btcNetworkOption: BTCWalletNetworkOptions = {
+            network: BTCNetworkBase.networkKey,
+            bitcoinAddressType: addressType
+          }
+          this.networkOptions.push(btcNetworkOption);
+        }
+        await this.save()
     }
 }
