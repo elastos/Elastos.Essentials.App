@@ -11,14 +11,7 @@ import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.servi
 })
 export class GlobalBTCRPCService {
     public static instance: GlobalBTCRPCService = null;
-    // // Pay for it after evaluation
-    // private apikeys = ['JCBiDqxUbHK2yjVPndSwYg70aANmzkOF',
-    //     'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2',
-    //     '4XZngRNFoTDc7l8GIKx3YmUWvtBSwydb',
-    //     '49DAE10rcXPU7LRkKfyiuGtFgvBMIJjQ',
-    //     'zvEsonX2uFPTLy7liqWApZhb9Uce8Omk']
-
-    private apikey_testnet = 'raIkl0N79nXd6jZOF1zyLiBMVwbJqfc2';
+    private apikey_testnet = '';
     private apikey_mainnet = '';
     private apikey = '';
 
@@ -30,7 +23,8 @@ export class GlobalBTCRPCService {
         this.http.get("assets/wallet/data/apikey-nownode.json").subscribe({
             next: (value) => {
                 if ((value instanceof Array) && (value.length > 0)) {
-                    this.apikey_mainnet = value[Math.floor(Math.random() * value.length)];
+                    this.apikey_mainnet = value[0];
+                    this.apikey_testnet = value[1] ? value[1] : value[0];
 
                     let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
                     if (network !== MAINNET_TEMPLATE) {

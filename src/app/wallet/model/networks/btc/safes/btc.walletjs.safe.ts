@@ -60,8 +60,6 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
                 await networkWallet.saveContextInfo("btcAccounts", accounts);
             }
         }
-
-        Logger.warn('wallet', 'BTC accounts', accounts)
     }
 
     private async initJSWallet(): Promise<BtcAccountInfos> {
@@ -69,7 +67,6 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
             let accountInfos: BtcAccountInfos = {};
             const root = await this.getRoot();
 
-            let types = [BitcoinAddressType.Legacy, BitcoinAddressType.NativeSegwit, BitcoinAddressType.P2sh, BitcoinAddressType.Taproot]
             for (let i = 0; i < SupportedBtcAddressTypes.length; i++) {
                 let derivePath = this.getDerivePath(SupportedBtcAddressTypes[i]);
                 const keypair = root.derivePath(derivePath)
@@ -133,7 +130,6 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
                 payment = BTC.payments.p2pkh({ pubkey: keyPair.publicKey , network: this.btcNetwork});
             break;
             case BitcoinAddressType.NativeSegwit:
-                // Native Segwit
                 payment = BTC.payments.p2wpkh({pubkey: keyPair.publicKey, network: this.btcNetwork});
             break;
             case BitcoinAddressType.P2sh:
@@ -142,7 +138,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
                 })
             break;
             case BitcoinAddressType.Taproot:
-                payment = BTC.payments.p2tr({internalPubkey: toXOnly(Buffer.from(keyPair.publicKey as Uint8Array)), network: this.btcNetwork})
+                payment = BTC.payments.p2tr({internalPubkey: toXOnly(keyPair.publicKey), network: this.btcNetwork})
             break;
         }
         return payment?.address;
@@ -196,15 +192,37 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
         const psbt = new BTC.Psbt({ network: this.btcNetwork });
 
+        let xOnlyPubkey = null, scriptOutput = null, tweakedChildNode = null;
+        if (this.bitcoinAddressType === BitcoinAddressType.Taproot) {
+          xOnlyPubkey = toXOnly(Buffer.from(this.btcPublicKey, 'hex'));
+
+          // This is new for taproot
+          const { output } = BTC.payments.p2tr({
+            internalPubkey:xOnlyPubkey,
+          });
+
+          scriptOutput = output;
+
+          // Used for signing, since the output and address are using a tweaked key
+          // We must tweak the signer in the same way.
+          tweakedChildNode = keypair.tweak(
+            BTC.crypto.taggedHash('TapTweak', xOnlyPubkey),
+          );
+        }
+
         let totalAmount = 0;
         rawTransaction.inputs.forEach(input => {
-            totalAmount += parseInt(input.value);
-            psbt.addInput({hash:input.txid, index:input.vout, nonWitnessUtxo: Buffer.from(input.utxoHex, 'hex')});
-            // For witnessUtxo
-            // psbt.addInput({hash:input.TxHash, index:input.Index, witnessUtxo: {
-            //     script: Buffer.from(input.scriptPubKey.hex, 'hex'),
-            //     value: input.Amount * 100000000}
-            // });
+            let value = parseInt(input.value)
+            totalAmount += value;
+            if (this.bitcoinAddressType !== BitcoinAddressType.Taproot) {
+              psbt.addInput({hash:input.txid, index:input.vout, nonWitnessUtxo: Buffer.from(input.utxoHex, 'hex')});
+            } else {
+              psbt.addInput({
+                hash:input.txid, index:input.vout,
+                witnessUtxo: { value: value, script: scriptOutput },
+                tapInternalKey: xOnlyPubkey,
+              })
+            }
         })
 
         rawTransaction.outputs.forEach(output => {
@@ -221,7 +239,11 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
             Logger.log('wallet', 'BTCWalletJSSafe changeAmount too small, dust')
         }
 
-        psbt.signAllInputs(keypair);
+        if (this.bitcoinAddressType === BitcoinAddressType.Taproot) {
+          psbt.signAllInputs(tweakedChildNode);
+        } else {
+          psbt.signAllInputs(keypair);
+        }
         psbt.finalizeAllInputs();
 
         let tx_hex = psbt.extractTransaction().toHex()

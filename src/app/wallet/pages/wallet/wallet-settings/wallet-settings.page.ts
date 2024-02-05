@@ -367,12 +367,12 @@ export class WalletSettingsPage implements OnInit {
                 }
             },
             // TODO: Open it when support Taproot TX.
-            // {
-            //     title: "Taproot",
-            //     routeOrAction: () => {
-            //       void this.switchBTCAddressType(BitcoinAddressType.Taproot);
-            //     }
-            // }
+            {
+                title: "Taproot",
+                routeOrAction: () => {
+                  void this.switchBTCAddressType(BitcoinAddressType.Taproot);
+                }
+            }
         ]
     }
 
