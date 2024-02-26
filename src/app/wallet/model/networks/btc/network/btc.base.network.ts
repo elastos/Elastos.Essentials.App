@@ -16,6 +16,7 @@ import { Network } from "../../network";
 
 export abstract class BTCNetworkBase extends Network<BTCWalletNetworkOptions> {
   public static networkKey = "btc";
+  private bitcoinAddressType: BitcoinAddressType = null
 
   constructor(
     displayName: string,
@@ -43,10 +44,13 @@ export abstract class BTCNetworkBase extends Network<BTCWalletNetworkOptions> {
   }
 
   public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
-    // Get btc address type from masterWallet.networkOptions
-    let bitcoinAddressType = (masterWallet as StandardMasterWallet).getBitcoinAddressType();
+    let bitcoinAddressType = this.bitcoinAddressType
     switch (masterWallet.type) {
       case WalletType.STANDARD:
+        if (!bitcoinAddressType) {
+          // Get btc address type from masterWallet.networkOptions
+          bitcoinAddressType = (masterWallet as StandardMasterWallet).getBitcoinAddressType();
+        }
         const StandardBTCNetworkWallet = (await import("../networkwallets/standard/standard.btc.networkwallet")).StandardBTCNetworkWallet;
         return new StandardBTCNetworkWallet(masterWallet as StandardMasterWallet, this, bitcoinAddressType);
       case WalletType.LEDGER:
@@ -100,5 +104,11 @@ export abstract class BTCNetworkBase extends Network<BTCWalletNetworkOptions> {
 
   public getMainColor(): string {
     return "ffad4a";
+  }
+
+  // To temporarily create networkwallets for all BTC address types on the asset overview page
+  // BTC supports three address types. Currently, we need to create a networkwallet separately to obtain the balance.
+  public setBitcoinAddressType(type: BitcoinAddressType) {
+    this.bitcoinAddressType = type;
   }
 }

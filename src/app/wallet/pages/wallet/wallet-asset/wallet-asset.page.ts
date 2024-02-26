@@ -28,8 +28,13 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { TitleBarIcon, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { BitcoinAddressType } from 'src/app/wallet/model/btc.types';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from 'src/app/wallet/model/networks/base/subwallets/maincoin.subwallet';
+import { BTCNetworkBase } from 'src/app/wallet/model/networks/btc/network/btc.base.network';
+import { StandardBTCNetworkWallet } from 'src/app/wallet/model/networks/btc/networkwallets/standard/standard.btc.networkwallet';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { TronSubWallet } from 'src/app/wallet/model/networks/tron/subwallets/tron.subwallet';
 import { WalletUtil } from 'src/app/wallet/model/wallet.util';
@@ -169,7 +174,17 @@ export class WalletAssetPage implements OnDestroy {
                     let subWallets = await this.getSubwalletsShouldShowOn(networkWallet, stakedBalance, updateBalance);
                     if ((subWallets.length > 0) || (stakingData.length > 0)) {
                         // getDisplayBalanceInActiveCurrency including the staked assets.
-                        let balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
+                        let balanceBigNumber;
+                        // BTC supports three address types. Currently, we need to create a networkwallet separately to obtain the balance.
+                        if (networkWallet instanceof StandardBTCNetworkWallet) {
+                          balanceBigNumber = new BigNumber(0)
+                          subWallets.forEach( (sw) => {
+                            balanceBigNumber = balanceBigNumber.plus(sw.getAmountInExternalCurrency(sw.getDisplayBalance()))
+                          })
+                        } else {
+                          balanceBigNumber = networkWallet.getDisplayBalanceInActiveCurrency();
+                        }
+
                         let stakedBalanceString = null;
                         if (stakedBalance) {
                             stakedBalanceString = this.getStakedBalanceInCurrency(stakedBalance, networkWallet);
@@ -239,7 +254,13 @@ export class WalletAssetPage implements OnDestroy {
 
     // Get all subwallets that the balance is bigger than the threshold.
     private async getSubwalletsShouldShowOn(networkWallet: AnyNetworkWallet, stakedBalance: number, updateBalance = false) {
-        let showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+        let showSubwalets = [];
+        if (networkWallet instanceof StandardBTCNetworkWallet) {
+          // BTC supports three address types. Currently, we need to create a networkwallet separately to obtain the balance.
+          showSubwalets = await this.getSubwalletsForAllBTCAddressType(networkWallet.network as BTCNetworkBase, networkWallet.masterWallet);
+        } else {
+          showSubwalets = networkWallet.getSubWallets().filter(sw => sw.shouldShowOnHomeScreen());
+        }
         if (!updateBalance) {
             this.totalSubwalletCount += showSubwalets.length;
         }
@@ -276,6 +297,33 @@ export class WalletAssetPage implements OnDestroy {
         }
 
         return subWallets;
+    }
+
+    // Only for StandardBTCNetworkWallet
+    // BTC supports three address types. Currently, we need to create a networkwallet separately to obtain the balance.
+    private async getSubwalletsForAllBTCAddressType(network: BTCNetworkBase, masterWallet: MasterWallet) {
+      const SupportedBtcAddressTypes =
+          [BitcoinAddressType.Legacy,
+          BitcoinAddressType.NativeSegwit,
+          BitcoinAddressType.Taproot]
+
+      let subWallets: AnySubWallet[] = [];
+      try {
+        for (let i = 0; i < SupportedBtcAddressTypes.length; i++) {
+          network.setBitcoinAddressType(SupportedBtcAddressTypes[i])
+          let wallet = await network.newNetworkWallet(masterWallet);
+          if (wallet) {
+            await wallet.initialize();
+          }
+
+          subWallets.push(wallet.subWallets[StandardCoinName.BTC])
+        }
+      } catch (e) {
+        Logger.warn('wallet', 'Can not get the btc subwallet', e)
+      }
+      // Reset
+      network.setBitcoinAddressType(null);
+      return subWallets;
     }
 
     private updateTotalAssets() {
