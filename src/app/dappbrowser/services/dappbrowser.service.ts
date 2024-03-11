@@ -23,6 +23,7 @@ import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import type { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { BTCMainNetNetwork } from 'src/app/wallet/model/networks/btc/network/btc.mainnet.network';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import type { EthSignIntentResult } from 'src/app/wallet/pages/intents/ethsign/intentresult';
@@ -34,6 +35,8 @@ import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { BrowsedAppInfo } from '../model/browsedappinfo';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
+
+type InjectedProviderType = "ethereum" | "elastos" | "unisat";
 
 const MAX_RECENT_APPS = 100;
 
@@ -88,10 +91,12 @@ export class DappBrowserService implements GlobalService {
     public static instance: DappBrowserService = null;
 
     // Latest data sent to the provider, still while in app
-    private userAddress: string = null;
-    private activeChainID: number;
+    private userEVMAddress: string = null; // EVM wallet address
+    private activeChainID: number; // EVM network ID
+    private activeEVMNetworkRpcUrl: string = null;
+    private userBTCAddress: string = null; // Bitcoin wallet address
+    private btcRpcUrl: string = null;
 
-    private rpcUrl: string = null;
     private dabClient: DappBrowserClient = null;
     public title: string = null;
     public url: string;
@@ -115,6 +120,7 @@ export class DappBrowserService implements GlobalService {
         private globalStorageService: GlobalStorageService,
         private globalIntentService: GlobalIntentService,
         public globalPopupService: GlobalPopupService,
+        private walletNetworkService: WalletNetworkService
     ) {
         DappBrowserService.instance = this;
 
@@ -261,7 +267,8 @@ export class DappBrowserService implements GlobalService {
             target = "_webview";
         }
 
-        let activeNetwork = WalletNetworkService.instance.activeNetwork.value;
+        const activeNetwork = WalletNetworkService.instance.activeNetwork.value;
+        const masterWallet = WalletService.instance.getActiveMasterWallet();
 
         // The main chain ID is -1 if there is no EVM subwallet. eg. BTC.
         if (activeNetwork instanceof EVMNetwork) {
@@ -269,19 +276,30 @@ export class DappBrowserService implements GlobalService {
             this.activeChainID = activeNetwork.getMainChainID();
 
             // Get the active network RPC URL
-            this.rpcUrl = activeNetwork.getRPCUrl();
+            this.activeEVMNetworkRpcUrl = activeNetwork.getRPCUrl();
 
-            this.userAddress = null;
+            this.userEVMAddress = null;
             // Get the active wallet address
             if (WalletService.instance.activeNetworkWallet.value) {
-                let subwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
-                if (subwallet)
-                    this.userAddress = await subwallet.getCurrentReceiverAddress();
+                // EVM configuration
+                let evmSubwallet = WalletService.instance.activeNetworkWallet.value.getMainEvmSubWallet();
+                if (evmSubwallet)
+                    this.userEVMAddress = await evmSubwallet.getCurrentReceiverAddress();
+
+                // Bitcoin configuration
+                const bitcoinNetwork = this.walletNetworkService.getNetworkByKey("btc") as BTCMainNetNetwork; // TODO: support BTC testnet
+                const bitcoinNetworkWallet = await bitcoinNetwork.newNetworkWallet(masterWallet);
+                await bitcoinNetworkWallet?.initialize();
+                const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
+                this.userBTCAddress = addresses?.[0];
+                this.btcRpcUrl = bitcoinNetwork.getRPCUrl();
             }
         }
         else {
-            this.userAddress = null;
+            this.userEVMAddress = null;
             this.activeChainID = 0;
+            this.userBTCAddress = null;
+            this.btcRpcUrl = null;
         }
 
         var options: any = {
@@ -332,7 +350,8 @@ export class DappBrowserService implements GlobalService {
         let web3ProviderCode = await this.httpClient.get('assets/essentialsiabweb3provider.js', { responseType: 'text' }).toPromise();
         web3ProviderCode = web3ProviderCode + `
         console.log('Essentials Web3 provider is being created');
-        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.rpcUrl}', '${this.userAddress}');
+        window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.activeEVMNetworkRpcUrl}', '${this.userEVMAddress}');
+        window.unisat = new DappBrowserUnisatProvider('${this.btcRpcUrl}', '${this.userBTCAddress}');
         window.web3 = {
             currentProvider: window.ethereum
         };
@@ -446,21 +465,21 @@ export class DappBrowserService implements GlobalService {
     private async sendActiveNetworkToDApp(activeNetwork: AnyNetwork) {
         // Get the active network RPC URL
         if (activeNetwork instanceof EVMNetwork) {
-            this.rpcUrl = activeNetwork.getRPCUrl();
+            this.activeEVMNetworkRpcUrl = activeNetwork.getRPCUrl();
             // Get the active network chain ID
             this.activeChainID = activeNetwork.getMainChainID();
         }
         else {
-            this.rpcUrl = null;
+            this.activeEVMNetworkRpcUrl = null;
             this.activeChainID = -1;
         }
 
-        Logger.log("dappbrowser", "Sending active network to dapp", activeNetwork.key, this.activeChainID, this.rpcUrl);
+        Logger.log("dappbrowser", "Sending active network to dapp", activeNetwork.key, this.activeChainID, this.activeEVMNetworkRpcUrl);
 
         await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
         void dappBrowser.executeScript({
             code: `
-                window.ethereum.setRPCApiEndpoint(${this.activeChainID}, '${this.rpcUrl}');
+                window.ethereum.setRPCApiEndpoint(${this.activeChainID}, '${this.activeEVMNetworkRpcUrl}');
                 window.ethereum.setChainId(${this.activeChainID});
             `});
 
@@ -473,14 +492,14 @@ export class DappBrowserService implements GlobalService {
         if (networkWallet) {
             let subwallet = networkWallet.getMainEvmSubWallet();
             if (subwallet) {
-                this.userAddress = await subwallet.getCurrentReceiverAddress();
+                this.userEVMAddress = await subwallet.getCurrentReceiverAddress();
 
-                Logger.log("dappbrowser", "Sending active address to dapp", this.userAddress);
+                Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress);
 
                 await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
                 void dappBrowser.executeScript({
                     code: " \
-                      window.ethereum.setAddress('"+ this.userAddress + "');\
+                      window.ethereum.setAddress('"+ this.userEVMAddress + "');\
                   "});
             }
         }
@@ -617,6 +636,13 @@ export class DappBrowserService implements GlobalService {
             return;
         }
 
+        // UNISAT
+        if (message.data.name.startsWith("unisat_")) {
+            await this.handleUnisatMessage(message);
+            return;
+        }
+
+        // EVM, Elastos connectivity SDK
         switch (message.data.name) {
             // WEB3 PROVIDER
             case "eth_sendTransaction":
@@ -710,20 +736,15 @@ export class DappBrowserService implements GlobalService {
             }
         });
 
-        this.sendWeb3IABResponse(
-            message.data.id,
-            response.result.txid // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
-        );
+        // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
+        this.sendInjectedResponse("ethereum", message.data.id, response.result.txid);
     }
 
     /**
      * Returns the active user address to the calling dApp.
      */
     private handleRequestAccounts(message: DABMessage): Promise<void> {
-        this.sendWeb3IABResponse(
-            message.data.id,
-            [this.userAddress]
-        );
+        this.sendInjectedResponse("ethereum", message.data.id, [this.userEVMAddress]);
         return;
     }
 
@@ -733,11 +754,7 @@ export class DappBrowserService implements GlobalService {
     private async handleSignTypedData(message: DABMessage): Promise<void> {
         let rawData: { payload: string, useV4: boolean } = message.data.object
         let response: { result: SignTypedDataIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signtypeddata", rawData);
-
-        this.sendWeb3IABResponse(
-            message.data.id,
-            response.result.signedData
-        );
+        this.sendInjectedResponse("ethereum", message.data.id, response.result.signedData);
     }
 
     /**
@@ -746,11 +763,7 @@ export class DappBrowserService implements GlobalService {
     private async handlePersonalSign(message: DABMessage): Promise<void> {
         let rawData: { data: unknown } = message.data.object
         let response: { result: PersonalSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/personalsign", rawData);
-
-        this.sendWeb3IABResponse(
-            message.data.id,
-            response.result.signedData
-        );
+        this.sendInjectedResponse("ethereum", message.data.id, response.result.signedData);
     }
 
     /**
@@ -759,11 +772,7 @@ export class DappBrowserService implements GlobalService {
     private async handleInsecureEthSign(message: DABMessage): Promise<void> {
         let rawData: { data: unknown } = message.data.object
         let response: { result: EthSignIntentResult } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/insecureethsign", rawData);
-
-        this.sendWeb3IABResponse(
-            message.data.id,
-            response.result.signedData
-        );
+        this.sendInjectedResponse("ethereum", message.data.id, response.result.signedData);
     }
 
     private async handleSwitchEthereumChain(message: DABMessage): Promise<void> {
@@ -774,7 +783,7 @@ export class DappBrowserService implements GlobalService {
         let targetNetwork = WalletNetworkService.instance.getNetworkByChainId(chainId);
         if (!targetNetwork) {
             // We don't support this network
-            this.sendWeb3IABError(message.data.id, {
+            this.sendInjectedError("ethereum", message.data.id, {
                 code: 4902,
                 message: "Unsupported network"
             });
@@ -784,18 +793,18 @@ export class DappBrowserService implements GlobalService {
             // Do nothing if already on the right network
             if ((WalletNetworkService.instance.activeNetwork.value as EVMNetwork).getMainChainID() === chainId) {
                 Logger.log("dappbrowser", "Already on the right network");
-                this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
+                this.sendInjectedResponse("ethereum", message.data.id, {}); // Successfully switched
                 return;
             }
 
             let networkSwitched = await GlobalSwitchNetworkService.instance.promptSwitchToNetwork(targetNetwork);
             if (networkSwitched) {
                 Logger.log("dappbrowser", "Successfully switched to the new network");
-                this.sendWeb3IABResponse(message.data.id, {}); // Successfully switched
+                this.sendInjectedResponse("ethereum", message.data.id, {}); // Successfully switched
             }
             else {
                 Logger.log("dappbrowser", "Network switch cancelled");
-                this.sendWeb3IABError(message.data.id, {
+                this.sendInjectedError("ethereum", message.data.id, {
                     code: -1,
                     message: "Cancelled operation"
                 });
@@ -835,10 +844,10 @@ export class DappBrowserService implements GlobalService {
 
         if (networkWasAdded || existingNetwork) {
             // Network added, or network already existed => success, no matter if user chosed to switch or not
-            this.sendWeb3IABResponse(message.data.id, {}); // Successfully added or existing
+            this.sendInjectedResponse("ethereum", message.data.id, {}); // Successfully added or existing
         }
         else {
-            this.sendWeb3IABError(message.data.id, {
+            this.sendInjectedError("ethereum", message.data.id, {
                 code: 4001,
                 message: "User rejected the request."
             });
@@ -854,77 +863,16 @@ export class DappBrowserService implements GlobalService {
 
             if (!res || !res.result || !res.result.presentation) {
                 console.warn("Missing presentation. The operation was maybe cancelled.");
-                this.sendElastosConnectorIABError(message.data.id, "Missing presentation. The operation was maybe cancelled.");
+                this.sendInjectedError("elastos", message.data.id, "Missing presentation. The operation was maybe cancelled.");
                 return;
             }
 
-            this.sendElastosConnectorIABResponse(
-                message.data.id,
-                res.result.presentation
-            );
+            this.sendInjectedResponse("elastos", message.data.id, res.result.presentation);
         }
         catch (e) {
-            this.sendElastosConnectorIABError(message.data.id, e);
+            this.sendInjectedError("elastos", message.data.id, e);
         }
     }
-
-    /* private async handleElastosRequestCredentials(message: DABMessage): Promise<void> {
-        try {
-            let request = message.data.object as DID.CredentialDisclosureRequest;
-
-            let res: { result: { presentation: DIDPlugin.VerifiablePresentation } };
-            res = await GlobalIntentService.instance.sendIntent("https://did.web3essentials.io/requestcredentials", { request });
-
-            if (!res || !res.result || !res.result.presentation) {
-                console.warn("Missing presentation. The operation was maybe cancelled.");
-                this.sendElastosConnectorIABError(message.data.id, "Missing presentation. The operation was maybe cancelled.");
-                return;
-            }
-
-            this.sendElastosConnectorIABResponse(
-                message.data.id,
-                res.result.presentation
-            );
-        }
-        catch (e) {
-            this.sendElastosConnectorIABError(message.data.id, e);
-        }
-    } */
-
-    /* private async handleElastosImportCredentials(message: DABMessage): Promise<void> {
-        try {
-            let request: { credentials: string[], options?: DID.ImportCredentialOptions } = message.data.object;
-
-            let credentials: DIDPlugin.VerifiableCredential[] = [];
-            for (let cs of request.credentials) {
-                credentials.push(didManager.VerifiableCredentialBuilder.fromJson(cs));
-            }
-
-            request.options = request.options || {};
-
-            let res: { result: { importedcredentials: string[] } };
-            let importParams: CredImportIdentityIntentParams = {
-                credentials,
-                forceToPublishCredentials: request.options.forceToPublishCredentials,
-                customization: null
-            };
-            res = await GlobalIntentService.instance.sendIntent("https://did.web3essentials.io/credimport", importParams);
-
-            if (!res || !res.result || !res.result.importedcredentials) {
-                console.warn("Missing imported credentials result. The operation was maybe cancelled.");
-                this.sendElastosConnectorIABError(message.data.id, "Missing imported credentials result. The operation was maybe cancelled.");
-                return;
-            }
-
-            this.sendElastosConnectorIABResponse(
-                message.data.id,
-                res.result.importedcredentials
-            );
-        }
-        catch (e) {
-            this.sendElastosConnectorIABError(message.data.id, e);
-        }
-    } */
 
     private async handleElastosSignData(message: DABMessage): Promise<void> {
         try {
@@ -935,17 +883,30 @@ export class DappBrowserService implements GlobalService {
 
             if (!res || !res.result) {
                 console.warn("Missing signature data. The operation was maybe cancelled.");
-                this.sendElastosConnectorIABError(message.data.id, "Missing signature data. The operation was maybe cancelled.");
+                this.sendInjectedError("elastos", message.data.id, "Missing signature data. The operation was maybe cancelled.");
                 return;
             }
 
-            this.sendElastosConnectorIABResponse(
-                message.data.id,
-                res.result
-            );
+            this.sendInjectedResponse("elastos", message.data.id, res.result);
         }
         catch (e) {
-            this.sendElastosConnectorIABError(message.data.id, e);
+            this.sendInjectedError("elastos", message.data.id, e);
+        }
+    }
+
+    /**
+     * Message has been received from the injected unisat provider.
+     */
+    private handleUnisatMessage(message: DABMessage) {
+        console.log("Unisat command received");
+
+        switch (message.data.name) {
+            case "unisat_sendBitcoin":
+                // TODO
+                this.sendInjectedResponse("unisat", message.data.id, "fake-btc-tx-id");
+                break;
+            default:
+                Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);
         }
     }
 
@@ -962,24 +923,40 @@ export class DappBrowserService implements GlobalService {
 
             if (!res || !res.result) {
                 console.warn("Missing response data. The operation was maybe cancelled.");
-                this.sendElastosConnectorIABError(message.data.id, "Missing response data. The operation was maybe cancelled.");
+                this.sendInjectedError("elastos", message.data.id, "Missing response data. The operation was maybe cancelled.");
                 return;
             }
 
-            this.sendElastosConnectorIABResponse(
-                message.data.id,
-                res.result
-            );
+            this.sendInjectedResponse("elastos", message.data.id, res.result);
         }
         catch (e) {
-            this.sendElastosConnectorIABError(message.data.id, e);
+            this.sendInjectedError("elastos", message.data.id, e);
         }
+    }
+
+    private sendInjectedResponse(provider: InjectedProviderType, id: number, result: any) {
+        const stringifiedResult = JSON.stringify(result);
+        const code = `window.${provider}.sendResponse(${id}, ${stringifiedResult})`;
+        console.log("stringifiedResult", stringifiedResult, "code", code, "provider", provider);
+        void dappBrowser.executeScript({ code });
+    }
+
+    private sendInjectedError(provider: InjectedProviderType, id: number, error: string | { code: number; message: string; }) {
+        let stringifiedError: string;
+        if (provider === "elastos")
+            stringifiedError = typeof error == "string" ? error : new String(error).toString();
+        else
+            stringifiedError = JSON.stringify(error);
+
+        const code = `window.${provider}.sendError(${id}, ${stringifiedError})`;
+        console.log("stringifiedError", stringifiedError, "code", code, "provider", provider);
+        void dappBrowser.executeScript({ code });
     }
 
     /**
      * Sends a request response from Essentials to the calling web app (web3).
      */
-    private sendWeb3IABResponse(id: number, result: any) {
+    /* private sendWeb3IABResponse(id: number, result: any) {
         let stringifiedResult = JSON.stringify(result);
         let code = 'window.ethereum.sendResponse(' + id + ', ' + stringifiedResult + ')';
         console.log("stringifiedResult", stringifiedResult, "code", code);
@@ -987,9 +964,9 @@ export class DappBrowserService implements GlobalService {
         void dappBrowser.executeScript({
             code: code
         });
-    }
+    } */
 
-    private sendWeb3IABError(id: number, error: { code: number; message: string; }) {
+    /* private sendWeb3IABError(id: number, error: { code: number; message: string; }) {
         let stringifiedError = JSON.stringify(error);
         let code = 'window.ethereum.sendError(' + id + ', ' + stringifiedError + ')';
         console.log("stringifiedError", stringifiedError, "code", code);
@@ -997,19 +974,17 @@ export class DappBrowserService implements GlobalService {
         void dappBrowser.executeScript({
             code: code
         });
-    }
+    } */
 
-    private sendElastosConnectorIABResponse(id: number, result: any) {
+    /* private sendElastosConnectorIABResponse(id: number, result: any) {
         let stringifiedResult = JSON.stringify(result);
         let code = 'window.elastos.sendResponse(' + id + ', ' + stringifiedResult + ')';
         console.log("stringifiedResult", stringifiedResult, "code", code);
 
-        void dappBrowser.executeScript({
-            code: code
-        });
-    }
+        void dappBrowser.executeScript({ code });
+    } */
 
-    private sendElastosConnectorIABError(id: number, error: Error | string) {
+    /* private sendElastosConnectorIABError(id: number, error: Error | string) {
         Logger.log("dappbrowser", "Sending elastos error", error);
 
         let stringifiedError = typeof error == "string" ? error : new String(error);
@@ -1019,7 +994,7 @@ export class DappBrowserService implements GlobalService {
         void dappBrowser.executeScript({
             code: code
         });
-    }
+    } */
 
     private getActiveNetworkKey(): string {
         return WalletNetworkService.instance.activeNetwork.value ? WalletNetworkService.instance.activeNetwork.value.key : null;

@@ -7,7 +7,7 @@
     <author email="contact@elastos.io" href="https://d.web3essentials.io">
         Elaphant Limited.
     </author>
-    <content src="index.html" />
+    <content original-src="index.html" src="https://192.168.0.102:8100" />
     <access origin="*" />
     <allow-intent href="http://*/*" />
     <allow-intent href="https://*/*" />
@@ -316,4 +316,5 @@
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <hook src="scripts/podDeploymentTargetFix.js" type="after_prepare" />
+    <allow-navigation href="https://192.168.0.102:8100" sessionid="6f652d12" />
 </widget>

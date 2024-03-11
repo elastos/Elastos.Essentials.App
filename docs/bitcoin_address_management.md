@@ -21,8 +21,3 @@ Bitcoin is handled a bit differently from other networks are the same HD wallet 
 - For the above reasons:
   - We use different network wallets for each bitcoin address type
   - When user switches the bitcoin address type from wallet settings, a different network wallet becomes in use.
-
-## TODO:
-
-- Show active btc address type on UI on wallet home
-- wallet options to switch bitcoin address type
