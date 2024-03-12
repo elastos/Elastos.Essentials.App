@@ -1,48 +1,26 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
+import { environment } from 'src/environments/environment';
 import { Logger } from '../logger';
 import { AddressResult, BalanceHistory, BTCNetworkInfoResult, BTCTransaction, BTCUTXO } from '../wallet/model/btc.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
-import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
+
+export enum BTCFeeRate {
+  FAST = 1,     // 1 block
+  AVERAGE = 3,  // 3 block
+  SLOW = 6      // 6 block
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class GlobalBTCRPCService {
     public static instance: GlobalBTCRPCService = null;
-    private apikey_testnet = '';
-    private apikey_mainnet = '';
-    private apikey = '';
+    private apikey = `${environment.NownodeAPI.apikey}`;
 
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalBTCRPCService.instance = this;
-    }
-
-    init() {
-        this.http.get("assets/wallet/data/apikey-nownode.json").subscribe({
-            next: (value) => {
-                if ((value instanceof Array) && (value.length > 0)) {
-                    this.apikey_mainnet = value[0];
-                    this.apikey_testnet = value[1] ? value[1] : value[0];
-
-                    let network = GlobalNetworksService.instance.getActiveNetworkTemplate();
-                    if (network !== MAINNET_TEMPLATE) {
-                        this.apikey = this.apikey_testnet;
-                    } else {
-                        this.apikey = this.apikey_mainnet;
-                    }
-
-                } else {
-                    Logger.warn('GlobalBTCRPCService', "Can't find the nownodes api keys, the value is " + value)
-                }
-            },
-            complete: () => {
-            },
-            error: (e) => {
-                Logger.warn('GlobalBTCRPCService', "Can't find the nownodes api keys", e)
-            }
-        })
     }
 
     // EXPLORER api
@@ -117,11 +95,12 @@ export class GlobalBTCRPCService {
     }
 
     // Node api
-    public async estimatesmartfee(rpcApiUrl: string): Promise<number> {
+    // feeRate: [1, 1008]
+    public async estimatesmartfee(rpcApiUrl: string, feeRate: BTCFeeRate = BTCFeeRate.FAST): Promise<number> {
         const param = {
             'API_key': this.apikey,
             method: 'estimatesmartfee',
-            params: [1],
+            params: [feeRate],
             "jsonrpc": "2.0",
             "id": "1",
         };

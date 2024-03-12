@@ -1,4 +1,4 @@
-import { green } from "colors";
+import { green, yellow } from "colors";
 import { parse } from "dotenv";
 import { existsSync, mkdirSync, readFileSync, writeFile } from 'fs';
 import { env } from "process";
@@ -23,6 +23,9 @@ const prodEnv = {
   },
   CredentialsToolbox: {
     serviceUrl: 'https://credentials-toolbox.elastos.net/api/v1'
+  },
+  NownodesAPI: {
+    apikey: ''
   }
 }
 
@@ -37,6 +40,9 @@ const devEnv = {
   },
   CredentialsToolbox: {
     serviceUrl: env.ESSENTIALS_CREDENTIALS_TOOLBOX_SERVICE_URL || prodEnv.CredentialsToolbox.serviceUrl
+  },
+  NownodeAPI: {
+    apikey: localEnv.NOWNODES_API_KEY || prodEnv.NownodesAPI.apikey
   }
 }
 
@@ -71,3 +77,7 @@ writeFile('./src/environments/environment.prod.ts', prodEnvironmentFile, functio
 
 console.log("DEV environment is going to run with the following configuration:");
 console.log(devEnv);
+
+if (prodEnv.NownodesAPI.apikey.length === 0) {
+  console.warn(yellow("Warning: The nownodes apikey for production is empty! You will not be able to obtain relevant data of the btc chain"));
+}

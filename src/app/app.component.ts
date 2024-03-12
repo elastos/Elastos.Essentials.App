@@ -130,7 +130,6 @@ export class AppComponent {
       void this.globalFirebaseService.init();
       void this.globalELAUtxoService.init();
       // Init after globalNetworksService.init()
-      void this.globalBTCService.init();
       void this.globalTronGridService.init();
       void this.globalCosmosService.init();
 
