@@ -351,11 +351,18 @@ export class DappBrowserService implements GlobalService {
         web3ProviderCode = web3ProviderCode + `
         console.log('Essentials Web3 provider is being created');
         window.ethereum = new DappBrowserWeb3Provider(${this.activeChainID}, '${this.activeEVMNetworkRpcUrl}', '${this.userEVMAddress}');
-        window.unisat = new DappBrowserUnisatProvider('${this.btcRpcUrl}', '${this.userBTCAddress}');
         window.web3 = {
             currentProvider: window.ethereum
         };
-        console.log('Essentials Web3 provider is injected', window.ethereum, window.web3);`;
+        console.log('Essentials Web3 provider is injected', window.ethereum, window.web3);
+
+        const bitcoinProvider = new DappBrowserUnisatProvider('${this.btcRpcUrl}', '${this.userBTCAddress}');
+        window.unisat = bitcoinProvider;
+        window.okxwallet = {
+            bitcoin: bitcoinProvider
+        }
+        console.log('Essentials Unisat/OKX providers are injected', bitcoinProvider);
+        `;
 
         Logger.log("dappbrowser", "Loading the IAB elastos connector");
         let elastosConnectorCode = await this.httpClient.get('assets/essentialsiabconnector.js', { responseType: 'text' }).toPromise();
