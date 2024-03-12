@@ -214,6 +214,11 @@ export const en = {
         "balance-locked": "( {{ locked }} locked )",
         "ela-coinbase-warning": "Make sure to not send Elastos Smart Chain ELA to a Coinbase address, as the ELA on Coinbase is a wrapped ethereum ERC20 ELA.",
         "nft-transaction-creation-error": "It seems like the transfer operation cannot be done for this NFT. Some NFTs are locked and require special conditions to be transferred. Please check with the original NFT marketplace or with the NFT creator.",
+        "btc-feerate": "Fee rate",
+        "btc-feerate-fast": "Fast",
+        "btc-feerate-avg": "Avg",
+        "btc-feerate-slow": "Slow",
+        "btc-feerate-select-title": "Select fee rate",
 
         /********************
         * Coin Receive Page *
@@ -561,6 +566,11 @@ export const en = {
         "signtypeddata-subtitle": "Sign data",
         "signtypeddata-intro": "The calling application requires you to sign some data with your wallet in order to continue. Please confirm.",
         "signtypeddata-danger": "Signing this message can be dangerous. This signature could potentially perform any operation on your account's behalf, including granting complete control of your account and all of its assets to the requesting site. Only sign this message if you know what you're doing or completely trust the requesting site.",
+
+        /***********************
+        * Send Bitcoin Page *
+        ************************/
+        "sendbitcoin-title": "Transfer BTC",
 
         /***********************
         * No Wallet *

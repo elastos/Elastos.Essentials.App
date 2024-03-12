@@ -214,6 +214,11 @@ export const zh = {
         "balance-locked": "( {{ locked }} 确认中 )",
         "ela-coinbase-warning": "请确保不要将 Elastos Smart Chain 的 ELA 发送到 Coinbase 地址，因为 Coinbase 上的 ELA 是基于以太坊网络的 ERC20 ELA。",
         "nft-transaction-creation-error": "似乎无法对此 NFT 进行转让操作。一些 NFT 被锁定，需要特殊条件才能转让。请咨询原始 NFT 市场或 NFT 创建者。",
+        "btc-feerate": "费率",
+        "btc-feerate-fast": "快速",
+        "btc-feerate-avg": "普通",
+        "btc-feerate-slow": "慢",
+        "btc-feerate-select-title": "选择费率",
 
         /********************
         * Coin Receive Page *
@@ -561,6 +566,11 @@ export const zh = {
         "signtypeddata-subtitle": "数据签名",
         "signtypeddata-intro": "调用应用程序需要您使用钱包签署一些数据才能继续。请确认",
         "signtypeddata-danger": "对此数据签名可能会很危险。此签名可能代表您的帐户执行任何操作，包括将您的帐户及其所有资产的完全控制权授予请求站点。只有在你知道自己在做什么或完全信任请求网站的情况下，才能签署此消息。",
+
+        /***********************
+        * Send Bitcoin Page *
+        ************************/
+        "sendbitcoin-title": "发送 BTC",
 
         /***********************
         * No Wallet *

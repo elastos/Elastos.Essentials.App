@@ -198,6 +198,11 @@ export class IntentService {
                 this.coinTransferService.intentTransfer = intent;
                 break;
 
+            case 'sendbitcoin':
+                this.nextScreen = '/wallet/intents/sendbitcoin';
+                navigationState = JSON.parse(JSON.stringify(intent));
+                break;
+
             default:
                 Logger.log("wallet", 'IntentService unknown intent:', intent);
                 return;

@@ -287,7 +287,7 @@ export class DappBrowserService implements GlobalService {
                     this.userEVMAddress = await evmSubwallet.getCurrentReceiverAddress();
 
                 // Bitcoin configuration
-                const bitcoinNetwork = this.walletNetworkService.getNetworkByKey("btc") as BTCMainNetNetwork; // TODO: support BTC testnet
+                const bitcoinNetwork = this.walletNetworkService.getNetworkByKey("btc") as BTCMainNetNetwork;
                 const bitcoinNetworkWallet = await bitcoinNetwork.newNetworkWallet(masterWallet);
                 await bitcoinNetworkWallet?.initialize();
                 const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
@@ -904,14 +904,24 @@ export class DappBrowserService implements GlobalService {
     /**
      * Message has been received from the injected unisat provider.
      */
-    private handleUnisatMessage(message: DABMessage) {
+    private async handleUnisatMessage(message: DABMessage) {
         console.log("Unisat command received");
 
         switch (message.data.name) {
             case "unisat_sendBitcoin":
-                // TODO
-                const testResultTxId = `${message.data.object.payAddress}-${message.data.object.satAmount}`;
-                this.sendInjectedResponse("unisat", message.data.id, testResultTxId);
+              let response: {
+                action: string,
+                result: {
+                    txid: string,
+                    status: "published" | "cancelled"
+                }
+              } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/sendbitcoin", {
+                  payload: {
+                      params: [
+                          message.data.object
+                      ]
+                  }})
+                this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);

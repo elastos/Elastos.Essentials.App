@@ -214,6 +214,11 @@ export const fr = {
         "balance-locked": "( {{ locked }} locked )",
         "ela-coinbase-warning": "N'envoyez pas d'ELA de la chaîne Elastos Smart Chain ELA vers une adresse Coinbase, car les ELA sur Coinbase sont des jetons ERC20 ethereum.",
         "nft-transaction-creation-error": "Il semble que le transfert ne puisse pas être réalisé pour ce NFT. Certains NFTs sont bloqués et nécessitent des conditions spéciales pour être transférés. Veuillez vous renseigner auprès de la marketplace ou du créateur du NFT.",
+        "btc-feerate": "Fee rate",
+        "btc-feerate-fast": "Fast",
+        "btc-feerate-avg": "Avg",
+        "btc-feerate-slow": "Slow",
+        "btc-feerate-select-title": "Select fee rate",
 
         /********************
         * Coin Receive Page *
@@ -553,6 +558,11 @@ export const fr = {
         "esctransaction-you-are-using": "Vous utilisez:",
         "esctransaction-value": "Montant:",
         "esctransaction-fees": "Frais maximal estimé:",
+
+        /***********************
+        * Send Bitcoin Page *
+        ************************/
+        "sendbitcoin-title": "Transfer BTC",
 
         /***********************
         * Sign Typed Data Page *
