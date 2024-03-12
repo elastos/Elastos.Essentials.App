@@ -903,7 +903,8 @@ export class DappBrowserService implements GlobalService {
         switch (message.data.name) {
             case "unisat_sendBitcoin":
                 // TODO
-                this.sendInjectedResponse("unisat", message.data.id, "fake-btc-tx-id");
+                const testResultTxId = `${message.data.object.payAddress}-${message.data.object.satAmount}`;
+                this.sendInjectedResponse("unisat", message.data.id, testResultTxId);
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);
