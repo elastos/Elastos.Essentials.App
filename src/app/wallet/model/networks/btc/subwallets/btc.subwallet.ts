@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { GlobalBTCRPCService } from 'src/app/services/global.btc.service';
+import { BTCFeeRate, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
@@ -223,8 +223,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return utxoArrayForSDK;
     }
 
-    public async estimateTransferTransactionGas() {
-        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
+    public async estimateTransferTransactionGas(feeRate = BTCFeeRate.AVERAGE) {
+        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
         if (!feerate) {
             throw new Error("Failed to estimatesmartfee");
         }
@@ -235,8 +235,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     // Ignore gasPrice, gasLimit and nonce.
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = ""): Promise<string> {
-        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl);
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeRate = BTCFeeRate.AVERAGE): Promise<string> {
+        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
         if (!feerate) {
             throw new Error("Failed to estimatesmartfee");
         }

@@ -156,7 +156,7 @@ export class TxConfirmComponent implements OnInit {
     }
   }
 
-  private async getEVMTransactionfee() {
+  private getEVMTransactionfee() {
     this.evmNativeFee = new BigNumber(this.gasLimit).multipliedBy(new BigNumber(this.gasPrice)).dividedBy(this.mainTokenSubWallet.tokenAmountMulipleTimes);
     let nativeFee = WalletUtil.getAmountWithoutScientificNotation(this.evmNativeFee, 8) + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
     let currencyFee = this.mainTokenSubWallet.getAmountInExternalCurrency(this.evmNativeFee);

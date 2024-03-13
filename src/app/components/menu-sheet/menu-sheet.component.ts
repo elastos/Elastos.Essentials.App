@@ -8,6 +8,7 @@ import { Stack } from "stack-typescript";
 export type MenuSheetMenu = {
   icon?: string;
   title: string;
+  subtitle?: string;
   items?: MenuSheetMenu[];
   routeOrAction?: string | (() => void | Promise<void>);
 };

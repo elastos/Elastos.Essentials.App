@@ -403,6 +403,30 @@
                 }
             }
         }
+
+        .btc-fee-row {
+          border-radius: 16px;
+          padding: 10px 15px;
+          background-color: var(--essentials-box-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          ion-col {
+            display: flex;
+            align-items: center;
+            padding: 10px 5px;
+
+            span {
+                font-size: 14px;
+                font-weight: 600;
+            }
+          }
+        }
+
+        .middle-col {
+            justify-content: flex-end;
+        }
     }
 
     .footer-container {

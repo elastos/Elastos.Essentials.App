@@ -96,7 +96,7 @@ export class GlobalBTCRPCService {
 
     // Node api
     // feeRate: [1, 1008]
-    public async estimatesmartfee(rpcApiUrl: string, feeRate: BTCFeeRate = BTCFeeRate.FAST): Promise<number> {
+    public async estimatesmartfee(rpcApiUrl: string, feeRate: BTCFeeRate = BTCFeeRate.AVERAGE): Promise<number> {
         const param = {
             'API_key': this.apikey,
             method: 'estimatesmartfee',

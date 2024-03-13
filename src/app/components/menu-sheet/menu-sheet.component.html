@@ -16,9 +16,12 @@
       <ion-col size="12">
         <ion-row *ngFor="let menuItem of selectedMenu.items" (click)="onMenuItemClicked(menuItem)"
           class="menu-item ripple ion-activatable" [@enterTrigger]="'fadeIn'">
-          <ion-col size="11" class="label">
+          <ion-col [size]="menuItem.subtitle ? 5.5 : 11" class="label">
             <img *ngIf="menuItem.icon" [src]="menuItem.icon" />
             {{ menuItem.title }}
+          </ion-col>
+          <ion-col *ngIf="menuItem.subtitle" size="5.5" class="right-col">
+            {{ menuItem.subtitle }}
           </ion-col>
           <ion-col size="1" class="arrow">
             <img class="arrow-icon"
