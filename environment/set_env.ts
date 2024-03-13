@@ -41,7 +41,7 @@ const devEnv = {
   CredentialsToolbox: {
     serviceUrl: env.ESSENTIALS_CREDENTIALS_TOOLBOX_SERVICE_URL || prodEnv.CredentialsToolbox.serviceUrl
   },
-  NownodeAPI: {
+  NownodesAPI: {
     apikey: localEnv.NOWNODES_API_KEY || prodEnv.NownodesAPI.apikey
   }
 }

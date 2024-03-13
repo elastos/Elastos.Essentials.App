@@ -17,7 +17,7 @@ export enum BTCFeeRate {
 })
 export class GlobalBTCRPCService {
     public static instance: GlobalBTCRPCService = null;
-    private apikey = `${environment.NownodeAPI.apikey}`;
+    private apikey = `${environment.NownodesAPI.apikey}`;
 
     constructor(private http: HttpClient, private globalJsonRPCService: GlobalJsonRPCService) {
         GlobalBTCRPCService.instance = this;
