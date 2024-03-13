@@ -8,76 +8,18 @@
     object-fit: cover;
 
     ion-card {
-        ion-card-header {
-            position: relative;
-            margin: 50px 10px 30px;
-            background: var(--essentials-box-color);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            border-radius: 15px;
-            padding: 25px 15px 30px;
-            overflow: visible;
-
-            .img {
-                width: 116px;
-                height: 95px;
-                position: absolute;
-                z-index: 10;
-                top: -47.5px;
-                object-fit: contain;
-            }
-
-            ion-card-title {
-                font-size: 21px;
-                font-weight: 600;
-                line-height: 1.29;
-                margin: 40px 15px 10px;
-            }
-
-            ion-card-subtitle {
-                text-align: center;
-                text-transform: none;
-                font-size: 13px;
-                font-weight: 500;
-                line-height: 1.46;
-                margin: 0 15px;
-            }
-        }
-    }
-
-    .network-row {
-        border-radius: 17px;
-        padding: 5px 10px;
-        margin-bottom: 7.5px;
-        background-color: transparent;
-
-        ion-col {
-            display: flex;
-            align-items: center;
+        img {
+            width: 75px;
+            height: 75px;
         }
 
-        .left-col {
-            justify-content: center;
-
-            img {
-                width: 35px;
-                height: 35px;
-            }
-
-            h1 {
-                margin: 0 0 0 10px;
-                font-size: 14px;
-                font-weight: 600;
-                letter-spacing: 0.7px;
-                text-align: left;
-            }
+        h1 {
+          font-size: 16px;
         }
     }
 
     .msg-container {
-        padding: 20px 20px 5px;
+        padding: 0px 20px 5px;
 
         p,
         h1 {
@@ -149,6 +91,31 @@
         .address {
           font-size: 14px;
           margin: 10px 0;
+        }
+
+        .btc-fee-row {
+          border-radius: 16px;
+          margin-top: 15px;
+          padding: 10px 15px;
+          background-color: var(--essentials-box-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          ion-col {
+            display: flex;
+            align-items: center;
+            padding: 10px 5px;
+
+            span {
+                font-size: 14px;
+                font-weight: 600;
+            }
+          }
+        }
+
+        .middle-col {
+            justify-content: flex-end;
         }
     }
 

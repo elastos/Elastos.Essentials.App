@@ -10,18 +10,10 @@
     <!-- CARD HEADER -->
     <div>
       <ion-card>
-        <div class="img" inlineSVG="assets/wallet/intents/curcol-smartcontracts.svg"></div>
-        <ion-card-title>{{ 'wallet.sendbitcoin-title' | translate }}</ion-card-title>
-      </ion-card>
-    </div>
-
-    <!-- Network info -->
-    <ion-row class="network-row">
-      <ion-col size="12" class="left-col">
         <img [src]="networkWallet.network.logo">
         <h1>{{ networkWallet.network.name }}</h1>
-      </ion-col>
-    </ion-row>
+      </ion-card>
+    </div>
 
     <!-- TX INFO -->
     <div class="msg-container">
@@ -87,6 +79,18 @@
           <span> {{ uiService.getFixedBalance(balance) }}</span> {{ getCurrencyInUse() }}
         </ion-col>
       </ion-row>
+      <ion-row *ngIf="showEditFeeRate" class="btc-fee-row" (click)="pickBTCFeerate()">
+        <ion-col size="7.5">
+            <span>{{ 'wallet.btc-feerate' | translate }}</span>
+        </ion-col>
+        <ion-col size="3.5" class="middle-col">
+            <span>{{ getCurrenttBtcFeerateTitle() }}</span>
+        </ion-col>
+        <ion-col size="1" class="right-col">
+            <img
+                [src]="!theme.darkMode ? 'assets/wallet/icons/right-arrow.svg' : 'assets/wallet/icons/darkmode/right-arrow.svg'" />
+        </ion-col>
+      </ion-row>
     </div>
 
     <!-- BUTTONS FOOTER -->
@@ -94,7 +98,7 @@
       (clicked)="cancelOperation()"
       [title]="(!balanceIsEnough() ? 'wallet.insufficient-balance' : 'common.cancel') | translate">
     </ebutton>
-    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" [disabled]="signingAndTransacting" (clicked)="goTransaction()"
+    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" [disabled]="signingAndTransacting || actionIsGoing" (clicked)="goTransaction()"
       [title]="'common.confirm' | translate"></ebutton>
   </ion-grid>
 </ion-content>

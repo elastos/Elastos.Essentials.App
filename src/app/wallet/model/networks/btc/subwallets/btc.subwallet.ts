@@ -223,6 +223,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return utxoArrayForSDK;
     }
 
+    // return satoshi
     public async estimateTransferTransactionGas(feeRate = BTCFeeRate.AVERAGE) {
         let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
         if (!feerate) {
@@ -235,10 +236,17 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     // Ignore gasPrice, gasLimit and nonce.
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeRate = BTCFeeRate.AVERAGE): Promise<string> {
-        let feerate = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
-        if (!feerate) {
-            throw new Error("Failed to estimatesmartfee");
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeRate = BTCFeeRate.AVERAGE, satPerKB = null): Promise<string> {
+        let feerateSatPerKB = satPerKB;
+        let feerateBTCPerKB = null;
+        if (!feerateSatPerKB) {
+            feerateBTCPerKB = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
+            if (!feerateBTCPerKB) {
+                throw new Error("Failed to estimatesmartfee");
+            }
+            feerateSatPerKB = Util.accMul(feerateBTCPerKB, Config.SATOSHI);
+        } else {
+          feerateBTCPerKB = feerateSatPerKB / Config.SATOSHI;
         }
 
         let fee;
@@ -248,25 +256,23 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             utxo = await this.getAvailableUtxo(-1);
             if (!utxo) return null;
 
-            let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate);
+            let feeSat = WalletUtil.estimateBTCFee(utxo.length, 2, feerateSatPerKB);
             // let networkInfo = await GlobalBTCRPCService.instance.getnetworkinfo(this.rpcApiUrl);
             // if (feeBTC < networkInfo.relayfee) {
             //     feeBTC = networkInfo.relayfee;
             // }
-            fee = Util.accMul(feeBTC, Config.SATOSHI);
 
-            toAmount = Math.floor(this.balance.minus(fee).toNumber());
+            toAmount = Math.floor(this.balance.minus(feeSat).toNumber());
 
         } else {
             // In order to estimate how much utxo is needed
-            fee = Util.accMul(feerate, Config.SATOSHI);
+            fee = feerateSatPerKB;
 
             toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
             utxo = await this.getAvailableUtxo(toAmount + fee);
             if (!utxo) return null;
 
-            let feeBTC = WalletUtil.estimateBTCFee(utxo.length, 2, feerate)
-            fee = Util.accMul(feeBTC, Config.SATOSHI);
+            fee = WalletUtil.estimateBTCFee(utxo.length, 2, feerateSatPerKB)
         }
 
         let outputs: BTCOutputData[] = [{
@@ -287,12 +293,12 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             }
         }
 
-        Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount)
+        Logger.log('wallet', 'createBTCTransaction  toAddress:', toAddress, ' amount:', toAmount, ' fee:', fee)
         return (this.networkWallet.safe as any as BTCSafe).createBTCPaymentTransaction(
             utxo,
             outputs,
             this.btcAddress,
-            feerate.toString(),
+            feerateBTCPerKB.toString(),
             fee);
     }
 
