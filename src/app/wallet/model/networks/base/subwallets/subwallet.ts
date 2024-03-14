@@ -485,6 +485,14 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
         } else {
             message = err.message;
         }
+      } else if (err.error) { // BTC: nownode api
+          try {
+            let erroObj = JSON.parse(err.error);
+            message = erroObj.error.message;
+          } catch (e) {
+            // not json
+            Logger.error("wallet", "JSON.parse error:", err.error, e);
+          }
       }
 
       await this.markGenericOutgoingTransactionEnd(null, message);

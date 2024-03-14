@@ -69,7 +69,8 @@ export class SendBitcoinPage implements OnInit {
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
   public sendBitcoinParam: SendBitcoinParam = null
-  public balance: BigNumber; // ELA
+  public balance: BigNumber;
+  public sendAmountOfBTC : BigNumber;
   public satPerKB: number;
   public feesBTC: BigNumber;
   private btcFeerateUsed = BTCFeeRate.AVERAGE; // default
@@ -145,6 +146,7 @@ export class SendBitcoinPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
     this.sendBitcoinParam = this.receivedIntent.params.payload.params[0]
+    this.sendAmountOfBTC = new BigNumber(this.sendBitcoinParam.satAmount).dividedBy(Config.SATOSHI);
 
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
@@ -163,18 +165,18 @@ export class SendBitcoinPage implements OnInit {
     let feesSAT = null;
     if (this.sendBitcoinParam.satPerVB) {
       this.satPerKB = this.sendBitcoinParam.satPerVB * 1000;
-      feesSAT = this.satPerKB // TODO
       this.showEditFeeRate = false;
     } else {
-      try {
-        feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed);
-      }
-      catch (err) {
-        // TODO:
-        Logger.warn("wallet", "Can not get the feeRate");
-      }
       this.showEditFeeRate = true;
       void this.getAllBTCFeerate();
+    }
+
+    try {
+      feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, this.satPerKB, this.sendAmountOfBTC);
+    }
+    catch (err) {
+      // TODO:
+      Logger.warn("wallet", "Can not get the feeRate", err);
     }
 
     this.feesBTC = (new BigNumber(feesSAT)).dividedBy(Config.SATOSHI);
@@ -217,15 +219,14 @@ export class SendBitcoinPage implements OnInit {
    * Input values in "payloadParam" are in SAT
    */
   public getTotalTransactionCostInCurrency(): { totalAsBigNumber: BigNumber; total: string; valueAsBigNumber: BigNumber; value: string; feesAsBigNumber: BigNumber; fees: string; currencyFee: string; } {
-    let currencyValue = new BigNumber(this.sendBitcoinParam.satAmount).dividedBy(Config.SATOSHI);
-    let total = currencyValue.plus(this.feesBTC);
+    let total = this.sendAmountOfBTC.plus(this.feesBTC);
     let currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesBTC);
 
     return {
       totalAsBigNumber: total,
       total: total.toFixed(),
-      valueAsBigNumber: currencyValue,
-      value: currencyValue.toFixed(),
+      valueAsBigNumber: this.sendAmountOfBTC,
+      value: this.sendAmountOfBTC.toFixed(),
       feesAsBigNumber: this.feesBTC,
       fees: this.feesBTC.toFixed(),
       currencyFee: currencyFee.toFixed()
@@ -329,7 +330,7 @@ export class SendBitcoinPage implements OnInit {
     this.actionIsGoing = true;
     // Update fee
     try {
-      let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed);
+      let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, this.btcFeerates[this.btcFeerateUsed] * 1000, this.sendAmountOfBTC);
       this.feesBTC = (new BigNumber(feesSAT)).dividedBy(Config.SATOSHI);
     } catch (e) {
       // Do nothing

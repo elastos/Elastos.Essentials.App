@@ -178,9 +178,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     // Input
     public inputActive = false;
 
-    // For example, the estimated btc rate request is slow, so we need to wait until it is completed
-    private actionIsGoing = false;
-
     private popover: any = null;
     private showContactsOption = false;
     private showCryptonamesOption = false;
@@ -378,7 +375,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                                 this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                             }
                         } else if (this.fromSubWallet instanceof BTCSubWallet) {
-                            this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                            // call estimateTransferTransactionGas after input amount
+                            // this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         } else if (this.fromSubWallet instanceof TRC20SubWallet) {
                             let feeSun = await this.fromSubWallet.estimateTransferTransactionGas();
                             this.feeLimitOfTRX = Util.ceil(feeSun, 10000000);
@@ -418,9 +416,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                             } else if (this.fromSubWallet instanceof ERC20SubWallet) {
                                 this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                             }
-                        } else if (this.fromSubWallet instanceof BTCSubWallet) {
-                            this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                         }
+                        // else if (this.fromSubWallet instanceof BTCSubWallet) {
+                        //     this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                        // }
                     }
                     catch (err) {
                         Logger.warn('wallet', 'estimateTransferTransactionGas exception:', err)
@@ -739,11 +738,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
     }
 
-    // Disable button When some rpc requests are not completed
-    canTransaction() {
-      return !this.actionIsGoing;
-    }
-
     private conditionalShowToast(message: string, showToast: boolean, duration = 4000) {
         if (showToast)
             this.native.toast_trans(message, duration);
@@ -757,6 +751,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         if (!this.toAddress) {
             this.conditionalShowToast('wallet.not-a-valid-address', showToast);
             return false;
+        }
+
+        if (this.fromSubWallet instanceof BTCSubWallet) {
+          // Calculate fee after input amount
+          this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, null, new BigNumber(this.amount))).toString();
         }
 
         let fee = null;
@@ -1314,18 +1313,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         return false;
     }
 
-    private async setBTCFeerate(feerate: BTCFeeRate) {
+    private setBTCFeerate(feerate: BTCFeeRate) {
       this.btcFeerateUsed = feerate;
-      this.actionIsGoing = true;
-      // Update fee
-      if (this.fromSubWallet instanceof BTCSubWallet) {
-        try {
-          this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed)).toString();
-        } catch (e) {
-          // Do nothing
-        }
-      }
-      this.actionIsGoing = false;
     }
 
     private buildBTCFeerateMenuItems(): MenuSheetMenu[] {

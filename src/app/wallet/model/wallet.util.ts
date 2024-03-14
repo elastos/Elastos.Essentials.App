@@ -213,7 +213,7 @@ export class WalletUtil {
     // Legacy
     let estimateSize = inputCount * 148 + outputCount * 34 + 10;
     let estimateFee = estimateSize * feePerKB / 1000;
-    return estimateFee;
+    return Math.ceil(estimateFee);
   }
 
   public static async getWalletFromSeed(seed: string, path: string = null) {

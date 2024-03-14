@@ -127,12 +127,8 @@ export class GlobalBTCRPCService {
             "id": "1",
         };
 
-        try {
-            return await this.globalJsonRPCService.httpPost(rpcApiUrl, param, "btc");
-        } catch (err) {
-            Logger.error('GlobalBTCRPCService', 'sendrawtransaction error:', err);
-        }
-        return null;
+        // The caller handles the exception
+        return await this.globalJsonRPCService.httpPost(rpcApiUrl, param, "btc");
     }
 
     public async getnetworkinfo(rpcApiUrl: string): Promise<BTCNetworkInfoResult> {
