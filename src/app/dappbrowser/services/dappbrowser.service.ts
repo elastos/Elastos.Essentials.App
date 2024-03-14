@@ -22,6 +22,7 @@ import { GlobalSwitchNetworkService } from 'src/app/services/global.switchnetwor
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { MasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import type { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { BTCMainNetNetwork } from 'src/app/wallet/model/networks/btc/network/btc.mainnet.network';
 import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
@@ -287,12 +288,9 @@ export class DappBrowserService implements GlobalService {
                     this.userEVMAddress = await evmSubwallet.getCurrentReceiverAddress();
 
                 // Bitcoin configuration
-                const bitcoinNetwork = this.walletNetworkService.getNetworkByKey("btc") as BTCMainNetNetwork;
-                const bitcoinNetworkWallet = await bitcoinNetwork.newNetworkWallet(masterWallet);
-                await bitcoinNetworkWallet?.initialize();
-                const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
-                this.userBTCAddress = addresses?.[0];
+                const bitcoinNetwork = this.getBitcoinNetwork();
                 this.btcRpcUrl = bitcoinNetwork.getRPCUrl();
+                this.userBTCAddress = await this.getWalletBitcoinAddress(masterWallet);
             }
         }
         else {
@@ -500,14 +498,16 @@ export class DappBrowserService implements GlobalService {
             let subwallet = networkWallet.getMainEvmSubWallet();
             if (subwallet) {
                 this.userEVMAddress = await subwallet.getCurrentReceiverAddress();
+                this.userBTCAddress = await this.getWalletBitcoinAddress(networkWallet.masterWallet);
 
                 Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress);
 
                 await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
                 void dappBrowser.executeScript({
-                    code: " \
-                      window.ethereum.setAddress('"+ this.userEVMAddress + "');\
-                  "});
+                    code: `
+                        window.ethereum.setAddress('${this.userEVMAddress}');
+                        window.unisat.setAddress('${this.userBTCAddress}');
+                    `});
             }
         }
     }
@@ -909,18 +909,19 @@ export class DappBrowserService implements GlobalService {
 
         switch (message.data.name) {
             case "unisat_sendBitcoin":
-              let response: {
-                action: string,
-                result: {
-                    txid: string,
-                    status: "published" | "cancelled"
-                }
-              } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/sendbitcoin", {
-                  payload: {
-                      params: [
-                          message.data.object
-                      ]
-                  }})
+                let response: {
+                    action: string,
+                    result: {
+                        txid: string,
+                        status: "published" | "cancelled"
+                    }
+                } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/sendbitcoin", {
+                    payload: {
+                        params: [
+                            message.data.object
+                        ]
+                    }
+                })
                 this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
                 break;
             default:
@@ -1154,5 +1155,17 @@ export class DappBrowserService implements GlobalService {
             Logger.log("dappbrowser", "Showing web view");
             void dappBrowser.show();
         }
+    }
+
+    private getBitcoinNetwork(): BTCMainNetNetwork {
+        return this.walletNetworkService.getNetworkByKey("btc") as BTCMainNetNetwork
+    }
+
+    private async getWalletBitcoinAddress(masterWallet: MasterWallet): Promise<string> {
+        const bitcoinNetwork = this.getBitcoinNetwork();
+        const bitcoinNetworkWallet = await bitcoinNetwork.newNetworkWallet(masterWallet);
+        await bitcoinNetworkWallet?.initialize();
+        const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
+        return addresses?.[0];
     }
 }

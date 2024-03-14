@@ -32,3 +32,8 @@ console.log(`  If downloads are slow, you can configure a proxy by setting ESSEN
 console.log(colors.gray(`  Eg: export ESSENTIALS_TOOLCHAIN_DOWNLOAD_PROXY=socks5://127.0.0.1:1080`));
 
 console.log();
+console.log(colors.green("  NOWNODES_API_KEY"));
+console.log(`  Must be configure for BTC operations to work.`);
+console.log(colors.gray(`  Eg: environment/.env: NOWNODES_API_KEY=abcdef`));
+
+console.log();
