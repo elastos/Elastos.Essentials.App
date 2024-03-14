@@ -201,33 +201,32 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
      * Computes and returns the list of UTXO we have to use to be able to spend the given amount.
      */
     public async getAvailableUtxo(amount: number): Promise<BTCUTXO[]> {
-        let payableUTXOs: BTCUTXO[] = [];
-
-        // Get all UTXOs
         let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.btcAddress);
-        if (!utxoArray)
-            return null;
 
-        let getEnoughUTXO = false;
+        if (amount == -1)
+            return utxoArray;
+
+        let payableUTXOs: BTCUTXO[] = [];
         let totalAmount = 0;
-        // Use old utxos first.
-        for (let i = utxoArray.length - 1; i >= 0; i--) {
-            payableUTXOs.push(utxoArray[i]);
 
-            totalAmount += parseInt(utxoArray[i].value);
-            if ((amount != -1) && (totalAmount >= amount)) {
-                Logger.log('wallet', 'BTCSubWallet: Get enough btc utxo for :', amount);
-                getEnoughUTXO = true;
+        // Sort UTXOs by value in descending order
+        let sortedUtxos = utxoArray.sort((a, b) => parseInt(b.value) - parseInt(a.value));
+
+        for (const utxo of sortedUtxos) {
+            if (totalAmount >= amount) {
+                // We have enough funds
                 break;
             }
+            payableUTXOs.push(utxo);
+            totalAmount += parseInt(utxo.value);
         }
 
-        if (!getEnoughUTXO && (amount != -1)) {
+        if (totalAmount < amount) {
             Logger.error('wallet', 'BTCSubWallet: Utxo is not enough for ', amount, payableUTXOs);
             return null;
+        } else {
+            return payableUTXOs;
         }
-
-        return payableUTXOs;
     }
 
     /**
@@ -280,7 +279,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     /**
      * Estimates the fee in satoshi that we need to pay to be able to send a transaction of "amount" BTCs
-     * 
+     *
      * @returns Fees, in satoshi
      */
     public async estimateTransferTransactionGas(feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null, amountBTC: BigNumber = null) {
