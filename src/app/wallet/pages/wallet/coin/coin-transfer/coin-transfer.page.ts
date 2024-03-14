@@ -755,7 +755,17 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         if (this.fromSubWallet instanceof BTCSubWallet) {
             // Calculate fee after input amount
-            this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, null, new BigNumber(this.amount))).toString();
+            try {
+              this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, null, new BigNumber(this.amount))).toString();
+            } catch (e) {
+              let stringifiedError = "" + e;
+              let message = 'Failed to estimate fee';
+              if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
+                message = 'wallet.insufficient-balance';
+              }
+              this.conditionalShowToast(message, showToast);
+              return false;
+            }
         }
 
         let fee = null;

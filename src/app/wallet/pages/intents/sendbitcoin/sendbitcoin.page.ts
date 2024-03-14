@@ -337,7 +337,12 @@ export class SendBitcoinPage implements OnInit {
       let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.forcedFeeSpeed, forcedSatsPerKB, this.sendAmountOfBTC);
       this.feesBTC = satsToBtc(feesSAT);
     } catch (e) {
-      // Do nothing
+        let stringifiedError = "" + e;
+        let message = 'Failed to estimate fee';
+        if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
+          message = 'wallet.insufficient-balance';
+        }
+        this.native.toast_trans(message, 4000);
     }
     this.actionIsGoing = false;
   }
