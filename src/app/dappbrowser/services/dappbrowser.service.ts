@@ -922,7 +922,11 @@ export class DappBrowserService implements GlobalService {
                         ]
                     }
                 })
-                this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
+                if (response.result.txid) {
+                  this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
+                } else {
+                  this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
+                }
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);
