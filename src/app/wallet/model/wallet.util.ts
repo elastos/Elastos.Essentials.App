@@ -159,7 +159,7 @@ export class WalletUtil {
   public static async isTronAddress(address: string): Promise<boolean> {
     const TronWeb = await lazyTronWebImport();
     const tronWeb = new TronWeb({
-        fullHost: 'https://api.shasta.trongrid.io/',
+      fullHost: 'https://api.shasta.trongrid.io/',
     })
     return tronWeb.isAddress(address);
   }
@@ -208,11 +208,11 @@ export class WalletUtil {
   }
 
   // TODO: How to get accurate fee?
-  public static estimateBTCFee(inputCount: number, outputCount: number, feePerKB: number) {
+  public static estimateBTCFee(inputCount: number, outputCount: number, feeInSatPerKB: number) {
     // Native Segwit
     // Legacy
     let estimateSize = inputCount * 148 + outputCount * 34 + 10;
-    let estimateFee = estimateSize * feePerKB / 1000;
+    let estimateFee = estimateSize * feeInSatPerKB / 1000;
     return Math.ceil(estimateFee);
   }
 

@@ -15,6 +15,7 @@ import { WalletUtil } from '../../../wallet.util';
 import { NetworkAPIURLType } from '../../base/networkapiurltype';
 import { AnyNetworkWallet } from '../../base/networkwallets/networkwallet';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
+import { btcToSats, satsToBtc } from '../conversions';
 import { AnyBTCNetworkWallet } from '../networkwallets/btc.networkwallet';
 import { BTCSafe } from '../safes/btc.safe';
 
@@ -64,16 +65,16 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     }
 
     public getFriendlyName(): string {
-      switch ((this.networkWallet as AnyBTCNetworkWallet).bitcoinAddressType) {
-        case BitcoinAddressType.Legacy:
-          return 'Legacy';
-        case BitcoinAddressType.NativeSegwit:
-          return 'Native Segwit'
-        case BitcoinAddressType.Taproot:
-          return "Taproot"
-        default:
-          return 'BTC';
-      }
+        switch ((this.networkWallet as AnyBTCNetworkWallet).bitcoinAddressType) {
+            case BitcoinAddressType.Legacy:
+                return 'Legacy';
+            case BitcoinAddressType.NativeSegwit:
+                return 'Native Segwit'
+            case BitcoinAddressType.Taproot:
+                return "Taproot"
+            default:
+                return 'BTC';
+        }
     }
 
     public getDisplayTokenName(): string {
@@ -184,7 +185,6 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         await this.getBalanceByRPC();
     }
 
-
     /**
      * Check whether the available balance is enough.
      * @param amount unit is sotoshi
@@ -197,103 +197,111 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return this.transactionsList;
     }
 
-    //satoshi
-    public async getAvailableUtxo(amount: number) {
-        let utxoArrayForSDK: BTCUTXO[] = [];
-        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.btcAddress);
-        let getEnoughUTXO = false;
-        if (utxoArray) {
-            let totalAmount = 0;
-            // Use the old utxo first.
-            for (let i = utxoArray.length - 1; i >= 0; i--) {
-                utxoArrayForSDK.push(utxoArray[i]);
+    /**
+     * Computes and returns the list of UTXO we have to use to be able to spend the given amount.
+     */
+    public async getAvailableUtxo(amount: number): Promise<BTCUTXO[]> {
+        let payableUTXOs: BTCUTXO[] = [];
 
-                totalAmount += parseInt(utxoArray[i].value);
-                if ((amount != -1) && (totalAmount >= amount)) {
-                    Logger.log('wallet', 'BTCSubWallet: Get enough btc utxo for :', amount);
-                    getEnoughUTXO = true;
-                    break;
-                }
+        // Get all UTXOs
+        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.btcAddress);
+        if (!utxoArray)
+            return null;
+
+        let getEnoughUTXO = false;
+        let totalAmount = 0;
+        // Use old utxos first.
+        for (let i = utxoArray.length - 1; i >= 0; i--) {
+            payableUTXOs.push(utxoArray[i]);
+
+            totalAmount += parseInt(utxoArray[i].value);
+            if ((amount != -1) && (totalAmount >= amount)) {
+                Logger.log('wallet', 'BTCSubWallet: Get enough btc utxo for :', amount);
+                getEnoughUTXO = true;
+                break;
             }
         }
 
         if (!getEnoughUTXO && (amount != -1)) {
-            Logger.warn('wallet', 'BTCSubWallet: Utxo is not enough for ', amount, utxoArrayForSDK)
+            Logger.error('wallet', 'BTCSubWallet: Utxo is not enough for ', amount, payableUTXOs);
+            return null;
         }
-        return utxoArrayForSDK;
+
+        return payableUTXOs;
     }
 
-    private async getUTXOsAndFee(amount: BigNumber, feerateSatPerKB: number) {
-      let feeSat;
-      let utxo: BTCUTXO[] = [];
-      let toAmount = 0;
-      if (amount.eq(-1)) {
-          utxo = await this.getAvailableUtxo(-1);
-          if (!utxo) return null;
+    /**
+     * Computes the list of UTXOs, and the total fee user has to pay, for a given
+     * amount of BTC and a fee rate.
+     */
+    private async getUTXOsAndFee(amountBTC: BigNumber, feeInSatPerKB: number) {
+        let feeSat: number;
+        let utxos: BTCUTXO[] = [];
 
-          feeSat = WalletUtil.estimateBTCFee(utxo.length, 2, feerateSatPerKB);
-      } else {
-          // In order to estimate how much utxo is needed
-          feeSat = feerateSatPerKB;
+        if (amountBTC.eq(-1)) {
+            // Get all available UTXOs
+            utxos = await this.getAvailableUtxo(-1);
+            if (!utxos)
+                return null;
 
-          toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
-          utxo = await this.getAvailableUtxo(toAmount + feeSat);
-          if (!utxo) return null;
+            feeSat = WalletUtil.estimateBTCFee(utxos.length, 2, feeInSatPerKB);
+        } else {
+            // In order to estimate how much utxo is needed
+            const amountSat = btcToSats(amountBTC).toNumber();
 
-          feeSat = WalletUtil.estimateBTCFee(utxo.length, 2, feerateSatPerKB)
-      }
+            utxos = await this.getAvailableUtxo(amountSat + feeInSatPerKB);
+            if (!utxos)
+                return null;
 
-      return {
-        feeSat: feeSat,
-        utxos: utxo
-      }
+            feeSat = WalletUtil.estimateBTCFee(utxos.length, 2, feeInSatPerKB)
+        }
+
+        return {
+            utxos, // UTXOs to spend
+            feeSat // Transaction fee in sat
+        };
+    }
+
+    /**
+     * Estimates the right number of SAT per kB to use to send a transaction.
+     * The rate is either forced by the user, or automatically estimated by the node API
+     * based on the number of blocks we are ready to wait for the transaction to go through.
+     */
+    private async estimateFeeRate(feeRate = BTCFeeRate.AVERAGE, forcedSatPerKB = null): Promise<number> {
+        if (forcedSatPerKB)
+            return forcedSatPerKB;
+
+        const btcPerKB = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
+        if (!btcPerKB)
+            throw new Error("BTCSubWallet: Failed to estimate fee rate by API");
+
+        return Util.accMul(btcPerKB, Config.SATOSHI);
     }
 
     // return satoshi
-    public async estimateTransferTransactionGas(feeRate = BTCFeeRate.AVERAGE, satPerKB = null, amount: BigNumber = null) {
-        let feerateSatPerKB = satPerKB;
-        let feerateBTCPerKB = null;
-        if (!feerateSatPerKB) {
-            feerateBTCPerKB = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
-            if (!feerateBTCPerKB) {
-                throw new Error("BTCSubWallet: Failed to estimatesmartfee");
-            }
-            feerateSatPerKB = Util.accMul(feerateBTCPerKB, Config.SATOSHI);
-        } else {
-          feerateBTCPerKB = feerateSatPerKB / Config.SATOSHI;
-        }
+    public async estimateTransferTransactionGas(feeRate = BTCFeeRate.AVERAGE, forcedSatPerKB = null, amount: BigNumber = null) {
+        let satPerKB = await this.estimateFeeRate(feeRate, forcedSatPerKB);
 
-        Logger.log('wallet', 'BTCSubWallet: feerateSatPerKB:', feerateSatPerKB)
+        Logger.log('wallet', 'BTCSubWallet: feerateSatPerKB:', satPerKB)
 
         // TODO: Normally the data less than 1KB.
         // Fees are related to input and output.
         if (!amount)
-          return Util.accMul(feerateBTCPerKB, Config.SATOSHI);
+            return satPerKB;
 
-        let result = await this.getUTXOsAndFee(amount, feerateSatPerKB)
+        let result = await this.getUTXOsAndFee(amount, satPerKB)
         return result.feeSat;
     }
 
-    // Ignore gasPrice, gasLimit and nonce.
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeRate = BTCFeeRate.AVERAGE, satPerKB = null): Promise<string> {
-        let feerateSatPerKB = satPerKB;
-        let feerateBTCPerKB = null;
-        if (!feerateSatPerKB) {
-            feerateBTCPerKB = await GlobalBTCRPCService.instance.estimatesmartfee(this.rpcApiUrl, feeRate);
-            if (!feerateBTCPerKB) {
-                throw new Error("BTCSubWallet: Failed to estimatesmartfee");
-            }
-            feerateSatPerKB = Util.accMul(feerateBTCPerKB, Config.SATOSHI);
-        } else {
-          feerateBTCPerKB = feerateSatPerKB / Config.SATOSHI;
-        }
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeRate = BTCFeeRate.AVERAGE, forcedSatPerKB = null): Promise<string> {
+        let satPerKB = await this.estimateFeeRate(feeRate, forcedSatPerKB);
 
         let toAmount = 0;
-        let {feeSat, utxos} = await this.getUTXOsAndFee(amount, feerateSatPerKB)
+        let { feeSat, utxos } = await this.getUTXOsAndFee(amount, satPerKB)
         if (amount.eq(-1)) {
             toAmount = Math.floor(this.balance.minus(feeSat).toNumber());
         } else {
-            toAmount = Util.accMul(amount.toNumber(), Config.SATOSHI);
+            toAmount = btcToSats(amount).toNumber();
         }
 
         let outputs: BTCOutputData[] = [{
@@ -307,7 +315,6 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
                 if (rawtransaction) {
                     utxos[i].utxoHex = rawtransaction.hex;
                 } else {
-                    // TODO:
                     Logger.log('wallet', 'GlobalBTCRPCService getrawtransaction error');
                     return null;
                 }
@@ -319,7 +326,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             utxos,
             outputs,
             this.btcAddress,
-            feerateBTCPerKB.toString(),
+            satsToBtc(satPerKB).toString(),
             feeSat);
     }
 

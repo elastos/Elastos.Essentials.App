@@ -7,9 +7,9 @@ import { AddressResult, BalanceHistory, BTCNetworkInfoResult, BTCTransaction, BT
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 
 export enum BTCFeeRate {
-  FAST = 1,     // 1 block
-  AVERAGE = 3,  // 3 block
-  SLOW = 6      // 6 block
+    FAST = 1,     // 1 block
+    AVERAGE = 3,  // 3 block
+    SLOW = 6      // 6 block
 }
 
 @Injectable({
@@ -94,8 +94,13 @@ export class GlobalBTCRPCService {
         }
     }
 
-    // Node api
-    // feeRate: [1, 1008]
+    /**
+     * Returns an estimation of the current BTC to pay per transaction kB.
+     * Node api.
+     * 
+     * @param feeRate Number of blocks
+     * @returns BTC/kB
+     */
     public async estimatesmartfee(rpcApiUrl: string, feeRate: BTCFeeRate = BTCFeeRate.AVERAGE): Promise<number> {
         const param = {
             'API_key': this.apikey,
