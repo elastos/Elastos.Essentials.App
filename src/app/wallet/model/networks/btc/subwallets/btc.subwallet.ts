@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { BTCFeeRate, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
+import { BTCFeeSpeed, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
@@ -267,7 +267,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
      * The rate is either forced by the user, or automatically estimated by the node API
      * based on the number of blocks we are ready to wait for the transaction to go through.
      */
-    private async estimateFeeRate(feeRate = BTCFeeRate.AVERAGE, forcedSatPerKB = null): Promise<number> {
+    private async estimateFeeRate(feeRate = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null): Promise<number> {
         if (forcedSatPerKB)
             return forcedSatPerKB;
 
@@ -278,23 +278,26 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         return Util.accMul(btcPerKB, Config.SATOSHI);
     }
 
-    // return satoshi
-    public async estimateTransferTransactionGas(feeRate = BTCFeeRate.AVERAGE, forcedSatPerKB = null, amount: BigNumber = null) {
-        let satPerKB = await this.estimateFeeRate(feeRate, forcedSatPerKB);
-
-        Logger.log('wallet', 'BTCSubWallet: feerateSatPerKB:', satPerKB)
+    /**
+     * Estimates the fee in satoshi that we need to pay to be able to send a transaction of "amount" BTCs
+     * 
+     * @returns Fees, in satoshi
+     */
+    public async estimateTransferTransactionGas(feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null, amountBTC: BigNumber = null) {
+        let satPerKB = await this.estimateFeeRate(feeSpeed, forcedSatPerKB);
+        Logger.log('wallet', 'BTCSubWallet: satPerKB:', satPerKB)
 
         // TODO: Normally the data less than 1KB.
         // Fees are related to input and output.
-        if (!amount)
+        if (!amountBTC)
             return satPerKB;
 
-        let result = await this.getUTXOsAndFee(amount, satPerKB)
+        let result = await this.getUTXOsAndFee(amountBTC, satPerKB)
         return result.feeSat;
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeRate = BTCFeeRate.AVERAGE, forcedSatPerKB = null): Promise<string> {
-        let satPerKB = await this.estimateFeeRate(feeRate, forcedSatPerKB);
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null): Promise<string> {
+        let satPerKB = await this.estimateFeeRate(feeSpeed, forcedSatPerKB);
 
         let toAmount = 0;
         let { feeSat, utxos } = await this.getUTXOsAndFee(amount, satPerKB)

@@ -30,8 +30,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
-import { Util } from 'src/app/model/util';
-import { BTCFeeRate, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
+import { BTCFeeSpeed, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
@@ -41,6 +40,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { btcToSats, satsToBtc } from 'src/app/wallet/model/networks/btc/conversions';
 import { BTCSubWallet } from 'src/app/wallet/model/networks/btc/subwallets/btc.subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
@@ -68,13 +68,13 @@ export class SendBitcoinPage implements OnInit {
   public networkWallet: AnyNetworkWallet = null;
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
-  public sendBitcoinParam: SendBitcoinParam = null
-  public balance: BigNumber;
-  public sendAmountOfBTC : BigNumber;
+  public intentParams: SendBitcoinParam = null
+  public balanceBTC: BigNumber;
+  public sendAmountOfBTC: BigNumber;
   public satPerKB: number;
   public feesBTC: BigNumber;
-  private btcFeerateUsed = BTCFeeRate.AVERAGE; // default
-  private btcFeerates: {
+  private forcedFeeSpeed = BTCFeeSpeed.AVERAGE; // default
+  private feeSpeedsInSatPerVB: {
     [index: number]: number
   } = {};
   public showEditFeeRate = false;
@@ -145,8 +145,8 @@ export class SendBitcoinPage implements OnInit {
   async init() {
     const navigation = this.router.getCurrentNavigation();
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.sendBitcoinParam = this.receivedIntent.params.payload.params[0]
-    this.sendAmountOfBTC = new BigNumber(this.sendBitcoinParam.satAmount).dividedBy(Config.SATOSHI);
+    this.intentParams = this.receivedIntent.params.payload.params[0]
+    this.sendAmountOfBTC = new BigNumber(this.intentParams.satAmount).dividedBy(Config.SATOSHI);
 
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
@@ -154,49 +154,49 @@ export class SendBitcoinPage implements OnInit {
 
     let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
     this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    if (!this.networkWallet) return;
+    if (!this.networkWallet)
+      return;
 
     this.btcSubWallet = <BTCSubWallet>this.networkWallet.getMainTokenSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-    if (!this.btcSubWallet) return;
+    if (!this.btcSubWallet)
+      return;
 
     await this.btcSubWallet.updateBalance()
-    this.balance = await this.btcSubWallet.getDisplayBalance();
+    this.balanceBTC = await this.btcSubWallet.getDisplayBalance();
 
-    let feesSAT = null;
-    if (this.sendBitcoinParam.satPerVB) {
-      this.satPerKB = this.sendBitcoinParam.satPerVB * 1000;
+    if (this.intentParams.satPerVB) {
+      // Fee rate is forced in the intent by the caller
+      this.satPerKB = this.intentParams.satPerVB * 1000;
       this.showEditFeeRate = false;
     } else {
       this.showEditFeeRate = true;
-      void this.getAllBTCFeerate();
+      void this.computeBTCFeeRate();
     }
 
+    let feesSAT: number = null;
     try {
-      feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, this.satPerKB, this.sendAmountOfBTC);
+      feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.forcedFeeSpeed, this.satPerKB, this.sendAmountOfBTC);
     }
     catch (err) {
       // TODO:
       Logger.warn("wallet", "Can not get the feeRate", err);
     }
 
-    this.feesBTC = (new BigNumber(feesSAT)).dividedBy(Config.SATOSHI);
-    this.loading = false
+    this.feesBTC = btcToSats(feesSAT);
+    this.loading = false;
   }
 
   /**
-   * Cancel the vote operation. Closes the screen and goes back to the calling application after
+   * Cancel the intent operation. Closes the screen and goes back to the calling application after
    * sending the intent response.
    */
   async cancelOperation(navigateBack = true) {
-    await this.sendIntentResponse(
-      { txid: null, status: 'cancelled' },
-      this.receivedIntent.intentId, navigateBack
-    );
+    await this.sendIntentResponse({ txid: null, status: 'cancelled' }, navigateBack);
   }
 
-  private async sendIntentResponse(result, intentId, navigateBack = true) {
+  private async sendIntentResponse(result, navigateBack = true) {
     this.alreadySentIntentResponse = true;
-    await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
+    await this.globalIntentService.sendIntentResponse(result, this.receivedIntent.intentId, navigateBack);
   }
 
   goTransaction() {
@@ -205,12 +205,11 @@ export class SendBitcoinPage implements OnInit {
 
   async checkValue(): Promise<void> {
     // Nothing to check
-
     await this.createTransaction();
   }
 
   public balanceIsEnough() {
-    return this.getTotalTransactionCostInCurrency().totalAsBigNumber.lte(this.balance);
+    return this.getTotalTransactionCostInCurrency().totalAsBigNumber.lte(this.balanceBTC);
   }
 
   /**
@@ -243,8 +242,11 @@ export class SendBitcoinPage implements OnInit {
     return CurrencyService.instance.selectedCurrency.symbol;
   }
 
+  /**
+   * Creates the payment transaction and publishes it.
+   */
   async createTransaction() {
-    Logger.log('wallet', "Calling createPaymentTransaction(): ", this.sendBitcoinParam);
+    Logger.log('wallet', "Calling createPaymentTransaction(): ", this.intentParams);
 
     await this.native.showLoading(this.translate.instant('common.please-wait'));
 
@@ -252,10 +254,10 @@ export class SendBitcoinPage implements OnInit {
     let rawTx = null;
     try {
       rawTx = await this.btcSubWallet.createPaymentTransaction(
-        this.sendBitcoinParam.payAddress,
+        this.intentParams.payAddress,
         this.getTotalTransactionCostInCurrency().valueAsBigNumber,
         '',
-        this.btcFeerateUsed,
+        this.forcedFeeSpeed,
         this.satPerKB
       );
     } catch (err) {
@@ -279,23 +281,14 @@ export class SendBitcoinPage implements OnInit {
 
       try {
         const result = await this.btcSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
-        await this.sendIntentResponse(
-          { txid: result.txid, status: result.status },
-          this.receivedIntent.intentId
-        );
+        await this.sendIntentResponse({ txid: result.txid, status: result.status });
       }
       catch (err) {
         Logger.error('wallet', 'SendBitcoinPage publishTransaction error:', err)
-        await this.sendIntentResponse(
-          { txid: null, status: 'error' },
-          this.receivedIntent.intentId
-        );
+        await this.sendIntentResponse({ txid: null, status: 'error' });
       }
     } else {
-      await this.sendIntentResponse(
-        { txid: null, status: 'error' },
-        this.receivedIntent.intentId
-      );
+      await this.sendIntentResponse({ txid: null, status: 'error' });
     }
 
     this.signingAndTransacting = false;
@@ -305,33 +298,44 @@ export class SendBitcoinPage implements OnInit {
     Logger.error('wallet', "transaction error:", err);
     let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
     if (reworkedEx instanceof Web3Exception) {
-        await this.globalPopupService.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+      await this.globalPopupService.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
     } else {
-        let message: string = typeof (err) === "string" ? err : err.message;
-        await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
+      let message: string = typeof (err) === "string" ? err : err.message;
+      await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
     }
   }
 
-  // Fee rate
-  private async getAllBTCFeerate() {
+  /**
+   * Computes the fee user has to pay, in sat/vB, for all the possible fee speed the user can choose.
+   */
+  private async computeBTCFeeRate() {
     try {
-      let fast = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.btcSubWallet).rpcApiUrl, BTCFeeRate.FAST)
-      this.btcFeerates[BTCFeeRate.FAST] = Util.accMul(fast, Config.SATOSHI) / 1000;
-      let avg = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.btcSubWallet).rpcApiUrl, BTCFeeRate.AVERAGE)
-      this.btcFeerates[BTCFeeRate.AVERAGE] = Util.accMul(avg, Config.SATOSHI) / 1000;
-      let slow = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.btcSubWallet).rpcApiUrl, BTCFeeRate.SLOW)
-      this.btcFeerates[BTCFeeRate.SLOW] = Util.accMul(slow, Config.SATOSHI) / 1000;
+      // BTC/kB to sat/vB
+      let fast = await GlobalBTCRPCService.instance.estimatesmartfee(this.btcSubWallet.rpcApiUrl, BTCFeeSpeed.FAST)
+      this.feeSpeedsInSatPerVB[BTCFeeSpeed.FAST] = btcToSats(fast).dividedBy(1000).toNumber();
+
+      let avg = await GlobalBTCRPCService.instance.estimatesmartfee(this.btcSubWallet.rpcApiUrl, BTCFeeSpeed.AVERAGE)
+      this.feeSpeedsInSatPerVB[BTCFeeSpeed.AVERAGE] = btcToSats(avg).dividedBy(1000).toNumber();
+
+      let slow = await GlobalBTCRPCService.instance.estimatesmartfee(this.btcSubWallet.rpcApiUrl, BTCFeeSpeed.SLOW)
+      this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW] = btcToSats(slow).dividedBy(1000).toNumber();
     } catch (e) {
-      Logger.warn('wallet', ' estimatesmartfee error',  e)
+      Logger.warn('wallet', 'computeBTCFeeRate() error:', e)
     }
   }
-  private async setBTCFeerate(feerate: BTCFeeRate) {
-    this.btcFeerateUsed = feerate;
+
+  /**
+   * Selects the fee speed manually from the UI and recomputes transaction cost based on this new fee rate.
+   */
+  private async setFeeSpeed(feeSpeed: BTCFeeSpeed) {
+    this.forcedFeeSpeed = feeSpeed;
+
+    // Recomputes fees
     this.actionIsGoing = true;
-    // Update fee
     try {
-      let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, this.btcFeerates[this.btcFeerateUsed] * 1000, this.sendAmountOfBTC);
-      this.feesBTC = (new BigNumber(feesSAT)).dividedBy(Config.SATOSHI);
+      const forcedSatsPerKB = this.feeSpeedsInSatPerVB[this.forcedFeeSpeed] * 1000;
+      let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.forcedFeeSpeed, forcedSatsPerKB, this.sendAmountOfBTC);
+      this.feesBTC = satsToBtc(feesSAT);
     } catch (e) {
       // Do nothing
     }
@@ -340,60 +344,60 @@ export class SendBitcoinPage implements OnInit {
 
   private buildBTCFeerateMenuItems(): MenuSheetMenu[] {
     return [
-        {
-            title: this.getBtcFeerateTitle(BTCFeeRate.FAST),
-            subtitle: this.btcFeerates[BTCFeeRate.FAST] + ' sat/vB',
-            routeOrAction: () => {
-              void this.setBTCFeerate(BTCFeeRate.FAST);
-            }
-        },
-        {
-            title: this.getBtcFeerateTitle(BTCFeeRate.AVERAGE),
-            subtitle: this.btcFeerates[BTCFeeRate.AVERAGE] + ' sat/vB',
-            routeOrAction: () => {
-              void this.setBTCFeerate(BTCFeeRate.AVERAGE);
-            }
-        },
-        {
-            title: this.getBtcFeerateTitle(BTCFeeRate.SLOW),
-            subtitle: this.btcFeerates[BTCFeeRate.SLOW] + ' sat/vB',
-            routeOrAction: () => {
-              void this.setBTCFeerate(BTCFeeRate.SLOW);
-            }
+      {
+        title: this.getFeeSpeedTitle(BTCFeeSpeed.FAST),
+        subtitle: this.feeSpeedsInSatPerVB[BTCFeeSpeed.FAST] + ' sat/vB',
+        routeOrAction: () => {
+          void this.setFeeSpeed(BTCFeeSpeed.FAST);
         }
+      },
+      {
+        title: this.getFeeSpeedTitle(BTCFeeSpeed.AVERAGE),
+        subtitle: this.feeSpeedsInSatPerVB[BTCFeeSpeed.AVERAGE] + ' sat/vB',
+        routeOrAction: () => {
+          void this.setFeeSpeed(BTCFeeSpeed.AVERAGE);
+        }
+      },
+      {
+        title: this.getFeeSpeedTitle(BTCFeeSpeed.SLOW),
+        subtitle: this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW] + ' sat/vB',
+        routeOrAction: () => {
+          void this.setFeeSpeed(BTCFeeSpeed.SLOW);
+        }
+      }
     ]
   }
 
   /**
-   * Choose an fee rate
+   * Choose a fee speed
    */
-  public pickBTCFeerate() {
-    if (!this.btcFeerates[BTCFeeRate.SLOW]) {
+  public pickBTCFeeSpeed() {
+    if (!this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW]) {
       Logger.warn('wallet', 'Can not get the btc fee rate.')
       return
     }
     let menuItems: MenuSheetMenu[] = this.buildBTCFeerateMenuItems();
 
     let menu: MenuSheetMenu = {
-        title: GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-select-title"),
-        items: menuItems
+      title: GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-select-title"),
+      items: menuItems
     };
 
     void GlobalNativeService.instance.showGenericBottomSheetMenuChooser(menu);
   }
 
-  public getBtcFeerateTitle(btcFeerate) {
+  public getFeeSpeedTitle(btcFeerate) {
     switch (btcFeerate) {
-      case BTCFeeRate.AVERAGE:
+      case BTCFeeSpeed.AVERAGE:
         return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-avg");
-      case BTCFeeRate.SLOW:
+      case BTCFeeSpeed.SLOW:
         return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-slow");
       default: // BTCFeeRate.Fast
         return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-fast");
     }
   }
 
-  public getCurrenttBtcFeerateTitle() {
-    return this.getBtcFeerateTitle(this.btcFeerateUsed)
+  public getCurrentFeeSpeedTitle() {
+    return this.getFeeSpeedTitle(this.forcedFeeSpeed);
   }
 }

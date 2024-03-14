@@ -36,7 +36,7 @@ import { Logger } from 'src/app/logger';
 import { WalletPendingTransactionException } from 'src/app/model/exceptions/walletpendingtransaction.exception';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
 import { Util } from 'src/app/model/util';
-import { BTCFeeRate, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
+import { BTCFeeSpeed, GlobalBTCRPCService } from 'src/app/services/global.btc.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -122,9 +122,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // For BTC
     private feeOfBTC: string = null
-    private btcFeerateUsed = BTCFeeRate.AVERAGE; // default
+    private btcFeerateUsed = BTCFeeSpeed.AVERAGE; // default
     private btcFeerates: {
-      [index: number]: number
+        [index: number]: number
     } = {};
 
     // For Tron
@@ -469,7 +469,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
 
         if (this.fromSubWallet instanceof BTCSubWallet) {
-          void this.getAllBTCFeerate()
+            void this.getAllBTCFeerate()
         }
 
 
@@ -512,12 +512,12 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 );
             }
             else if (this.fromSubWallet instanceof BTCSubWallet) {
-              rawTx = await this.fromSubWallet.createPaymentTransaction(
-                  this.toAddress, // User input address
-                  new BigNumber(this.amount), // User input amount
-                  this.memo, // User input memo
-                  this.btcFeerateUsed
-              );
+                rawTx = await this.fromSubWallet.createPaymentTransaction(
+                    this.toAddress, // User input address
+                    new BigNumber(this.amount), // User input amount
+                    this.memo, // User input memo
+                    this.btcFeerateUsed
+                );
             }
             else if (this.fromSubWallet instanceof MainCoinSubWallet) {
                 rawTx = await this.fromSubWallet.createPaymentTransaction(
@@ -754,8 +754,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         }
 
         if (this.fromSubWallet instanceof BTCSubWallet) {
-          // Calculate fee after input amount
-          this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, null, new BigNumber(this.amount))).toString();
+            // Calculate fee after input amount
+            this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, null, new BigNumber(this.amount))).toString();
         }
 
         let fee = null;
@@ -1212,19 +1212,19 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // for elastos cross chain transaction.
     getELANetworkByID(id: StandardCoinName) {
-      let networkKey = 'elastos';
-      switch (id) {
-          case StandardCoinName.ETHDID:
-              networkKey = 'elastosidchain';
-              break;
-          case StandardCoinName.ETHSC:
-              networkKey = 'elastossmartchain';
-              break;
-          default:
-              break;
-      }
+        let networkKey = 'elastos';
+        switch (id) {
+            case StandardCoinName.ETHDID:
+                networkKey = 'elastosidchain';
+                break;
+            case StandardCoinName.ETHSC:
+                networkKey = 'elastossmartchain';
+                break;
+            default:
+                break;
+        }
 
-      return WalletNetworkService.instance.getNetworkByKey(networkKey);
+        return WalletNetworkService.instance.getNetworkByKey(networkKey);
     }
 
     async getELASubwalletByID(id: StandardCoinName) {
@@ -1295,84 +1295,84 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     // For Btc: select fee rate
     private async getAllBTCFeerate() {
-      try {
-        let fast = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.fromSubWallet).rpcApiUrl, BTCFeeRate.FAST)
-        this.btcFeerates[BTCFeeRate.FAST] = Util.accMul(fast, Config.SATOSHI) / 1000;
-        let avg = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.fromSubWallet).rpcApiUrl, BTCFeeRate.AVERAGE)
-        this.btcFeerates[BTCFeeRate.AVERAGE] = Util.accMul(avg, Config.SATOSHI) / 1000;
-        let slow = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.fromSubWallet).rpcApiUrl, BTCFeeRate.SLOW)
-        this.btcFeerates[BTCFeeRate.SLOW] = Util.accMul(slow, Config.SATOSHI) / 1000;
-      } catch (e) {
-        Logger.warn('wallet', ' estimatesmartfee error',  e)
-      }
+        try {
+            let fast = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.fromSubWallet).rpcApiUrl, BTCFeeSpeed.FAST)
+            this.btcFeerates[BTCFeeSpeed.FAST] = Util.accMul(fast, Config.SATOSHI) / 1000;
+            let avg = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.fromSubWallet).rpcApiUrl, BTCFeeSpeed.AVERAGE)
+            this.btcFeerates[BTCFeeSpeed.AVERAGE] = Util.accMul(avg, Config.SATOSHI) / 1000;
+            let slow = await GlobalBTCRPCService.instance.estimatesmartfee((<BTCSubWallet>this.fromSubWallet).rpcApiUrl, BTCFeeSpeed.SLOW)
+            this.btcFeerates[BTCFeeSpeed.SLOW] = Util.accMul(slow, Config.SATOSHI) / 1000;
+        } catch (e) {
+            Logger.warn('wallet', ' estimatesmartfee error', e)
+        }
     }
     public shouldShowPickBTCFeerate(): boolean {
-      if (this.fromSubWallet instanceof BTCSubWallet)
+        if (this.fromSubWallet instanceof BTCSubWallet)
             return true;
 
         return false;
     }
 
-    private setBTCFeerate(feerate: BTCFeeRate) {
-      this.btcFeerateUsed = feerate;
+    private setBTCFeerate(feerate: BTCFeeSpeed) {
+        this.btcFeerateUsed = feerate;
     }
 
     private buildBTCFeerateMenuItems(): MenuSheetMenu[] {
-      return [
-          {
-              title: this.getBtcFeerateTitle(BTCFeeRate.FAST),
-              subtitle: this.btcFeerates[BTCFeeRate.FAST] + ' sat/vB',
-              routeOrAction: () => {
-                void this.setBTCFeerate(BTCFeeRate.FAST);
-              }
-          },
-          {
-              title: this.getBtcFeerateTitle(BTCFeeRate.AVERAGE),
-              subtitle: this.btcFeerates[BTCFeeRate.AVERAGE] + ' sat/vB',
-              routeOrAction: () => {
-                void this.setBTCFeerate(BTCFeeRate.AVERAGE);
-              }
-          },
-          {
-              title: this.getBtcFeerateTitle(BTCFeeRate.SLOW),
-              subtitle: this.btcFeerates[BTCFeeRate.SLOW] + ' sat/vB',
-              routeOrAction: () => {
-                void this.setBTCFeerate(BTCFeeRate.SLOW);
-              }
-          }
-      ]
+        return [
+            {
+                title: this.getBtcFeerateTitle(BTCFeeSpeed.FAST),
+                subtitle: this.btcFeerates[BTCFeeSpeed.FAST] + ' sat/vB',
+                routeOrAction: () => {
+                    void this.setBTCFeerate(BTCFeeSpeed.FAST);
+                }
+            },
+            {
+                title: this.getBtcFeerateTitle(BTCFeeSpeed.AVERAGE),
+                subtitle: this.btcFeerates[BTCFeeSpeed.AVERAGE] + ' sat/vB',
+                routeOrAction: () => {
+                    void this.setBTCFeerate(BTCFeeSpeed.AVERAGE);
+                }
+            },
+            {
+                title: this.getBtcFeerateTitle(BTCFeeSpeed.SLOW),
+                subtitle: this.btcFeerates[BTCFeeSpeed.SLOW] + ' sat/vB',
+                routeOrAction: () => {
+                    void this.setBTCFeerate(BTCFeeSpeed.SLOW);
+                }
+            }
+        ]
     }
 
     /**
      * Choose an fee rate
      */
     public pickBTCFeerate() {
-      if (!this.btcFeerates[BTCFeeRate.SLOW]) {
-        Logger.warn('wallet', 'Can not get the btc fee rate.')
-        return
-      }
-      let menuItems: MenuSheetMenu[] = this.buildBTCFeerateMenuItems();
+        if (!this.btcFeerates[BTCFeeSpeed.SLOW]) {
+            Logger.warn('wallet', 'Can not get the btc fee rate.')
+            return
+        }
+        let menuItems: MenuSheetMenu[] = this.buildBTCFeerateMenuItems();
 
-      let menu: MenuSheetMenu = {
-          title: GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-select-title"),
-          items: menuItems
-      };
+        let menu: MenuSheetMenu = {
+            title: GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-select-title"),
+            items: menuItems
+        };
 
-      void GlobalNativeService.instance.showGenericBottomSheetMenuChooser(menu);
+        void GlobalNativeService.instance.showGenericBottomSheetMenuChooser(menu);
     }
 
     public getBtcFeerateTitle(btcFeerate) {
-      switch (btcFeerate) {
-        case BTCFeeRate.AVERAGE:
-          return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-avg");
-        case BTCFeeRate.SLOW:
-          return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-slow");
-        default: // BTCFeeRate.Fast
-          return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-fast");
-      }
+        switch (btcFeerate) {
+            case BTCFeeSpeed.AVERAGE:
+                return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-avg");
+            case BTCFeeSpeed.SLOW:
+                return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-slow");
+            default: // BTCFeeRate.Fast
+                return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-fast");
+        }
     }
 
     public getCurrenttBtcFeerateTitle() {
-      return this.getBtcFeerateTitle(this.btcFeerateUsed)
+        return this.getBtcFeerateTitle(this.btcFeerateUsed)
     }
 }
