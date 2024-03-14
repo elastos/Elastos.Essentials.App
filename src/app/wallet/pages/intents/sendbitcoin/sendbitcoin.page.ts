@@ -182,7 +182,7 @@ export class SendBitcoinPage implements OnInit {
       Logger.warn("wallet", "Can not get the feeRate", err);
     }
 
-    this.feesBTC = btcToSats(feesSAT);
+    this.feesBTC = satsToBtc(feesSAT);
     this.loading = false;
   }
 

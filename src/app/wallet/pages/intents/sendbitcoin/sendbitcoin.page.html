@@ -22,7 +22,7 @@
         getCurrencyInUse() }}</h1>
 
       <p>{{ 'wallet.send-to' | translate }}</p>
-      <p class="address">{{ sendBitcoinParam.payAddress }}</p>
+      <p class="address">{{ intentParams.payAddress }}</p>
 
       <ion-row class="item-row ripple ion-activatable">
         <ion-col size="5">
@@ -79,7 +79,7 @@
           <span> {{ uiService.getFixedBalance(balanceBTC) }}</span> {{ getCurrencyInUse() }}
         </ion-col>
       </ion-row>
-      <ion-row *ngIf="showEditFeeRate" class="btc-fee-row" (click)="pickBTCFeerate()">
+      <ion-row *ngIf="showEditFeeRate" class="btc-fee-row" (click)="pickBTCFeeSpeed()">
         <ion-col size="7.5">
             <span>{{ 'wallet.btc-feerate' | translate }}</span>
         </ion-col>
