@@ -495,20 +495,22 @@ export class DappBrowserService implements GlobalService {
     private async sendActiveWalletToDApp(networkWallet: AnyNetworkWallet) {
         // Get the active wallet address
         if (networkWallet) {
-            let subwallet = networkWallet.getMainEvmSubWallet();
-            if (subwallet) {
-                this.userEVMAddress = await subwallet.getCurrentReceiverAddress();
-                this.userBTCAddress = await this.getWalletBitcoinAddress(networkWallet.masterWallet);
-
-                Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress);
-
-                await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
-                void dappBrowser.executeScript({
-                    code: `
-                        window.ethereum.setAddress('${this.userEVMAddress}');
-                        window.unisat.setAddress('${this.userBTCAddress}');
-                    `});
+            let evmSubwallet = networkWallet.getMainEvmSubWallet();
+            if (evmSubwallet) {
+                this.userEVMAddress = await evmSubwallet.getCurrentReceiverAddress();
+            } else {
+                this.userEVMAddress = null;
             }
+            this.userBTCAddress = await this.getWalletBitcoinAddress(networkWallet.masterWallet);
+
+            Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress, this.userBTCAddress);
+
+            await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
+            void dappBrowser.executeScript({
+                code: `
+                    window.ethereum.setAddress('${this.userEVMAddress}');
+                    window.unisat.setAddress('${this.userBTCAddress}');
+                `});
         }
     }
 
