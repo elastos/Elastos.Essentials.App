@@ -195,20 +195,20 @@ export class EscTransactionPage implements OnInit {
     Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
 
     if (this.coinTransferService.payloadParam.data) {
-        // Extract information about the specific transaction type we are handling
-        let transactionInfoParser = new ETHTransactionInfoParser(
-          this.evmSubWallet.networkWallet.network
-        )
-        this.transactionInfo = await transactionInfoParser.computeFromTxData(
-          this.coinTransferService.payloadParam.data,
-          this.coinTransferService.payloadParam.to);
+      // Extract information about the specific transaction type we are handling
+      let transactionInfoParser = new ETHTransactionInfoParser(
+        this.evmSubWallet.networkWallet.network
+      )
+      this.transactionInfo = await transactionInfoParser.computeFromTxData(
+        this.coinTransferService.payloadParam.data,
+        this.coinTransferService.payloadParam.to);
 
     } else {
-        this.transactionInfo = {
-            type: ETHOperationType.SEND_ERC20,
-            operation: null,
-            events: []
-        }
+      this.transactionInfo = {
+        type: ETHOperationType.SEND_ERC20,
+        operation: null,
+        events: []
+      }
     }
     Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
 
@@ -307,12 +307,12 @@ export class EscTransactionPage implements OnInit {
 
     return {
       totalAsBigNumber: total,
-      total: total.toFixed(),
+      total: total?.toFixed(),
       valueAsBigNumber: currencyValue,
-      value: currencyValue.toFixed(),
+      value: currencyValue?.toFixed(),
       feesAsBigNumber: fees,
-      fees: fees.toFixed(),
-      currencyFee: currencyFee.toFixed()
+      fees: fees?.toFixed(),
+      currencyFee: currencyFee?.toFixed()
     }
   }
 

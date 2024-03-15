@@ -223,12 +223,12 @@ export class SendBitcoinPage implements OnInit {
 
     return {
       totalAsBigNumber: total,
-      total: total.toFixed(),
+      total: total?.toFixed(),
       valueAsBigNumber: this.sendAmountOfBTC,
       value: this.sendAmountOfBTC.toFixed(),
       feesAsBigNumber: this.feesBTC,
-      fees: this.feesBTC.toFixed(),
-      currencyFee: currencyFee.toFixed()
+      fees: this.feesBTC?.toFixed(),
+      currencyFee: currencyFee?.toFixed()
     }
   }
 
@@ -337,12 +337,12 @@ export class SendBitcoinPage implements OnInit {
       let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.forcedFeeSpeed, forcedSatsPerKB, this.sendAmountOfBTC);
       this.feesBTC = satsToBtc(feesSAT);
     } catch (e) {
-        let stringifiedError = "" + e;
-        let message = 'Failed to estimate fee';
-        if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
-          message = 'wallet.insufficient-balance';
-        }
-        this.native.toast_trans(message, 4000);
+      let stringifiedError = "" + e;
+      let message = 'Failed to estimate fee';
+      if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
+        message = 'wallet.insufficient-balance';
+      }
+      this.native.toast_trans(message, 4000);
     }
     this.actionIsGoing = false;
   }
