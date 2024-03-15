@@ -295,7 +295,7 @@ export class DappBrowserService implements GlobalService {
         }
         else {
             this.userEVMAddress = null;
-            this.activeChainID = 0;
+            this.activeChainID = -1;
             this.userBTCAddress = null;
             this.btcRpcUrl = null;
         }
