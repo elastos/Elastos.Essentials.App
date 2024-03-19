@@ -25,7 +25,7 @@ const prodEnv = {
     serviceUrl: 'https://credentials-toolbox.elastos.net/api/v1'
   },
   NownodesAPI: {
-    apikey: ''
+    apikey: localEnv.NOWNODES_API_KEY
   }
 }
 
@@ -42,7 +42,7 @@ const devEnv = {
     serviceUrl: env.ESSENTIALS_CREDENTIALS_TOOLBOX_SERVICE_URL || prodEnv.CredentialsToolbox.serviceUrl
   },
   NownodesAPI: {
-    apikey: localEnv.NOWNODES_API_KEY || prodEnv.NownodesAPI.apikey
+    apikey: localEnv.NOWNODES_API_KEY
   }
 }
 
