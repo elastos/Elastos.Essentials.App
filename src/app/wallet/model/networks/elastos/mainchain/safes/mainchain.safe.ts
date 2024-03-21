@@ -96,4 +96,7 @@ export interface ElastosMainChainSafe {
   createDPoSV2ClaimRewardTransaction(inputs: UTXOInput[], payload: DPoSV2ClaimRewardInfo, fee: string, memo: string): EncodedTx;
   unstakeDigest(payload: UnstakeInfo): string;
   createUnstakeTransaction(inputs: UTXOInput[], payload: UnstakeInfo, fee: string, memo: string): EncodedTx;
+
+  // Consolidate: If there are too many utxos, the transaction may fail to be sent.
+  getMaxUtxoConsolidateCount(): number;
 }

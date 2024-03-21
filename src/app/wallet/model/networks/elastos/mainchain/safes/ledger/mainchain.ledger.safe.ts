@@ -422,5 +422,9 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     const signature = Buffer.from(response.signature, 'hex');
     this.signedTx = await ELATransactionSigner.addSignatureToTx(this.txData, this.publicKey, signature);
   }
+
+  public getMaxUtxoConsolidateCount() {
+    return LEDGER_UTXO_CONSOLIDATE_COUNT;
+  }
 }
 

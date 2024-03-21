@@ -823,7 +823,8 @@ export const fr = {
         // Consolidate
         'text-consolidate-prompt': 'Consolider?',
         'text-consolidate-UTXO-counts': 'Nombre d\'UTXOs: {{ count }}',
-        'text-consolidate-note': 'Trop d\'UTXO peuvent provoquer l\'échec de certaines transactions, il est recommandé de consolider. La consolidation n\'affecte pas les votes en cours',
+        'text-consolidate-note': 'Trop d\'UTXO peuvent provoquer l\'échec de certaines transactions, il est recommandé de consolider.',
+        'text-consolidate-note-ledger': 'Trop d\'UTXO peuvent provoquer l\'échec de certaines transactions, il est recommandé de consolider. Le portefeuille Ledger ne peut fusionner que {{ count }} utxo à la fois.',
         'reasons-failure': 'Cause de l\'échec',
         "notification-too-many-utxos": "The number of UTXOs in ELA mainchain of wallet {{ walletname }} has reached {{ count }}. It is recommended that you consolidate UTXOs!",
 

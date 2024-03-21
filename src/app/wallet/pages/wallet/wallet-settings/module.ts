@@ -8,6 +8,7 @@ import { SharedComponentsModule } from 'src/app/components/sharedcomponents.modu
 import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { WalletSettingsPage } from './wallet-settings.page';
+import { LedgerSignComponentModule } from 'src/app/wallet/components/ledger-sign/module';
 
 @NgModule({
     declarations: [WalletSettingsPage],
@@ -18,6 +19,7 @@ import { WalletSettingsPage } from './wallet-settings.page';
         IonicModule,
         TranslateModule,
         ComponentsModule,
+        LedgerSignComponentModule,
         StdTransactionComponentModule,
         RouterModule.forChild([{ path: '', component: WalletSettingsPage }])
     ],

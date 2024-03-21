@@ -536,4 +536,10 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
       Logger.error("wallet", "walletjs safe getExtendedPublicKey() error:", e);
     }
   }
+
+  // If there are too many utxos, the transaction may fail to be sent.
+  // Therefore, the maximum number of utxos to be consolidated is set to 10000.
+  public getMaxUtxoConsolidateCount() {
+    return 10000;
+  }
 }

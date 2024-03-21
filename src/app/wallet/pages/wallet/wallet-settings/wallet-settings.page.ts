@@ -29,6 +29,8 @@ import { Native } from '../../../services/native.service';
 import { LocalStorage } from '../../../services/storage.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
+import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
+import { ElastosMainChainSafe } from 'src/app/wallet/model/networks/elastos/mainchain/safes/mainchain.safe';
 
 type SettingsMenuEntry = {
     type: string;
@@ -262,8 +264,17 @@ export class WalletSettingsPage implements OnInit {
 
         if (utxosCount > Config.UTXO_CONSOLIDATE_MIN_THRESHOLD) {
             const UTXOsCountString = this.translate.instant('wallet.text-consolidate-UTXO-counts', { count: utxosCount });
+
+            let noteMessage = 'wallet.text-consolidate-note';
+            if (mainChainSubwallet.masterWallet.type == WalletType.LEDGER){
+                let max_Consolidate_Utxos = (this.networkWallet.safe as unknown as ElastosMainChainSafe).getMaxUtxoConsolidateCount();
+                if (utxosCount > max_Consolidate_Utxos) {
+                    noteMessage = this.translate.instant('wallet.text-consolidate-note-ledger', { count: max_Consolidate_Utxos });
+                }
+            }
+
             let ret = await this.globalPopupService.ionicConfirmWithSubTitle('wallet.text-consolidate-prompt',
-                UTXOsCountString, 'wallet.text-consolidate-note')
+                UTXOsCountString, noteMessage)
             if (ret) {
                 let rawTx = await mainChainSubwallet.createConsolidateTransaction(normalUxtos,
                     this.translate.instant('wallet.wallet-settings-consolidate-utxos'));

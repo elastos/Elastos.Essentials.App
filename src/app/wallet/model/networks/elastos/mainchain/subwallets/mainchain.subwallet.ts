@@ -67,10 +67,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     private externalAddressCount = 110; // Addresses for user.
     private internalAddressCount = 105;
 
-    // TODO: If there are too many utxos, the transaction may fail to be sent.
-    // Therefore, the maximum number of utxos to be consolidated is set to 10000.
-    private Max_Consolidate_Utxos = 10000;
-
     private addressWithBalanceArray: AdressWithBalance[] = [];
 
     private invalidVoteCandidatesHelper: InvalidVoteCandidatesHelper = null;
@@ -87,7 +83,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public async initialize(): Promise<void> {
-        super.initialize();
+        await super.initialize();
 
         await this.loadStakedBalanceFromCache();
     }
@@ -480,9 +476,11 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public createConsolidateTransaction(utxoArray: Utxo[], memo = ''): Promise<string> {
         if (!utxoArray || utxoArray.length == 0) return null;
 
+        let max_Consolidate_Utxos = (this.networkWallet.safe as unknown as ElastosMainChainSafe).getMaxUtxoConsolidateCount();
+
         let utxoArrayForSDK = [];
         let totalAmount = 0;
-        let maxUtxoCount = utxoArray.length > this.Max_Consolidate_Utxos ? this.Max_Consolidate_Utxos : utxoArray.length;
+        let maxUtxoCount = utxoArray.length > max_Consolidate_Utxos ? max_Consolidate_Utxos : utxoArray.length;
         for (let i = 0; i < maxUtxoCount; i++) {
             let utxoAmountSELA = Util.accMul(parseFloat(utxoArray[i].amount), Config.SELA)
             let utxoInput: UTXOInput = {

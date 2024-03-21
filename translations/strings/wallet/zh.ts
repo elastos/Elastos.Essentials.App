@@ -825,7 +825,8 @@ export const zh = {
         // Consolidate
         'text-consolidate-prompt': '是否零钱换整？',
         'text-consolidate-UTXO-counts': 'UTXO 个数已达到：{{ count }}',
-        'text-consolidate-note': 'UTXO 数量过多可能会导致一些交易失败，执行零钱换整后不影响已有的超级节点投票',
+        'text-consolidate-note': 'UTXO 数量过多可能会导致一些交易失败',
+        'text-consolidate-note-ledger': 'UTXO 数量过多可能会导致一些交易失败，Ledger钱包目前一次只能合并 {{ count }} 个UTXO',
         'reasons-failure': '失败原因',
         "notification-too-many-utxos": "钱包 {{ walletname }} 的ELA 主链中的 UTXO 个数已达到 {{ count }}，建议您执行零钱换整！",
 
