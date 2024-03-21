@@ -128,4 +128,10 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
   public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
     onGoingConfig['ETHDID'] = { chainID: '23', NetworkID: '23' };
   }
+
+  // When the user manually sets the gas price, it cannot be less than this value.
+  // The unit is gwei.
+  public getMinGasprice(): number {
+    return 1;
+  }
 }

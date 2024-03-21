@@ -15,6 +15,7 @@ import { CurrencyService } from '../../services/currency.service';
 import { Native } from '../../services/native.service';
 import { WalletNetworkService } from '../../services/network.service';
 import { WalletService } from '../../services/wallet.service';
+import { EVMNetwork } from '../../model/networks/evms/evm.network';
 
 @Component({
   selector: 'app-tx-confirm',
@@ -38,6 +39,7 @@ export class TxConfirmComponent implements OnInit {
   private mainTokenSubWallet: AnyMainCoinEVMSubWallet = null;
 
   public gasPriceGwei = '';
+  private minGasPriceGweiOfNetwork = -1;
   public showEditGasPrice = false;
 
   public feeDisplay = ''; // ELA
@@ -100,6 +102,7 @@ export class TxConfirmComponent implements OnInit {
             this.gasPrice = await this.mainTokenSubWallet.getGasPrice();
             let decimalPlaces = this.gasPrice.length < 10 ? 11 - this.gasPrice.length : 1;
             this.gasPriceGwei = new BigNumber(this.gasPrice).dividedBy(Config.GWEI).toFixed(decimalPlaces);
+            this.minGasPriceGweiOfNetwork = (<EVMNetwork>WalletNetworkService.instance.activeNetwork.value).getMinGasprice();
             await this.getEVMTransactionfee();
         }
         catch (e) {
@@ -174,6 +177,10 @@ export class TxConfirmComponent implements OnInit {
 
   public async updateGasprice(event) {
     if (!this.gasPriceGwei) return;
+
+    if ((this.minGasPriceGweiOfNetwork > 0) && parseFloat(this.gasPriceGwei) < this.minGasPriceGweiOfNetwork) {
+      this.gasPriceGwei = this.minGasPriceGweiOfNetwork.toString();
+    }
 
     this.gasPrice = new BigNumber(this.gasPriceGwei).multipliedBy(Config.GWEI).toString();
     await this.getEVMTransactionfee()

@@ -357,4 +357,10 @@ export abstract class EVMNetwork extends Network<WalletNetworkOptions> {
   public isEVMNetwork(): boolean {
     return true;
   }
+
+  // When the user manually sets the gas price, it cannot be less than this value.
+  // The unit is gwei.
+  public getMinGasprice(): number {
+    return -1;
+  }
 }

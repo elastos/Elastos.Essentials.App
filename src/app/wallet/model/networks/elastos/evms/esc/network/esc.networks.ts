@@ -171,4 +171,10 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
   public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
     onGoingConfig['ETHSC'] = { chainID: '21', NetworkID: '21' };
   }
+
+  // When the user manually sets the gas price, it cannot be less than this value.
+  // The unit is gwei.
+  public getMinGasprice(): number {
+    return 1;
+  }
 }
