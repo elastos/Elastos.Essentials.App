@@ -61,7 +61,7 @@ export abstract class ElastosSmartChainNetworkBase extends ElastosEVMNetwork<Wal
   }
 
   public getMainColor(): string {
-    return '9394af';
+    return 'faba9b';
   }
 }
 
@@ -76,7 +76,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
       ElastosSmartChainNetworkBase.NETWORK_KEY,
       "Elastos Smart Chain",
       "ESC",
-      "assets/wallet/coins/ela-gray.svg",
+      "assets/wallet/networks/elastos-esc.png",
       MAINNET_TEMPLATE,
       20,
       [
@@ -108,7 +108,7 @@ export class ElastosSmartChainMainNetNetwork extends ElastosSmartChainNetworkBas
     else if (type === NetworkAPIURLType.ETHERSCAN) {
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(StandardCoinName.ETHSC), MAINNET_TEMPLATE);
     } else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
-        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHSC), MAINNET_TEMPLATE);
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHSC), MAINNET_TEMPLATE);
     } else
       return null;
   }
@@ -139,7 +139,7 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
       ElastosSmartChainNetworkBase.NETWORK_KEY,
       "Elastos Smart Chain Testnet",
       "ESC Testnet",
-      "assets/wallet/coins/ela-gray.svg",
+      "assets/wallet/networks/elastos-esc.png",
       TESTNET_TEMPLATE,
       21,
       [], [], [],
@@ -155,7 +155,7 @@ export class ElastosSmartChainTestNetNetwork extends ElastosSmartChainNetworkBas
     else if (type === NetworkAPIURLType.ETHERSCAN) {
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(StandardCoinName.ETHSC), TESTNET_TEMPLATE);
     } else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
-        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHSC), TESTNET_TEMPLATE);
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHSC), TESTNET_TEMPLATE);
     } else
       return null;
   }

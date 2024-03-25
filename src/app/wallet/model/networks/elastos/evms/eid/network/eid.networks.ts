@@ -33,17 +33,17 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosEVMNetwork<
   public getBrowserUrlByType(type: TransactionInfoType, value: string): string {
     let browserUrl = this.getAPIUrlOfType(NetworkAPIURLType.BLOCK_EXPLORER);
     switch (type) {
-        case TransactionInfoType.ADDRESS:
-            browserUrl += '/address/'
+      case TransactionInfoType.ADDRESS:
+        browserUrl += '/address/'
         break;
-        case TransactionInfoType.BLOCKID:
-            browserUrl += '/blocks/'
+      case TransactionInfoType.BLOCKID:
+        browserUrl += '/blocks/'
         break;
-        case TransactionInfoType.TXID:
-            browserUrl += '/tx/'
+      case TransactionInfoType.TXID:
+        browserUrl += '/tx/'
         break;
-        default:
-            Logger.warn("wallet", "getBrowserUrlByType: not support ", type);
+      default:
+        Logger.warn("wallet", "getBrowserUrlByType: not support ", type);
         break;
     }
     return browserUrl + value;
@@ -68,7 +68,7 @@ export abstract class ElastosIdentityChainNetworkBase extends ElastosEVMNetwork<
   }
 
   public getMainColor(): string {
-    return "20e3d2";
+    return "a8befa";
   }
 }
 
@@ -81,7 +81,7 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
       "elastosidchain",
       "Elastos Identity Chain",
       "EID",
-      "assets/wallet/coins/ela-turquoise.svg",
+      "assets/wallet/networks/elastos-eid.png",
       MAINNET_TEMPLATE,
       22
     );
@@ -91,7 +91,7 @@ export class ElastosIdentityChainMainNetNetwork extends ElastosIdentityChainNetw
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHDID), MAINNET_TEMPLATE);
     else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
-        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHDID), MAINNET_TEMPLATE);
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHDID), MAINNET_TEMPLATE);
     } else
       return null;
   }
@@ -110,7 +110,7 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
       "elastosidchain",
       "Elastos Identity Chain Testnet",
       "EID Testnet",
-      "assets/wallet/coins/ela-turquoise.svg",
+      "assets/wallet/networks/elastos-eid.png",
       TESTNET_TEMPLATE,
       23
     );
@@ -120,7 +120,7 @@ export class ElastosIdentityChainTestNetNetwork extends ElastosIdentityChainNetw
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ETHDID), TESTNET_TEMPLATE);
     else if (type === NetworkAPIURLType.BLOCK_EXPLORER) {
-        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHDID), TESTNET_TEMPLATE);
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ETHDID), TESTNET_TEMPLATE);
     } else
       return null;
   }

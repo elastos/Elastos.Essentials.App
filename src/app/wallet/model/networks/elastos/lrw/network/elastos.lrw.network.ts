@@ -6,7 +6,7 @@ import { ElastosMainChainNetworkBase } from "../../mainchain/network/elastos.net
 
 export class ElastosLRWNetwork extends ElastosMainChainNetworkBase {
   constructor() {
-    super("elastos", "ElastosLRW", "ElastosLRW", "assets/wallet/networks/elastos.svg", "LRW");
+    super("elastos", "ElastosLRW", "ElastosLRW", "assets/wallet/networks/elastos.png", "LRW");
   }
 
   public getAPIUrlOfType(type: NetworkAPIURLType): string {

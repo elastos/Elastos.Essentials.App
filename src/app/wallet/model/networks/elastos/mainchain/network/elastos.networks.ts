@@ -38,7 +38,7 @@ export abstract class ElastosMainChainNetworkBase extends ElastosNetworkBase<Ela
   }
 
   public getMainColor(): string {
-    return "444444";
+    return "0a1530";
   }
 }
 
@@ -51,7 +51,7 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
       ElastosMainChainNetworkBase.networkKey,
       "Elastos Main Chain",
       "Elastos Main",
-      "assets/wallet/networks/elastos.svg",
+      "assets/wallet/networks/elastos.png",
       MAINNET_TEMPLATE
     );
   }
@@ -60,7 +60,7 @@ export class ElastosMainChainMainNetNetwork extends ElastosMainChainNetworkBase 
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ELA), MAINNET_TEMPLATE);
     else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
-        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ELA), MAINNET_TEMPLATE);
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ELA), MAINNET_TEMPLATE);
     else
       return null;
   }
@@ -90,7 +90,7 @@ export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase 
       ElastosMainChainNetworkBase.networkKey,
       "Elastos Main Chain Testnet",
       "Elastos Main Testnet",
-      "assets/wallet/networks/elastos.svg",
+      "assets/wallet/networks/elastos.png",
       TESTNET_TEMPLATE
     );
   }
@@ -99,7 +99,7 @@ export class ElastosMainChainTestNetNetwork extends ElastosMainChainNetworkBase 
     if (type === NetworkAPIURLType.RPC)
       return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForRpc(StandardCoinName.ELA), TESTNET_TEMPLATE);
     else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
-        return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ELA), TESTNET_TEMPLATE);
+      return GlobalElastosAPIService.instance.getApiUrl(GlobalElastosAPIService.instance.getApiUrlTypeForBlockExplorer(StandardCoinName.ELA), TESTNET_TEMPLATE);
     else
       return null;
   }

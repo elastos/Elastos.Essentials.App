@@ -24,7 +24,7 @@ export class ElastosSmartChainTransactionProvider extends TransactionProvider<El
 
     this.escSubWallet = this.networkWallet.getSubWallet(StandardCoinName.ETHSC) as EscSubWallet;
 
-    // TODO: No ETHSC in LRW
+    // No ETHSC in LRW
     if (this.escSubWallet) {
       this.escProvider = new ElastosEscSubWalletProvider(this, this.escSubWallet);
       await this.escProvider.initialize();
