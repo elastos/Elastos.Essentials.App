@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import { BehaviorSubject } from 'rxjs';
-import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { runDelayed, sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalCosmosService } from 'src/app/services/global.cosmos.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -125,15 +125,22 @@ export class CurrencyService {
 
     // Don't block the init, run asynchronously
     runDelayed(async () => {
-      await this.computeExchangeRatesFromCurrenciesService();
-      await this.fetchTokenStatsFromCosmosService();
-      await this.fetchTokenStatsFromPriceService();
+      let retryTimes = 0;
+      let isPriceUpdated = false;
+
+      // If the update fails, try again
+      // Let users see the latest prices as soon as possible
+      do {
+        isPriceUpdated = await this.updateExchangeRatesAndPrice();
+        if (!isPriceUpdated) {
+          await sleep(1000);
+        }
+      } while (!isPriceUpdated && retryTimes++ < 3)
 
       this.updateInterval = setInterval(() => {
-        void this.fetchTokenStatsFromCosmosService();
-        void this.fetchTokenStatsFromPriceService();
+        void this.updateExchangeRatesAndPrice();
       }, 30000);// 30s
-    }, 10000);
+    }, 1000);
 
     Logger.log('wallet', "Currency service initialization complete");
   }
@@ -142,6 +149,18 @@ export class CurrencyService {
     if (this.updateInterval) {
       clearInterval(this.updateInterval);
       this.updateInterval = null;
+    }
+  }
+
+  async updateExchangeRatesAndPrice() {
+    try {
+      await this.computeExchangeRatesFromCurrenciesService();
+      await this.fetchTokenStatsFromPriceService();
+      await this.fetchTokenStatsFromCosmosService();
+      return true;
+    } catch (e) {
+      Logger.warn('wallet', "Failed to update exchange rates and price", e);
+      return false;
     }
   }
 
@@ -223,6 +242,7 @@ export class CurrencyService {
     Logger.log("wallet", "Fetching token prices");
 
     return new Promise(resolve => {
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       this.http.get<any>(this.tokenPriceUrl).subscribe(async (res: PriceAPITokenStats[]) => {
         if (res) {
           for (let tokenSymbol in this.networkMainTokenPrice) {
@@ -352,7 +372,7 @@ export class CurrencyService {
                 Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
             }
         } else if ((<EVMNetwork>network).getDexScreenerCurrencyProvider()) {
-            this.dexScreenerTokenFetch(cacheKey, <EVMNetwork>network, (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin());
+            void this.dexScreenerTokenFetch(cacheKey, <EVMNetwork>network, (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin());
         }
       } else {
         this.pricesCache.remove(cacheKey);
@@ -396,12 +416,12 @@ export class CurrencyService {
     }
   }
 
-  public fetchERC20TokenValue(quantity: BigNumber, coin: ERC20Coin, network?: EVMNetwork, currencySymbol = this.selectedCurrency.symbol): Promise<void> {
+  public fetchERC20TokenValue(coin: ERC20Coin, network?: EVMNetwork): Promise<void> {
     let cacheKey = network.key + coin.getContractAddress();
     if ((<EVMNetwork>network).getUniswapCurrencyProvider()) {
         this.queueUniswapTokenFetch(cacheKey, network, coin);
     } else {
-        this.dexScreenerTokenFetch(cacheKey, network, coin);
+        void this.dexScreenerTokenFetch(cacheKey, network, coin);
     }
     return;
   }
