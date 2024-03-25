@@ -241,7 +241,7 @@ export class CurrencyService {
   private fetchTokenStatsFromPriceService(): Promise<boolean> {
     Logger.log("wallet", "Fetching token prices");
 
-    return new Promise(resolve => {
+    return new Promise((resolve, reject) => {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       this.http.get<any>(this.tokenPriceUrl).subscribe(async (res: PriceAPITokenStats[]) => {
         if (res) {
@@ -265,11 +265,12 @@ export class CurrencyService {
           resolve(true);
         }
         else {
-          resolve(false);
+          Logger.error('walletprice', 'Fetch CMC Stats err, the result is empty');
+          reject('Fetch CMC Stats err, the result is empty')
         }
       }, (err) => {
-        Logger.error('wallet', 'Fetch CMC Stats err', err);
-        resolve(false);
+        Logger.error('walletprice', 'Fetch CMC Stats err', err);
+        reject('Fetch CMC Stats err,' + err);
       });
     })
   }

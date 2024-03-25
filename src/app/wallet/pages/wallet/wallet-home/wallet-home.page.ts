@@ -59,6 +59,7 @@ import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletEditionService } from '../../../services/walletedition.service';
 import { LedgerConnectType } from '../ledger/ledger-connect/ledger-connect.page';
+import { Logger } from 'src/app/logger';
 
 @Component({
     selector: 'app-wallet-home',
@@ -165,7 +166,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
                     this.refreshStakingAssetsList();
                 })
 
-                void this.getStakedBalance();
+                void this.updateCurrentWalletInfo()
             }
             else {
                 if (this.masterWallet && (this.masterWallet.type === WalletType.LEDGER)) {

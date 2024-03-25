@@ -86,13 +86,11 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
         this.tronWeb.setAddress(this.coin.trc20ContractAddress);
 
         await super.initialize();
-
-        // this.txInfoParser = new ETHTransactionInfoParser(this.networkWallet.network);
     }
 
     public async startBackgroundUpdates(): Promise<void> {
         await super.startBackgroundUpdates();
-        void this.fetchAndRearmTokenValue();
+        // void this.fetchAndRearmTokenValue();
 
         runDelayed(() => this.updateBalance(), 5000);
         return;
@@ -129,7 +127,7 @@ export class TRC20SubWallet extends SubWallet<TronTRC20Transaction, any> {
     }
 
     private async fetchTokenValue(): Promise<void> {
-        // await CurrencyService.instance.fetchERC20TokenValue(this.getDisplayBalance(), this.coin, this.network, 'USD');
+        // await CurrencyService.instance.fetchERC20TokenValue(this.coin, this.network);
     }
 
     public getUniqueIdentifierOnNetwork(): string {

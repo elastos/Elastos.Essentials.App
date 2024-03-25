@@ -113,7 +113,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     }
 
     public getMainIcon(): string {
-        return "assets/wallet/coins/ela-black.svg";
+        return "assets/wallet/networks/elastos.png";
     }
 
     public getSecondaryIcon(): string {

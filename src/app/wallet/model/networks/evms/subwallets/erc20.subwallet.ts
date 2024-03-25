@@ -111,9 +111,11 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
 
     public async startBackgroundUpdates(): Promise<void> {
         await super.startBackgroundUpdates();
-        void this.fetchAndRearmTokenValue();
 
-        runDelayed(() => this.updateBalance(), 5000);
+        runDelayed(() => {
+            void this.updateBalance();
+            void this.fetchAndRearmTokenValue();
+        }, 5000);
         return;
     }
 
@@ -148,7 +150,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     private async fetchTokenValue(): Promise<void> {
-        await CurrencyService.instance.fetchERC20TokenValue(this.getDisplayBalance(), this.coin, this.network, 'USD');
+        await CurrencyService.instance.fetchERC20TokenValue(this.coin, this.network);
     }
 
     public getUniqueIdentifierOnNetwork(): string {
@@ -327,7 +329,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
             if (rawBalance) {
                 this.balance = new BigNumber(rawBalance);
                 await this.saveBalanceToCache();
-                // Logger.log('wallet', this.coin.getName(), this.id + ": balance:", this.getRawBalance().toFixed());
+                // Logger.log('wallet', this.coin.getSymbol(), this.id + ": balance:", this.getRawBalance().toFixed());
             }
         } catch (error) {
             Logger.log('wallet', 'ERC20 Token (', this.coin.getSymbol(), this.id, ') updateBalance error:', error);

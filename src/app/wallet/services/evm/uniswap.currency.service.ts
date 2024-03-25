@@ -55,7 +55,7 @@ export class UniswapCurrencyService {
     if (!currencyProvider)
       return 0;
 
-    //Logger.log('walletdebug', "getTokenUSDValue", erc20coin.getName(), erc20coin.getContractAddress());
+    // Logger.log('walletdebug', "getTokenUSDValue", erc20coin.getSymbol(), erc20coin.getContractAddress());
 
     let chainId = network.getMainChainID();
     let swapFactoryAddress = currencyProvider.getFactoryAddress();

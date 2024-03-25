@@ -57,7 +57,7 @@ export class GlobalEthereumRPCService {
       return -1;
     } */
 
-    public async eth_getBalance(rpcApiUrl: string, address: string, limitatorName = "default"): Promise<BigNumber> {
+    public async eth_getBalance(rpcApiUrl: string, address: string, limitatorName = "default", highPriority = false): Promise<BigNumber> {
         const param = {
             method: 'eth_getBalance',
             params: [
@@ -70,7 +70,7 @@ export class GlobalEthereumRPCService {
 
         try {
             // Normal 10s is enough for get balance.
-            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 10000);
+            let balanceString = await this.globalJsonRPCService.httpPost(rpcApiUrl, param, limitatorName, 10000, false, highPriority);
             return new BigNumber(balanceString);
         }
         catch (err) {

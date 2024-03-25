@@ -1,7 +1,7 @@
 <ion-content>
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <img [src]="!theme.darkMode ? 'assets/wallet/coins/ela-black.svg' : 'assets/wallet/coins/ela-white.svg'" />
+        <img src="/assets/wallet/networks/elastos.png" />
         <div *ngIf="displayedKey" class="qrcode-container">
             <qrcode [qrdata]="displayedKey" [width]="200"></qrcode>
         </div>

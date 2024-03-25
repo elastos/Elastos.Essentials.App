@@ -440,13 +440,13 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async update() {
-    await this.updateBalance();
+    await this.updateBalance(true);
   }
 
-  public async updateBalance(): Promise<void> {
+  public async updateBalance(highPriority = false): Promise<void> {
     // this.balance = await this.getBalanceByWeb3();
     const address = await this.getAccountAddress();
-    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
+    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key, highPriority);
     if (balance) {
       this.balance = balance;
       await this.saveBalanceToCache();
