@@ -113,7 +113,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         await super.startBackgroundUpdates();
 
         runDelayed(() => {
-            void this.updateBalance();
+            void this.updateBalance(true);
             void this.fetchAndRearmTokenValue();
         }, 5000);
         return;
@@ -142,6 +142,8 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     }
 
     private async fetchAndRearmTokenValue(): Promise<void> {
+        if (this.backGroundUpdateStoped) return;
+
         await this.fetchTokenValue();
 
         this.fetchTokenValueTimer = setTimeout(() => {
@@ -306,16 +308,20 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
         }
     }
 
-    public async update() {
-        await this.updateBalance();
+    public async update(runInBackground = false) {
+        await this.updateBalance(runInBackground);
     }
 
-    public async updateBalance(): Promise<void> {
+    public async updateBalance(runInBackground = false): Promise<void> {
         // BPI REMOVED - This method should update when we call it. The backGroundUpdateStoped logic must be done somewhere else.
         // if (this.backGroundUpdateStoped) return;
         //Logger.log('wallet', "Updating ERC20 token balance for token: ", this.coin.getName());
         if (typeof (this.tokenDecimals) == "undefined" || this.tokenDecimals === null) {
             Logger.error("wallet", "Token decimals unknown for token " + this.coin.getID());
+            return;
+        }
+
+        if (runInBackground && this.backGroundUpdateStoped) {
             return;
         }
 

@@ -107,7 +107,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                 await this.checkAddresses(true);
                 await this.checkAddresses(false);
             }
-            await this.updateBalance();
+            await this.updateBalance(true);
             await this.updatePendingTransaction();
         }, 1000);
     }
@@ -350,14 +350,14 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return true;
     }
 
-    public async update() {
-        await this.getBalanceByRPC();
-        await this.updateStakedBalance();
+    public async update(runInBackground = false) {
+        await this.getBalanceByRPC(runInBackground);
+        await this.updateStakedBalance(runInBackground);
     }
 
-    public async updateBalance() {
-        await this.getBalanceByRPC();
-        await this.updateStakedBalance();
+    public async updateBalance(runInBackground = false) {
+        await this.getBalanceByRPC(runInBackground);
+        await this.updateStakedBalance(runInBackground);
     }
 
     /**
@@ -565,6 +565,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         let findTx = false;
         try {
             do {
+                if (this.backGroundUpdateStoped) return false;
+
                 findTx = false;
                 let addressArray = this.networkWallet.safe.getAddresses(startIndex, checkCount, internal, AddressUsage.DEFAULT);
                 const txRawList = await GlobalElastosAPIService.instance.getTransactionsByAddress(this.id as StandardCoinName, addressArray, this.TRANSACTION_LIMIT, 0);
@@ -923,7 +925,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     /**
      * Get balance by type
      */
-    public async getTotalBalanceByType(spendable = false) {
+    public async getTotalBalanceByType(spendable = false, runInBackground = false) {
         let totalBalance = new BigNumber(0);
         let balanceList;
 
@@ -931,7 +933,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         // The Single Address Wallet should use the external address.
         if (!this.isSingleAddress()) {
-            balanceList = await this.getBalanceByAddress(true, spendable);
+            balanceList = await this.getBalanceByAddress(true, spendable, runInBackground);
             if (!balanceList || balanceList.value == null) {
                 return null;
             }
@@ -939,7 +941,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
             addressWithBalanceArrayTemp = balanceList.addresses;
         }
 
-        balanceList = await this.getBalanceByAddress(false, spendable);
+        balanceList = await this.getBalanceByAddress(false, spendable, runInBackground);
         if (!balanceList || balanceList.value == null) {
             return null;
         }
@@ -948,7 +950,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
 
         if (this.id == StandardCoinName.ELA) {
             // Coinbase reward, eg. dpos
-            balanceList = await this.getBalanceByOwnerAddress(spendable);
+            balanceList = await this.getBalanceByOwnerAddress(spendable, runInBackground);
             if (balanceList && (balanceList.value !== null)) {
                 totalBalance = totalBalance.plus(balanceList.value);
                 addressWithBalanceArrayTemp = [...addressWithBalanceArrayTemp, ...balanceList.addresses];
@@ -969,10 +971,10 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     /**
      * Get balance by RPC
      */
-    public async getBalanceByRPC() {
-        if (this.backGroundUpdateStoped) return;
+    public async getBalanceByRPC(runInBackground = false) {
+        if (runInBackground && this.backGroundUpdateStoped) return;
 
-        let totalBalance = await this.getTotalBalanceByType(false);
+        let totalBalance = await this.getTotalBalanceByType(false, runInBackground);
         if (totalBalance !== null) {
             this.balance = totalBalance;
             await this.saveBalanceToCache();
@@ -988,7 +990,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return this.stakedBalance;
     }
 
-    public async updateStakedBalance() {
+    public async updateStakedBalance(runInBackground = false) {
+        if (runInBackground && this.backGroundUpdateStoped) return;
+
         var stakeAddress = this.getOwnerStakeAddress();
         if (stakeAddress) {
             const result = await GlobalElastosAPIService.instance.getVoteRights(stakeAddress);
@@ -1060,7 +1064,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         return (this.networkWallet.safe as any as ElastosMainChainSafe).verifyDigest(publicKey, digest, signature);
     }
 
-    private async getBalanceByOwnerAddress(spendable = false) {
+    private async getBalanceByOwnerAddress(spendable = false, runInBackground = false) {
+        if (runInBackground && this.backGroundUpdateStoped) return;
+
         if (this.id != StandardCoinName.ELA) return;
 
         let ownerAddress = this.getOwnerAddress();
@@ -1077,7 +1083,7 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
         }
     }
 
-    private async getBalanceByAddress(internalAddress: boolean, spendable = false) {
+    private async getBalanceByAddress(internalAddress: boolean, spendable = false, runInBackground = false) {
         let startIndex = 0;
         let totalBalanceList: BalanceList = {
             value: null,
@@ -1095,6 +1101,8 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
                     break;
                 }
             }
+
+            if (runInBackground && this.backGroundUpdateStoped) return null;
 
             addressArray = this.networkWallet.safe.getAddresses(startIndex, count, internalAddress, AddressUsage.DEFAULT);
             startIndex += addressArray.length;

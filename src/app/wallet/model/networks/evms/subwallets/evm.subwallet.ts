@@ -63,7 +63,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     await super.startBackgroundUpdates();
 
     setTimeout(() => {
-      void this.updateBalance();
+      void this.updateBalance(false, true);
     }, 2000);
 
     return;
@@ -443,7 +443,11 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     await this.updateBalance(true);
   }
 
-  public async updateBalance(highPriority = false): Promise<void> {
+  public async updateBalance(highPriority = false, runInBackground = false): Promise<void> {
+    if (runInBackground && this.backGroundUpdateStoped) {
+      return;
+    }
+
     // this.balance = await this.getBalanceByWeb3();
     const address = await this.getAccountAddress();
     const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key, highPriority);
