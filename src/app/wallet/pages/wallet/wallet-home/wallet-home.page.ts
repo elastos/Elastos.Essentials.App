@@ -550,4 +550,14 @@ export class WalletHomePage implements OnInit, OnDestroy {
       this.native.toast(confirmationMessage);
       void this.native.copyClipboard(address);
     }
+
+    public canSwitchWallet() {
+        if (!this.networkWallet) {
+            // The activity wallet does not support the current network,
+            // but users can choose to switch to another wallet
+            return this.getPotentialActiveWallets().length >= 1
+        } else {
+            return this.getPotentialActiveWallets().length > 1
+        }
+    }
 }
