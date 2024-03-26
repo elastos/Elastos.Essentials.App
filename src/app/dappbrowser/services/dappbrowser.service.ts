@@ -746,7 +746,17 @@ export class DappBrowserService implements GlobalService {
         });
 
         // 32 Bytes - the transaction hash, or the zero hash if the transaction is not yet available.
-        this.sendInjectedResponse("ethereum", message.data.id, response.result.txid);
+        if (response.result.txid) {
+            this.sendInjectedResponse("ethereum", message.data.id, response.result.txid);
+        } else {
+            let errorMessage = 'Transaction rejected.';
+            let code = 32003;
+            if (response.result.status == 'cancelled') {
+                errorMessage = "User rejected the request.";
+                code = 4001;
+            }
+            this.sendInjectedError("ethereum", message.data.id, { code: code, message: errorMessage});
+        }
     }
 
     /**
