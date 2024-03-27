@@ -3,21 +3,21 @@
 .container {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
-    padding: 20px 10px;
+    min-height: 105%; // Ensure that the page can be scrolled and the bottom element is not covered by the button.
+    padding: 10px 10px;
     object-fit: cover;
 
     ion-card {
         ion-card-header {
             position: relative;
-            margin: 50px 10px 30px;
+            margin: 50px 10px 10px;
             background: var(--essentials-box-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-radius: 15px;
-            padding: 25px 15px 30px;
+            padding: 25px 15px 10px;
             overflow: visible;
 
             .img {
@@ -50,7 +50,6 @@
     .network-row {
         border-radius: 17px;
         padding: 5px 10px;
-        margin-bottom: 7.5px;
         background-color: transparent;
 
         ion-col {
@@ -77,7 +76,7 @@
     }
 
     .msg-container {
-        padding: 20px 20px 5px;
+        padding: 10px 20px 5px;
 
         p,
         h1 {
@@ -93,7 +92,7 @@
         }
 
         h1 {
-            margin: 15px 0 30px;
+            margin: 15px 0 20px;
             font-size: 22px;
             letter-spacing: 0.55px;
 
