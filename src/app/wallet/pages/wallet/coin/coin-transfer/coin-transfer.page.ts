@@ -942,8 +942,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         if (this.feeOfTRX) {
             let nativeFee = this.feeOfTRX + ' ' + WalletNetworkService.instance.activeNetwork.value.getMainTokenSymbol();
-            let mainTokenSubwellet = this.networkWallet.getMainTokenSubWallet();
-            let currencyFee = mainTokenSubwellet.getAmountInExternalCurrency(new BigNumber(this.feeOfTRX)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
+            let mainTokenSubWallet = this.networkWallet.getMainTokenSubWallet();
+            let currencyFee = mainTokenSubWallet.getAmountInExternalCurrency(new BigNumber(this.feeOfTRX)).toString() + ' ' + CurrencyService.instance.selectedCurrency.symbol;
             feeString = `${nativeFee} (~ ${currencyFee})`;
         }
 
