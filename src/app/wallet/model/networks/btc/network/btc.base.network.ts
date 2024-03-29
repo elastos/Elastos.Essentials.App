@@ -62,6 +62,11 @@ export abstract class BTCNetworkBase extends Network<BTCWalletNetworkOptions> {
         let option = (<LedgerMasterWallet>masterWallet).accountOptions.find((option) => {
           return option.type === LedgerAccountType.BTC
         })
+        if (!option) {
+          // Do not support.
+          return null;
+        }
+
         if (option.accountPath.startsWith("84'")) {
           bitcoinAddressType = BitcoinAddressType.NativeSegwit;
         } else if (option.accountPath.startsWith("86'")) {

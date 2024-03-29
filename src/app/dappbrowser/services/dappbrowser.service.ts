@@ -1179,8 +1179,7 @@ export class DappBrowserService implements GlobalService {
 
     private async getWalletBitcoinAddress(masterWallet: MasterWallet): Promise<string> {
         const bitcoinNetwork = this.getBitcoinNetwork();
-        const bitcoinNetworkWallet = await bitcoinNetwork.newNetworkWallet(masterWallet);
-        await bitcoinNetworkWallet?.initialize();
+        const bitcoinNetworkWallet = await bitcoinNetwork.createNetworkWallet(masterWallet, false)
         const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
         return addresses?.[0];
     }
