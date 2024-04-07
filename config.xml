@@ -265,6 +265,43 @@
                 <string>applinks:packet.fun</string>
             </array>
         </config-file>
+        <privacy-manifest>
+            <key>NSPrivacyAccessedAPITypes</key>
+            <array>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategorySystemBootTime</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>35F9.1</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>CA92.1</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryDiskSpace</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>E174.1</string>
+                    </array>
+                </dict>
+                <dict>
+                    <key>NSPrivacyAccessedAPIType</key>
+                    <string>NSPrivacyAccessedAPICategoryFileTimestamp</string>
+                    <key>NSPrivacyAccessedAPITypeReasons</key>
+                    <array>
+                        <string>C617.1</string>
+                    </array>
+                </dict>
+            </array>
+        </privacy-manifest>
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="20" src="resources/ios/icon/icon-20.png" width="20" />
