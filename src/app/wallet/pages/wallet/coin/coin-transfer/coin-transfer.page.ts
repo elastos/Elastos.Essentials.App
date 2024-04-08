@@ -83,6 +83,7 @@ import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
 import { NetworkInfo } from '../coin-select/coin-select.page';
+import { satsToBtc } from 'src/app/wallet/model/networks/btc/conversions';
 
 @Component({
     selector: 'app-coin-transfer',
@@ -108,7 +109,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public sendMax = false;
 
     public displayBalanceString = '';
-    private displayBalanceLocked = '';
+    public displayBalanceLocked = '';
+
+    public smallUtxoBalanceSATOnBTC: BigNumber;
+    public smallUtxoBalanceOnBTCString = ''
 
     // Display recharge wallets
     public fromSubWallet: AnySubWallet;
@@ -470,8 +474,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         if (this.fromSubWallet instanceof BTCSubWallet) {
             void this.getAllBTCFeerate()
+            this.smallUtxoBalanceSATOnBTC = await this.fromSubWallet.getBalanceWithSmallUtxo()
+            if (this.smallUtxoBalanceSATOnBTC.isPositive()) {
+                this.smallUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.fromSubWallet.getDisplayAmount(this.smallUtxoBalanceSATOnBTC));
+            }
         }
-
 
         this.displayBalanceString = this.uiService.getFixedBalance(this.networkWallet.subWallets[this.subWalletId].getDisplayBalance());
         void this.getBalanceSpendable();
@@ -811,6 +818,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
 
+                if (!(await this.showConfirmIfNeedUseSmallUtxos(amountBigNumber))) {
+                    return false;
+                }
+
                 if (!this.networkWallet.subWallets[this.subWalletId].isAmountValid(amountBigNumber)) {
                     this.conditionalShowToast('wallet.amount-invalid', showToast);
                     return false;
@@ -820,6 +831,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                 if (fee && !this.networkWallet.getMainTokenSubWallet().isBalanceEnough(fee)) {
                     const message = this.translate.instant("wallet.eth-insuff-balance", { coinName: this.networkWallet.getDisplayTokenName() })
                     this.conditionalShowToast(message, showToast, 4000);
+                    return false;
+                }
+
+                if (!(await this.showConfirmIfNeedUseSmallUtxos(null))) {
                     return false;
                 }
             }
@@ -1384,5 +1399,21 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
     public getCurrenttBtcFeerateTitle() {
         return this.getBtcFeerateTitle(this.btcFeerateUsed)
+    }
+
+    public async showConfirmIfNeedUseSmallUtxos(amount: BigNumber) {
+        if (!(this.fromSubWallet instanceof BTCSubWallet)) {
+            return true;
+        }
+
+        if (this.smallUtxoBalanceSATOnBTC.isZero())
+            return true;
+
+        if ((amount == null) || (!this.fromSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.smallUtxoBalanceSATOnBTC))))) {
+            let noteMessage = this.translate.instant('wallet.btc-small-utxos-info', { smallutxos: this.smallUtxoBalanceOnBTCString });
+            return await this.globalPopupService.ionicConfirm('wallet.btc-small-utxos-title', noteMessage, "common.continue")
+        }
+
+        return true;
     }
 }

@@ -6,15 +6,13 @@ import { Logger } from "src/app/logger";
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { BTCOutputData, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS, BitcoinAddressType } from "../../../btc.types";
+import { BTCOutputData, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS, BitcoinAddressType, UtxoDust } from "../../../btc.types";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from '../../../safes/safe.types';
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from '../../base/subwallets/subwallet';
 import { BTCSafe } from "./btc.safe";
-
-const DUST = 550; // TODO: How to calculate the dust value?
 
 type AccountInfo = {
   address: string;
@@ -232,7 +230,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         // change
         let changeAmount = totalAmount - rawTransaction.outputs[0].Amount - rawTransaction.fee;
         Logger.log('wallet', 'BTCWalletJSSafe changeAmount ', changeAmount)
-        if (changeAmount >= DUST) {
+        if (changeAmount >= UtxoDust) {
             psbt.addOutput({address: this.btcAddress, value: changeAmount});
         } else {
             // Bitcoin Core considers a transaction output to be dust, when its value is lower than the cost of spending it at the dustRelayFee rate.

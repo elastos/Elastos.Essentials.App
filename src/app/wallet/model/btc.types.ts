@@ -1,5 +1,24 @@
 import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
 
+export const UtxoDust = 546;
+export const SmallUtxo = UtxoDust + 10;
+// TODO:
+// export function getUtxoDust(addressType: AddressType) {
+//   if (
+//     addressType === AddressType.P2WPKH ||
+//     addressType === AddressType.M44_P2WPKH
+//   ) {
+//     return 294;
+//   } else if (
+//     addressType === AddressType.P2TR ||
+//     addressType === AddressType.M44_P2TR
+//   ) {
+//     return 330;
+//   } else {
+//     return 546;
+//   }
+// }
+
 export enum BitcoinAddressType {
   Legacy = "legacy",
   P2sh = "p2sh",

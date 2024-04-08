@@ -5,7 +5,7 @@ import { BTCFeeSpeed, GlobalBTCRPCService } from 'src/app/services/global.btc.se
 import { GlobalTranslationService } from 'src/app/services/global.translation.service';
 import { TransactionService } from 'src/app/wallet/services/transaction.service';
 import { Config } from '../../../../config/Config';
-import { BTCOutputData, BTCTransaction, BTCUTXO, BitcoinAddressType } from '../../../btc.types';
+import { BTCOutputData, BTCTransaction, BTCUTXO, BitcoinAddressType, SmallUtxo, UtxoDust } from '../../../btc.types';
 import { StandardCoinName } from '../../../coin';
 import { BridgeProvider } from '../../../earn/bridgeprovider';
 import { EarnProvider } from '../../../earn/earnprovider';
@@ -195,6 +195,31 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     public getTxidList() {
         return this.transactionsList;
+    }
+
+    /**
+     * Small-amount UTXO may contain assets such as inscriptions.
+     * When users use small-amount UTXO, we need to remind users of possible risks.
+     * At the same time, using small-amount UTXO will increase transaction fees.
+     *
+     * TODO: Use other methods to determine whether utxo contains other assets
+     */
+    public async getBalanceWithSmallUtxo(): Promise<BigNumber> {
+        let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.btcAddress);
+        if (!utxoArray)
+            return null;
+
+        // Sort UTXOs by value in descending order
+        let sortedUtxos = utxoArray.sort((a, b) => parseInt(b.value) - parseInt(a.value));
+        let totalAmount = new BigNumber(0);
+        for (let i = sortedUtxos.length - 1; i >= 0; i--) {
+            let valueInSat = new BigNumber(sortedUtxos[i].value)
+            if (valueInSat.gt(SmallUtxo)) {
+                break;
+            }
+            totalAmount = totalAmount.plus(valueInSat);
+        }
+        return totalAmount
     }
 
     /**

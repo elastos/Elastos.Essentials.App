@@ -219,6 +219,8 @@ export const it = {
         "btc-feerate-avg": "Avg",
         "btc-feerate-slow": "Slow",
         "btc-feerate-select-title": "Select fee rate",
+        "btc-small-utxos-title": "Small UTXO(s)",
+        "btc-small-utxos-info": "Your account contains small UTXO(s). The total amount is: {{ smallutxos }} BTC. Please confirm the UTXOs do not contain other assets, otherwise it may lead to asset loss and increase transaction fees!",
 
         /********************
         * Coin Receive Page *

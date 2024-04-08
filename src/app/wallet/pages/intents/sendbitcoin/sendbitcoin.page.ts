@@ -87,6 +87,9 @@ export class SendBitcoinPage implements OnInit {
 
   public currentNetworkName = ''
 
+  public smallUtxoBalanceSATOnBTC: BigNumber;
+  public smallUtxoBalanceOnBTCString = ''
+
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -164,6 +167,11 @@ export class SendBitcoinPage implements OnInit {
     await this.btcSubWallet.updateBalance()
     this.balanceBTC = await this.btcSubWallet.getDisplayBalance();
 
+    this.smallUtxoBalanceSATOnBTC = await this.btcSubWallet.getBalanceWithSmallUtxo()
+    if (this.smallUtxoBalanceSATOnBTC.isPositive()) {
+        this.smallUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.btcSubWallet.getDisplayAmount(this.smallUtxoBalanceSATOnBTC));
+    }
+
     if (this.intentParams.satPerVB) {
       // Fee rate is forced in the intent by the caller
       this.satPerKB = this.intentParams.satPerVB * 1000;
@@ -204,7 +212,8 @@ export class SendBitcoinPage implements OnInit {
   }
 
   async checkValue(): Promise<void> {
-    // Nothing to check
+    if (!(await this.showConfirmIfNeedUseSmallUtxos(this.getTotalTransactionCostInCurrency().totalAsBigNumber)))
+      return
     await this.createTransaction();
   }
 
@@ -404,5 +413,17 @@ export class SendBitcoinPage implements OnInit {
 
   public getCurrentFeeSpeedTitle() {
     return this.getFeeSpeedTitle(this.forcedFeeSpeed);
+  }
+
+  public async showConfirmIfNeedUseSmallUtxos(amount: BigNumber) {
+    if (this.smallUtxoBalanceSATOnBTC.isZero())
+        return true;
+
+    if ((amount == null) || (!this.btcSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.smallUtxoBalanceSATOnBTC))))) {
+        let noteMessage = this.translate.instant('wallet.btc-small-utxos-info', { smallutxos: this.smallUtxoBalanceOnBTCString });
+        return await this.globalPopupService.ionicConfirm('wallet.btc-small-utxos-title', noteMessage, "common.continue")
+    }
+
+    return true;
   }
 }
