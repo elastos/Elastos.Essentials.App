@@ -219,8 +219,8 @@ export const zh = {
         "btc-feerate-avg": "普通",
         "btc-feerate-slow": "慢",
         "btc-feerate-select-title": "选择费率",
-        "btc-small-utxos-title": "此交易将使用小额UTXO",
-        "btc-small-utxos-info": "您的账户中含有小额 UTXO 总金额：{{ smallutxos }} BTC，请确认此UTXO不含有其它资产，否则可能会导致资产流失，且增加交易手续费！",
+        "btc-inscription-utxos-title": "此交易将使用含有铭文的UTXO",
+        "btc-inscription-utxos-info": "您的账户中含有铭文 UTXO 总金额：{{ utxos }} BTC，使用此类UTXO会导致资产流失，请确认是否继续！",
 
         /********************
         * Coin Receive Page *

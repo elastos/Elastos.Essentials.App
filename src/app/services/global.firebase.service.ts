@@ -44,7 +44,7 @@ export class GlobalFirebaseService {
 
     public init(): Promise<void> {
         void this.platform.ready().then(() => {
-            this.appVersion.getVersionNumber().then(res => {
+            void this.appVersion.getVersionNumber().then(res => {
                 if (res && res.endsWith('.d')) {
                     this.debugVersion = true;
                 }

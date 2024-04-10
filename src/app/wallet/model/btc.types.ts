@@ -1,4 +1,6 @@
+import BigNumber from "bignumber.js";
 import { GenericTransaction, TransactionDirection } from "./tx-providers/transaction.types";
+import { UnisatUtxo } from "./unisat.types";
 
 export const UtxoDust = 546;
 export const SmallUtxo = UtxoDust + 10;
@@ -139,20 +141,28 @@ export type BTCTxData = {
  * Result of networkinfo
  */
 export type BTCNetworkInfoResult = {
-    version: number;
-    subversion: string;
-    protocolversion: number;
-    localservices: string;
-    localservicesnames: string[];
-    localrelay: boolean;
-    timeoffset: number;
-    networkactive: number;
-    connections: number;
-    connections_in: number;
-    connections_out: number;
-    networks: any[];
-    relayfee: number; // 0.00001
-    incrementalfee: number;
-    localaddresses: any[];
-    warnings: string;
-  }
+  version: number;
+  subversion: string;
+  protocolversion: number;
+  localservices: string;
+  localservicesnames: string[];
+  localrelay: boolean;
+  timeoffset: number;
+  networkactive: number;
+  connections: number;
+  connections_in: number;
+  connections_out: number;
+  networks: any[];
+  relayfee: number; // 0.00001
+  incrementalfee: number;
+  localaddresses: any[];
+  warnings: string;
+}
+
+/**
+ * For inscription
+ */
+export type InscriptionUtxoData = {
+  total: BigNumber;
+  utxo: UnisatUtxo[]
+}

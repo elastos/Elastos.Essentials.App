@@ -111,8 +111,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     public displayBalanceString = '';
     public displayBalanceLocked = '';
 
-    public smallUtxoBalanceSATOnBTC: BigNumber;
-    public smallUtxoBalanceOnBTCString = ''
+    public inscriptionUtxoBalanceSATOnBTC: BigNumber;
+    public inscriptionUtxoBalanceOnBTCString = ''
 
     // Display recharge wallets
     public fromSubWallet: AnySubWallet;
@@ -130,6 +130,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private btcFeerates: {
         [index: number]: number
     } = {};
+    private filterInscriptionUTXOnBTC = true;
 
     // For Tron
     private feeOfTRX: string = null
@@ -379,8 +380,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                                 this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                             }
                         } else if (this.fromSubWallet instanceof BTCSubWallet) {
-                            // call estimateTransferTransactionGas after input amount
-                            // this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
+                            // estimate fees after input amount
                         } else if (this.fromSubWallet instanceof TRC20SubWallet) {
                             let feeSun = await this.fromSubWallet.estimateTransferTransactionGas();
                             this.feeLimitOfTRX = Util.ceil(feeSun, 10000000);
@@ -421,9 +421,6 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                                 this.gasLimit = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
                             }
                         }
-                        // else if (this.fromSubWallet instanceof BTCSubWallet) {
-                        //     this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas()).toString();
-                        // }
                     }
                     catch (err) {
                         Logger.warn('wallet', 'estimateTransferTransactionGas exception:', err)
@@ -474,9 +471,11 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         if (this.fromSubWallet instanceof BTCSubWallet) {
             void this.getAllBTCFeerate()
-            this.smallUtxoBalanceSATOnBTC = await this.fromSubWallet.getBalanceWithSmallUtxo()
-            if (this.smallUtxoBalanceSATOnBTC.isPositive()) {
-                this.smallUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.fromSubWallet.getDisplayAmount(this.smallUtxoBalanceSATOnBTC));
+            let result = await this.fromSubWallet.getInscriptionUTXO()
+            this.inscriptionUtxoBalanceSATOnBTC = result?.total;
+
+            if (this.inscriptionUtxoBalanceSATOnBTC.isPositive()) {
+                this.inscriptionUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.fromSubWallet.getDisplayAmount(this.inscriptionUtxoBalanceSATOnBTC));
             }
         }
 
@@ -523,7 +522,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     this.toAddress, // User input address
                     new BigNumber(this.amount), // User input amount
                     this.memo, // User input memo
-                    this.btcFeerateUsed
+                    this.btcFeerateUsed,
+                    this.filterInscriptionUTXOnBTC
                 );
             }
             else if (this.fromSubWallet instanceof MainCoinSubWallet) {
@@ -762,17 +762,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
 
         if (this.fromSubWallet instanceof BTCSubWallet) {
             // Calculate fee after input amount
-            try {
-              this.feeOfBTC = (await this.fromSubWallet.estimateTransferTransactionGas(this.btcFeerateUsed, null, new BigNumber(this.amount))).toString();
-            } catch (e) {
-              let stringifiedError = "" + e;
-              let message = 'Failed to estimate fee';
-              if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
-                message = 'wallet.insufficient-balance';
-              }
-              this.conditionalShowToast(message, showToast);
-              return false;
-            }
+            let ret = await this.estimateBTCFees();
+            if (!ret) return ret;
         }
 
         let fee = null;
@@ -818,7 +809,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
 
-                if (!(await this.showConfirmIfNeedUseSmallUtxos(amountBigNumber))) {
+                if (!(await this.showConfirmIfNeedUseInscriptionUtxos(amountBigNumber))) {
                     return false;
                 }
 
@@ -834,7 +825,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
 
-                if (!(await this.showConfirmIfNeedUseSmallUtxos(null))) {
+                if (!(await this.showConfirmIfNeedUseInscriptionUtxos(null))) {
                     return false;
                 }
             }
@@ -1401,19 +1392,47 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         return this.getBtcFeerateTitle(this.btcFeerateUsed)
     }
 
-    public async showConfirmIfNeedUseSmallUtxos(amount: BigNumber) {
+    public async showConfirmIfNeedUseInscriptionUtxos(amount: BigNumber) {
         if (!(this.fromSubWallet instanceof BTCSubWallet)) {
             return true;
         }
 
-        if (this.smallUtxoBalanceSATOnBTC.isZero())
+        if (this.inscriptionUtxoBalanceSATOnBTC.isZero())
             return true;
 
-        if ((amount == null) || (!this.fromSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.smallUtxoBalanceSATOnBTC))))) {
-            let noteMessage = this.translate.instant('wallet.btc-small-utxos-info', { smallutxos: this.smallUtxoBalanceOnBTCString });
-            return await this.globalPopupService.ionicConfirm('wallet.btc-small-utxos-title', noteMessage, "common.continue")
+        if ((amount == null) || (!this.fromSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.inscriptionUtxoBalanceSATOnBTC))))) {
+            let noteMessage = this.translate.instant('wallet.btc-inscription-utxos-info', { utxos: this.inscriptionUtxoBalanceOnBTCString });
+            let result = await this.globalPopupService.ionicConfirm('wallet.btc-inscription-utxos-title', noteMessage, "common.continue")
+            this.filterInscriptionUTXOnBTC = !result;
+            return result;
         }
 
         return true;
+    }
+
+    public async estimateBTCFees() {
+        // Calculate fee after input amount
+        let amountBigNumber = new BigNumber(this.amount || 0)
+        try {
+            this.feeOfBTC = (await (<BTCSubWallet>this.fromSubWallet).estimateTransferTransactionGas(this.btcFeerateUsed, null, amountBigNumber, this.filterInscriptionUTXOnBTC)).toString();
+            return true;
+        } catch (e) {
+            let stringifiedError = "" + e;
+            let message = 'Failed to estimate fee';
+            if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
+                message = 'wallet.insufficient-balance';
+
+                if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.filterInscriptionUTXOnBTC) {
+                    let result = await this.showConfirmIfNeedUseInscriptionUtxos(amountBigNumber)
+                    if (result) {
+                        this.filterInscriptionUTXOnBTC = false;
+                        // Use inscriotion utxo to re-estimate
+                        return await this.estimateBTCFees();
+                    }
+                }
+            }
+            this.conditionalShowToast(message, true);
+            return false;
+        }
     }
 }

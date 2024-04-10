@@ -35,6 +35,7 @@ import { GlobalTronGridService } from './services/global.tron.service';
 import { GlobalThemeService } from './services/theming/global.theme.service';
 import { GlobalWalletConnectService } from './services/walletconnect/global.walletconnect.service';
 import { VoteService } from './voting/services/vote.service';
+import { GlobalUnisatApiService } from './services/global.unisat.service';
 
 
 declare let didManager: DIDPlugin.DIDManager;
@@ -72,6 +73,7 @@ export class AppComponent {
     private globalStartupService: GlobalStartupService,
     public globalEthereumService: GlobalEthereumRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalBTCService: GlobalBTCRPCService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
+    public globalUnisatApiService: GlobalUnisatApiService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalTronGridService: GlobalTronGridService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     public globalCosmosService: GlobalCosmosService, // IMPORTANT: Unused by this component, but keep it here for instantiation by angular
     private voteService: VoteService,
@@ -132,6 +134,7 @@ export class AppComponent {
       // Init after globalNetworksService.init()
       void this.globalTronGridService.init();
       void this.globalCosmosService.init();
+      void this.globalUnisatApiService.init();
 
       await this.widgetsService.init();
 
