@@ -523,6 +523,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     new BigNumber(this.amount), // User input amount
                     this.memo, // User input memo
                     this.btcFeerateUsed,
+                    null,
                     this.filterInscriptionUTXOnBTC
                 );
             }
