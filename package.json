@@ -207,7 +207,7 @@
     "cordova-plugin-lottie-splashscreen": "^0.9.6",
     "cordova-plugin-printer": "0.8.0",
     "cordova-plugin-qrscanner": "3.0.1",
-    "cordova-plugin-screen-orientation": "3.0.2",
+    "cordova-plugin-screen-orientation": "^3.0.4",
     "cordova-plugin-statusbar": "2.4.3",
     "cordova-sqlite-storage": "6.0.0",
     "dotenv": "^14.3.2",
