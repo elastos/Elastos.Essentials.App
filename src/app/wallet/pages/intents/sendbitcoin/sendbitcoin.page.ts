@@ -89,7 +89,7 @@ export class SendBitcoinPage implements OnInit {
 
   public inscriptionUtxoBalanceSATOnBTC: BigNumber;
   public inscriptionUtxoBalanceOnBTCString = ''
-  private filterInscriptionUTXOnBTC = true;
+  private useInscriptionUTXO = false; // Not using inscription utxo
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -168,11 +168,12 @@ export class SendBitcoinPage implements OnInit {
     await this.btcSubWallet.updateBalance()
     this.balanceBTC = await this.btcSubWallet.getDisplayBalance();
 
-    let result = await this.btcSubWallet.getInscriptionUTXO()
-    this.inscriptionUtxoBalanceSATOnBTC = result?.total;
-    if (this.inscriptionUtxoBalanceSATOnBTC.isPositive()) {
-        this.inscriptionUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.btcSubWallet.getDisplayAmount(this.inscriptionUtxoBalanceSATOnBTC));
-    }
+    // Not using inscription utxo
+    // let result = await this.btcSubWallet.getInscriptionUTXO()
+    // this.inscriptionUtxoBalanceSATOnBTC = result?.total;
+    // if (this.inscriptionUtxoBalanceSATOnBTC.isPositive()) {
+    //     this.inscriptionUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.btcSubWallet.getDisplayAmount(this.inscriptionUtxoBalanceSATOnBTC));
+    // }
 
     if (this.intentParams.satPerVB) {
       // Fee rate is forced in the intent by the caller
@@ -214,8 +215,8 @@ export class SendBitcoinPage implements OnInit {
   }
 
   async checkValue(): Promise<void> {
-    if (!(await this.showConfirmIfNeedUseInscriptionUtxos(this.getTotalTransactionCostInCurrency().totalAsBigNumber)))
-      return
+    // if (!(await this.showConfirmIfNeedUseInscriptionUtxos(this.getTotalTransactionCostInCurrency().totalAsBigNumber)))
+    //   return
     await this.createTransaction();
   }
 
@@ -270,7 +271,7 @@ export class SendBitcoinPage implements OnInit {
         '',
         this.forcedFeeSpeed,
         this.satPerKB,
-        this.filterInscriptionUTXOnBTC
+        this.useInscriptionUTXO
       );
     } catch (err) {
       await this.parseException(err);
@@ -353,7 +354,7 @@ export class SendBitcoinPage implements OnInit {
   public async estimateBTCFees(forcedSatsPerKB: number) {
     // Calculate fee after input amount
     try {
-        let feesSAT = await (this.btcSubWallet).estimateTransferTransactionGas(this.forcedFeeSpeed, forcedSatsPerKB, this.sendAmountOfBTC, this.filterInscriptionUTXOnBTC);
+        let feesSAT = await (this.btcSubWallet).estimateTransferTransactionGas(this.forcedFeeSpeed, forcedSatsPerKB, this.sendAmountOfBTC, this.useInscriptionUTXO);
         this.feesBTC = satsToBtc(feesSAT);
         return true;
     } catch (e) {
@@ -361,15 +362,15 @@ export class SendBitcoinPage implements OnInit {
         let message = 'Failed to estimate fee';
         if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
             message = 'wallet.insufficient-balance';
-
-            if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.filterInscriptionUTXOnBTC) {
-                let result = await this.showConfirmIfNeedUseInscriptionUtxos(this.sendAmountOfBTC)
-                if (result) {
-                    this.filterInscriptionUTXOnBTC = false;
-                    // Use inscriotion utxo to re-estimate
-                    return await this.estimateBTCFees(forcedSatsPerKB);
-                }
-            }
+            // Not using inscription utxo
+            // if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.useInscriptionUTXO) {
+            //     let result = await this.showConfirmIfNeedUseInscriptionUtxos(this.sendAmountOfBTC)
+            //     if (result) {
+            //         this.useInscriptionUTXO = true;
+            //         // Use inscriotion utxo to re-estimate
+            //         return await this.estimateBTCFees(forcedSatsPerKB);
+            //     }
+            // }
         }
         this.native.toast_trans(message, 4000);
         return false;
@@ -435,17 +436,18 @@ export class SendBitcoinPage implements OnInit {
     return this.getFeeSpeedTitle(this.forcedFeeSpeed);
   }
 
-  public async showConfirmIfNeedUseInscriptionUtxos(amount: BigNumber) {
-    if (this.inscriptionUtxoBalanceSATOnBTC.isZero())
-        return true;
+  // Not using inscription utxo
+  // public async showConfirmIfNeedUseInscriptionUtxos(amount: BigNumber) {
+  //   if (this.inscriptionUtxoBalanceSATOnBTC.isZero())
+  //       return true;
 
-    if ((amount == null) || (!this.btcSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.inscriptionUtxoBalanceSATOnBTC))))) {
-        let noteMessage = this.translate.instant('wallet.btc-inscription-utxos-info', { utxos: this.inscriptionUtxoBalanceOnBTCString });
-        let result = await this.globalPopupService.ionicConfirm('wallet.btc-inscription-utxos-title', noteMessage, "common.continue")
-        this.filterInscriptionUTXOnBTC = !result;
-        return result;
-    }
+  //   if ((amount == null) || (!this.btcSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.inscriptionUtxoBalanceSATOnBTC))))) {
+  //       let noteMessage = this.translate.instant('wallet.btc-inscription-utxos-info', { utxos: this.inscriptionUtxoBalanceOnBTCString });
+  //       let result = await this.globalPopupService.ionicConfirm('wallet.btc-inscription-utxos-title', noteMessage, "common.continue")
+  //       this.useInscriptionUTXO = result;
+  //       return result;
+  //   }
 
-    return true;
-  }
+  //   return true;
+  // }
 }

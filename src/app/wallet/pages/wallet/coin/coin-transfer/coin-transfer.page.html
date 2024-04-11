@@ -173,6 +173,16 @@
                         translate:{locked: displayBalanceLocked} }}</strong>
                 </p>
             </ion-row>
+            <ion-row class="toggle-row" *ngIf="canShowToogleForInscription()">
+                <ion-col class="left-col" size="10">
+                    <h1 *ngIf="useInscriptionUTXO">{{ 'wallet.btc-send-inscription-utxos' | translate:{utxos: inscriptionUtxoBalanceOnBTCString}  }}</h1>
+                    <h1 *ngIf="!useInscriptionUTXO">{{ 'wallet.btc-not-send-inscription-utxos' | translate }}</h1>
+                </ion-col>
+                <ion-col class="right-col" size="2">
+                    <ion-toggle mode="ios" [(ngModel)]="useInscriptionUTXO">
+                    </ion-toggle>
+                </ion-col>
+            </ion-row>
 
             <!-- Receiver info -->
             <h1>{{ 'wallet.send-to' | translate }}</h1>
@@ -254,7 +264,7 @@
         <div *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3" class="footer-container ion-no-border"
             [class.dark-footer]="theme.darkMode">
             <ion-row class="btn-container">
-                <ebutton (clicked)="goTransaction()" [title]="getButtonLabel() | translate">
+                <ebutton (clicked)="goTransaction()" [title]="getButtonLabel() | translate" [disabled]="actionIsGoing">
                 </ebutton>
             </ion-row>
         </div>

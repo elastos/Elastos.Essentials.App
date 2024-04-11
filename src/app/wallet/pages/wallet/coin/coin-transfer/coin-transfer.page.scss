@@ -329,6 +329,40 @@
             }
         }
 
+        .toggle-row {
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            margin-top: 10px;
+            padding: 0 15px;
+
+            ion-col {
+                padding: 0;
+                display: flex;
+                align-items: center;
+            }
+
+            .left-col {
+                justify-content: flex-start;
+
+                h1 {
+                    margin: 0;
+                    font-size: 13px;
+                    font-weight: 400;
+                    letter-spacing: 0.9px;
+                    text-align: left;
+                }
+            }
+
+            .right-col {
+                justify-content: flex-end;
+
+                ion-toggle {
+                    zoom: 0.6;
+                }
+            }
+        }
+
         .contact-row {
             p {
                 width: 100%;

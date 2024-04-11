@@ -130,7 +130,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private btcFeerates: {
         [index: number]: number
     } = {};
-    private filterInscriptionUTXOnBTC = true;
+    public useInscriptionUTXO = false;
 
     // For Tron
     private feeOfTRX: string = null
@@ -188,6 +188,8 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     private showCryptonamesOption = false;
     private publicationStatusSub: Subscription;
     private ethTransactionSpeedupSub: Subscription;
+
+    public actionIsGoing = false;
 
     constructor(
         public route: ActivatedRoute,
@@ -474,7 +476,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             let result = await this.fromSubWallet.getInscriptionUTXO()
             this.inscriptionUtxoBalanceSATOnBTC = result?.total;
 
-            if (this.inscriptionUtxoBalanceSATOnBTC.isPositive()) {
+            if (this.inscriptionUtxoBalanceSATOnBTC?.isGreaterThan(0)) {
                 this.inscriptionUtxoBalanceOnBTCString = this.uiService.getFixedBalance(this.fromSubWallet.getDisplayAmount(this.inscriptionUtxoBalanceSATOnBTC));
             }
         }
@@ -524,7 +526,7 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     this.memo, // User input memo
                     this.btcFeerateUsed,
                     null,
-                    this.filterInscriptionUTXOnBTC
+                    this.useInscriptionUTXO
                 );
             }
             else if (this.fromSubWallet instanceof MainCoinSubWallet) {
@@ -738,12 +740,20 @@ export class CoinTransferPage implements OnInit, OnDestroy {
     resetAmountInput() {
         this.sendMax = false;
         this.amount = null;
+        this.useInscriptionUTXO = false;
+    }
+
+    // if user has no inscription, or if not max clicked, don't show the toggle
+    canShowToogleForInscription() {
+        return this.sendMax && this.inscriptionUtxoBalanceSATOnBTC?.isGreaterThan(0);
     }
 
     async goTransaction() {
+        this.actionIsGoing = true;
         if (await this.checkValuesReady()) {
             await this.startTransaction();
         }
+        this.actionIsGoing = false;
     }
 
     private conditionalShowToast(message: string, showToast: boolean, duration = 4000) {
@@ -810,9 +820,10 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
 
-                if (!(await this.showConfirmIfNeedUseInscriptionUtxos(amountBigNumber))) {
-                    return false;
-                }
+                // Not using inscription utxo if not max clicked
+                // if (!(await this.showConfirmIfNeedUseInscriptionUtxos(amountBigNumber))) {
+                //     return false;
+                // }
 
                 if (!this.networkWallet.subWallets[this.subWalletId].isAmountValid(amountBigNumber)) {
                     this.conditionalShowToast('wallet.amount-invalid', showToast);
@@ -826,9 +837,9 @@ export class CoinTransferPage implements OnInit, OnDestroy {
                     return false;
                 }
 
-                if (!(await this.showConfirmIfNeedUseInscriptionUtxos(null))) {
-                    return false;
-                }
+                // if (!(await this.showConfirmIfNeedUseInscriptionUtxos(null))) {
+                //     return false;
+                // }
             }
         }
 
@@ -1393,29 +1404,29 @@ export class CoinTransferPage implements OnInit, OnDestroy {
         return this.getBtcFeerateTitle(this.btcFeerateUsed)
     }
 
-    public async showConfirmIfNeedUseInscriptionUtxos(amount: BigNumber) {
-        if (!(this.fromSubWallet instanceof BTCSubWallet)) {
-            return true;
-        }
+    // public async showConfirmIfNeedUseInscriptionUtxos(amount: BigNumber) {
+    //     if (!(this.fromSubWallet instanceof BTCSubWallet)) {
+    //         return true;
+    //     }
 
-        if (this.inscriptionUtxoBalanceSATOnBTC.isZero())
-            return true;
+    //     if (this.inscriptionUtxoBalanceSATOnBTC.isZero())
+    //         return true;
 
-        if ((amount == null) || (!this.fromSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.inscriptionUtxoBalanceSATOnBTC))))) {
-            let noteMessage = this.translate.instant('wallet.btc-inscription-utxos-info', { utxos: this.inscriptionUtxoBalanceOnBTCString });
-            let result = await this.globalPopupService.ionicConfirm('wallet.btc-inscription-utxos-title', noteMessage, "common.continue")
-            this.filterInscriptionUTXOnBTC = !result;
-            return result;
-        }
+    //     if ((amount == null) || (!this.fromSubWallet.isBalanceEnough(amount.plus(satsToBtc(this.inscriptionUtxoBalanceSATOnBTC))))) {
+    //         let noteMessage = this.translate.instant('wallet.btc-inscription-utxos-info', { utxos: this.inscriptionUtxoBalanceOnBTCString });
+    //         let result = await this.globalPopupService.ionicConfirm('wallet.btc-inscription-utxos-title', noteMessage, "common.continue")
+    //         this.useInscriptionUTXO = result;
+    //         return result;
+    //     }
 
-        return true;
-    }
+    //     return true;
+    // }
 
     public async estimateBTCFees() {
         // Calculate fee after input amount
         let amountBigNumber = new BigNumber(this.amount || 0)
         try {
-            this.feeOfBTC = (await (<BTCSubWallet>this.fromSubWallet).estimateTransferTransactionGas(this.btcFeerateUsed, null, amountBigNumber, this.filterInscriptionUTXOnBTC)).toString();
+            this.feeOfBTC = (await (<BTCSubWallet>this.fromSubWallet).estimateTransferTransactionGas(this.btcFeerateUsed, null, amountBigNumber, this.useInscriptionUTXO)).toString();
             return true;
         } catch (e) {
             let stringifiedError = "" + e;
@@ -1423,14 +1434,14 @@ export class CoinTransferPage implements OnInit, OnDestroy {
             if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
                 message = 'wallet.insufficient-balance';
 
-                if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.filterInscriptionUTXOnBTC) {
-                    let result = await this.showConfirmIfNeedUseInscriptionUtxos(amountBigNumber)
-                    if (result) {
-                        this.filterInscriptionUTXOnBTC = false;
-                        // Use inscriotion utxo to re-estimate
-                        return await this.estimateBTCFees();
-                    }
-                }
+                // if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.useInscriptionUTXO) {
+                //     let result = await this.showConfirmIfNeedUseInscriptionUtxos(amountBigNumber)
+                //     if (result) {
+                //         this.useInscriptionUTXO = true;
+                //         // Use inscriotion utxo to re-estimate
+                //         return await this.estimateBTCFees();
+                //     }
+                // }
             }
             this.conditionalShowToast(message, true);
             return false;

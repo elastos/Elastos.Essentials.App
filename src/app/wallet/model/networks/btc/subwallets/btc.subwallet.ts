@@ -266,10 +266,18 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     /**
      * Computes and returns the list of UTXO we have to use to be able to spend the given amount.
      */
-    public async getAvailableUtxo(amount: number, feeInSatPerKB: number, filterInscriptionUTXO = true): Promise<BTCUTXO[]> {
+    public async getAvailableUtxo(amount: number, feeInSatPerKB: number, useInscriptionUTXO = false): Promise<BTCUTXO[]> {
         let utxoArray: BTCUTXO[] = await GlobalBTCRPCService.instance.getUTXO(this.explorerApiUrl, this.btcAddress);
         if (!utxoArray)
             return null;
+
+        // Filter inscription UTXO
+        if (!useInscriptionUTXO) {
+            let inscriptionUTXO = await this.getInscriptionUTXO();
+            inscriptionUTXO.utxo.forEach(utxo => {
+                utxoArray.splice(utxoArray.findIndex(u => u.txid === utxo.txid), 1)
+            });
+        }
 
         if (amount == -1)
             return utxoArray;
@@ -279,14 +287,6 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         let amountWithFee = amount;
         let feeSat = 0;
         let index = 0;
-
-        // Filter inscription UTXO
-        if (filterInscriptionUTXO) {
-            let inscriptionUTXO = await this.getInscriptionUTXO();
-            inscriptionUTXO.utxo.forEach(utxo => {
-                utxoArray.splice(utxoArray.findIndex(u => u.txid === utxo.txid), 1)
-            });
-        }
 
         // Sort UTXOs by value in descending order
         let sortedUtxos = utxoArray.sort((a, b) => parseInt(b.value) - parseInt(a.value));
@@ -320,13 +320,13 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
      * Computes the list of UTXOs, and the total fee user has to pay, for a given
      * amount of BTC and a fee rate.
      */
-    private async getUTXOsAndFee(amountBTC: BigNumber, feeInSatPerKB: number, filterInscriptionUTXO = true) {
+    private async getUTXOsAndFee(amountBTC: BigNumber, feeInSatPerKB: number, useInscriptionUTXO = false) {
         let feeSat: number;
         let utxos: BTCUTXO[] = [];
 
         if (amountBTC.eq(-1)) {
             // Get all available UTXOs
-            utxos = await this.getAvailableUtxo(-1, feeInSatPerKB, filterInscriptionUTXO);
+            utxos = await this.getAvailableUtxo(-1, feeInSatPerKB, useInscriptionUTXO);
             if (!utxos)
                 return null;
 
@@ -334,7 +334,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         } else {
             // In order to estimate how much utxo is needed
             const amountSat = btcToSats(amountBTC).toNumber();
-            utxos = await this.getAvailableUtxo(amountSat, feeInSatPerKB, filterInscriptionUTXO);
+            utxos = await this.getAvailableUtxo(amountSat, feeInSatPerKB, useInscriptionUTXO);
             if (!utxos)
                 return null;
 
@@ -368,7 +368,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
      *
      * @returns Fees, in satoshi
      */
-    public async estimateTransferTransactionGas(feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null, amountBTC: BigNumber = null, filterInscriptionUTXO = true) {
+    public async estimateTransferTransactionGas(feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null, amountBTC: BigNumber = null, useInscriptionUTXO = false) {
         let satPerKB = await this.estimateFeeRate(feeSpeed, forcedSatPerKB);
         Logger.log('wallet', 'BTCSubWallet: satPerKB:', satPerKB)
 
@@ -377,17 +377,17 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         if (!amountBTC)
             return satPerKB;
 
-        let result = await this.getUTXOsAndFee(amountBTC, satPerKB, filterInscriptionUTXO)
+        let result = await this.getUTXOsAndFee(amountBTC, satPerKB, useInscriptionUTXO)
         if (!result)
           throw new Error("BTCSubWallet: Utxo is not enough");
         return result.feeSat;
     }
 
-    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null, filterInscriptionUTXO = true): Promise<string> {
+    public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo = "", feeSpeed = BTCFeeSpeed.AVERAGE, forcedSatPerKB = null, useInscriptionUTXO = false): Promise<string> {
         let satPerKB = await this.estimateFeeRate(feeSpeed, forcedSatPerKB);
 
         let toAmount = 0;
-        let { feeSat, utxos } = await this.getUTXOsAndFee(amount, satPerKB, filterInscriptionUTXO)
+        let { feeSat, utxos } = await this.getUTXOsAndFee(amount, satPerKB, useInscriptionUTXO)
         if (amount.eq(-1)) {
             toAmount = Math.floor(this.balance.minus(feeSat).toNumber());
         } else {

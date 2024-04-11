@@ -221,6 +221,8 @@ export const zh = {
         "btc-feerate-select-title": "选择费率",
         "btc-inscription-utxos-title": "此交易将使用含有铭文的UTXO",
         "btc-inscription-utxos-info": "您的账户中含有铭文 UTXO 总金额：{{ utxos }} BTC，使用此类UTXO会导致资产流失，请确认是否继续！",
+        'btc-send-inscription-utxos': "使用铭文UTXO {{ utxos }} BTC",
+        'btc-not-send-inscription-utxos': "不使用铭文UTXO",
 
         /********************
         * Coin Receive Page *

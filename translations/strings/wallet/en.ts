@@ -221,6 +221,8 @@ export const en = {
         "btc-feerate-select-title": "Select fee rate",
         "btc-inscription-utxos-title": "Inscription UTXO(s)",
         "btc-inscription-utxos-info": "Your account contains inscription UTXO(s). The total amount is: {{ utxos }} BTC. Using this type of UTXO will result in asset loss, please confirm whether to continue!",
+        'btc-send-inscription-utxos': "Send inscriptions {{ utxos }} BTC",
+        'btc-not-send-inscription-utxos': "Don't send inscriptions",
 
         /********************
         * Coin Receive Page *
