@@ -12,7 +12,7 @@ module.exports = (context) => {
   const podfilePath = path.resolve(platformPath, "Podfile");
 
   if (!fs.existsSync(podfilePath)) {
-    console.log(`'${podfilePath}' does not exist. Firebase deployment fix skipped.`);
+    console.log(`'${podfilePath}' does not exist. Pod deployment fix skipped.`);
     return;
   }
 
@@ -24,6 +24,7 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+      config.build_settings['ONLY_ACTIVE_ARCH'] = 'NO'
     end
   end
 end`;

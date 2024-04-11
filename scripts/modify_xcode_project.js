@@ -1,5 +1,35 @@
 "use strict";
 
+const fs = require('fs'),
+xcode = require('xcode');
+
+function updateCordovaProject() {
+  let cordovaProjPath = 'platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj',
+  cordovaProj = xcode.project(cordovaProjPath);
+
+  let promise = new Promise(function(resolve, reject) {
+    (async () => {
+      cordovaProj.parse(function (err) {
+        //
+        // Add build settings
+        //
+        cordovaProj.addToBuildSettings("ONLY_ACTIVE_ARCH", "NO");
+        cordovaProj.addToBuildSettings("IPHONEOS_DEPLOYMENT_TARGET", "13.0");
+
+
+        //
+        // Write back the new XCode project
+        //
+        console.log("Writing to " + cordovaProjPath);
+        fs.writeFileSync(cordovaProjPath, cordovaProj.writeSync());
+        resolve();
+      })
+    })()
+  });
+
+  return promise;
+}
+
 module.exports = function(ctx) {
   // console.log(JSON.stringify(ctx, null, 2));
 
@@ -11,18 +41,13 @@ module.exports = function(ctx) {
     return;
   }
 
-  const fs = require('fs'),
-        path = require('path'),
-        join = require('path').join,
-        xcode = require('xcode');
-
   let projectPath = 'platforms/ios/Essentials.xcodeproj/project.pbxproj',
       essentialsProj = xcode.project(projectPath);
-      // cordovaProjPath = 'platforms/ios/CordovaLib/CordovaLib.xcodeproj/project.pbxproj',
-      // cordovaProj = xcode.project(cordovaProjPath);
 
   let promise = new Promise(function(resolve, reject) {
     (async () => {
+      await updateCordovaProject();
+
       essentialsProj.parse(function (err) {
         //
         // Embed frameworks and binaries
@@ -52,9 +77,9 @@ module.exports = function(ctx) {
         // Add build settings
         //
         essentialsProj.addToBuildSettings("SWIFT_VERSION", "5.2");
-        // essentialsProj.addToBuildSettings("PRODUCT_BUNDLE_IDENTIFIER", "org.elastos.trinity.browser");
         essentialsProj.addToBuildSettings("CLANG_CXX_LANGUAGE_STANDARD", "\"c++0x\"");
         essentialsProj.addToBuildSettings("MARKETING_VERSION", "1.1.0");
+        essentialsProj.addToBuildSettings("ONLY_ACTIVE_ARCH", "NO");
 
         //
         // Set SWIFT_OPTIMIZATION_LEVEL -Onone for Debug
