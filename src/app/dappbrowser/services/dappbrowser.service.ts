@@ -34,10 +34,11 @@ import type { EditCustomNetworkIntentResult } from 'src/app/wallet/pages/setting
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { BrowsedAppInfo } from '../model/browsedappinfo';
+import { ElastosMainChainMainNetNetwork, ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
-type InjectedProviderType = "ethereum" | "elastos" | "unisat";
+type InjectedProviderType = "ethereum" | "elastos" | "elamain" | "unisat";
 
 const MAX_RECENT_APPS = 100;
 
@@ -97,6 +98,8 @@ export class DappBrowserService implements GlobalService {
     private activeEVMNetworkRpcUrl: string = null;
     private userBTCAddress: string = null; // Bitcoin wallet address
     private btcRpcUrl: string = null;
+    private userELAMainChainAddress: string = null; // ELA main chain wallet address
+    private elamainRpcUrl: string = null;
 
     private dabClient: DappBrowserClient = null;
     public title: string = null;
@@ -291,6 +294,11 @@ export class DappBrowserService implements GlobalService {
                 const bitcoinNetwork = this.getBitcoinNetwork();
                 this.btcRpcUrl = bitcoinNetwork.getRPCUrl();
                 this.userBTCAddress = await this.getWalletBitcoinAddress(masterWallet);
+
+                // Ela main chain configuration
+                const elamainNetwork = this.getELAMainChainNetwork();
+                this.elamainRpcUrl = elamainNetwork.getRPCUrl();
+                this.userELAMainChainAddress = (await this.getWalletELAMainChainAddresses(masterWallet, 0, 1, false))?.[0];
             }
         }
         else {
@@ -298,6 +306,8 @@ export class DappBrowserService implements GlobalService {
             this.activeChainID = -1;
             this.userBTCAddress = null;
             this.btcRpcUrl = null;
+            this.userELAMainChainAddress = null;
+            this.elamainRpcUrl = null;
         }
 
         var options: any = {
@@ -360,6 +370,10 @@ export class DappBrowserService implements GlobalService {
             bitcoin: bitcoinProvider
         }
         console.log('Essentials Unisat/OKX providers are injected', bitcoinProvider);
+
+        const elamainProvider = new DappBrowserElaMainProvider('${this.elamainRpcUrl}', '${this.userELAMainChainAddress}');
+        window.elamain = elamainProvider;
+        console.log('Essentials Ela main chain providers are injected', elamainProvider);
         `;
 
         Logger.log("dappbrowser", "Loading the IAB elastos connector");
@@ -503,13 +517,16 @@ export class DappBrowserService implements GlobalService {
             }
             this.userBTCAddress = await this.getWalletBitcoinAddress(networkWallet.masterWallet);
 
-            Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress, this.userBTCAddress);
+            this.userELAMainChainAddress = (await this.getWalletELAMainChainAddresses(networkWallet.masterWallet, 0, 1, false))?.[0];
+
+            Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress, this.userBTCAddress, this.userELAMainChainAddress);
 
             await dappBrowser.setInjectedJavascript(await this.getInjectedJs()); // Inject the web3 provider and connector at document start
             void dappBrowser.executeScript({
                 code: `
                     window.ethereum.setAddress('${this.userEVMAddress}');
                     window.unisat.setAddress('${this.userBTCAddress}');
+                    window.elamain.setAddress('${this.userELAMainChainAddress}');
                 `});
         }
     }
@@ -648,6 +665,12 @@ export class DappBrowserService implements GlobalService {
         // UNISAT
         if (message.data.name.startsWith("unisat_")) {
             await this.handleUnisatMessage(message);
+            return;
+        }
+
+        // Elastos main chain
+        if (message.data.name.startsWith("elamain_")) {
+            await this.handleElaMainMessage(message);
             return;
         }
 
@@ -946,6 +969,23 @@ export class DappBrowserService implements GlobalService {
     }
 
     /**
+     * Message has been received from the injected elamain provider.
+     */
+    private async handleElaMainMessage(message: DABMessage) {
+        console.log("Elamain command received", message);
+
+        switch (message.data.name) {
+            case "elamain_getAddresses":
+                const masterWallet = WalletService.instance.getActiveMasterWallet();
+                const addresses = await this.getWalletELAMainChainAddresses(masterWallet, message.data.object.index, message.data.object.count, message.data.object.internal);
+                this.sendInjectedResponse("elamain", message.data.id, addresses);
+                break;
+            default:
+                Logger.warn("dappbrowser", "Unhandled elamain message command", message.data.name);
+        }
+    }
+
+    /**
      * Generic way to receive all kind of intents as if that came from native intents (eg: android).
      * TODO: This should replace other elastos_methods that don't require specific handling one by one.
      */
@@ -1182,5 +1222,15 @@ export class DappBrowserService implements GlobalService {
         const bitcoinNetworkWallet = await bitcoinNetwork.createNetworkWallet(masterWallet, false)
         const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
         return addresses?.[0];
+    }
+
+    private getELAMainChainNetwork(): ElastosMainChainMainNetNetwork {
+        return this.walletNetworkService.getNetworkByKey(ElastosMainChainNetworkBase.networkKey) as ElastosMainChainMainNetNetwork
+    }
+
+    private async getWalletELAMainChainAddresses(masterWallet: MasterWallet, index: number, count: number, internal = false): Promise<string[]> {
+        const elaMainChainNetwork = this.getELAMainChainNetwork();
+        const elaMainChainNetworkWallet = await elaMainChainNetwork.createNetworkWallet(masterWallet, false)
+        return elaMainChainNetworkWallet?.safe.getAddresses(index, count, internal, null);
     }
 }
