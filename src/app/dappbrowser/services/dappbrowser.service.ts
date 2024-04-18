@@ -35,6 +35,8 @@ import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { WalletService } from 'src/app/wallet/services/wallet.service';
 import type { BrowsedAppInfo } from '../model/browsedappinfo';
 import { ElastosMainChainMainNetNetwork, ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { StandardCoinName } from 'src/app/wallet/model/coin';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -63,6 +65,15 @@ export type DABLoadStop = {
     type: "loadstop";
     url: string;
 }
+
+enum AddressType  {
+    Normal_external = 'normal-external',
+    Normal_internal = 'normal-internal',
+    Owner = 'owner',
+    CROwnerDeposit = 'cr-owner-deposit',
+    OwnerDeposit = 'owner-deposit',
+    OwnerStake = 'owner-stake',
+  }
 
 /**
  * Mode used to run dapps. Depending on this mode, different things are done.
@@ -298,7 +309,7 @@ export class DappBrowserService implements GlobalService {
                 // Ela main chain configuration
                 const elamainNetwork = this.getELAMainChainNetwork();
                 this.elamainRpcUrl = elamainNetwork.getRPCUrl();
-                this.userELAMainChainAddress = (await this.getWalletELAMainChainAddresses(masterWallet, 0, 1, false))?.[0];
+                this.userELAMainChainAddress = (await this.getWalletELAMainChainAddressesByType(masterWallet, 1))?.[0];
             }
         }
         else {
@@ -517,7 +528,7 @@ export class DappBrowserService implements GlobalService {
             }
             this.userBTCAddress = await this.getWalletBitcoinAddress(networkWallet.masterWallet);
 
-            this.userELAMainChainAddress = (await this.getWalletELAMainChainAddresses(networkWallet.masterWallet, 0, 1, false))?.[0];
+            this.userELAMainChainAddress = (await this.getWalletELAMainChainAddressesByType(networkWallet.masterWallet, 1))?.[0];
 
             Logger.log("dappbrowser", "Sending active address to dapp", this.userEVMAddress, this.userBTCAddress, this.userELAMainChainAddress);
 
@@ -977,8 +988,10 @@ export class DappBrowserService implements GlobalService {
         switch (message.data.name) {
             case "elamain_getAddresses":
                 const masterWallet = WalletService.instance.getActiveMasterWallet();
-                const addresses = await this.getWalletELAMainChainAddresses(masterWallet, message.data.object.index, message.data.object.count, message.data.object.internal);
+                const addresses = await this.getWalletELAMainChainAddressesByType(masterWallet, message.data.object.count, message.data.object.type, message.data.object.index);
                 this.sendInjectedResponse("elamain", message.data.id, addresses);
+                break;
+            case "elamain_sign":
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled elamain message command", message.data.name);
@@ -1228,9 +1241,40 @@ export class DappBrowserService implements GlobalService {
         return this.walletNetworkService.getNetworkByKey(ElastosMainChainNetworkBase.networkKey) as ElastosMainChainMainNetNetwork
     }
 
-    private async getWalletELAMainChainAddresses(masterWallet: MasterWallet, index: number, count: number, internal = false): Promise<string[]> {
+    private async getWalletELAMainChainAddressesByType(masterWallet: MasterWallet, count, type = AddressType.Normal_external, index = 0) {
         const elaMainChainNetwork = this.getELAMainChainNetwork();
         const elaMainChainNetworkWallet = await elaMainChainNetwork.createNetworkWallet(masterWallet, false)
-        return elaMainChainNetworkWallet?.safe.getAddresses(index, count, internal, null);
+        if (!elaMainChainNetworkWallet) return [];
+
+        let elaSubwallet = elaMainChainNetworkWallet.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
+
+        let addressArray = [];
+        let address = null;
+        let internal = false;
+        switch (type) {
+            case AddressType.CROwnerDeposit:
+                address = elaSubwallet.getCRDepositAddress()
+                if (address) addressArray.push(address)
+            break;
+            case AddressType.Owner:
+                address = elaSubwallet.getOwnerAddress()
+                if (address) addressArray.push(address)
+            break;
+            case AddressType.OwnerDeposit:
+                address = elaSubwallet.getOwnerDepositAddress()
+                if (address) addressArray.push(address)
+            break;
+            case AddressType.OwnerStake:
+                address = elaSubwallet.getOwnerStakeAddress()
+                if (address) addressArray.push(address)
+            break;
+            case AddressType.Normal_internal:
+                internal = true;
+            // eslint-disable-next-line no-fallthrough
+            case AddressType.Normal_external:
+                addressArray = elaMainChainNetworkWallet.safe.getAddresses(index, count, internal, null);
+            break;
+        }
+        return addressArray;
     }
 }
