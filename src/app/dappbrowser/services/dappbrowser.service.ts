@@ -73,6 +73,7 @@ enum AddressType  {
     CROwnerDeposit = 'cr-owner-deposit',
     OwnerDeposit = 'owner-deposit',
     OwnerStake = 'owner-stake',
+    All = 'all'
   }
 
 /**
@@ -986,12 +987,28 @@ export class DappBrowserService implements GlobalService {
         console.log("Elamain command received", message);
 
         switch (message.data.name) {
-            case "elamain_getAddresses":
+            case "elamain_getMultiAddresses":
                 const masterWallet = WalletService.instance.getActiveMasterWallet();
                 const addresses = await this.getWalletELAMainChainAddressesByType(masterWallet, message.data.object.count, message.data.object.type, message.data.object.index);
                 this.sendInjectedResponse("elamain", message.data.id, addresses);
                 break;
             case "elamain_sign":
+                // let digets: { data: unknown } = message.data.object
+                // // let bufData = Buffer.from('test');
+                // // let digets = SHA256.sha256Hash(bufData).toString('hex');
+
+                // let response: {
+                //     action: string,
+                //     result: {
+                //         signedData: string,
+                //         status: "published" | "cancelled"
+                //     }
+                // } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/elamainsign", digets)
+                // if (response.result.signedData) {
+                //   this.sendInjectedResponse("elamain", message.data.id, response.result.signedData);
+                // } else {
+                //   this.sendInjectedError("elamain", message.data.id, { code: 4001, message: "User rejected the request."});
+                // }
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled elamain message command", message.data.name);
@@ -1255,25 +1272,43 @@ export class DappBrowserService implements GlobalService {
             case AddressType.CROwnerDeposit:
                 address = elaSubwallet.getCRDepositAddress()
                 if (address) addressArray.push(address)
-            break;
+                break;
             case AddressType.Owner:
                 address = elaSubwallet.getOwnerAddress()
                 if (address) addressArray.push(address)
-            break;
+                break;
             case AddressType.OwnerDeposit:
                 address = elaSubwallet.getOwnerDepositAddress()
                 if (address) addressArray.push(address)
-            break;
+                break;
             case AddressType.OwnerStake:
                 address = elaSubwallet.getOwnerStakeAddress()
                 if (address) addressArray.push(address)
-            break;
+                break;
             case AddressType.Normal_internal:
                 internal = true;
             // eslint-disable-next-line no-fallthrough
             case AddressType.Normal_external:
                 addressArray = elaMainChainNetworkWallet.safe.getAddresses(index, count, internal, null);
-            break;
+                break;
+            case AddressType.All:
+                // Add all special addresses first, then half the external addresses and half the internal addresses
+                address = elaSubwallet.getCRDepositAddress()
+                if (address) addressArray.push(address)
+                address = elaSubwallet.getOwnerAddress()
+                if (address) addressArray.push(address)
+                address = elaSubwallet.getOwnerDepositAddress()
+                if (address) addressArray.push(address)
+                address = elaSubwallet.getOwnerStakeAddress()
+                if (address) addressArray.push(address)
+
+                let addressAccount = Math.ceil(count / 2)
+                let addressesExternal = elaMainChainNetworkWallet.safe.getAddresses(index, addressAccount, true, null);
+                addressArray = [...addressArray,  ...addressesExternal]
+
+                let addressesInternal = elaMainChainNetworkWallet.safe.getAddresses(index, addressAccount, false, null);
+                addressArray = [...addressArray,  ...addressesInternal]
+                break;
         }
         return addressArray;
     }
