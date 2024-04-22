@@ -56,8 +56,6 @@ export class EthSignPage implements OnInit {
 
   private networkWallet: AnyNetworkWallet = null;
   public evmSubWallet: AnyMainCoinEVMSubWallet = null;
-  public showEditGasPrice = false;
-  public hasOpenETHSCChain = false;
 
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
   private payloadToBeSigned: string;

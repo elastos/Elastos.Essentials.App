@@ -1,9 +1,9 @@
 <ion-content class="ion-text-center">
   <app-titlebar title=""></app-titlebar>
-  <div class="warning" *ngIf="!evmSubWallet">
+  <div class="warning" *ngIf="!elamainSubWallet">
     <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
   </div>
-  <ion-grid class="container" *ngIf="evmSubWallet">
+  <ion-grid class="container" *ngIf="elamainSubWallet">
     <!-- CARD HEADER -->
     <div>
       <ion-card>
@@ -13,9 +13,20 @@
           <ion-card-subtitle>
             {{ 'wallet.signtypeddata-intro' | translate }}
           </ion-card-subtitle>
+          <ion-card-subtitle class="danger">
+            {{ 'wallet.signtypeddata-danger' | translate }}
+          </ion-card-subtitle>
         </ion-card-header>
       </ion-card>
     </div>
+
+    <!-- Network info -->
+    <ion-row class="network-row">
+      <ion-col size="12" class="left-col">
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.name }}</h1>
+      </ion-col>
+    </ion-row>
 
     <!-- Message info -->
     <ion-row *ngIf="message" class="message-row">

@@ -20,6 +20,7 @@ import { PersonalSignPage } from './personalsign/personalsign.page';
 import { SelectSubwalletPage } from './select-subwallet/select-subwallet.page';
 import { SendBitcoinPage } from './sendbitcoin/sendbitcoin.page';
 import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
+import { ElamainSignMessagePage } from './elamainsignmessage/elamainsignmessage.page';
 
 @NgModule({
     declarations: [
@@ -32,7 +33,8 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
         PersonalSignPage,
         EthSignPage,
         MultiSigTxPage,
-        SendBitcoinPage
+        SendBitcoinPage,
+        ElamainSignMessagePage
     ],
     imports: [
         EthTransactionComponentModule,
@@ -58,6 +60,7 @@ import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
             { path: 'select-subwallet', component: SelectSubwalletPage },
             { path: 'multisigtx', component: MultiSigTxPage },
             { path: 'sendbitcoin', component: SendBitcoinPage },
+            { path: 'elamainsignmessage', component: ElamainSignMessagePage },
         ])
     ],
     exports: [RouterModule],

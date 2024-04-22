@@ -3,21 +3,30 @@
 .container {
     display: flex;
     flex-direction: column;
-    min-height: 100%;
-    padding: 20px 10px;
+    min-height: 104%;
+    padding: 10px 10px;
     object-fit: cover;
 
     ion-card {
+        img {
+            width: 75px;
+            height: 75px;
+        }
+
+        h1 {
+            font-size: 16px;
+        }
+
         ion-card-header {
             position: relative;
-            margin: 50px 10px 30px;
+            margin: 50px 10px 10px;
             background: var(--essentials-box-color);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             border-radius: 15px;
-            padding: 25px 15px 30px;
+            padding: 25px 15px 10px;
             overflow: visible;
 
             .img {
@@ -42,15 +51,18 @@
                 font-size: 13px;
                 font-weight: 500;
                 line-height: 1.46;
-                margin: 0 15px;
+
+                &.danger {
+                    color: red;
+                    margin-top: 10px;
+                }
             }
         }
     }
 
     .network-row {
         border-radius: 17px;
-        padding: 5px 10px;
-        margin-bottom: 7.5px;
+        padding: 0px 10px;
         background-color: transparent;
 
         ion-col {

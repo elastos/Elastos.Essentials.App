@@ -161,6 +161,10 @@ export class Util {
         return typeof num === 'number' && !isNaN(num);
     }
 
+    public static isSHA256(str) {
+        return /^[0-9a-fA-F]{64}$/.test(str);
+    }
+
     // TODO: Accuracy issues
     // eg Util.accMul(5166.24809741, Config.SELA), the result is 516624809740
     public static accMul(arg1: number, arg2: number): number {

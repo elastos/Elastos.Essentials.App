@@ -203,6 +203,12 @@ export class IntentService {
                 navigationState = JSON.parse(JSON.stringify(intent));
                 break;
 
+            // Ela main chain
+            case 'elamainsignmessage':
+                this.nextScreen = '/wallet/intents/elamainsignmessage';
+                navigationState = JSON.parse(JSON.stringify(intent));
+                break;
+
             default:
                 Logger.log("wallet", 'IntentService unknown intent:', intent);
                 return;

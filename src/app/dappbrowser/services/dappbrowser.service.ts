@@ -37,6 +37,7 @@ import type { BrowsedAppInfo } from '../model/browsedappinfo';
 import { ElastosMainChainMainNetNetwork, ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
 import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { StandardCoinName } from 'src/app/wallet/model/coin';
+import { SHA256 } from 'src/app/helpers/crypto/sha256';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -975,6 +976,8 @@ export class DappBrowserService implements GlobalService {
                   this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
                 }
                 break;
+            case "unisat_signmessage":
+                break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);
         }
@@ -992,23 +995,20 @@ export class DappBrowserService implements GlobalService {
                 const addresses = await this.getWalletELAMainChainAddressesByType(masterWallet, message.data.object.count, message.data.object.type, message.data.object.index);
                 this.sendInjectedResponse("elamain", message.data.id, addresses);
                 break;
-            case "elamain_sign":
-                // let digets: { data: unknown } = message.data.object
-                // // let bufData = Buffer.from('test');
-                // // let digets = SHA256.sha256Hash(bufData).toString('hex');
-
-                // let response: {
-                //     action: string,
-                //     result: {
-                //         signedData: string,
-                //         status: "published" | "cancelled"
-                //     }
-                // } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/elamainsign", digets)
-                // if (response.result.signedData) {
-                //   this.sendInjectedResponse("elamain", message.data.id, response.result.signedData);
-                // } else {
-                //   this.sendInjectedError("elamain", message.data.id, { code: 4001, message: "User rejected the request."});
-                // }
+            case "elamain_signMessage":
+                let response: {
+                    action: string,
+                    result: {
+                        signedDatas: string[],
+                    }
+                } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/elamainsignmessage", {
+                    payload: message.data.object
+                })
+                if (response.result.signedDatas) {
+                  this.sendInjectedResponse("elamain", message.data.id, response.result.signedDatas);
+                } else {
+                  this.sendInjectedError("elamain", message.data.id, { code: 4001, message: "User rejected the request."});
+                }
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled elamain message command", message.data.name);

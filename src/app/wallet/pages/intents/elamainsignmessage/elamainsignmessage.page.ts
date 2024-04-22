@@ -23,43 +23,46 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { signTypedData, signTypedData_v4 } from "eth-sig-util";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AuthService } from 'src/app/wallet/services/auth.service';
-import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
-import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
+import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
+import { ElastosMainChainNetworkBase } from 'src/app/wallet/model/networks/elastos/mainchain/network/elastos.networks';
+import { SHA256 } from 'src/app/helpers/crypto/sha256';
+import { Util } from 'src/app/model/util';
 
+/**
+ * This operation is dangerous and is deprecated, but we handle it for backward compatibility
+ * with some dApps.
+ */
 @Component({
-  selector: 'app-signtypeddata',
-  templateUrl: './signtypeddata.page.html',
-  styleUrls: ['./signtypeddata.page.scss'],
+  selector: 'app-elamainsignmessage',
+  templateUrl: './elamainsignmessage.page.html',
+  styleUrls: ['./elamainsignmessage.page.scss'],
 })
-export class SignTypedDataPage implements OnInit {
+export class ElamainSignMessagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: AnyNetworkWallet = null;
-  public evmSubWallet: AnyMainCoinEVMSubWallet = null;
-  public showEditGasPrice = false;
-  public hasOpenETHSCChain = false;
+  public targetNetwork: AnyNetwork = null;
+  public networkWallet: AnyNetworkWallet = null;
+  public elamainSubWallet: MainChainSubWallet = null;
 
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
-  private payloadToBeSigned: string;
-  private dataToSign = null;
-  private useV4: boolean;
-  private message: string = null;
+  private payloadToBeSigned: { digest: string, addresses?: string[] };
+  private digest = null;
+  public message = null;
+  private specialAddresses: string[] = [];
 
   private alreadySentIntentResponse = false;
 
@@ -78,15 +81,13 @@ export class SignTypedDataPage implements OnInit {
     private translate: TranslateService,
     public theme: GlobalThemeService,
     private authService: AuthService,
-    private erc20service: ERC20CoinService, // Keep it to initialize the service for the ETHTransactionInfoParser
     public uiService: UiService,
     private router: Router,
-    private ethTransactionService: EVMService
   ) {
   }
 
   ngOnInit() {
-    this.init();
+    void this.init();
   }
 
   ionViewWillEnter() {
@@ -121,25 +122,40 @@ export class SignTypedDataPage implements OnInit {
     }
   }
 
-  init() {
-    this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
-
-    this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
-    if (!this.networkWallet) return;
-
-    this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-
+  async init() {
     const navigation = this.router.getCurrentNavigation();
 
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.payloadToBeSigned = this.receivedIntent.params.payload;
-    this.useV4 = this.receivedIntent.params.useV4;
-    this.dataToSign = JSON.parse(this.payloadToBeSigned);
+    if (this.receivedIntent.params)
+      this.payloadToBeSigned = this.receivedIntent.params.payload;
 
-    if (this.useV4 && this.dataToSign.message) {
-      // TODO: EIP-712
-      this.message = this.dataToSign.message.message
+    // No message ? Just exit immediatelly
+    if (!this.payloadToBeSigned) {
+      Logger.warn('wallet', 'ElamainSignMessagePage invalid payload, received Intent:', this.receivedIntent)
+      return await this.cancelOperation();
     }
+
+    if (Util.isSHA256(this.payloadToBeSigned.digest)) {
+      this.digest = this.payloadToBeSigned.digest;
+    } else {
+      this.message = this.payloadToBeSigned.digest;
+      this.digest = SHA256.sha256Hash(Buffer.from(this.payloadToBeSigned.digest)).toString('hex');
+    }
+
+    this.targetNetwork = WalletNetworkService.instance.getNetworkByKey(ElastosMainChainNetworkBase.networkKey);
+
+    this.currentNetworkName = this.targetNetwork.name;
+
+    let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+    this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
+    if (!this.networkWallet)
+      return;
+
+    this.elamainSubWallet = <MainChainSubWallet>this.networkWallet.getMainTokenSubWallet();
+    if (!this.elamainSubWallet)
+      return;
+
+    this.getAllSpecialAddresses();
   }
 
   /**
@@ -159,40 +175,55 @@ export class SignTypedDataPage implements OnInit {
   }
 
   async confirmSign(): Promise<void> {
-    const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id);
+    const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id, true, true);
     if (payPassword === null) { // cancelled by user
+      await this.cancelOperation();
       return;
     }
 
-    let privateKeyHexNoprefix = await (await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword)).replace("0x", "");
-
-    let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
-    let signedData: string = null;
-
     try {
-      if (this.useV4) {
-        signedData = signTypedData_v4(privateKey, {
-          data: this.dataToSign
-        });
-      }
-      else {
-        signedData = signTypedData(privateKey, {
-          data: this.dataToSign
-        });
+      let addresses = this.payloadToBeSigned.addresses;
+      if (!addresses) {
+        let address = this.elamainSubWallet.getRootPaymentAddress()
+        addresses = [address]
       }
 
+      let signatures = [];
+      let rawMsgSig = null;
+      for (let index = 0; index < addresses.length; index++) {
+        if (this.specialAddresses.indexOf(addresses[index]) != -1) {
+          // special address
+          rawMsgSig =  await this.elamainSubWallet.signDigestWithOwnerKey(this.digest, payPassword);
+        } else {
+          rawMsgSig =  await this.elamainSubWallet.signDigest(addresses[index], this.digest, payPassword);
+        }
+        signatures.push(rawMsgSig)
+      }
       void this.sendIntentResponse({
-        signedData
+        signedDatas: signatures
       }, this.receivedIntent.intentId);
     }
     catch (e) {
       // Sign method can throw exception in case some provided content has an invalid format
       // i.e.: array value, with "address" type. In such case, we fail silently.
-      Logger.error("wallet", "Sign typed data - unable to sign, sending empty response:", e);
+      Logger.warn('wallet', 'ethmain_signmessage intent error:', e)
       await this.sendIntentResponse(
         { data: null },
         this.receivedIntent.intentId
       );
     }
+  }
+
+  private getAllSpecialAddresses() {
+    this.specialAddresses = [];
+
+    let address = this.elamainSubWallet.getCRDepositAddress()
+    if (address) this.specialAddresses.push(address)
+    address = this.elamainSubWallet.getOwnerAddress()
+    if (address) this.specialAddresses.push(address)
+    address = this.elamainSubWallet.getOwnerDepositAddress()
+    if (address) this.specialAddresses.push(address)
+    address = this.elamainSubWallet.getOwnerStakeAddress()
+    if (address) this.specialAddresses.push(address)
   }
 }
