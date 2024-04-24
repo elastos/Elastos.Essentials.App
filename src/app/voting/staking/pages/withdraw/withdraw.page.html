@@ -38,7 +38,7 @@
     <ion-footer *ngIf="!signingAndTransacting && isKeyboardHide">
         <ion-row>
             <ion-col>
-                <ebutton class="btn-container" (clicked)="withdraw()" [title]="'staking.withdraw' | translate">
+                <ebutton class="btn-container" (clicked)="withdraw()" [disabled]="!checkvalue()" [title]="'staking.withdraw' | translate">
                 </ebutton>
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-col>
