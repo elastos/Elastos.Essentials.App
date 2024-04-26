@@ -37,6 +37,8 @@ export const fr = {
         'no-cancellable-votes': 'No cancellable votes (BPoS votes cannot be cancelled)',
 
         'unvote-message': 'Are you sure to cancel the four votes of DPoS 1.0, CR election, CR member impeachment, and CR proposal opposition vote?',
+
+        'withdraw-prompt-message': 'Available = actual available reward - 1 ELA.',
     }
 
 };

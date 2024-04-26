@@ -37,6 +37,8 @@ export const zh = {
         'no-cancellable-votes': '没有可取消的投票（BPoS 投票无法取消）',
 
         'unvote-message': '确定取消DPoS 1.0、CR选举、CR委员弹劾、CR提案反对票这四种投票吗?',
+
+        'withdraw-prompt-message': '有效数量 = 实际可取回收益 - 1 ELA',
     }
 
 };

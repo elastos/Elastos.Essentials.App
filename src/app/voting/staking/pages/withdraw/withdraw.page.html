@@ -29,6 +29,10 @@
                 </ion-row>
             </ion-col>
         </ion-row>
+
+        <ion-row *ngIf="showPromptMessage" class="message-row">
+            <p>{{ 'staking.withdraw-prompt-message' | translate }}</p>
+        </ion-row>
     </ion-grid>
 
     <div *ngIf="signingAndTransacting">
