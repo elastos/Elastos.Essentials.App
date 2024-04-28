@@ -233,7 +233,9 @@ export class WalletInitService extends GlobalService {
     this.nameResolvingService.registerNameResolver(new CryptoNameResolver(this.httpClient));
     this.nameResolvingService.registerNameResolver(new UnstoppableDomainsAddressResolver(this.httpClient));
     this.nameResolvingService.registerNameResolver(new IdrissResolver());
-    this.nameResolvingService.registerNameResolver(new ENSResolver());
+    // TODO : build error (HookWebpackError: Cannot read properties of undefined) with @ensdomains/ensjs": "3.0.0-alpha.20"
+    // Temporarily remove ENSResolver, Try to upgrade @ensdomains/ensjs later
+    // this.nameResolvingService.registerNameResolver(new ENSResolver());
     this.nameResolvingService.registerNameResolver(new ELADomainResolver());
   }
 
