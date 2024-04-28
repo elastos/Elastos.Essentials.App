@@ -1,4 +1,4 @@
-import type { ENS } from '@ensdomains/ensjs';
+// import type { ENS } from '@ensdomains/ensjs';
 import { lazyEthersImport } from 'src/app/helpers/import.helper';
 import { Logger } from "src/app/logger";
 import { AnySubWallet } from '../../networks/base/subwallets/subwallet';
@@ -9,7 +9,11 @@ import { ENSAddress } from '../addresses/ENSAddress';
 import { Resolver } from "./Resolver";
 
 export class ENSResolver extends Resolver {
-    private ENSInstance: ENS = null;
+    // private ENSInstance: ENS = null;
+
+    // TODO : build error (HookWebpackError: Cannot read properties of undefined) with @ensdomains/ensjs": "3.0.0-alpha.20"
+    // Temporarily remove ENSResolver, Try to upgrade @ensdomains/ensjs later
+    private ENSInstance = null;
 
     constructor() {
         super();
@@ -27,13 +31,13 @@ export class ENSResolver extends Resolver {
         let providerUrl = EthereumAPI.getApiUrl(EthereumAPIType.RPC, 'mainnet');
         const provider = new providers.JsonRpcProvider(providerUrl)
 
-        const ENS = (await import('@ensdomains/ensjs')).ENS;
-        this.ENSInstance = new ENS()
-        try {
-            await this.ENSInstance.setProvider(provider)
-        } catch (e) {
-            Logger.warn('wallet', ' ENSInstance.setProvider error', e)
-        }
+        // const ENS = (await import('@ensdomains/ensjs')).ENS;
+        // this.ENSInstance = new ENS()
+        // try {
+        //     await this.ENSInstance.setProvider(provider)
+        // } catch (e) {
+        //     Logger.warn('wallet', ' ENSInstance.setProvider error', e)
+        // }
     }
 
     public getName(): string {

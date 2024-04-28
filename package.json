@@ -55,7 +55,6 @@
     "@elastosfoundation/did-js-sdk": "^2.3.1",
     "@elastosfoundation/hive-js-sdk": "^2.9.13",
     "@elastosfoundation/wallet-js-sdk": "^1.0.8",
-    "@ensdomains/ensjs": "3.0.0-alpha.20",
     "@ethereumjs/common": "^2.6.5",
     "@ethereumjs/tx": "^3.5.2",
     "@ethersproject/address": "^5.7.0",
