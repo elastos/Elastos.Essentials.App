@@ -568,13 +568,21 @@ export const zh = {
         ************************/
         "signtypeddata-title": "数据签名",
         "signtypeddata-subtitle": "数据签名",
-        "signtypeddata-intro": "调用应用程序需要您使用钱包签署一些数据才能继续。请确认",
+        "signtypeddata-intro": "应用程序需要您使用钱包签署一些数据才能继续，请确认",
         "signtypeddata-danger": "对此数据签名可能会很危险。此签名可能代表您的帐户执行任何操作，包括将您的帐户及其所有资产的完全控制权授予请求站点。只有在你知道自己在做什么或完全信任请求网站的情况下，才能签署此消息。",
 
         /***********************
         * Send Bitcoin Page *
         ************************/
         "sendbitcoin-title": "发送 BTC",
+        "sendbitcoin-transaction-fee": "手续费:",
+
+        /***********************
+        * Sign Bitcoin Data Page *
+        ************************/
+        "signbitcoindata-title": "交易签名",
+        "signbitcoindata-intro": "应用程序需要您使用钱包签署交易才能继续，请确认",
+        "signbitcoindata-danger": "只有在您知道自己在做什么或完全信任请求网站的情况下，才能签署此交易。",
 
         /***********************
         * No Wallet *

@@ -567,6 +567,7 @@ export const fr = {
         * Send Bitcoin Page *
         ************************/
         "sendbitcoin-title": "Transfer BTC",
+        "sendbitcoin-transaction-fee": "Fee:",
 
         /***********************
         * Sign Typed Data Page *
@@ -575,6 +576,13 @@ export const fr = {
         "signtypeddata-subtitle": "Signature",
         "signtypeddata-intro": "L'application a besoin de signer certaines informations avec la signature de votre portefeuille. Veuillez confirmer pour continuer.",
         "signtypeddata-danger": "Signer ce message peut être dangereux. Cette signature peut éventuellement permettre à l'application de prendre le contrôle complet de votre portefeuille et de tous ses fonds. Ne signez ceci que si vous savez ce que vous faites ou si vous faites totalement confiance à l'application.",
+
+        /***********************
+        * Sign Bitcoin Data Page *
+        ************************/
+        "signbitcoindata-title": "Signature de transaction",
+        "signbitcoindata-intro": "L'application a besoin de signer certaines informations avec la signature de votre portefeuille. Veuillez confirmer pour continuer.",
+        "signbitcoindata-danger": "Ne signez ceci que si vous savez ce que vous faites ou si vous faites totalement confiance à l'application.",
 
         /***********************
         * No Wallet *

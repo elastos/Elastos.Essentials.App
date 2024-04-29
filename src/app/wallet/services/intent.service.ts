@@ -202,6 +202,10 @@ export class IntentService {
                 this.nextScreen = '/wallet/intents/sendbitcoin';
                 navigationState = JSON.parse(JSON.stringify(intent));
                 break;
+            case 'signbitcoindata':
+                this.nextScreen = '/wallet/intents/signbitcoindata';
+                navigationState = JSON.parse(JSON.stringify(intent));
+                break;
 
             // Ela main chain
             case 'elamainsignmessage':

@@ -1,0 +1,69 @@
+<ion-content class="ion-text-center">
+  <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+  <div class="warning" *ngIf="!btcSubWallet">
+    <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+  </div>
+
+  <ion-spinner class='spinner' *ngIf="loading && btcSubWallet"></ion-spinner>
+
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!loading && networkWallet">
+    <div>
+      <ion-card>
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.name }}</h1>
+      </ion-card>
+
+      <ion-card-header>
+        <ion-card-subtitle>
+          {{ 'wallet.signbitcoindata-intro' | translate }}
+        </ion-card-subtitle>
+        <ion-card-subtitle class="danger">
+          {{ 'wallet.signbitcoindata-danger' | translate }}
+        </ion-card-subtitle>
+      </ion-card-header>
+    </div>
+
+    <!-- TX INFO -->
+    <div class="msg-container">
+      <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
+
+      <ion-row *ngIf='feesAsBigNumber' class="item-row ripple ion-activatable">
+        <ion-col size="5">
+          <div>{{ 'wallet.sendbitcoin-transaction-fee' | translate }}</div>
+        </ion-col>
+        <ion-col size="6" class="price">
+          <ion-row>
+            <ion-col class="fee">
+              <span> {{ uiService.getFixedBalance(feesAsBigNumber) }}</span> {{
+                getCurrencyInUse() }}
+            </ion-col>
+          </ion-row>
+          <ion-row>
+            <ion-col class="fee">
+              <span> {{ currencyFee }}</span> {{
+                getNativeCurrencyInUse() }}
+            </ion-col>
+          </ion-row>
+        </ion-col>
+      </ion-row>
+
+
+      <ion-row class="item-row ripple ion-activatable">
+        <ion-col size="5">
+          <div>{{ 'wallet.balance-remaining' | translate }}</div>
+        </ion-col>
+        <ion-col size="7" class="price">
+          <span> {{ uiService.getFixedBalance(balanceBTC) }}</span> {{ getCurrencyInUse() }}
+        </ion-col>
+      </ion-row>
+    </div>
+
+    <!-- BUTTONS FOOTER -->
+    <ebutton class="btn cancel" [class.expand]="!balanceIsEnough()" [disabled]="!balanceIsEnough()" mode="cancel"
+      (clicked)="cancelOperation()"
+      [title]="(!balanceIsEnough() ? 'wallet.insufficient-balance' : 'common.cancel') | translate">
+    </ebutton>
+    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" [disabled]="signingAndTransacting || actionIsGoing" (clicked)="goTransaction()"
+      [title]="'common.confirm' | translate"></ebutton>
+  </ion-grid>
+</ion-content>

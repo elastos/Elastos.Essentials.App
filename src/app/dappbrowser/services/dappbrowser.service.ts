@@ -976,7 +976,26 @@ export class DappBrowserService implements GlobalService {
                   this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
                 }
                 break;
-            case "unisat_signmessage":
+            case "unisat_signMessage":
+                break;
+            case "unisat_signData":
+                let responseSigndata: {
+                    action: string,
+                    result: {
+                        signature: string,
+                    }
+                } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signbitcoindata", {
+                    payload: {
+                        params: [
+                            message.data.object
+                        ]
+                    }
+                })
+                if (responseSigndata.result.signature) {
+                  this.sendInjectedResponse("unisat", message.data.id, responseSigndata.result.signature);
+                } else {
+                  this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
+                }
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);

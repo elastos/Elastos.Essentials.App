@@ -575,6 +575,14 @@ export const en = {
         * Send Bitcoin Page *
         ************************/
         "sendbitcoin-title": "Transfer BTC",
+        "sendbitcoin-transaction-fee": "Fee:",
+
+        /***********************
+        * Sign Bitcoin Data Page *
+        ************************/
+        "signbitcoindata-title": "Sign transaction",
+        "signbitcoindata-intro": "The calling application requires you to sign transaction with your wallet in order to continue. Please confirm.",
+        "signbitcoindata-danger": "Only sign this transaction if you know what you're doing or completely trust the requesting site.",
 
         /***********************
         * No Wallet *

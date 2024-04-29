@@ -151,18 +151,14 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
     }
 
     public async signDigest(address: string, digest: string, password: string): Promise<string> {
-      let keypair = await this.getKeyPair(false);
+      let keypair = await this.getKeyPair(true);
       if (!keypair) {
           // User canceled the password
           return null;
       }
 
-      const secp256k1 = require('secp256k1');
-      let signObj = secp256k1.sign(Buffer.from(digest, "hex"), keypair.privateKey);
-      if (signObj) {
-        return signObj.signature.toString('hex');
-      }
-      else return null;
+      // ecdsa
+      return BTC.script.signature.encode(keypair.sign(Buffer.from(digest, 'hex')), BTC.Transaction.SIGHASH_ALL).toString('hex');
     }
 
     public createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {
