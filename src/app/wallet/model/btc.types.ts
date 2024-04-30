@@ -22,9 +22,9 @@ export const SmallUtxo = UtxoDust + 10;
 // }
 
 export enum BitcoinAddressType {
-  Legacy = "legacy",
+  Legacy = "legacy", // p2pkh
   P2sh = "p2sh",
-  NativeSegwit = "nativesegwit",
+  NativeSegwit = "nativesegwit", // p2wpkh
   Taproot = 'taproot'
 }
 

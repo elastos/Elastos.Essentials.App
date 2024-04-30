@@ -1,0 +1,42 @@
+<ion-content class="ion-text-center">
+  <app-titlebar title=""></app-titlebar>
+  <div class="warning" *ngIf="!btcSubWallet">
+    <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+  </div>
+
+  <ion-spinner class='spinner' *ngIf="loading && btcSubWallet"></ion-spinner>
+
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!loading && networkWallet">
+    <div>
+      <ion-card>
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.name }}</h1>
+      </ion-card>
+
+      <ion-card-header>
+        <ion-card-title>{{ 'wallet.signtypeddata-subtitle' | translate }}</ion-card-title>
+        <ion-card-subtitle>
+          {{ 'wallet.signtypeddata-intro' | translate }}
+        </ion-card-subtitle>
+      </ion-card-header>
+    </div>
+
+    <!-- Message info -->
+    <ion-row *ngIf="message" class="message-row">
+      <ion-col size="3" class="left-col">
+        <p> Message :</p>
+      </ion-col>
+      <ion-col size="9" class="right-col">
+        <p>{{ message }}</p>
+      </ion-col>
+    </ion-row>
+
+    <!-- BUTTONS FOOTER -->
+    <ebutton class="btn cancel" mode="cancel"
+      (clicked)="cancelOperation()"
+      [title]="'common.cancel' | translate">
+    </ebutton>
+    <ebutton class="btn confirm" [disabled]="signingAndTransacting || actionIsGoing" (clicked)="signData()"
+      [title]="'common.confirm' | translate"></ebutton>
+  </ion-grid>
+</ion-content>

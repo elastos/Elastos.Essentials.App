@@ -13,6 +13,8 @@ import { SignTransactionResult } from '../../../safes/safe.types';
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { AnySubWallet } from '../../base/subwallets/subwallet';
 import { BTCSafe } from "./btc.safe";
+import bitcoinMessage from "bitcoinjs-message";
+
 
 type AccountInfo = {
   address: string;
@@ -157,8 +159,27 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
           return null;
       }
 
+
+      // same as keypair.sign
+      //   const secp256k1 = require('secp256k1');
+      //   let signObj = secp256k1.sign(Buffer.from(digest, "hex"), keypair.privateKey);
+      //   if (signObj) {
+      //      return signObj.signature.toString('hex');
+      //   }
+      //   else return null;
+
       // ecdsa
       return BTC.script.signature.encode(keypair.sign(Buffer.from(digest, 'hex')), BTC.Transaction.SIGHASH_ALL).toString('hex');
+    }
+
+    public async signMessage(message: string): Promise<string> {
+        let keypair = await this.getKeyPair(true);
+        if (!keypair) {
+            // User canceled the password
+            return null;
+        }
+
+        return bitcoinMessage.sign(message, keypair.privateKey, keypair.compressed).toString('base64')
     }
 
     public createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {

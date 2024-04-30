@@ -22,6 +22,7 @@ import { SendBitcoinPage } from './sendbitcoin/sendbitcoin.page';
 import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
 import { ElamainSignMessagePage } from './elamainsignmessage/elamainsignmessage.page';
 import { SignBitcoinDataPage } from './signbitcoindata/signbitcoindata.page';
+import { SignBitcoinMessagePage } from './signbitcoinmessage/signbitcoinmessage.page';
 
 @NgModule({
     declarations: [
@@ -36,6 +37,7 @@ import { SignBitcoinDataPage } from './signbitcoindata/signbitcoindata.page';
         MultiSigTxPage,
         SendBitcoinPage,
         SignBitcoinDataPage,
+        SignBitcoinMessagePage,
         ElamainSignMessagePage
     ],
     imports: [
@@ -63,6 +65,7 @@ import { SignBitcoinDataPage } from './signbitcoindata/signbitcoindata.page';
             { path: 'multisigtx', component: MultiSigTxPage },
             { path: 'sendbitcoin', component: SendBitcoinPage },
             { path: 'signbitcoindata', component: SignBitcoinDataPage },
+            { path: 'signbitcoinmessage', component: SignBitcoinMessagePage },
             { path: 'elamainsignmessage', component: ElamainSignMessagePage },
         ])
     ],

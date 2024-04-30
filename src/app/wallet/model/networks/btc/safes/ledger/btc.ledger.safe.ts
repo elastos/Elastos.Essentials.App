@@ -146,4 +146,9 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
     });
     Logger.log('wallet', 'BTCLedgerSafe this.signedTx:', this.signedTx)
   }
+
+  public signMessage(message: string): Promise<string> {
+    // TODO: Do not support.
+    return null;
+  }
 }

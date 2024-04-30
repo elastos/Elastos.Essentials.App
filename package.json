@@ -107,6 +107,7 @@
     "bip39": "^3.0.4",
     "bitcoin-address-validation": "^2.2.1",
     "bitcoinjs-lib": "^6.0.2",
+    "bitcoinjs-message": "^2.2.0",
     "browserify-zlib": "^0.2.0",
     "bs58check": "^2.1.2",
     "cordova-plugin-advanced-http": "^3.3.1",

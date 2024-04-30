@@ -956,49 +956,107 @@ export class DappBrowserService implements GlobalService {
         console.log("Unisat command received");
 
         switch (message.data.name) {
+            case "unisat_getPublicKey":
+                await this.handleBitcoinGetPublicKey(message);
+                break;
             case "unisat_sendBitcoin":
-                let response: {
-                    action: string,
-                    result: {
-                        txid: string,
-                        status: "published" | "cancelled"
-                    }
-                } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/sendbitcoin", {
-                    payload: {
-                        params: [
-                            message.data.object
-                        ]
-                    }
-                })
-                if (response.result.txid) {
-                  this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
-                } else {
-                  this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
-                }
+                await this.handleBitcoinSend(message);
                 break;
             case "unisat_signMessage":
+                await this.handleBitcoinSignMessage(message);
                 break;
             case "unisat_signData":
-                let responseSigndata: {
-                    action: string,
-                    result: {
-                        signature: string,
-                    }
-                } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signbitcoindata", {
-                    payload: {
-                        params: [
-                            message.data.object
-                        ]
-                    }
-                })
-                if (responseSigndata.result.signature) {
-                  this.sendInjectedResponse("unisat", message.data.id, responseSigndata.result.signature);
-                } else {
-                  this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
-                }
+                await this.handleBitcoinSignData(message);
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);
+        }
+    }
+
+    private async handleBitcoinSend(message: DABMessage): Promise<void> {
+        try {
+            let response: {
+                action: string,
+                result: {
+                    txid: string,
+                    status: "published" | "cancelled"
+                }
+            } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/sendbitcoin", {
+                payload: {
+                    params: [
+                        message.data.object
+                    ]
+                }
+            })
+            if (response.result.txid) {
+              this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
+            } else {
+              this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
+            }
+        }
+        catch (e) {
+            this.sendInjectedError("unisat", message.data.id, e);
+        }
+    }
+
+    private async handleBitcoinSignMessage(message: DABMessage): Promise<void> {
+        try {
+            let responseSignMessage: {
+                action: string,
+                result: {
+                    signature: string,
+                }
+            } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signbitcoinmessage", {
+                payload: {
+                    params: [
+                        message.data.object
+                    ]
+                }
+            })
+            if (responseSignMessage.result.signature) {
+              this.sendInjectedResponse("unisat", message.data.id, responseSignMessage.result.signature);
+            } else {
+              this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
+            }
+        }
+        catch (e) {
+            this.sendInjectedError("unisat", message.data.id, e);
+        }
+    }
+
+    private async handleBitcoinSignData(message: DABMessage): Promise<void> {
+        try {
+            let responseSigndata: {
+                action: string,
+                result: {
+                    signature: string,
+                }
+            } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signbitcoindata", {
+                payload: {
+                    params: [
+                        message.data.object
+                    ]
+                }
+            })
+            if (responseSigndata.result.signature) {
+              this.sendInjectedResponse("unisat", message.data.id, responseSigndata.result.signature);
+            } else {
+              this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
+            }
+        }
+        catch (e) {
+            this.sendInjectedError("unisat", message.data.id, e);
+        }
+    }
+
+    private async handleBitcoinGetPublicKey(message: DABMessage): Promise<void> {
+        try {
+            const masterWallet = WalletService.instance.getActiveMasterWallet();
+            let publickey = await this.getWalletBitcoinPublicKey(masterWallet)
+            this.sendInjectedResponse("unisat", message.data.id, publickey);
+        }
+        catch (e) {
+            this.sendInjectedError("unisat", message.data.id, e);
         }
     }
 
@@ -1271,6 +1329,12 @@ export class DappBrowserService implements GlobalService {
         const bitcoinNetworkWallet = await bitcoinNetwork.createNetworkWallet(masterWallet, false)
         const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
         return addresses?.[0];
+    }
+
+    private async getWalletBitcoinPublicKey(masterWallet: MasterWallet): Promise<string> {
+        const bitcoinNetwork = this.getBitcoinNetwork();
+        const bitcoinNetworkWallet = await bitcoinNetwork.createNetworkWallet(masterWallet, false)
+        return bitcoinNetworkWallet?.safe.getPublicKey();
     }
 
     private getELAMainChainNetwork(): ElastosMainChainMainNetNetwork {
