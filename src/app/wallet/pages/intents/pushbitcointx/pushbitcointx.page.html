@@ -1,0 +1,34 @@
+<ion-content class="ion-text-center">
+  <app-titlebar title=""></app-titlebar>
+  <div class="warning" *ngIf="!btcSubWallet">
+    <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+  </div>
+
+  <ion-spinner class='spinner' *ngIf="loading && btcSubWallet"></ion-spinner>
+
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!loading && networkWallet">
+    <div>
+      <ion-card>
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.name }}</h1>
+      </ion-card>
+
+      <ion-card-header>
+        <ion-card-subtitle>
+          {{ 'wallet.pushbitcointx-intro' | translate }}
+        </ion-card-subtitle>
+        <ion-card-subtitle class="danger">
+          {{ 'wallet.pushbitcointx-danger' | translate }}
+        </ion-card-subtitle>
+      </ion-card-header>
+    </div>
+
+    <!-- BUTTONS FOOTER -->
+    <ebutton class="btn cancel" mode="cancel"
+      (clicked)="cancelOperation()"
+      [title]="'common.cancel' | translate">
+    </ebutton>
+    <ebutton class="btn confirm" [disabled]="signingAndTransacting || actionIsGoing" (clicked)="pushTx()"
+      [title]="'common.confirm' | translate"></ebutton>
+  </ion-grid>
+</ion-content>

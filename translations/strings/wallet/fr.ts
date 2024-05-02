@@ -585,6 +585,13 @@ export const fr = {
         "signbitcoindata-danger": "Ne signez ceci que si vous savez ce que vous faites ou si vous faites totalement confiance à l'application.",
 
         /***********************
+        * Push Bitcoin Tx Page *
+        ************************/
+        "pushbitcointx-title": "Publish transaction",
+        "pushbitcointx-intro": "The calling application requires you to publish transaction with your wallet in order to continue. Please confirm.",
+        "pushbitcointx-danger": "Only publish this transaction if you know what you're doing or completely trust the requesting site.",
+
+        /***********************
         * No Wallet *
         ************************/
         "intent-no-wallet-title": "Aucun Portefeuille",

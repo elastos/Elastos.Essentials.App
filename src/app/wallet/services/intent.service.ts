@@ -198,6 +198,10 @@ export class IntentService {
                 this.coinTransferService.intentTransfer = intent;
                 break;
 
+            case 'pushbitcointx':
+                this.nextScreen = '/wallet/intents/pushbitcointx';
+                navigationState = JSON.parse(JSON.stringify(intent));
+                break;
             case 'sendbitcoin':
                 this.nextScreen = '/wallet/intents/sendbitcoin';
                 navigationState = JSON.parse(JSON.stringify(intent));

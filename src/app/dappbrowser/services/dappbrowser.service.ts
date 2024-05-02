@@ -959,6 +959,9 @@ export class DappBrowserService implements GlobalService {
             case "unisat_getPublicKey":
                 await this.handleBitcoinGetPublicKey(message);
                 break;
+            case "unisat_pushTx":
+                await this.handleBitcoinPushTx(message);
+                break;
             case "unisat_sendBitcoin":
                 await this.handleBitcoinSend(message);
                 break;
@@ -970,6 +973,32 @@ export class DappBrowserService implements GlobalService {
                 break;
             default:
                 Logger.warn("dappbrowser", "Unhandled unisat message command", message.data.name);
+        }
+    }
+
+    private async handleBitcoinPushTx(message: DABMessage): Promise<void> {
+        try {
+            let response: {
+                action: string,
+                result: {
+                    txid: string,
+                    status: "published" | "cancelled"
+                }
+            } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/pushbitcointx", {
+                payload: {
+                    params: [
+                        message.data.object
+                    ]
+                }
+            })
+            if (response.result.txid) {
+              this.sendInjectedResponse("unisat", message.data.id, response.result.txid);
+            } else {
+              this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "User rejected the request."});
+            }
+        }
+        catch (e) {
+            this.sendInjectedError("unisat", message.data.id, e);
         }
     }
 

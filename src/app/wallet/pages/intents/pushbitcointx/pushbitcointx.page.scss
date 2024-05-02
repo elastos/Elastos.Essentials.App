@@ -1,0 +1,104 @@
+@import "src/app/wallet/root.scss";
+
+.container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 20px 10px;
+    object-fit: cover;
+
+    ion-card {
+        img {
+            width: 75px;
+            height: 75px;
+        }
+
+        h1 {
+          font-size: 16px;
+        }
+    }
+
+    ion-card-header {
+        position: relative;
+        margin: 20px 10px 10px;
+        background: var(--essentials-box-color);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        border-radius: 15px;
+        padding: 25px 15px 30px;
+        overflow: visible;
+
+        .img {
+            width: 116px;
+            height: 95px;
+            position: absolute;
+            z-index: 10;
+            top: -47.5px;
+            object-fit: contain;
+        }
+
+        ion-card-title {
+            font-size: 21px;
+            font-weight: 600;
+            line-height: 1.29;
+            margin: 40px 15px 10px;
+        }
+
+        ion-card-subtitle {
+            text-align: center;
+            text-transform: none;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.46;
+            margin: 0 15px;
+
+            &.danger {
+                color: red;
+                margin-top: 10px;
+            }
+        }
+    }
+
+    .message-row {
+        border-radius: 17px;
+        padding: 0px 10px;
+        background-color: transparent;
+
+        ion-col {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+    }
+
+    .btn {
+        width: 46.5%;
+        position: fixed;
+        bottom: 20px;
+    }
+
+    .cancel {
+        left: 2%;
+    }
+
+    .confirm {
+        right: 2%;
+    }
+
+    .expand {
+        right: 2%;
+        width: 96%;
+    }
+}
+
+.warning {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    color: darkorange;
+}

@@ -585,6 +585,13 @@ export const zh = {
         "signbitcoindata-danger": "只有在您知道自己在做什么或完全信任请求网站的情况下，才能签署此交易。",
 
         /***********************
+        * Push Bitcoin Tx Page *
+        ************************/
+        "pushbitcointx-title": "发布交易",
+        "pushbitcointx-intro": "应用程序需要您使用钱包发布交易才能继续，请确认",
+        "pushbitcointx-danger": "只有在您知道自己在做什么或完全信任请求网站的情况下，才能发布此交易。",
+
+        /***********************
         * No Wallet *
         ************************/
         "intent-no-wallet-title": "没有钱包",
