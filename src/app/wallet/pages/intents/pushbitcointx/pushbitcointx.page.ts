@@ -40,10 +40,6 @@ import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
-type PushBitcoinParam = {
-  rawtx: string,
-}
-
 @Component({
   selector: 'app-pushbitcointx',
   templateUrl: './pushbitcointx.page.html',
@@ -56,7 +52,8 @@ export class PushBitcoinTxPage implements OnInit {
   public networkWallet: AnyNetworkWallet = null;
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
-  public intentParams: PushBitcoinParam = null
+  public intentParams = null
+  public rawtx = null;
 
   public loading = true;
   public actionIsGoing = false;
@@ -124,6 +121,11 @@ export class PushBitcoinTxPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
     this.intentParams = this.receivedIntent.params.payload.params[0]
+    if (this.intentParams?.rawtx) {
+      this.rawtx = this.intentParams.rawtx
+    } else {
+      this.rawtx = this.intentParams;
+    }
 
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
@@ -139,7 +141,7 @@ export class PushBitcoinTxPage implements OnInit {
       return;
 
     // TODO: Show tx info
-    // const txBuffer = Buffer.from(this.intentParams.rawtx, 'hex');
+    // const txBuffer = Buffer.from(this.rawtx, 'hex');
     // let transaction = BTC.Transaction.fromBuffer(txBuffer);
     // Logger.log('wallet', 'PushBitcoinTxPage transaction:', transaction)
 
@@ -149,7 +151,7 @@ export class PushBitcoinTxPage implements OnInit {
   async pushTx() {
     if (this.receivedIntent?.params?.payload?.params[0]) {
       try {
-        const result = await this.btcSubWallet.sendSignedTransaction(this.intentParams.rawtx, null, false);
+        const result = await this.btcSubWallet.sendSignedTransaction(this.rawtx, null, false);
         await this.sendIntentResponse({ txid: result.txid, status: result.status });
       }
       catch (err) {
