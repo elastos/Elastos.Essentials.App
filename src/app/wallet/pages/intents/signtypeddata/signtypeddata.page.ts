@@ -23,7 +23,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { signTypedData, signTypedData_v4 } from "eth-sig-util";
+import { TypedDataUtils, signTypedData, signTypedData_v4 } from "eth-sig-util";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -137,8 +137,12 @@ export class SignTypedDataPage implements OnInit {
     this.dataToSign = JSON.parse(this.payloadToBeSigned);
 
     if (this.useV4 && this.dataToSign.message) {
-      // TODO: EIP-712
-      this.message = this.dataToSign.message.message
+      if (this.dataToSign.message.message) {
+        this.message = this.dataToSign.message.message
+      } else {
+        // TODO: Better display
+        this.message = JSON.stringify(this.dataToSign.message, null, 2)
+      }
     }
   }
 

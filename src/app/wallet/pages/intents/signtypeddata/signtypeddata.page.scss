@@ -77,15 +77,18 @@
     }
 
     .message-row {
-        border-radius: 17px;
-        padding: 0px 10px;
+        padding: 0px 20px;
         background-color: transparent;
 
-        ion-col {
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            font-weight: 600;
+        .title {
+            font-size: 16px;
+        }
+        .content {
+            background: var(--essentials-box-color);
+            border-radius: 15px;
+            line-height: 20px;
+            font-size: 12px;
+            margin-top: 0px;
         }
     }
 

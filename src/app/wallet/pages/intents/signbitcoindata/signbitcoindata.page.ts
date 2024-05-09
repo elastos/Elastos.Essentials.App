@@ -150,9 +150,7 @@ export class SignBitcoinDataPage implements OnInit {
       return;
 
     try {
-      const txBuffer = Buffer.from(this.intentParams.rawData, 'hex');
-
-      this.transaction = BTC.Transaction.fromBuffer(txBuffer);
+      this.transaction = BTC.Transaction.fromHex(this.intentParams.rawData);
       Logger.log('wallet', 'SignBitcoinDataPage transaction:', this.transaction)
 
       let totalOutputValues = 0;
@@ -162,8 +160,6 @@ export class SignBitcoinDataPage implements OnInit {
         this.feesAsBigNumber = satsToBtc(new BigNumber(this.intentParams.value - totalOutputValues));
         this.currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesAsBigNumber);
       }
-
-
     } catch (e) {
       Logger.warn('wallet', 'BTC.Transaction.fromBuffer error:', e)
     }

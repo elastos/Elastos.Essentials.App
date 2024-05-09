@@ -19,12 +19,10 @@
 
     <!-- Message info -->
     <ion-row *ngIf="message" class="message-row">
-      <ion-col size="3" class="left-col">
-        <p> Message</p>
-      </ion-col>
-      <ion-col size="9" class="right-col">
-        <p>{{ message }}</p>
-      </ion-col>
+      <p class="title"> Message</p>
+    </ion-row>
+    <ion-row *ngIf="message" class="message-row">
+      <p class="content">{{ message }}</p>
     </ion-row>
 
     <!-- BUTTONS FOOTER -->
