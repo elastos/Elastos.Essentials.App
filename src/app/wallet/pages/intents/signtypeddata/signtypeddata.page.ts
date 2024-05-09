@@ -23,7 +23,7 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { TypedDataUtils, signTypedData, signTypedData_v4 } from "eth-sig-util";
+import { signTypedData, signTypedData_v4 } from "eth-sig-util";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
@@ -42,6 +42,11 @@ import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
+type Message = {
+  key: string;
+  value: string
+}
+
 @Component({
   selector: 'app-signtypeddata',
   templateUrl: './signtypeddata.page.html',
@@ -59,7 +64,7 @@ export class SignTypedDataPage implements OnInit {
   private payloadToBeSigned: string;
   private dataToSign = null;
   private useV4: boolean;
-  public message: string = null;
+  public messageList: Message[] = [];
 
   private alreadySentIntentResponse = false;
 
@@ -137,11 +142,14 @@ export class SignTypedDataPage implements OnInit {
     this.dataToSign = JSON.parse(this.payloadToBeSigned);
 
     if (this.useV4 && this.dataToSign.message) {
-      if (this.dataToSign.message.message) {
-        this.message = this.dataToSign.message.message
-      } else {
-        // TODO: Better display
-        this.message = JSON.stringify(this.dataToSign.message, null, 2)
+      for (let p of Object.keys(this.dataToSign.message)) {
+        let value;
+        if (typeof this.dataToSign.message[p] == "string") {
+          value = this.dataToSign.message[p]
+        } else {
+          value = JSON.stringify(this.dataToSign.message[p], null, 2)
+        }
+        this.messageList.push({key: p, value: value})
       }
     }
   }

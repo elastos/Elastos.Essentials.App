@@ -4,13 +4,13 @@
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    padding: 20px 10px;
+    padding: 10px 10px;
     object-fit: cover;
 
     ion-card {
         ion-card-header {
             position: relative;
-            margin: 50px 10px 30px;
+            margin: 50px 10px 10px;
             background: var(--essentials-box-color);
             display: flex;
             flex-direction: column;
@@ -76,19 +76,22 @@
         }
     }
 
-    .message-row {
+    .message-title {
         padding: 0px 20px;
         background-color: transparent;
 
-        .title {
+        p {
             font-size: 16px;
         }
-        .content {
-            background: var(--essentials-box-color);
-            border-radius: 15px;
-            line-height: 20px;
+    }
+
+    .message-content {
+        background: var(--essentials-box-color);
+        border-radius: 15px;
+
+        p {
             font-size: 12px;
-            margin-top: 0px;
+            margin: 0px;
         }
     }
 
