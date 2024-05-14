@@ -42,6 +42,10 @@ import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import * as BTC from 'bitcoinjs-lib';
 import { satsToBtc } from 'src/app/wallet/model/networks/btc/conversions';
+import { environment } from 'src/environments/environment';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 
 type SignBitcoinDataParam = {
   rawData: string,
@@ -90,6 +94,7 @@ export class SignBitcoinDataPage implements OnInit {
     public uiService: UiService,
     private router: Router,
     public globalPopupService: GlobalPopupService,
+    private prefs: GlobalPreferencesService,
   ) {
   }
 
@@ -135,6 +140,10 @@ export class SignBitcoinDataPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
     this.intentParams = this.receivedIntent.params.payload.params[0]
+
+    if (!(await this.isSignDataEnabled())) {
+      return;
+    }
 
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
@@ -227,5 +236,26 @@ export class SignBitcoinDataPage implements OnInit {
   // CNY, USD, etc
   public getNativeCurrencyInUse(): string {
     return CurrencyService.instance.selectedCurrency.symbol;
+  }
+
+  /**
+   * This intent is currently only enabled in development mode.
+   */
+  private async isSignDataEnabled() {
+    let supportSignAnyData = `${environment.BitcoinSignAnyData}`;
+    if (!supportSignAnyData) {
+        Logger.warn("wallet", "Signing data on the bitcoin chain is not supported.");
+        void this.cancelOperation();
+        return false;
+    }
+
+    let developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    if (!developerMode) {
+        Logger.warn("wallet", "This api is only enabled on developer mode. You can enable developer mode in the settings.");
+        void this.cancelOperation();
+        return false;
+    }
+
+    return true;
   }
 }
