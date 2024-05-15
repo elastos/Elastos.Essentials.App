@@ -12,7 +12,7 @@ In order for Essentials to open universal links coming from external apps or web
 - contact.elastos.net
 - scanner.elastos.net
 - elink.elastos.net
-- packet.fun
+- packet.web3essentials.io
 
 ## apple-app-site-association (iOS) location
 

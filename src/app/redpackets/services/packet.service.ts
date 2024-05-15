@@ -74,7 +74,7 @@ export class PacketService {
   /**
    * Intent request to grab a packet
    *
-   * Grab url example: https://packet.fun/p?g=123f41a15a6047d1bd2a1620e50adbe4
+   * Grab url example: https://packet.web3essentials.io/p?g=123f41a15a6047d1bd2a1620e50adbe4
    */
   private handleGrabRequest(packetHash: string) {
     Logger.log("redpackets", "Handling red packet grab request for packet hash " + packetHash);
