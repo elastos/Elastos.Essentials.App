@@ -18,8 +18,8 @@ const prodEnv = {
     serviceUrl: 'https://essentials-api.elastos.io/api/v1'
   },
   RedPackets: {
-    webUrl: 'https://packet.fun',
-    serviceUrl: 'https://api.packet.fun/api/v1'
+    webUrl: 'https://packet.web3essentials.io',
+    serviceUrl: 'https://packet-api.web3essentials.io/api/v1'
   },
   CredentialsToolbox: {
     serviceUrl: 'https://credentials-toolbox.elastos.net/api/v1'

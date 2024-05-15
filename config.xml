@@ -27,7 +27,7 @@
     <preference name="LottieCacheDisabled" value="true" />
     <preference name="DisallowOverscroll" value="true" />
     <preference name="KeyboardResizeMode" value="ionic" />
-    <preference name="InternalIntentFilters" value="https://packet.fun https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net https://essentials.web3essentials.io https://did.web3essentials.io https://wallet.web3essentials.io https://hive.web3essentials.io https://contact.web3essentials.io https://scanner.web3essentials.io https://elink.web3essentials.io" />
+    <preference name="InternalIntentFilters" value="https://packet.web3essentials.io https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net https://elink.elastos.net https://essentials.web3essentials.io https://did.web3essentials.io https://wallet.web3essentials.io https://hive.web3essentials.io https://contact.web3essentials.io https://scanner.web3essentials.io https://elink.web3essentials.io" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
     <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc: https://wallet.web3essentials.io/wc:" />
     <preference name="CustomSchemeFilters" value="wc:" />
@@ -149,7 +149,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:host="packet.fun" android:pathPattern="/.*" android:scheme="https" />
+                <data android:host="packet.web3essentials.io" android:pathPattern="/.*" android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <data android:scheme="wc" />
@@ -241,7 +241,7 @@
                 <string>applinks:contact.web3essentials.io</string>
                 <string>applinks:scanner.web3essentials.io</string>
                 <string>applinks:elink.web3essentials.io</string>
-                <string>applinks:packet.fun</string>
+                <string>applinks:packet.web3essentials.io</string>
             </array>
         </config-file>
         <config-file parent="com.apple.developer.associated-domains" target="*-Release.plist">
@@ -262,7 +262,7 @@
                 <string>applinks:contact.web3essentials.io</string>
                 <string>applinks:scanner.web3essentials.io</string>
                 <string>applinks:elink.web3essentials.io</string>
-                <string>applinks:packet.fun</string>
+                <string>applinks:packet.web3essentials.io</string>
             </array>
         </config-file>
         <privacy-manifest>
