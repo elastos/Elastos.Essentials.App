@@ -4,9 +4,13 @@
     <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
   </div>
 
+  <div class="warning" *ngIf="!isSignDataEnable">
+    <p>{{ 'wallet.signbitcoindata-enable-signdata-request' | translate }}</p>
+  </div>
+
   <ion-spinner class='spinner' *ngIf="loading && btcSubWallet"></ion-spinner>
 
-  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!loading && networkWallet">
+  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!loading && networkWallet && isSignDataEnable">
     <div>
       <ion-card>
         <img [src]="networkWallet.network.logo">

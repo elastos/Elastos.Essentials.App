@@ -583,6 +583,7 @@ export const fr = {
         "signbitcoindata-title": "Signature de transaction",
         "signbitcoindata-intro": "L'application a besoin de signer certaines informations avec la signature de votre portefeuille. Veuillez confirmer pour continuer.",
         "signbitcoindata-danger": "Ne signez ceci que si vous savez ce que vous faites ou si vous faites totalement confiance à l'application.",
+        "signbitcoindata-enable-signdata-request": "You need to enable the signData request feature in Settings -> Developer Options to continue",
 
         /***********************
         * Push Bitcoin Tx Page *

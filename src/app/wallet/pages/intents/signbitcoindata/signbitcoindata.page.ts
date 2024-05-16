@@ -62,6 +62,7 @@ type SignBitcoinDataParam = {
 export class SignBitcoinDataPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
+  public isSignDataEnable = false;
   public targetNetwork: AnyNetwork = null;
   public networkWallet: AnyNetworkWallet = null;
   public btcSubWallet: BTCSubWallet = null;
@@ -141,9 +142,15 @@ export class SignBitcoinDataPage implements OnInit {
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
     this.intentParams = this.receivedIntent.params.payload.params[0]
 
-    if (!(await this.isSignDataEnabled())) {
-      return;
+    let supportSignAnyData = environment.BitcoinSignAnyData;
+    if (!supportSignAnyData) {
+        Logger.warn("wallet", "Signing data on the bitcoin chain is not supported.");
+        void this.cancelOperation();
+        return false;
     }
+
+    // This intent is currently only enabled in development mode.
+    this.isSignDataEnable = await this.prefs.getBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
 
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
@@ -236,26 +243,5 @@ export class SignBitcoinDataPage implements OnInit {
   // CNY, USD, etc
   public getNativeCurrencyInUse(): string {
     return CurrencyService.instance.selectedCurrency.symbol;
-  }
-
-  /**
-   * This intent is currently only enabled in development mode.
-   */
-  private async isSignDataEnabled() {
-    let supportSignAnyData = `${environment.BitcoinSignAnyData}`;
-    if (!supportSignAnyData) {
-        Logger.warn("wallet", "Signing data on the bitcoin chain is not supported.");
-        void this.cancelOperation();
-        return false;
-    }
-
-    let developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
-    if (!developerMode) {
-        Logger.warn("wallet", "This api is only enabled on developer mode. You can enable developer mode in the settings.");
-        void this.cancelOperation();
-        return false;
-    }
-
-    return true;
   }
 }

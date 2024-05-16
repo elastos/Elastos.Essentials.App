@@ -62,6 +62,8 @@ export const zh = {
           'off': '关',
           'developer-tools': '开发者工具',
           'developer-screen-capture': '允许屏幕截图',
+          'developer-bitcoin-signdata': '允许Bitcoin的signData请求',
+          'developer-bitcoin-signdata-prompt': "如果启用此设置，您可能会收到不可读的签名请求。 通过签署一条您不理解的消息，您可能同意放弃您的资金。 您面临网络钓鱼攻击的风险。 通过关闭signData 来保护自己。",
           'developer-logs': '捕获日志',
           'developer-export-logs': '导出捕获的日志',
 

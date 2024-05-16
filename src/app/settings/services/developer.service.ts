@@ -68,6 +68,7 @@ export class DeveloperService extends GlobalService {
   async reset() {
     await this.globalSecurityService.setScreenCaptureAllowed(false);
     await this.prefs.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, false);
+    await this.prefs.setBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, false);
   }
 
   /* async configNetwork() {

@@ -55,6 +55,7 @@ export class GlobalPreferencesService implements GlobalService {
       "developer.backgroundservices.startonboot": true,
       "developer.screencapture": false,
       "developer.collectLogs": false,
+      "developer.bitcoinSignData": false,
       "privacy.browser.usebuiltin": useBuiltInBrowser,
       "developer.core.mode": false, // Core developer mode, to access dev/tests screens
       "privacy.identity.publication.medium": "assist", // 'assist' or 'wallet'
@@ -202,6 +203,14 @@ export class GlobalPreferencesService implements GlobalService {
 
   public setCollectLogs(did: string, networkTemplate: string, collectLogs: boolean): Promise<void> {
     return this.setPreference(did, networkTemplate, "developer.collectLogs", collectLogs);
+  }
+
+  public getBitcoinSignData(did: string, networkTemplate: string = NetworkTemplateStore.networkTemplate): Promise<boolean> {
+    return this.getPreference<boolean>(did, networkTemplate, "developer.bitcoinSignData");
+  }
+
+  public setBitcoinSignData(did: string, networkTemplate: string, bitcoinSignData: boolean): Promise<void> {
+    return this.setPreference(did, networkTemplate, "developer.bitcoinSignData", bitcoinSignData);
   }
 
   public getUseHiveSync(did: string, networkTemplate: string = NetworkTemplateStore.networkTemplate): Promise<boolean> {

@@ -62,6 +62,8 @@ export const it = {
                 'off': 'OFF',
                 'developer-tools': 'Strumenti per sviluppatori',
                 'developer-screen-capture': 'Allow screen capture',
+                'developer-bitcoin-signdata': 'Allow bitcoin signData requests',
+                'developer-bitcoin-signdata-prompt': "If you enable this setting, you might get signature requests that aren't readable. By signing a message you don't understand, you could be agreeing to give away your funds. You're at risk for phishing attacks. Protect youself by truning off signData.",
                 'developer-logs': 'Capture logs',
                 'developer-export-logs': 'Export captured logs',
 

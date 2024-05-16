@@ -583,6 +583,7 @@ export const zh = {
         "signbitcoindata-title": "交易签名",
         "signbitcoindata-intro": "应用程序需要您使用钱包签署交易才能继续，请确认",
         "signbitcoindata-danger": "只有在您知道自己在做什么或完全信任请求网站的情况下，才能签署此交易。",
+        "signbitcoindata-enable-signdata-request": "您需要在“设置”->“开发者选项”中启用signData请求功能才能继续",
 
         /***********************
         * Push Bitcoin Tx Page *

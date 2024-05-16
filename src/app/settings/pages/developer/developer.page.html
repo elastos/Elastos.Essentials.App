@@ -22,6 +22,20 @@
       </ion-col>
     </ion-row>
 
+    <!-- Bitcoin signData -->
+    <ion-row class="section-row">
+      <ion-col size="9" class="left-col">
+        <h1>{{ 'settings.developer-bitcoin-signdata' | translate }}</h1>
+      </ion-col>
+      <ion-col size="3" class="right-col">
+        <ion-toggle [(ngModel)]="allowBitcoinSignData" (ionChange)="onAllowBitcoinSignDataChanged()" mode="ios">
+        </ion-toggle>
+      </ion-col>
+      <ion-col size="12" class="left-col">
+        <h3>{{ 'settings.developer-bitcoin-signdata-prompt' | translate }}</h3>
+      </ion-col>
+    </ion-row>
+
     <!-- Development logs -->
     <ion-row class="section-row">
       <ion-col size="9" class="left-col">

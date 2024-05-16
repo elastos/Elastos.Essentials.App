@@ -26,6 +26,7 @@ export class DeveloperPage implements OnInit {
   public allowScreenCapture = false;
   public captureLogs = false;
   public coreDeveloperMode = false;
+  public allowBitcoinSignData = false;
 
   constructor(
     private platform: Platform,
@@ -48,6 +49,7 @@ export class DeveloperPage implements OnInit {
     this.allowScreenCapture = await this.globalSecurityService.getScreenCaptureAllowed();
     this.captureLogs = await this.globalPrefsService.getCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
     this.coreDeveloperMode = await this.globalPrefsService.coreDeveloperModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.allowBitcoinSignData = await this.globalPrefsService.getBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
   }
 
   ionViewWillLeave() {
@@ -71,6 +73,10 @@ export class DeveloperPage implements OnInit {
 
   public onAllowCaptureLogsChanged() {
     void this.globalPrefsService.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.captureLogs);
+  }
+
+  public onAllowBitcoinSignDataChanged() {
+    void this.globalPrefsService.setBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.allowBitcoinSignData)
   }
 
   public exportLogs() {

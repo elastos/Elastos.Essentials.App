@@ -971,19 +971,19 @@ export class DappBrowserService implements GlobalService {
                 break;
             case "unisat_signData":
                 // This api is currently only enabled in development mode.
-                let supportSignAnyData = `${environment.BitcoinSignAnyData}`;
+                let supportSignAnyData = environment.BitcoinSignAnyData;
                 if (!supportSignAnyData) {
                     Logger.warn("dappbrowser", "Signing data on the bitcoin chain is not supported.");
                     this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "Unsupported."});
                     return;
                 }
 
-                let developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
-                if (!developerMode) {
-                    Logger.warn("dappbrowser", "This api is only enabled on developer mode. You can enable developer mode in the settings.");
-                    this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "Unsupported."});
-                    return;
-                }
+                // let developerMode = await this.prefs.developerModeEnabled(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+                // if (!developerMode) {
+                //     Logger.warn("dappbrowser", "This api is only enabled on developer mode. You can enable developer mode in the settings.");
+                //     this.sendInjectedError("unisat", message.data.id, { code: 4001, message: "Unsupported."});
+                //     return;
+                // }
 
                 await this.handleBitcoinSignData(message);
                 break;
