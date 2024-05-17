@@ -41,17 +41,15 @@ import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import * as BTC from 'bitcoinjs-lib';
-import { satsToBtc } from 'src/app/wallet/model/networks/btc/conversions';
-import { environment } from 'src/environments/environment';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
 import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { BTCSignDataType } from 'src/app/wallet/model/btc.types';
+import { BTCSafe } from 'src/app/wallet/model/networks/btc/safes/btc.safe';
 
 type SignBitcoinDataParam = {
-  rawData: string,
-  prevOutScript: string,
-  inIndex: number, // the index of inputs
-  value: number
+  rawData: string, // including random data or a real BTC raw transaction (CAUTION).
+  type: BTCSignDataType,
 }
 
 @Component({
@@ -68,7 +66,7 @@ export class SignBitcoinDataPage implements OnInit {
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
   public intentParams: SignBitcoinDataParam = null
-  public balanceBTC: BigNumber;
+  public balanceBTC: BigNumber = null;
   public feesAsBigNumber: BigNumber = null;
   public currencyFee = null;
 
@@ -142,13 +140,6 @@ export class SignBitcoinDataPage implements OnInit {
     this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
     this.intentParams = this.receivedIntent.params.payload.params[0]
 
-    let supportSignAnyData = environment.BitcoinSignAnyData;
-    if (!supportSignAnyData) {
-        Logger.warn("wallet", "Signing data on the bitcoin chain is not supported.");
-        void this.cancelOperation();
-        return false;
-    }
-
     // This intent is currently only enabled in development mode.
     this.isSignDataEnable = await this.prefs.getBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
 
@@ -165,20 +156,21 @@ export class SignBitcoinDataPage implements OnInit {
     if (!this.btcSubWallet)
       return;
 
-    try {
-      this.transaction = BTC.Transaction.fromHex(this.intentParams.rawData);
-      Logger.log('wallet', 'SignBitcoinDataPage transaction:', this.transaction)
+    // TODO: Show useful tx info
+    // try {
+    //   this.transaction = BTC.Transaction.fromHex(this.intentParams.rawData);
+    //   Logger.log('wallet', 'SignBitcoinDataPage transaction:', this.transaction)
 
-      let totalOutputValues = 0;
-      this.transaction.outs.forEach( o => totalOutputValues += o.value)
+      // let totalOutputValues = 0;
+      // this.transaction.outs.forEach( o => totalOutputValues += o.value)
 
-      if (this.intentParams.value > totalOutputValues) {
-        this.feesAsBigNumber = satsToBtc(new BigNumber(this.intentParams.value - totalOutputValues));
-        this.currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesAsBigNumber);
-      }
-    } catch (e) {
-      Logger.warn('wallet', 'BTC.Transaction.fromBuffer error:', e)
-    }
+      // if (this.intentParams.value > totalOutputValues) {
+      //   this.feesAsBigNumber = satsToBtc(new BigNumber(this.intentParams.value - totalOutputValues));
+      //   this.currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesAsBigNumber);
+      // }
+    // } catch (e) {
+    //   Logger.warn('wallet', 'BTC.Transaction.fromBuffer error:', e)
+    // }
 
     void this.updateBalance();
 
@@ -198,14 +190,13 @@ export class SignBitcoinDataPage implements OnInit {
 
   async signData() {
     try {
-      let prevOutScripts = Buffer.from(this.intentParams.prevOutScript, 'hex')
+      // let prevOutScripts = Buffer.from(this.intentParams.prevOutScript, 'hex')
+      // // let scriptString = bitcoin.script.toASM(bitcoin.script.decompile(prevOutScripts))
+      // // Logger.warn('wallet', 'SignBitcoinDataPage scriptString:', scriptString)
+      // let digest = this.transaction.hashForWitnessV0(this.intentParams.inIndex, prevOutScripts, this.intentParams.value, BTC.Transaction.SIGHASH_ALL).toString('hex')
 
-      // let scriptString = bitcoin.script.toASM(bitcoin.script.decompile(prevOutScripts))
-      // Logger.warn('wallet', 'SignBitcoinDataPage scriptString:', scriptString)
-
-      let digest = this.transaction.hashForWitnessV0(this.intentParams.inIndex, prevOutScripts, this.intentParams.value, BTC.Transaction.SIGHASH_ALL).toString('hex')
-      let signature = await this.networkWallet.safe.signDigest('', digest, '');
-
+      let signature = await (this.networkWallet.safe as unknown as BTCSafe).signData(this.intentParams.rawData, this.intentParams.type);
+      // Logger.log('wallet', 'signature:', signature)
       await this.sendIntentResponse({ signature: signature, status: 'ok' });
     } catch (e) {
       Logger.warn('wallet', 'SignBitcoinDataPage sign data error:', e)

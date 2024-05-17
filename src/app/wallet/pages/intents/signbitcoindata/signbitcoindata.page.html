@@ -29,7 +29,7 @@
 
     <!-- TX INFO -->
     <div class="msg-container">
-      <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
+      <!-- <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
 
       <ion-row *ngIf='feesAsBigNumber' class="item-row ripple ion-activatable">
         <ion-col size="5">
@@ -49,10 +49,10 @@
             </ion-col>
           </ion-row>
         </ion-col>
-      </ion-row>
+      </ion-row> -->
 
 
-      <ion-row class="item-row ripple ion-activatable">
+      <ion-row class="item-row ripple ion-activatable" *ngIf="balanceBTC">
         <ion-col size="5">
           <div>{{ 'wallet.balance-remaining' | translate }}</div>
         </ion-col>

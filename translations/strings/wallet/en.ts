@@ -583,7 +583,7 @@ export const en = {
         "signbitcoindata-title": "Sign transaction",
         "signbitcoindata-intro": "The calling application requires you to sign transaction with your wallet in order to continue. Please confirm.",
         "signbitcoindata-danger": "Only sign this transaction if you know what you're doing or completely trust the requesting site.",
-        "signbitcoindata-enable-signdata-request": "You need to enable the signData request feature in Settings -> Developer Options to continue",
+        "signbitcoindata-enable-signdata-request": "This request can be dangerous. Please first enable the developer mode in Essentials settings, and activate the bitcoin signData() feature",
 
         /***********************
         * Push Bitcoin Tx Page *

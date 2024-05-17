@@ -166,3 +166,7 @@ export type InscriptionUtxoData = {
   total: BigNumber;
   utxo: UnisatUtxo[]
 }
+
+
+// sign data type
+export type BTCSignDataType = "ecdsa" | "schnorr";

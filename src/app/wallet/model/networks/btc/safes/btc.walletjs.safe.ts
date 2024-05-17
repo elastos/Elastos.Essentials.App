@@ -6,7 +6,7 @@ import { Logger } from "src/app/logger";
 import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
 import { AuthService } from "src/app/wallet/services/auth.service";
 import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { BTCOutputData, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS, BitcoinAddressType, UtxoDust } from "../../../btc.types";
+import { BTCOutputData, BTCSignDataType, BTCTxData, BTCUTXO, BTC_MAINNET_PATHS, BitcoinAddressType, UtxoDust } from "../../../btc.types";
 import { StandardMasterWallet } from "../../../masterwallets/masterwallet";
 import { Safe } from "../../../safes/safe";
 import { SignTransactionResult } from '../../../safes/safe.types';
@@ -170,6 +170,22 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
       // ecdsa
       return BTC.script.signature.encode(keypair.sign(Buffer.from(digest, 'hex')), BTC.Transaction.SIGHASH_ALL).toString('hex');
+    }
+
+    public async signData(digest: string, type: BTCSignDataType): Promise<string> {
+        let keypair = await this.getKeyPair(true);
+        if (!keypair) {
+            // User canceled the password
+            return null;
+        }
+
+        if (type === "ecdsa") {
+            return keypair.sign(Buffer.from(digest, 'hex')).toString('hex');
+        } else if (type === "schnorr") {
+            return keypair.signSchnorr(Buffer.from(digest, 'hex')).toString('hex');
+        } else {
+            throw new Error("Not support type");
+        }
     }
 
     public async signMessage(message: string): Promise<string> {

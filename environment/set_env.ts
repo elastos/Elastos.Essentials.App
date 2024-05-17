@@ -27,7 +27,6 @@ const prodEnv = {
   NownodesAPI: {
     apikey: localEnv.NOWNODES_API_KEY
   },
-  BitcoinSignAnyData: false
 }
 
 const devEnv = {
@@ -45,7 +44,6 @@ const devEnv = {
   NownodesAPI: {
     apikey: localEnv.NOWNODES_API_KEY
   },
-  BitcoinSignAnyData: localEnv.FEAT_BITCOIN_SIGN_ANY_DATA?.toLowerCase() === 'true'
 }
 
 const devEnvironmentFile = `
@@ -84,10 +82,3 @@ if (prodEnv.NownodesAPI.apikey.length === 0) {
   console.warn(yellow("Warning: The nownodes apikey for production is empty! You will not be able to obtain relevant data of the btc chain"));
 }
 
-if (devEnv.BitcoinSignAnyData) {
-  console.warn(red("Warning: The FEAT_BITCOIN_SIGN_ANY_DATA is true on DEV environment! You will be able to sign any data on the btc chain"));
-}
-
-if (prodEnv.BitcoinSignAnyData) {
-  console.warn(red("Warning: The FEAT_BITCOIN_SIGN_ANY_DATA is true! You will be able to sign any data on the btc chain"));
-}

@@ -6,7 +6,7 @@ import { toOutputScript } from "bitcoinjs-lib/src/address";
 import { bitcoin, testnet } from "bitcoinjs-lib/src/networks";
 import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
 import { Logger } from "src/app/logger";
-import { BTCOutputData, BTCTxData, BTCUTXO } from "src/app/wallet/model/btc.types";
+import { BTCOutputData, BTCSignDataType, BTCTxData, BTCUTXO } from "src/app/wallet/model/btc.types";
 import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
 import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
 import { Safe } from "src/app/wallet/model/safes/safe";
@@ -145,6 +145,11 @@ export class BTCLedgerSafe extends Safe implements BTCSafe {
       additionals: additionals,
     });
     Logger.log('wallet', 'BTCLedgerSafe this.signedTx:', this.signedTx)
+  }
+
+  public signData(digest: string, type: BTCSignDataType): Promise<string> {
+    // TODO: Do not support.
+    return null;
   }
 
   public signMessage(message: string): Promise<string> {
