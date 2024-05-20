@@ -92,7 +92,15 @@ const supportedEIP155Methods = [
   // Networks and tokens
   "wallet_switchEthereumChain",
   "wallet_addEthereumChain",
-  "wallet_watchAsset"
+  "wallet_watchAsset",
+  // Bitcoin
+  "unisat_signData",
+  "unisat_sendBitcoin",
+  "unisat_signMessage",
+  "unisat_getPublicKey",
+  "unisat_getAccounts",
+  "unisat_requestAccounts",
+  "unisat_pushTx",
 ]
 
 /**
@@ -377,38 +385,72 @@ export class WalletConnectV2Service implements GlobalService {
     // are currently in use in the wallet, to avoid executing transactions on the wrong network
 
     let showReturnMessage = true;
-    /* TODO if (request.method === "essentials_url_intent") {
-      // Custom essentials request (not ethereum) over wallet connect protocol
-      showReturnMessage = await this.handleEssentialsCustomRequest(connector, request);
-    }
-    else*/  if (event.params.request.method === "wallet_watchAsset") {
-      let resultOrError = await EIP155RequestHandler.handleAddERCTokenRequest(event.params.request.params);
-      void this.approveOrReject(event, resultOrError);
-    }
-    else if (event.params.request.method === "wallet_switchEthereumChain") {
-      let resultOrError = await EIP155RequestHandler.handleSwitchNetworkRequest(event.params.request.params);
-      void this.approveOrReject(event, resultOrError);
-    }
-    else if (event.params.request.method === "wallet_addEthereumChain") {
-      let resultOrError = await EIP155RequestHandler.handleAddNetworkRequest(event.params.request.params);
-      void this.approveOrReject(event, resultOrError);
-    }
-    else if (event.params.request.method.startsWith("eth_signTypedData")) {
-      let resultOrError = await EIP155RequestHandler.handleSignTypedDataRequest(event.params.request.method, event.params.request.params);
-      void this.approveOrReject(event, resultOrError);
-    }
-    else if (event.params.request.method.startsWith("personal_sign")) {
-      let resultOrError = await EIP155RequestHandler.handlePersonalSignRequest(event.params.request.params);
-      void this.approveOrReject(event, resultOrError);
-    }
-    else if (event.params.request.method.startsWith("eth_sign")) {
-      let resultOrError = await EIP155RequestHandler.handleEthSignRequest(event.params.request.params);
-      void this.approveOrReject(event, resultOrError);
-    }
-    else if (event.params.request.method === "eth_sendTransaction") {
-      let chainId = this.wcChainToEIP155Chain(event.params.chainId);
-      let resultOrError = await EIP155RequestHandler.handleSendTransactionRequest(event.params.request.params, chainId);
-      void this.approveOrReject(event, resultOrError);
+    let resultOrError = null;
+
+    switch (event.params.request.method) {
+      // case "essentials_url_intent":
+      //   // Custom essentials request (not ethereum) over wallet connect protocol
+      //   showReturnMessage = await this.handleEssentialsCustomRequest(connector, request);
+      //   break;
+      case "wallet_watchAsset":
+        resultOrError = await EIP155RequestHandler.handleAddERCTokenRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "wallet_switchEthereumChain":
+        resultOrError = await EIP155RequestHandler.handleSwitchNetworkRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "wallet_addEthereumChain":
+        resultOrError = await EIP155RequestHandler.handleAddNetworkRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "eth_sendTransaction":
+        let chainId = this.wcChainToEIP155Chain(event.params.chainId);
+        resultOrError = await EIP155RequestHandler.handleSendTransactionRequest(event.params.request.params, chainId);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      // Bitcoin
+      case "unisat_signData":
+        resultOrError = await EIP155RequestHandler.handleBitcoinSignDataTransactionRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "unisat_sendBitcoin":
+        resultOrError = await EIP155RequestHandler.handleBitcoinSendRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "unisat_signMessage":
+        resultOrError = await EIP155RequestHandler.handleBitcoinSignMessageRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "unisat_getPublicKey":
+        showReturnMessage = false;
+        resultOrError = await EIP155RequestHandler.handleBitcoinGetPublicKeyRequest();
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case "unisat_getAccounts":
+      case "unisat_requestAccounts":
+          showReturnMessage = false;
+          resultOrError = await EIP155RequestHandler.handleBitcoinGetAccountsRequest();
+          void this.approveOrReject(event, resultOrError);
+          break;
+      case "unisat_pushTx":
+        resultOrError = await EIP155RequestHandler.handleBitcoinPushTxRequest(event.params.request.params);
+        void this.approveOrReject(event, resultOrError);
+        break;
+      default:
+        if (event.params.request.method.startsWith("eth_signTypedData")) {
+          resultOrError = await EIP155RequestHandler.handleSignTypedDataRequest(event.params.request.method, event.params.request.params);
+          void this.approveOrReject(event, resultOrError);
+        }
+        else if (event.params.request.method.startsWith("personal_sign")) {
+          resultOrError = await EIP155RequestHandler.handlePersonalSignRequest(event.params.request.params);
+          void this.approveOrReject(event, resultOrError);
+        }
+        else if (event.params.request.method.startsWith("eth_sign")) {
+          resultOrError = await EIP155RequestHandler.handleEthSignRequest(event.params.request.params);
+          void this.approveOrReject(event, resultOrError);
+        }
+        break;
     }
 
     if (showReturnMessage) {

@@ -12,6 +12,9 @@ import { GlobalIntentService } from "../../global.intent.service";
 import { GlobalNativeService } from "../../global.native.service";
 import { GlobalSwitchNetworkService } from "../../global.switchnetwork.service";
 import { GlobalTranslationService } from "../../global.translation.service";
+import { WalletService } from "src/app/wallet/services/wallet.service";
+import { BTCMainNetNetwork } from "src/app/wallet/model/networks/btc/network/btc.mainnet.network";
+import { MasterWallet } from "src/app/wallet/model/masterwallets/masterwallet";
 
 export type EIP155ResultOrError<T> = {
   result?: T;
@@ -279,6 +282,266 @@ export class EIP155RequestHandler {
     }
   }
 
+  // ******************************************
+  // Bitcoin Request: TODO move to a new file ?
+  // ******************************************
+
+  /**
+   * Signs any payload, including random data or a real BTC raw transaction (CAUTION).
+   *
+   * @param
+   * [{
+   *  rawData: Any HEX payload to sign, a raw BTC transaction encoded to HEX.
+   *  type:   "ecdsa" or "schnorr"
+   * }]
+   *
+   * @return Concatenated signature R|S (32 bytes, 32 bytes), HEX.
+   */
+  public static async handleBitcoinSignDataTransactionRequest(params: any): Promise<EIP155ResultOrError<string>> {
+    try {
+      Logger.log("walletconnecteip155", "Bitcoin Sign data intent", params[0]);
+
+      if (!(params[0].type)) {
+        params[0].type = 'ecdsa'; //default
+      }
+
+      let response: {
+        action: string,
+        result: {
+            signature: string,
+        }
+      } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signbitcoindata", {
+        payload: {
+          params: [
+            params[0]
+          ]
+        }
+      });
+      Logger.log("walletconnecteip155", "Got bitcpin sign data intent response", response);
+
+      if (response && response.result && response.result.signature) {
+        // Approve Call Request
+        return { result: response.result.signature };
+      }
+      else {
+        // Reject Call Request
+        return {
+          error: {
+            code: -1,
+            message: "Errored or cancelled - TODO: improve this error handler"
+          }
+        };
+      }
+    }
+    catch (e) {
+      Logger.error("walletconnecteip155", "Bitcoin sign data intent error", e);
+      // Reject Call Request
+      return {
+        error: {
+          code: -1,
+          message: e
+        }
+      };
+    }
+  }
+
+  public static async handleBitcoinSendRequest(params: any): Promise<EIP155ResultOrError<string>> {
+    try {
+      Logger.log("walletconnecteip155", "Bitcoin send intent", params[0]);
+
+      let response: {
+        action: string,
+        result: {
+            txid: string,
+            status: "published" | "cancelled"
+        }
+      } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/sendbitcoin", {
+          payload: {
+              params: [
+                params[0]
+              ]
+          }
+      })
+
+      if (response && response.result && response.result.txid) {
+        // Approve Call Request
+        return { result: response.result.txid };
+      }
+      else {
+        // Reject Call Request
+        return {
+          error: {
+            code: -1,
+            message: "Errored or cancelled - TODO: improve this error handler"
+          }
+        };
+      }
+    }
+    catch (e) {
+      Logger.error("walletconnecteip155", "Send intent error", e);
+      // Reject Call Request
+      return {
+        error: {
+          code: -1,
+          message: e
+        }
+      };
+    }
+  }
+
+  public static async handleBitcoinSignMessageRequest(params: any): Promise<EIP155ResultOrError<string>> {
+    try {
+      Logger.log("walletconnecteip155", "Bitcoin sign message intent", params[0]);
+
+      let response: {
+        action: string,
+        result: {
+            signature: string,
+        }
+      } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/signbitcoinmessage", {
+          payload: {
+              params: [
+                params[0]
+              ]
+          }
+      })
+
+      if (response && response.result && response.result.signature) {
+        // Approve Call Request
+        return { result: response.result.signature };
+      }
+      else {
+        // Reject Call Request
+        return {
+          error: {
+            code: -1,
+            message: "Errored or cancelled - TODO: improve this error handler"
+          }
+        };
+      }
+    }
+    catch (e) {
+      Logger.error("walletconnecteip155", "Bitcon sign message intent error", e);
+      // Reject Call Request
+      return {
+        error: {
+          code: -1,
+          message: e
+        }
+      };
+    }
+  }
+
+  public static async handleBitcoinPushTxRequest(params: any): Promise<EIP155ResultOrError<string>> {
+    try {
+      Logger.log("walletconnecteip155", "Bitcoin push tx intent", params[0]);
+
+      let response: {
+        action: string,
+        result: {
+            txid: string,
+            status: "published" | "cancelled"
+        }
+      } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/pushbitcointx", {
+          payload: {
+              params: [
+                params[0]
+              ]
+          }
+      })
+
+      if (response && response.result && response.result.txid) {
+        // Approve Call Request
+        return { result: response.result.txid };
+      }
+      else {
+        // Reject Call Request
+        return {
+          error: {
+            code: -1,
+            message: "Errored or cancelled - TODO: improve this error handler"
+          }
+        };
+      }
+    }
+    catch (e) {
+      Logger.error("walletconnecteip155", "Bitcon push tx intent error", e);
+      // Reject Call Request
+      return {
+        error: {
+          code: -1,
+          message: e
+        }
+      };
+    }
+  }
+
+  public static async handleBitcoinGetPublicKeyRequest(): Promise<EIP155ResultOrError<string>> {
+    try {
+      Logger.log("walletconnecteip155", "Bitcoin get public key intent");
+
+      const masterWallet = WalletService.instance.getActiveMasterWallet();
+      let publickey = await this.getWalletBitcoinPublicKey(masterWallet)
+
+      if (publickey) {
+        // Approve Call Request
+        return { result: publickey };
+      }
+      else {
+        // Reject Call Request
+        return {
+          error: {
+            code: -1,
+            message: "Errored or cancelled - TODO: improve this error handler"
+          }
+        };
+      }
+    }
+    catch (e) {
+      Logger.error("walletconnecteip155", "Bitcon get public key intent error", e);
+      // Reject Call Request
+      return {
+        error: {
+          code: -1,
+          message: e
+        }
+      };
+    }
+  }
+
+  public static async handleBitcoinGetAccountsRequest(): Promise<EIP155ResultOrError<string[]>> {
+    try {
+      Logger.log("walletconnecteip155", "Bitcoin get accounts intent");
+
+      const masterWallet = WalletService.instance.getActiveMasterWallet();
+      let address = await this.getWalletBitcoinAddress(masterWallet)
+
+      if (address) {
+        // Approve Call Request
+        return { result: [address] };
+      }
+      else {
+        // Reject Call Request
+        return {
+          error: {
+            code: -1,
+            message: "Errored or cancelled - TODO: improve this error handler"
+          }
+        };
+      }
+    }
+    catch (e) {
+      Logger.error("walletconnecteip155", "Bitcoin get accounts intent error", e);
+      // Reject Call Request
+      return {
+        error: {
+          code: -1,
+          message: e
+        }
+      };
+    }
+  }
+
   // message: Bytes | string
   private static messageToBuffer(message: string | any): Buffer {
     var buffer = Buffer.from([]);
@@ -296,5 +559,23 @@ export class EIP155RequestHandler {
 
   private static bufferToHex(buf: Buffer): string {
     return "0x" + Buffer.from(buf).toString("hex");
+  }
+
+  // For Bitcoin
+  private static getBitcoinNetwork(): BTCMainNetNetwork {
+    return WalletNetworkService.instance.getNetworkByKey("btc") as BTCMainNetNetwork
+  }
+
+  private static async getWalletBitcoinAddress(masterWallet: MasterWallet): Promise<string> {
+    const bitcoinNetwork = this.getBitcoinNetwork();
+    const bitcoinNetworkWallet = await bitcoinNetwork.createNetworkWallet(masterWallet, false)
+    const addresses = bitcoinNetworkWallet?.safe.getAddresses(0, 1, false, null);
+    return addresses?.[0];
+  }
+
+  private static async getWalletBitcoinPublicKey(masterWallet: MasterWallet): Promise<string> {
+    const bitcoinNetwork = this.getBitcoinNetwork();
+    const bitcoinNetworkWallet = await bitcoinNetwork.createNetworkWallet(masterWallet, false)
+    return bitcoinNetworkWallet?.safe.getPublicKey();
   }
 }
