@@ -96,9 +96,8 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         try {
             // tiny-secp256k1 v2 is an ESM module, so we can't "require", and must import async
             const ecc = await import('tiny-secp256k1');
-            const BIP32Wrapper = require('bip32').default;
-            // wrap the bip32 library
-            const bip32 = BIP32Wrapper(ecc);
+            const { BIP32Factory } = await import('bip32');
+            const bip32 = BIP32Factory(ecc);
 
             // For taproot
             BTC.initEccLib(ecc)
@@ -161,7 +160,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
 
 
       // same as keypair.sign
-      //   const secp256k1 = require('secp256k1');
+      //   const secp256k1 = await import('secp256k1');
       //   let signObj = secp256k1.sign(Buffer.from(digest, "hex"), keypair.privateKey);
       //   if (signObj) {
       //      return signObj.signature.toString('hex');
@@ -194,8 +193,8 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
             // User canceled the password
             return null;
         }
-
-        return bitcoinMessage.sign(message, keypair.privateKey, keypair.compressed).toString('base64')
+        // TODO: class BIP32 is not exported.
+        return bitcoinMessage.sign(message, keypair.privateKey, (keypair as any).compressed).toString('base64')
     }
 
     public createBTCPaymentTransaction(inputs: BTCUTXO[], outputs: BTCOutputData[], changeAddress: string, feePerKB: string, fee: number): Promise<any> {

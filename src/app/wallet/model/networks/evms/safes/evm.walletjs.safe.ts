@@ -70,9 +70,9 @@ export class EVMWalletJSSafe extends Safe implements EVMSafe {
 
     this.privateKey = this.privateKey.replace("0x", "");
 
-    const secp256k1 = require('secp256k1');
+    const secp256k1 = await import('secp256k1');
     // Get the compressed publickey.
-    this.publicKey = secp256k1.publicKeyCreate(Buffer.from(this.privateKey, "hex"), true).toString("hex");
+    this.publicKey = Buffer.from(secp256k1.publicKeyCreate(Buffer.from(this.privateKey, "hex"), true)).toString("hex")
 
     if (this.privateKey) {
       this.account = (await EVMService.instance.getWeb3(this.networkWallet.network)).eth.accounts.privateKeyToAccount(this.privateKey);

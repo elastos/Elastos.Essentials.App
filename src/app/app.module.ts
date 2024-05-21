@@ -84,6 +84,10 @@ export class SentryErrorHandler implements ErrorHandler {
     if (stringifiedError.indexOf("Unsupported accounts. update() namespace, account eip155:1") >= 0)
       return true;
 
+    // walletconnect error.
+    if (stringifiedError.indexOf("s.terminate is not a function") >= 0)
+      return true;
+
     return false;
   }
 
