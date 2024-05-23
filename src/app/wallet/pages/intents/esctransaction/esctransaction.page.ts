@@ -78,6 +78,8 @@ export class EscTransactionPage implements OnInit {
 
   public currentNetworkName = ''
 
+  public spendingCap = '--'; // for erc20 token approve
+
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
@@ -202,7 +204,13 @@ export class EscTransactionPage implements OnInit {
       this.transactionInfo = await transactionInfoParser.computeFromTxData(
         this.coinTransferService.payloadParam.data,
         this.coinTransferService.payloadParam.to);
-
+      if (this.transactionInfo.type === ETHOperationType.ERC20_TOKEN_APPROVE) {
+        let approveOperation = <ApproveERC20Operation>this.transactionInfo.operation;
+        if (approveOperation && approveOperation.spendingCap && approveOperation.decimals) {
+          let tokenAmountMulipleTimes = new BigNumber(10).pow(approveOperation.decimals)
+          this.spendingCap = (new BigNumber(approveOperation.spendingCap).dividedBy(tokenAmountMulipleTimes)).toFixed()
+        }
+      }
     } else {
       this.transactionInfo = {
         type: ETHOperationType.SEND_ERC20,
@@ -389,7 +397,7 @@ export class EscTransactionPage implements OnInit {
     this.gasPrice = Math.floor(this.gasPriceGwei * Config.GWEI).toString();
   }
 
-  public async updateGasLimit(event) {
+  public updateGasLimit(event) {
     if (this.gasLimitDisplay) this.gasLimit = this.gasLimitDisplay;
   }
 

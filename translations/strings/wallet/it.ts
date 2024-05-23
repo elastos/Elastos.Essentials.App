@@ -561,6 +561,7 @@ export const it = {
         "esctransaction-you-are-using": "Stai usando:",
         "esctransaction-value": "Valore:",
         "esctransaction-fees": "Commissione Max. Stimata:",
+        "esctransaction-approve-token-spending-cap": "Spending cap ",
 
         /***********************
         * Sign Typed Data Page *

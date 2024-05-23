@@ -562,6 +562,7 @@ export const fr = {
         "esctransaction-you-are-using": "Vous utilisez:",
         "esctransaction-value": "Montant:",
         "esctransaction-fees": "Frais maximal estimé:",
+        "esctransaction-approve-token-spending-cap": "Spending cap ",
 
         /***********************
         * Send Bitcoin Page *

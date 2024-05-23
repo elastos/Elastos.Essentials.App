@@ -562,6 +562,7 @@ export const zh = {
         "esctransaction-you-are-using": "您正在花费：",
         "esctransaction-value": "金额:",
         "esctransaction-fees": "预估手续费（最多）:",
+        "esctransaction-approve-token-spending-cap": "支付上限 ",
 
         /***********************
         * Sign Typed Data Page *

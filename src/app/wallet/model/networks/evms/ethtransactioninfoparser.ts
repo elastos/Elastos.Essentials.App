@@ -44,6 +44,8 @@ export type EthContractOperation = {
 export type ApproveERC20Operation = EthContractOperation & {
   tokenName: string;
   symbol: string;
+  decimals: number;
+  spendingCap: string;
 }
 
 export type SwapExactTokensOperation = EthContractOperation & {
@@ -211,12 +213,16 @@ export class ETHTransactionInfoParser {
 
       case '0x095ea7b3': // approve(address,uint256)
         try {
+          let params = await this.extractTransactionParamValues(["function approve(address,uint256) public returns (bool success)"], txData);
+          let amountIn = this.bigNumberTransactionParamAt(params, 1).toString()
           // Method is "approve". "to" must be a ERC20 contract and we'll try to resolve the token name.
           let coinInfo = await this.getERC20TokenInfoOrThrow(txTo);
           let operation: ApproveERC20Operation = {
             description: 'wallet.ext-tx-info-type-approve-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol },
             tokenName: coinInfo.coinName,
-            symbol: coinInfo.coinSymbol
+            symbol: coinInfo.coinSymbol,
+            decimals: coinInfo.coinDecimals,
+            spendingCap: amountIn
           }
 
           txInfo.type = ETHOperationType.ERC20_TOKEN_APPROVE;
@@ -228,7 +234,9 @@ export class ETHTransactionInfoParser {
           let operation: ApproveERC20Operation = {
             description: 'wallet.ext-tx-info-type-approve-token',
             tokenName: null,
-            symbol: null
+            symbol: null,
+            decimals: null,
+            spendingCap: null
           }
           txInfo.operation = operation;
         }
