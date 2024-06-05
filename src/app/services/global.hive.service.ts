@@ -24,13 +24,13 @@ declare let didManager: DIDPlugin.DIDManager;
 
 const availableHiveNodeProviders = {
   MainNet: [
-    "https://hive1.trinity-tech.io",
-    "https://hive2.trinity-tech.io",
-    "https://hive3.trinity-tech.io"
+    "https://hive1.elastos.io",
+    "https://hive2.elastos.io",
+    "https://hive3.elastos.io"
   ],
   TestNet: [
-    "https://hive-testnet1.trinity-tech.io",
-    "https://hive-testnet2.trinity-tech.io"
+    "https://hive-testnet1.elastos.io",
+    "https://hive-testnet2.elastos.io"
   ]
 };
 
