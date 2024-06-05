@@ -170,10 +170,15 @@ export class SettingsPage implements OnInit {
                                         this.importStandardWallet(ImportWalletType.PRIVATEKEY);
                                     }
                                 },
-                                /* TODO {
-                                  title: "Keystore file",
-                                  action: () => { console.log("xxx") }
-                                } */
+                                {
+                                    title: this.translate.instant("Keystore"),
+                                    routeOrAction: () => {
+                                        this.walletCreationService.reset();
+                                        this.walletCreationService.isMulti = false;
+                                        this.walletCreationService.type = 2; // import
+                                        this.native.go("/wallet/wallet-import-keystorespv");
+                                    }
+                                },
                             ]
                         }
                     ]

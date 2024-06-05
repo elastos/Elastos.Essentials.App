@@ -31,6 +31,7 @@ const routes: Routes = [
     { path: 'wallet-create', loadChildren: () => import('./pages/wallet/wallet-create/module').then(m => m.WalletCreateModule) },
     { path: 'wallet-import', loadChildren: () => import('./pages/wallet/wallet-import/module').then(m => m.WalletImportModule) },
     { path: 'wallet-import-privatekey', loadChildren: () => import('./pages/wallet/wallet-import-privatekey/module').then(m => m.WalletImportByPrivateKeyModule) },
+    { path: 'wallet-import-keystorespv', loadChildren: () => import('./pages/wallet/wallet-import-keystore-spv/module').then(m => m.WalletImportByKeystoreSpvModule) },
     { path: 'wallet-keystore-export', loadChildren: () => import('./pages/wallet/wallet-keystore-export/module').then(m => m.KeystoreExportModule) },
     { path: 'wallet-manager', loadChildren: () => import('./pages/wallet/wallet-manager/module').then(m => m.WalletManagerModule) },
     { path: 'wallet-create-name', loadChildren: () => import('./pages/wallet/wallet-create-name/module').then(m => m.WalletCreateNameModule) },
