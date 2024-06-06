@@ -25,7 +25,7 @@
       *ngIf="selecting && widgetState.category === 'app-plugin'">
       <img [src]="theme.darkMode ? '/assets/launcher/widgets/white-trash.svg' : '/assets/launcher/widgets/trash.svg'" />
     </div>
-    <div class="item" (click)="selectWidget()" *ngIf="selecting">
+    <div class="item" (click)="selectWidget()" *ngIf="selecting && widgetComponent">
       <img [src]="theme.darkMode ? '/assets/launcher/widgets/white-check.svg' : '/assets/launcher/widgets/check.svg'" />
     </div>
   </div>

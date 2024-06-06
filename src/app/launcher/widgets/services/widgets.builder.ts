@@ -5,10 +5,15 @@ import type { WidgetHolderComponent } from '../base/widget-holder/widget-holder.
 import { WidgetBase } from '../base/widgetbase';
 import { WidgetState } from '../base/widgetstate';
 import { WidgetPluginsService } from './plugin.service';
+import { Platform } from '@ionic/angular';
 
 export class WidgetsBuilder {
-    constructor(
-    ) { }
+    public static isIOS = false;
+
+    constructor(private platform: Platform) {
+        // Remove some widgets on iOS as apple complains about built-in widgets.
+        WidgetsBuilder.isIOS = this.platform.platforms().indexOf('android') < 0;
+    }
 
     /**
      * Intanciates a widget from a persistent widget state, into the target UI container.
@@ -84,7 +89,11 @@ export class WidgetsBuilder {
                 case "hive": widgetComponentClass = (await import("../builtin/hive/hive.widget")).HiveWidget; break;
                 case "discover-dapps": widgetComponentClass = (await import("../builtin/discover-dapps/discover-dapps.widget")).DiscoverDAppsWidget; break;
                 case "notifications": widgetComponentClass = (await import("../builtin/notifications/notifications.widget")).NotificationsWidget; break;
-                case "swap": widgetComponentClass = (await import("../builtin/swap/swap.widget")).SwapWidget; break;
+                case "swap":
+                    if (!WidgetsBuilder.isIOS) {
+                        widgetComponentClass = (await import("../builtin/swap/swap.widget")).SwapWidget;
+                    }
+                    break;
                 default:
                     Logger.warn("widgets", `Unhandled builtin widget type ${widgetState.builtInType}`);
             }
