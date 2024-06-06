@@ -5,15 +5,10 @@ import type { WidgetHolderComponent } from '../base/widget-holder/widget-holder.
 import { WidgetBase } from '../base/widgetbase';
 import { WidgetState } from '../base/widgetstate';
 import { WidgetPluginsService } from './plugin.service';
-import { Platform } from '@ionic/angular';
+import { WidgetsService } from './widgets.service';
 
 export class WidgetsBuilder {
-    public static isIOS = false;
-
-    constructor(private platform: Platform) {
-        // Remove some widgets on iOS as apple complains about built-in widgets.
-        WidgetsBuilder.isIOS = this.platform.platforms().indexOf('android') < 0;
-    }
+    constructor() {}
 
     /**
      * Intanciates a widget from a persistent widget state, into the target UI container.
@@ -90,7 +85,7 @@ export class WidgetsBuilder {
                 case "discover-dapps": widgetComponentClass = (await import("../builtin/discover-dapps/discover-dapps.widget")).DiscoverDAppsWidget; break;
                 case "notifications": widgetComponentClass = (await import("../builtin/notifications/notifications.widget")).NotificationsWidget; break;
                 case "swap":
-                    if (!WidgetsBuilder.isIOS) {
+                    if (!WidgetsService.isIOS) {
                         widgetComponentClass = (await import("../builtin/swap/swap.widget")).SwapWidget;
                     }
                     break;

@@ -21,6 +21,7 @@ import { WidgetsNewsService } from './news.service';
 import { WidgetPluginsService } from './plugin.service';
 import { WidgetsBuilder } from './widgets.builder';
 import { WidgetsServiceEvents } from './widgets.events';
+import { Platform } from '@ionic/angular';
 
 const PERSISTENCE_CONTEXT = "launcher-widget";
 
@@ -66,6 +67,7 @@ export type WidgetInstance = {
 })
 export class WidgetsService {
     public static instance: WidgetsService;
+    public static isIOS = false;
 
     // List of widget components instantiated, so we can call the lifecycle on them
     private componentsInstances: WidgetInstance[] = [];
@@ -81,7 +83,8 @@ export class WidgetsService {
         private http: HttpClient,
         private globalNative: GlobalNativeService,
         private pluginService: WidgetPluginsService,
-        private newsService: WidgetsNewsService
+        private newsService: WidgetsNewsService,
+        private platform: Platform
     ) {
         WidgetsService.instance = this;
         // TMP DEBUG
@@ -92,14 +95,17 @@ export class WidgetsService {
 
     init() {
         GlobalServiceManager.getInstance().registerService(this);
+
+        WidgetsService.isIOS = this.platform.platforms().indexOf('android') < 0;
     }
 
     public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     }
 
-    public async onUserSignOut(): Promise<void> {
+    public onUserSignOut(): Promise<void> {
         // TODO: When is the best time to clean the componentsInstances?
         this.componentsInstances = [];
+        return;
     }
 
     public getAvailableBuiltInWidgets(): WidgetState[] {
