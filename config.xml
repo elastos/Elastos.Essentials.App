@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-packageName="io.web3essentials.app" android-versionCode="301040" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="3.1.4.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-packageName="io.web3essentials.app" android-versionCode="301050" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="3.1.5.d" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Essentials web3 wallet
     </description>
-    <author email="contact@elastos.io" href="https://d.web3essentials.io">
+    <author email="contact@web3essentials.io" href="https://web3essentials.io">
         Elaphant Limited.
     </author>
     <content src="index.html" />
