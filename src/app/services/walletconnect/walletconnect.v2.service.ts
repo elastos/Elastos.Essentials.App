@@ -519,23 +519,28 @@ export class WalletConnectV2Service implements GlobalService {
 
     // For each requested EIP155 chain (we have checked that we support them all), we return the EVM account address (same for all)
     let accounts: string[] = [];
-    for (let chain of requiredNamespaces["eip155"].chains) {
-      accounts.push(`${chain}:${ethAccountAddresses}`)
-    }
-
     let methods: string[] = [];
     let events: string[] = [];
+
+    // requiredNamespace maybe is empty / undefined.
+    if (requiredNamespaces["eip155"]) {
+      for (let chain of requiredNamespaces["eip155"].chains) {
+        accounts.push(`${chain}:${ethAccountAddresses}`)
+      }
+
+      methods = requiredNamespaces["eip155"].methods;
+      events = requiredNamespaces["eip155"].events;
+    }
+
     // We also need to add option namespaces, some optional methods may also be executed.
     // If we don't add option namespaces, the app may directly think that this wallet does not support this method, and does not sent the request.
     if (optionNamespaces && optionNamespaces["eip155"]) {
       for (let chain of optionNamespaces["eip155"].chains) {
         accounts.push(`${chain}:${ethAccountAddresses}`)
       }
-      methods = requiredNamespaces["eip155"].methods.concat(optionNamespaces["eip155"].methods);
-      events = requiredNamespaces["eip155"].events.concat(optionNamespaces["eip155"].events);
-    } else {
-      methods = requiredNamespaces["eip155"].methods;
-      events = requiredNamespaces["eip155"].events;
+
+      methods = methods.concat(optionNamespaces["eip155"].methods);
+      events = events.concat(optionNamespaces["eip155"].events);
     }
 
     let namespaces: SessionTypes.Namespaces = { // Approved namespaces should match the request, based on our wallet capabilities
