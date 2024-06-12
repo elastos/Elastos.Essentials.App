@@ -60,6 +60,7 @@ export class EditCustomNetworkPage implements OnInit {
   }
 
   ngOnDestroy() {
+    void this.native.hideLoading(); // Maybe RPC request timeout
     if (this.intentMode && !this.alreadySentIntentResponse) {
         let result: EditCustomNetworkIntentResult = {
             networkAdded: false
