@@ -39,6 +39,7 @@ import { MainChainSubWallet } from 'src/app/wallet/model/networks/elastos/mainch
 import { StandardCoinName } from 'src/app/wallet/model/coin';
 import { SHA256 } from 'src/app/helpers/crypto/sha256';
 import { environment } from 'src/environments/environment';
+import { unsafeRandomHex } from 'src/app/helpers/random.helper';
 
 declare let dappBrowser: DappBrowserPlugin.DappBrowser;
 
@@ -76,7 +77,20 @@ enum AddressType  {
     OwnerDeposit = 'owner-deposit',
     OwnerStake = 'owner-stake',
     All = 'all'
-  }
+}
+
+type WalletPermissionCaveat = {
+    type: string
+    value: any
+}
+
+type WalletPermission = {
+    caveats: WalletPermissionCaveat[]
+    date: number // The date the permission was granted, in UNIX epoch time
+    id?: string
+    invoker: string, //`http://${string}` | `https://${string}`
+    parentCapability: 'eth_accounts' | string
+}
 
 /**
  * Mode used to run dapps. Depending on this mode, different things are done.
@@ -727,6 +741,12 @@ export class DappBrowserService implements GlobalService {
                 await this.handleAddEthereumChain(message);
                 this.showWebView();
                 break;
+            case "wallet_requestPermissions":
+                Logger.log("dappbrowser", "Received permissions request");
+                dappBrowser.hide();
+                await this.handleRequestPermissions(message);
+                this.showWebView();
+                break;
 
             // ELASTOS CONNECTOR
             case "elastos_getCredentials":
@@ -908,6 +928,28 @@ export class DappBrowserService implements GlobalService {
                 message: "User rejected the request."
             });
         }
+    }
+
+    /**
+     * TODO: Add screen to let user confirm
+     */
+    private handleRequestPermissions(message: DABMessage): Promise<void> {
+        let walletPermissions: WalletPermission = {
+            "id": unsafeRandomHex(21),
+            "parentCapability": "eth_accounts",
+            "invoker": this.url,
+            "caveats": [
+              {
+                "type": "restrictReturnedAccounts",
+                "value": [
+                  this.userEVMAddress
+                ]
+              }
+            ],
+            "date": moment().valueOf(), // ms
+        }
+        this.sendInjectedResponse("ethereum", message.data.id, [walletPermissions]);
+        return;
     }
 
     private async handleElastosGetCredentials(message: DABMessage): Promise<void> {
