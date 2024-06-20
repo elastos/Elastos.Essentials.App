@@ -159,7 +159,9 @@ export class WalletConnectConnectV2Page implements OnInit {
    * Tells if we are able to open a session for this dapp, based on its required protocols, chains, methods.
    */
   public canOpenSession() {
-    return this.unsupportedEIP155Methods.length === 0 && this.unsupportedChains.length === 0;
+    // We can open session even the chain is unsupported.
+    // Caller can call wallet_addEthereumChain if the chain is unsupported.
+    return this.unsupportedEIP155Methods.length === 0;
   }
 
   async openSession() {

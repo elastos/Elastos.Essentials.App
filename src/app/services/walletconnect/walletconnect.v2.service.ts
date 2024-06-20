@@ -198,7 +198,8 @@ export class WalletConnectV2Service implements GlobalService {
         // be reflected in apps ! Which may make us execute transactions on wrong chains.
 
         // Accounts and chains are provided to the "session", not to "pairings".
-        void this.signClient.update({
+        // Use await then we can catch the exception.
+        await this.signClient.update({
           topic: session.topic,
           namespaces: await this.buildNamespaces(ethAccounts, session.requiredNamespaces, session.optionalNamespaces)
         });
@@ -522,8 +523,13 @@ export class WalletConnectV2Service implements GlobalService {
     let methods: string[] = [];
     let events: string[] = [];
 
+    // non-evm network
+    if (ethAccountAddresses.length == 0) {
+      ethAccountAddresses.push('0x0')
+    }
+
     // requiredNamespace maybe is empty / undefined.
-    if (requiredNamespaces["eip155"]) {
+    if (requiredNamespaces && requiredNamespaces["eip155"]) {
       for (let chain of requiredNamespaces["eip155"].chains) {
         accounts.push(`${chain}:${ethAccountAddresses}`)
       }
