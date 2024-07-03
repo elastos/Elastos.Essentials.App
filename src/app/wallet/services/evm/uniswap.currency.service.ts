@@ -77,8 +77,11 @@ export class UniswapCurrencyService {
       // Note: later we can add more liquidity pairs here, not only including the wrapped native token, in order
       // to increase the possible routes.
       await this.fetchAndAddPair(evaluatedToken, wrappedNativeCoinToken, tradingPairs, network, swapFactoryAddress, swapFactoryInitCodeHash);
-      // USD stable coin against wrapped native token (ex: USDT <-> WBNB).
-      await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, network, swapFactoryAddress, swapFactoryInitCodeHash);
+
+      if (evaluatedToken.address != wrappedNativeCoinToken.address) { // Avoid duplicate pairs
+        // USD stable coin against wrapped native token (ex: USDT <-> WBNB).
+        await this.fetchAndAddPair(stableCoinUSDToken, wrappedNativeCoinToken, tradingPairs, network, swapFactoryAddress, swapFactoryInitCodeHash);
+      }
       //Logger.log('walletdebug', "Computed Trading Pairs:", tradingPairs);
     }
     catch (e) {
