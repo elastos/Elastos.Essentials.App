@@ -489,6 +489,9 @@ export abstract class SubWallet<TransactionType extends GenericTransaction, Wall
           try {
             let erroObj = JSON.parse(err.error);
             message = erroObj.error.message;
+            if (err.message.includes('txn-mempool-conflict')) { // For BTC chain.
+              message = GlobalTranslationService.instance.translateInstant('wallet.transaction-pending');
+            }
           } catch (e) {
             // not json
             Logger.error("wallet", "JSON.parse error:", err.error, e);

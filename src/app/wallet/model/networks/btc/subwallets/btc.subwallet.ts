@@ -33,6 +33,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     private transactionsList: string[] = null;
     private totalTransactionCount = 0;
     private explorerApiUrl = null;
+    // private unconfirmedSendingTxids = []; // We can't use these utxos
 
     constructor(networkWallet: AnyNetworkWallet, public rpcApiUrl: string) {
         super(networkWallet, StandardCoinName.BTC);
@@ -85,6 +86,10 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
 
     public async isAddressValid(address: string): Promise<boolean> {
         return await WalletUtil.isBTCAddress(address);
+    }
+
+    public getRawBalanceSpendable(): BigNumber {
+        return this.balanceSpendable;
     }
 
     public getRootPaymentAddress(): string {
@@ -279,6 +284,8 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             });
         }
 
+        // TODO: Filter unconfirmedSendingTxids
+
         if (amount == -1)
             return utxoArray;
 
@@ -449,12 +456,23 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
         if (btcInfo) {
             if (btcInfo.balance) {
                 // the unconfirmedBalance is negative for unconfirmed sending transaction.
+                // eg. "unconfirmedBalance": "-994890"
+                // btcInfo.unconfirmedBalance = "10000000"
                 this.balance = new BigNumber(btcInfo.balance).plus(btcInfo.unconfirmedBalance);
+                let unconfirmedBalance = new BigNumber(btcInfo.unconfirmedBalance);
+                // the unconfirmedBalance includes sent and received
+                if (unconfirmedBalance.isNegative) {
+                    this.balanceSpendable = new BigNumber(btcInfo.balance)
+                } else {
+                    this.balanceSpendable = this.balance;
+                }
                 await this.saveBalanceToCache();
             }
             if (btcInfo.txids) {
                 this.transactionsList = btcInfo.txids;
             }
+
+            // TODO: set unconfirmedSendingTxids
 
             this.totalTransactionCount = btcInfo.txs;
         }
