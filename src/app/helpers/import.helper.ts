@@ -241,12 +241,6 @@ export const lazyEvmosImport = async (): Promise<any> => {
   return importsCache["@evmos/address-converter"];
 }
 
-export const lazyChaingeImport = async (): Promise<typeof Web3> => {
-  if (!importsCache["@chainge/sdk"])
-    importsCache["@chainge/sdk"] = await import("@chainge/sdk");
-
-  return importsCache["@chainge/sdk"].default;
-}
 
 export const lazyTronWebImport = async (): Promise<any> => {
     if (!importsCache["tronweb"])

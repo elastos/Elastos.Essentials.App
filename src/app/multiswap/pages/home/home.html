@@ -113,7 +113,7 @@
       </div>
 
       <!-- Swap slippage. Only when DEXes are involved, not pure bridges -->
-      <ion-row *ngIf="activeTransfer.swapStep && activeTransfer.swapStep.slippage" class="slippage">
+      <ion-row *ngIf="activeTransfer.swapStep && activeTransfer.swapStep.priceImpact" class="slippage">
         <ion-col size="5">
           {{ 'easybridge.swap-price-impact' | translate }}
         </ion-col>
@@ -130,7 +130,7 @@
           {{ 'easybridge.swap-fees' | translate }}
         </ion-col>
         <ion-col size="7">
-          {{ getDisplayableSwapFees() }} {{selectedSourceToken.token.getSymbol() }} ({{ getDisplayableSwapFeesPercent()
+          {{ getDisplayableSwapFees() }} {{selectedDestinationToken.token.getSymbol() }} ({{ getDisplayableSwapFeesPercent()
           }}%)
         </ion-col>
       </ion-row>

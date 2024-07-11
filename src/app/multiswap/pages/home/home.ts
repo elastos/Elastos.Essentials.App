@@ -27,6 +27,7 @@ import { UIToken } from '../../model/uitoken';
 import { ChaingeSwapService } from '../../services/chaingeswap.service';
 import { SwapUIService } from '../../services/swap.ui.service';
 import { TokenChooserService } from '../../services/tokenchooser.service';
+import { ChaingeApiService } from '../../services/chaingeapi.service';
 
 export type MultiSwapHomePageParams = {
   sourceToken?: UIToken;
@@ -87,6 +88,7 @@ export class HomePage {
     private dAppBrowserService: DappBrowserService,
     private globalSwitchNetworkService: GlobalSwitchNetworkService,
     private chaingeSwapService: ChaingeSwapService,
+    private chaingeApiService: ChaingeApiService,
     route: ActivatedRoute,
     private router: Router,
     private zone: NgZone,
@@ -113,8 +115,8 @@ export class HomePage {
       }
     });
 
-    this.isIOS = this.platform.platforms().indexOf('android') < 0;
-    //this.isIOS = true; // TMP
+    // this.isIOS = this.platform.platforms().indexOf('android') < 0;
+    this.isIOS = true; // TMP, the chainge contract is not ready.
   }
 
   ionViewWillEnter() {
@@ -265,7 +267,10 @@ export class HomePage {
   }
 
   public getDisplayableSwapFees(): string {
-    return this.activeTransfer.swapStep.fees.toFixed(5);
+    if (this.activeTransfer.swapStep.fees)
+      return this.activeTransfer.swapStep.fees.toFixed(5);
+    else
+      return null;
   }
 
   public getDisplayableSwapFeesPercent(): string {
@@ -273,8 +278,8 @@ export class HomePage {
   }
 
   public getDisplayableSwapPriceImpact(): string {
-    if (this.activeTransfer.swapStep.slippage)
-      return (this.activeTransfer.swapStep.slippage * 100).toFixed(2);
+    if (this.activeTransfer.swapStep.priceImpact)
+      return this.activeTransfer.swapStep.priceImpact.toFixed(2);
     else
       return null;
   }
@@ -394,8 +399,8 @@ export class HomePage {
   public highPriceImpactWarning(): boolean {
     if (!this.activeTransfer || !this.activeTransfer.swapStep)
       return false;
-
-    return this.activeTransfer.swapStep.slippage > 0.05; // More than 5% is high slippage
+    return Math.abs(this.activeTransfer.swapStep.priceImpact) > 5; // More than 5% is high price impact
+    // return this.activeTransfer.swapStep.slippage > 5; // More than 5% is high slippage
   }
 
   /**
@@ -501,9 +506,9 @@ export class HomePage {
       // on the chainge swap web app.
       await this.networkService.setActiveNetwork(this.activeTransfer.sourceToken.network);
 
-      // https://openapi.chainge.finance/app?channel=4&fromChain=ETH&toChain=FSN&fromToken=USDT&toToken=USDT
-      let chaingeSwapWebApp = "https://openapi.chainge.finance/app?channel=4"; // 'channel = 4' == Essentials accounts
-      chaingeSwapWebApp += `&fromChain=${this.chaingeSwapService.essentialsToChaingeChainName(this.activeTransfer.sourceToken.network)}`;
+      // https://dapp.chainge.finance/?channel=4&fromChain=ETH&toChain=FSN&fromToken=USDT&toToken=USDT
+      let chaingeSwapWebApp = "https://dapp.chainge.finance/?"; // 'channel = 4' == Essentials accounts
+      chaingeSwapWebApp += `fromChain=${this.chaingeSwapService.essentialsToChaingeChainName(this.activeTransfer.sourceToken.network)}`;
       chaingeSwapWebApp += `&fromToken=${this.activeTransfer.sourceToken.getSymbol()}`;
       chaingeSwapWebApp += `&toChain=${this.chaingeSwapService.essentialsToChaingeChainName(this.activeTransfer.destinationToken.network)}`;
       chaingeSwapWebApp += `&toToken=${this.activeTransfer.destinationToken.getSymbol()}`;
