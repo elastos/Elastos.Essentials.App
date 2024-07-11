@@ -40,6 +40,7 @@ type SwapStep = {
   fees: number; // Total swap fees in source token amount.
   feesPercent: number; // 0-1 - Total swap fees in percentage of the input amount.
   slippage: number; // 0-1
+  priceImpact: number;
 }
 
 /**
@@ -75,6 +76,8 @@ export class Transfer {
   currentStep: TransferStep = TransferStep.NEW;
   swapStep: SwapStep = null;
   estimatedReceivedAmount: BigNumber = null; // Readable number of tokens
+  // Note: the decimal is chainDecimal, not the decimal of token when we call getAggregateQuote, so we can't get estimatedReceivedAmountWei by estimatedReceivedAmount.
+  estimatedReceivedAmountWei: string = null; // number of tokens, the unit is wei. Returned from getAggregateQuote or getCrossChainQuote.
   canExecute: boolean; // Whether the transfer can safely be executed or not (balance / route / swap slippage check)
   cannotExecuteReason: string = null;
   userAgreed: boolean;
@@ -198,6 +201,7 @@ export class Transfer {
     this.amount = amount;
     this.swapStep = null;
     this.estimatedReceivedAmount = null;
+    this.estimatedReceivedAmount = null;
     this.canExecute = false;
 
     await this.updateComputations();
@@ -238,17 +242,19 @@ export class Transfer {
     this.destinationNetworkSubWallet = destinationNetworkWallet.getMainEvmSubWallet();
 
     try {
-      let { fees, slippage, amountOut } = await ChaingeSwapService.instance.getSwapQuote(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken);
+      let { fees, slippage, priceImpact, amountOut, amountOutWei } = await ChaingeSwapService.instance.getSwapQuote(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken);
 
-      // Chainge fees are in number of input tokens. We convert this to percentage
-      let feesPercent = fees / this.amount.toNumber();
+      // Chainge fees are in number of output tokens. We convert this to percentage
+      let feesPercent = fees / parseFloat(amountOut);
       this.swapStep = {
         fees,
         feesPercent,
-        slippage
+        slippage,
+        priceImpact
       }
 
       this.estimatedReceivedAmount = new BigNumber(amountOut);
+      this.estimatedReceivedAmountWei = amountOutWei;
     }
     catch (e) {
       this.canExecute = false;
@@ -317,7 +323,7 @@ export class Transfer {
     try {
       this.currentStep = TransferStep.PUBLISHING;
 
-      orderId = await ChaingeSwapService.instance.executeSwap(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken);
+      orderId = await ChaingeSwapService.instance.executeSwap(this.sourceNetworkSubWallet, this.sourceToken, this.amount, this.destinationToken, this.estimatedReceivedAmountWei);
       console.log("txId", orderId);
 
       if (orderId) {

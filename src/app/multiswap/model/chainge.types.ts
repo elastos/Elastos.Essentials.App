@@ -11,14 +11,24 @@ export enum OrderType {
 }
 
 export enum ErrorCode {
-    SUCCESS = 200,
+    SUCCESS = 0,
     VALIDATION_FAILED = 31010, // msg: "Validation failed!"
     CHAIN_NOT_SUPPORTED = 31005, // msg: "Not support this chain!"
     TOKEN_CHAIN_NOT_SUPPORTED = 31006, // msg: "Not support this chain and token!"
-    NO_ROUTE = 31037, // msg: "Get aggregate quote error! Error msg !" (according to chainge team, this happens when no DEX is available to route tokens)
+    NO_ROUTE = 3, // msg: "not find best route"
     AGGREGATE_AMOUNT_TOO_LOW = 31031, // msg: "Get aggregate quote error! Amount can't cover gas and fee!"
     CROSS_CHAIN_AMOUNT_TOO_LOW = 31071 // msg: "Get cross chain quote error! Amount can't cover gas and fee!"
 }
+
+// export enum ErrorCode {
+//     SUCCESS = 200,
+//     VALIDATION_FAILED = 31010, // msg: "Validation failed!"
+//     CHAIN_NOT_SUPPORTED = 31005, // msg: "Not support this chain!"
+//     TOKEN_CHAIN_NOT_SUPPORTED = 31006, // msg: "Not support this chain and token!"
+//     NO_ROUTE = 31037, // msg: "Get aggregate quote error! Error msg !" (according to chainge team, this happens when no DEX is available to route tokens)
+//     AGGREGATE_AMOUNT_TOO_LOW = 31031, // msg: "Get aggregate quote error! Amount can't cover gas and fee!"
+//     CROSS_CHAIN_AMOUNT_TOO_LOW = 31071 // msg: "Get cross chain quote error! Amount can't cover gas and fee!"
+// }
 
 export type Response<T> = {
     code: ErrorCode;
@@ -28,24 +38,70 @@ export type Response<T> = {
 }
 
 export type SupportedChain = {
-    chainId: number;
+    chainIndex: number;
     fullName: string;
-    id: number;
-    isActive: boolean;
-    name: string;
-    tokens: string[];
-    url: string; // eg. "https://chainge.oss-cn-hongkong.aliyuncs.com/icon/75_ELA_color.png"
+    nickName: string,
+    baseCoin: string,
+    decimals: number,
+    poll: number,
+    confirmations: number,
+    family: number,
+    sigMethod: number,
+    network: string, // '20'
+    bip44Path: string, // "m/44'/60'/0'/0/0",
+    publicEndpoint: string,
+    privateEndpoint: string,
+    scanUrl: string, // 'https://eth.elastos.io',
+    needNonce: boolean,
+    disabled: boolean,
+    delisted: boolean,
+    evmIsLegacy: boolean,
+    builtInMinterProxy: string,
+    builtInMinterProxyV2: string, // '0xc66e5e278b24adbb638cba30d6e6de697f73a774',
+    builtInSwapProxy: string,
+    weth: string, // '0x517e9e5d46c1ea8ab6f78677d6114ef47f71f6c4',
+    gasPriceAmplifier: string;
+    swapGasMin: string, // '0.0001',
+    swapGasMax: string, //'0.001'
 }
 
-export type SupportedToken = {
-    address: string;
-    chain: string;
-    decimals: number;
-    name: string;
-    price: string; // USD
-    symbol: string;
-    url: string; // eg. "https://chainge.oss-cn-hongkong.aliyuncs.com/icon/75_ELA_color.png"
+// getAssetsByChain
+export type SupportedTokenByChain = {
+    index: number,
+    name: string,
+    symbol: string,
+    decimals: number,
+    contractAddress: string,
+    cmcid: number,
+    burnable?: boolean //true means tokens is wrapped by Chainge
 }
+
+// getAssets
+export type SupportedToken = {
+    index: number,
+    name: string,
+    symbol: string,
+    cmcid: number,
+    delisted?: boolean //true means current token of this chain is delisted
+    visible?: boolean
+    contracts : {
+        [chain: string]: {
+            address: string,
+            decimals: number,
+            burnable?: boolean,
+            delisted?: boolean
+        },
+    }
+}
+
+export type ChainGasUsd = {
+    chain: string,
+    chainId: string,
+    basecoin: number,
+    token: number,
+    dex: number,
+}
+
 
 export type FeeToInfo = {
     address: string; // "0x01a14bc0018fc97e2fdb14ace069f50b1c44ee86" ??
@@ -55,22 +111,29 @@ export type FeeToInfo = {
 }
 
 export type CrossChainQuote = {
-    amountIn: number;
-    amountOut: number;
-    fee: number; // All fees including chainge and essentials. In tokenIn amount
-    gas: number; // Gas paid by the intermediate transactions
-    tokenIn: string
+    price: string;
+    outAmount: string; // Unit wei
+    outAmountUsd: string; // Trade amount must exceed $5
+    serviceFee: string; // Unit wei
+    gasFee: string; // Unit wei
+    serviceFeeRate: string;
 }
 
+// return from api
 export type AggregateQuote = {
-    amountIn: number;
-    amountOut: number;
-    fee: number; // All fees including chainge and essentials. In tokenIn amount
-    gas: number; // Gas paid by the intermediate transactions
-    slippage: number;
-    tokenIn: string;
-    tokeOut: string;
+    aggregator: string;     // on which dex the swap will take place; could be 1inch,Kyber,OpenOcean or ChaingeDex
+    chain: string;          // chain id on which the swap will take place
+    chainDecimal: number;   // decimals of chain basecoin
+    gasFee: number;         // gas fee charged in toToken, '400000'
+    outAmount: string;      // expected output amount
+    outAmountUsd: string;   // expected output amount in USD value
+    serviceFee: string;     // service fee charged in toToken
+    serviceFeeRate: string; // '8'
+    slippage: string;       // '1' = 1%, denominator is 10,000
+    routeSummary?: string;  // used when aggregator=Kyber
+    priceImpact: string;    // "-8.39"
 }
+
 
 export type Transaction = {
     chain: string;
