@@ -10,7 +10,7 @@ export class EthereumAPI {
     switch (networkIdentifier) {
       case "mainnet":
         switch (type) {
-          case EthereumAPIType.RPC: return 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
+          case EthereumAPIType.RPC: return 'https://eth.llamarpc.com';
           case EthereumAPIType.ETHERSCAN_API: return 'https://api.etherscan.io/api';
           case EthereumAPIType.BLOCK_EXPLORER: return 'https://etherscan.io';
           default:
@@ -18,7 +18,7 @@ export class EthereumAPI {
         }
       case "goerli":
         switch (type) {
-          case EthereumAPIType.RPC: return 'https://goerli.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161';
+          case EthereumAPIType.RPC: return 'https://eth-goerli.public.blastapi.io';
           case EthereumAPIType.ETHERSCAN_API: return 'https://api-goerli.etherscan.io/api';
           case EthereumAPIType.BLOCK_EXPLORER: return 'https://goerli.etherscan.io';
           default:
