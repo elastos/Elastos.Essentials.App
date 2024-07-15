@@ -8,7 +8,7 @@ export class ArbitrumTestNetNetwork extends ArbitrumBaseNetwork {
       "Arbitrum One Testnet",
       "Arbitrum Testnet",
       "assets/wallet/networks/arbitrum.svg",
-      "AETH",
+      "ETH",
       "Arbitrum ETH",
       TESTNET_TEMPLATE,
       421611,

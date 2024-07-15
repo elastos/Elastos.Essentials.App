@@ -17,7 +17,7 @@ export class ArbitrumMainNetNetwork extends ArbitrumBaseNetwork {
       "Arbitrum One",
       "Arbitrum",
       "assets/wallet/networks/arbitrum.svg",
-      "AETH",
+      "ETH",
       "Arbitrum ETH",
       MAINNET_TEMPLATE,
       42161,
