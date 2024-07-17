@@ -33,7 +33,7 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
     private transactionsList: string[] = null;
     private totalTransactionCount = 0;
     private explorerApiUrl = null;
-    // private unconfirmedSendingTxids = []; // We can't use these utxos
+    private unconfirmedSendingTxids = []; // We can't use these utxos
 
     constructor(networkWallet: AnyNetworkWallet, public rpcApiUrl: string) {
         super(networkWallet, StandardCoinName.BTC);
@@ -284,7 +284,50 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             });
         }
 
-        // TODO: Filter unconfirmedSendingTxids
+        // Filter unconfirmedSendingTxids
+        if (this.unconfirmedSendingTxids.length > 0) {
+            let utxosInSpending = [];
+
+            // Get transaction from cache
+            let transactions = await this.getTransactions();
+
+            let rawTx: BTCTransaction = null;
+            for (let index = 0; index < this.unconfirmedSendingTxids.length; index++) {
+                let isTxInCache = false;
+                if (transactions) {
+                    for (let i = 0; i < transactions.length; i++) {
+                        if (transactions[i].blockHeight < 0) {
+                            break;
+                        }
+
+                        if (transactions[i].txid == this.unconfirmedSendingTxids[index]) {
+                            isTxInCache = true;
+                            rawTx = transactions[i]
+                            break;
+                        }
+                    }
+                }
+
+                if (!isTxInCache) {
+                    rawTx = await GlobalBTCRPCService.instance.getrawtransaction(this.explorerApiUrl, this.unconfirmedSendingTxids[index]);
+                }
+
+                if (rawTx) {
+                    rawTx.vin.forEach(btcinobj => {
+                        // send tx
+                        if (btcinobj.addresses.indexOf(this.btcAddress) !== -1) {
+                            utxosInSpending.push(btcinobj.txid);
+                        }
+                    })
+                }
+            }
+
+            if (utxosInSpending.length > 0) {
+                utxosInSpending.forEach(tx => {
+                    utxoArray.splice(utxoArray.findIndex(u => u.txid === tx), 1)
+                });
+            }
+        }
 
         if (amount == -1)
             return utxoArray;
@@ -470,9 +513,14 @@ export class BTCSubWallet extends MainCoinSubWallet<BTCTransaction, any> {
             }
             if (btcInfo.txids) {
                 this.transactionsList = btcInfo.txids;
-            }
 
-            // TODO: set unconfirmedSendingTxids
+                // TODO: set unconfirmedSendingTxids
+                if (btcInfo.unconfirmedTxs > 0) {
+                    this.unconfirmedSendingTxids = btcInfo.txids.slice(0, btcInfo.unconfirmedTxs)
+                } else {
+                    this.unconfirmedSendingTxids = []
+                }
+            }
 
             this.totalTransactionCount = btcInfo.txs;
         }

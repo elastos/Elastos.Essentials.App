@@ -59,7 +59,7 @@ export type AddressResult = {
     totalReceived: string;
     totalSend: string;
     unconfirmedBalance: string;
-    unconfirmedTxs: string;
+    unconfirmedTxs: number;
     txids: string[];
     txs: number;
 };
@@ -88,8 +88,8 @@ export type BTCTransaction = GenericTransaction & {
     vin: BTCInObj[];
     vout: BTCOutObj[];
     blockHash: string;
-    blockHeight: number;
-    confirmations: number;
+    blockHeight: number;   // -1: unconfirmed tx
+    confirmations: number; // 0:  unconfirmed tx
     time: number;
     blockTime: number;
     value: string;  // sotoshi
