@@ -66,7 +66,7 @@ export class WalletConnectPrepareToConnectPage implements OnInit {
       this.zone.run(() => {
         this.suggestToResetSession = true;
       });
-    }, 10000);
+    }, 15000);
   }
 
   ionViewDidEnter() {
