@@ -21,6 +21,8 @@ export class VoteResultComponent implements OnInit {
     ngOnInit() { }
 
     onShowMemberInfo(name: string) {
+        if (!name) return;
+
         let member = this.crCouncilService.crmembers.find( cr => cr.didName === name);
         if (member) {
             this.crCouncilService.selectedMemberDid = member.did;
@@ -29,6 +31,8 @@ export class VoteResultComponent implements OnInit {
     }
 
     getAvatar() {
+        if (!this.vote.name) return null;
+
         let member = this.crCouncilService.crmembers.find( cr => cr.didName === this.vote.name);
         if (member)
             return member.avatar;

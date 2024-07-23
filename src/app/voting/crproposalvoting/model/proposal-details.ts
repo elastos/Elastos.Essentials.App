@@ -10,7 +10,7 @@ export class VoteResult {
     result: VoteResultType;
     opinion: string; // Council member comment for his vote choice
     avatar?: string; // Url of the council member who sent this result, if any
-    name: string; // Display name of the voting council member
+    name?: string; // Display name of the voting council member, without name if the name is not set or made public for the DID
 }
 
 export class TrackingComment {
