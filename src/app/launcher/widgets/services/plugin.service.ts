@@ -109,7 +109,7 @@ export class WidgetPluginsService implements GlobalService {
                 this.http.get(widgetUrl).subscribe({
                     // eslint-disable-next-line @typescript-eslint/no-misused-promises
                     next: async (json) => {
-                        Logger.log("widget-plugins", "Got widget plugin data:", json);
+                        Logger.log("widgets-plugins", "Got widget plugin data:", json);
 
                         // Validate json format
                         const validationResult = this.validatePluginConfig(<PluginConfig<any>>json);

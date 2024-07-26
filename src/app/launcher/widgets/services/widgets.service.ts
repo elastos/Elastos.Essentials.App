@@ -393,7 +393,11 @@ export class WidgetsService {
         }
 
         for (let source of pluginSources) {
-            await this.pluginService.fetchWidgetPlugin(source);
+            try {
+                await this.pluginService.fetchWidgetPlugin(source);
+            } catch (e) {
+                // silence
+            }
         }
 
         await this.newsService.checkNewsSources();
@@ -424,7 +428,11 @@ export class WidgetsService {
 
                 if (now.subtract(refreshDelaySec, "seconds").isSameOrAfter(lastFetched)) {
                     // Right time to refresh
-                    await this.pluginService.fetchWidgetPlugin(source);
+                    try {
+                        await this.pluginService.fetchWidgetPlugin(source);
+                    } catch (e) {
+                        // silence
+                    }
                 }
             }
         }
@@ -485,7 +493,9 @@ export class WidgetsService {
 
     private fetchPartnerPlugins() {
         for (let partnerPluginUrl of partnerPluginUrls) {
-            void this.pluginService.fetchWidgetPlugin(partnerPluginUrl);
+            void this.pluginService.fetchWidgetPlugin(partnerPluginUrl).catch(e => {
+                // silence
+            })
         }
     }
 
