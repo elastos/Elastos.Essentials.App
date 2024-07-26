@@ -33,10 +33,8 @@ import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwall
 import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { CoinTransferService, TransferType } from 'src/app/wallet/services/cointransfer.service';
-import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
-import { LocalStorage } from '../../../../services/storage.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
 
@@ -60,10 +58,8 @@ export class CoinNFTDetailsPage implements OnInit {
         public events: GlobalEvents,
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
-        private erc721service: ERC721Service,
         private coinTransferService: CoinTransferService,
         public uiService: UiService,
-        private storage: LocalStorage
     ) {
         this.init();
     }

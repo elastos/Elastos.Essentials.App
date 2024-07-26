@@ -99,8 +99,15 @@ export class ImageCacheDirective implements AfterViewInit {
 
         // If there is a max size given, resize the picture.
         let smallerData: string;
-        if (this.maxsize !== undefined)
-          smallerData = await compressImage(rawData, this.maxsize);
+        if (this.maxsize !== undefined) {
+          try {
+            smallerData = await compressImage(rawData, this.maxsize);
+          }
+          catch (e) {
+            // TODO: not image, eg. data:application/octet-stream
+            smallerData = rawData;
+          }
+        }
         else
           smallerData = rawData;
 
