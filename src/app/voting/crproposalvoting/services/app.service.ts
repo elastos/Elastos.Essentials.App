@@ -49,6 +49,8 @@ export class AppService {
       proposals = await this.proposalService.fetchProposals(ProposalStatus.ALL, 1);
       Logger.log('crproposal', 'Background service: Proposals fetched', proposals);
 
+      if (!proposals || (proposals.length == 0)) return;
+
       proposals.forEach((proposal) => {
         if (moment(proposal.createdAt * 1000).isSame(today, 'd')) {
           newProposalsCount++;
