@@ -7,7 +7,7 @@
             </ion-refresher-content>
         </ion-refresher>
 
-        <ion-grid class="container">
+        <ion-grid *ngIf="networkWallet" class="container">
             <ion-row class="main-title-row">
                 <ion-col size="12">
                     <h1>{{ getSubwalletTitle() }}</h1>

@@ -183,6 +183,9 @@ export class CoinHomePage implements OnInit {
     }
 
     ngAfterViewInit() {
+        // just in case this.networkWallet is null
+        if (!this.fetchMoreTrigger) return;
+
         const options: IntersectionObserverInit = {
             root: this.fetchMoreTrigger.nativeElement.closest('.intersection-container')
         };
@@ -212,6 +215,7 @@ export class CoinHomePage implements OnInit {
             this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
             if (!this.networkWallet) {
                 Logger.warn('wallet', 'coin-home error this.networkWallet = null,', masterWalletId)
+                return;
             }
             this.coinTransferService.reset();
             this.coinTransferService.masterWalletId = masterWalletId;
