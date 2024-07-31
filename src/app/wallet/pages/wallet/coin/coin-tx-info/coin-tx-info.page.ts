@@ -205,7 +205,7 @@ export class CoinTxInfoPage implements OnInit {
             void this.getTransactionDetails();
             void this.networkWallet.getExtendedTxInfo(this.transactionInfo.txid).then(extTxInfo => {
                 this.extendedTxInfo = extTxInfo;
-                if (this.extendedTxInfo?.evm?.txInfo.type == ETHOperationType.INSCRIPTION) {
+                if (this.extendedTxInfo?.evm?.txInfo?.type == ETHOperationType.INSCRIPTION) {
                   void this.getInscriptionInfo(this.transactionInfo.txid);
                 }
             });
