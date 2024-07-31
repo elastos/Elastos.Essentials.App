@@ -141,9 +141,9 @@ export class CoinListPage implements OnInit, OnDestroy {
 
         this.masterWallet = this.networkWallet.masterWallet;
         this.network = (<EVMNetwork>this.networkWallet.network);
-        this.walletAddress = this.networkWallet.getMainEvmSubWallet().getCurrentReceiverAddress();
         // TODO: Navigate to this page from a notification, and maybe the active network does not support ERC20 Coins.
         if (this.network.supportsERC20Coins() || this.network.supportsTRC20Coins()) {
+            this.walletAddress = this.networkWallet.getMainEvmSubWallet().getCurrentReceiverAddress();
             this.updateSubscription = this.events.subscribe("error:update", () => {
                 this.currentCoin["open"] = false;
             });
