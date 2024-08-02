@@ -23,6 +23,7 @@ export const zh = {
 
         'enter-amount': '输入数量',
         'available': '有效数量',
+        'available-memo': "注意：您的钱包是多地址的。目前，只有第一个接收地址的ELA可进行质押。如果您愿意，您可以手动转到您的钱包（ELA币），进入接收页面，找到列表的第一个地址，并将您的ELA发送到此地址，然后再执行质押。",
         'advanced-options': '高级选项',
         'send-to': '发送到',
         'reciever-address': '接收地址',
