@@ -1817,8 +1817,9 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     // BPoS
     // amount: sela
     public async createStakeTransaction(payload: PayloadStakeInfo, amount: number, memo = ""): Promise<EncodedTx> {
-        // Support for multiple addresses, no need for all utxo in the first external address.
-        let au = await this.getAvailableUtxo(amount + 20000);
+        // Use the first external address.
+        let firstExternalAddress = this.getCurrentReceiverAddress();
+        let au = await this.getAvailableUtxo(amount + 20000, firstExternalAddress);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
         return (this.networkWallet.safe as unknown as ElastosMainChainSafe).createStakeTransaction(
@@ -1834,7 +1835,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async createDPoSV2VoteTransaction(payload: VotingInfo, memo = ""): Promise<EncodedTx> {
         // Use the first external address.
         let firstExternalAddress = this.getCurrentReceiverAddress();
-
         let au = await this.getAvailableUtxo(20000, firstExternalAddress);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 
@@ -1848,7 +1848,6 @@ export class MainChainSubWallet extends MainCoinSubWallet<ElastosTransaction, El
     public async createDPoSV2ClaimRewardTransaction(payload: DPoSV2ClaimRewardInfo, memo = ""): Promise<EncodedTx> {
         // Use the first external address.
         let firstExternalAddress = this.getCurrentReceiverAddress();
-
         let au = await this.getAvailableUtxo(20000, firstExternalAddress);
         if (!au.utxo) await this.throwUtxoNotEnoughError();
 

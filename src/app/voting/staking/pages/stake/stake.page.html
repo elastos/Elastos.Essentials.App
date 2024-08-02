@@ -22,6 +22,7 @@
                     <div id="max-button" (click)="clickMax()">{{ 'common.max' | translate}}</div>
                 </ion-col>
             </ion-row>
+            <p *ngIf="!isSingleAddressWallet" class="memo">{{ 'staking.available-memo' | translate }}</p>
         </ion-grid>
 
         <div *ngIf="signingAndTransacting">
