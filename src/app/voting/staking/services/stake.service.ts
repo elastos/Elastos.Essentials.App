@@ -166,12 +166,6 @@ export class StakeService {
         return this.getBalanceByAddress(firstAddress);
     }
 
-    public async getBalance() {
-        await this.voteService.sourceSubwallet.updateBalanceSpendable();
-        let balanceSpendable = this.voteService.sourceSubwallet.getRawBalanceSpendable();
-        return this.voteService.sourceSubwallet.getDisplayAmount(balanceSpendable)
-    }
-
     async getVoteRights(): Promise<VotesRight> {
         var stakeAddress = await this.voteService.sourceSubwallet.getOwnerStakeAddress()
         Logger.log(App.DPOS_VOTING, 'getOwnerStakeAddress', stakeAddress);
