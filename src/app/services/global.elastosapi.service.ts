@@ -11,7 +11,7 @@ import { CRProposalsSearchResponse } from '../model/voting/cyber-republic/CRProp
 import { CRMemberInfo } from '../voting/crcouncilvoting/services/crcouncil.service';
 import { ProposalDetails } from '../voting/crproposalvoting/model/proposal-details';
 import { StandardCoinName } from '../wallet/model/coin';
-import { ProducersSearchResponse, StakeInfo } from '../wallet/model/elastos.types';
+import { BPoSNFTInfo, ProducersSearchResponse, StakeInfo } from '../wallet/model/elastos.types';
 import { ERCTokenInfo, EthTokenTransaction } from '../wallet/model/networks/evms/evm.types';
 import { ElastosPaginatedTransactions, TransactionDetail, UtxoType } from '../wallet/model/tx-providers/transaction.types';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
@@ -1108,5 +1108,35 @@ export class GlobalElastosAPIService extends GlobalService {
           Logger.error('elastosapi', 'fetchImages error:', e)
       }
       return null;
-  }
+    }
+
+    // BPoS NFT
+    /**
+     *
+     * @param nftId
+     * @returns
+     */
+    async getBPoSNFTInfo(nftId: string): Promise<BPoSNFTInfo> {
+        const param = {
+            method: 'getnftinfo',
+            params: {
+                id: nftId,
+            },
+        };
+
+        const rpcApiUrl = this.getApiUrl(ElastosApiUrlType.ELA_RPC);
+        if (rpcApiUrl === null) {
+            return null;
+        }
+
+        let result = null;
+        try {
+            result = await this.globalJsonRPCService.httpPost(rpcApiUrl, param);
+        } catch (e) {
+            Logger.warn("elastosapi", "getBPoSNFTInfo exception", e);
+        }
+
+        return result;
+    }
+
 }

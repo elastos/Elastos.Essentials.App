@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
-import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
@@ -17,7 +16,6 @@ import { LedgerSignComponentModule } from 'src/app/wallet/components/ledger-sign
         SharedComponentsModule,
         CommonModule,
         FormsModule,
-        InlineSVGModule,
         IonicModule,
         TranslateModule,
         ComponentsModule,

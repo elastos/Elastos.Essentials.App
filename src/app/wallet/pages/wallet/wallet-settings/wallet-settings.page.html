@@ -36,7 +36,7 @@
         <ion-row class="setting-row ripple ion-activatable" [class.dark-setting-row]="theme.darkMode"
             *ngFor="let item of settings" (click)="goToSetting(item)">
             <ion-col size="1.25" class="left-col">
-                <div class="inline-svg" [inlineSVG]="!theme.darkMode ? item.icon : item.iconDarkmode"></div>
+                <img [src]="!theme.darkMode ? item.icon : item.iconDarkmode">
             </ion-col>
             <ion-col size="9.5" class="middle-col">
                 <h1>{{ item.title }}</h1>

@@ -1469,25 +1469,23 @@ export class CoinTransferPage implements OnInit, OnDestroy {
       await this.native.hideLoading();
 
       if (methodData) {
-        this.coinTransferService.masterWalletId = this.networkWallet.id;
-        this.coinTransferService.payloadParam = {
-            data: methodData,
-            to: this.nft.contractAddress
-        }
-
-        void this.native.go("/wallet/intents/esctransaction", {intentMode: false});
-
-        return new Promise<boolean>((resolve) => {
-          let approveSubscription: Subscription = this.events.subscribe("esctransaction", (ret) => {
-
-            approveSubscription.unsubscribe();
-            if (ret.result.published) {
-              resolve(true);
-            } else {
-              resolve(false);
+        let response: {
+            action: string,
+            result: {
+                txid: string,
+                status: "published" | "cancelled"
             }
-          })
+        } = await GlobalIntentService.instance.sendIntent("https://wallet.web3essentials.io/esctransaction", {
+            payload: {
+                params: [
+                    {
+                        data: methodData,
+                        to: this.nft.contractAddress
+                    }
+                ]
+            }
         });
+        return response.result.txid ? true : false;
       }
 
       return true;
