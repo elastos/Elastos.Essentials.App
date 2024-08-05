@@ -1,19 +1,9 @@
+import { BPoSNFTInfo } from "../../../elastos.types";
+
 export type NFTAssetAttribute = {
   trait_type: string; // eg: "Level", "Eyes"
   value: number | string; // eg: 5, "blue"
   display_type?: "number" | "date" | "boost_number" | "boost_percentage";
-}
-
-// BPoS NFT
-export type BPoSNFTInfo = {
-  endHeight: string;
-  genesisBlockHash: string;
-  referKey: string;
-  stakeAddress: string;
-  startHeight: string;
-  targetOwnerKey: string;
-  voteRights: string;
-  votes: string; // sela
 }
 
 /**

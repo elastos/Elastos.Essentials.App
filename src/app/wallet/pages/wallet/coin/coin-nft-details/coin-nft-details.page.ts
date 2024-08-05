@@ -28,7 +28,7 @@ import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
-import { GlobalElastosAPIService, NodeType } from 'src/app/services/global.elastosapi.service';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -237,19 +237,19 @@ export class CoinNFTDetailsPage implements OnInit {
       // votes
       this.bposNFTInfos.push({
         title: this.translate.instant('dposvoting.input-votes'),
-        value: this.uxService.toThousands(Util.toELA(parseInt(this.asset.bPoSNFTInfo.votes))),
+        value: this.uxService.toThousands(this.asset.bPoSNFTInfo.votes),
       })
 
       // voterights
       this.bposNFTInfos.push({
         title: this.translate.instant('voting.vote-rights'),
-        value: this.uxService.toThousands(Util.toELA(parseInt(this.asset.bPoSNFTInfo.voteRights))),
+        value: this.uxService.toThousands(this.asset.bPoSNFTInfo.votesright),
       })
 
       // endHeight
       let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
       let currentBlockTimestamp = moment().valueOf() / 1000;
-      let stakeTimestamp = (parseInt(this.asset.bPoSNFTInfo.endHeight) - currentHeight) * 120 + currentBlockTimestamp;
+      let stakeTimestamp = (this.asset.bPoSNFTInfo.endheight - currentHeight) * 120 + currentBlockTimestamp;
 
       this.bposNFTInfos.push({
         title: this.translate.instant('dposvoting.stake-until'),
@@ -257,16 +257,16 @@ export class CoinNFTDetailsPage implements OnInit {
       })
 
       // bpos node
-      let targetNode = null;
-      let targetOwnerKey = this.asset.bPoSNFTInfo.targetOwnerKey.startsWith('0x') ? this.asset.bPoSNFTInfo.targetOwnerKey.substring(2) : this.asset.bPoSNFTInfo.targetOwnerKey;
-      const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
-      if (result && !Util.isEmptyObject(result.producers)) {
-          targetNode = result.producers.find( n => n.ownerpublickey == targetOwnerKey);
-      }
-      this.bposNFTInfos.push({
-        title: this.translate.instant('dposvoting.node-name'),
-        value: targetNode? targetNode.nickname : targetOwnerKey,
-      })
+    //   let targetNode = null;
+    //   let targetOwnerKey = this.asset.bPoSNFTInfo.targetOwnerKey.startsWith('0x') ? this.asset.bPoSNFTInfo.targetOwnerKey.substring(2) : this.asset.bPoSNFTInfo.targetOwnerKey;
+    //   const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
+    //   if (result && !Util.isEmptyObject(result.producers)) {
+    //       targetNode = result.producers.find( n => n.ownerpublickey == targetOwnerKey);
+    //   }
+    //   this.bposNFTInfos.push({
+    //     title: this.translate.instant('dposvoting.node-name'),
+    //     value: targetNode? targetNode.nickname : targetOwnerKey,
+    //   })
     }
 
     async approveNFT() {
