@@ -137,11 +137,11 @@ export class MyVotesPage implements OnInit, OnDestroy {
                 ReferKey: node.referkey,
                 StakeAddress: this.voteService.sourceSubwallet.getOwnerStakeAddress(),
                 GenesisBlockHash: Config.ETHSC_GENESISBLOCKHASH,
-                StartHeight: node.blockheight,
-                EndHeight: node.locktime,
-                Votes: Util.toSELA(node.votes),
-                VoteRights: Util.toSELA(node.voteRights),
-                TargetOwnerKey: node.candidate
+                // StartHeight: node.blockheight,
+                // EndHeight: node.locktime,
+                // Votes: Util.toSELA(node.votes),
+                // VoteRights: Util.toSELA(node.voteRights),
+                // TargetOwnerKey: node.candidate
             };
 
             Logger.log(App.DPOS2, "mintBPosNFT payload:", payload);

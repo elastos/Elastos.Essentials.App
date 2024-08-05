@@ -25,10 +25,12 @@ import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import type Web3 from 'web3';
 import { Config } from '../../config/Config';
-import { BPoSNFTInfo } from '../../model/networks/evms/nfts/nftasset';
 import { AnyNetwork } from '../../model/networks/network';
 import { WalletNetworkService } from '../network.service';
 import { EVMService } from './evm.service';
+import BigNumber from 'bignumber.js';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { BPoSNFTInfo } from '../../model/elastos.types';
 
 
 @Injectable({
@@ -40,7 +42,7 @@ export class BPoSERC721Service {
     /** Web3 variables to call smart contracts */
     private web3: Web3;
     private bposClaimErc721ABI: any;
-    private bposErc721ABI: any;
+    // private bposErc721ABI: any;
 
     constructor(
         private evmService: EVMService,
@@ -62,7 +64,7 @@ export class BPoSERC721Service {
         this.web3 = this.evmService.getWeb3(network ? network : this.networkService.activeNetwork.value, true);
 
         // BPoS ERC721 contract ABI
-        this.bposErc721ABI = require('../../../../assets/wallet/ethereum/BPoSErc721ABI.json');
+        // this.bposErc721ABI = require('../../../../assets/wallet/ethereum/BPoSErc721ABI.json');
         this.bposClaimErc721ABI = require('../../../../assets/wallet/ethereum/BPoSClaimErc721ABI.json');
         return this.web3;
     }
@@ -90,11 +92,18 @@ export class BPoSERC721Service {
 
     public async getBPoSNFTInfo(tokenId: string, network: AnyNetwork = null): Promise<BPoSNFTInfo> {
         try {
-            const bposErc721Contract = new (await this.getWeb3(network)).eth.Contract(this.bposErc721ABI, Config.ETHSC_BPoSNFT_CONTRACTADDRESS);
-            return await bposErc721Contract.methods.getInfo(tokenId).call();
+            let nftIDforApi = this.convertBPoSNFTId(tokenId);
+            let info = await GlobalElastosAPIService.instance.getBPoSNFTInfo(nftIDforApi)
+            return info;
         } catch (err) {
             Logger.warn('wallet', 'BPoSERC721Service getBPoSNFTInfo exception', err)
             return null;
         }
+    }
+
+    // the bposNFTId is a decimal string and needs to be converted to a hexadecimal string
+    private convertBPoSNFTId(bposNFTId: string) {
+        let nftID = new BigNumber(bposNFTId, 10);
+        return nftID.toString(16);
     }
 }

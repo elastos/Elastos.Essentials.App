@@ -125,3 +125,12 @@ export type MintBPoSNFTTxInfo = {
   txid: string,
   status: MintBPoSNFTTxStatus,
 };
+
+export type BPoSNFTInfo = {
+    ID: string,
+    startheight: number,
+    endheight: number,
+    votes:  string,
+    votesright: string,
+    rewards: string
+};
