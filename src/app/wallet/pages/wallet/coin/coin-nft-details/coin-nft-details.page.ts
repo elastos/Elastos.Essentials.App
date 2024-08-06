@@ -256,6 +256,12 @@ export class CoinNFTDetailsPage implements OnInit {
         value: this.uxService.formatDate(stakeTimestamp),
       })
 
+      //reward
+      this.bposNFTInfos.push({
+        title: this.translate.instant('staking.voting-reward'),
+        value: this.uxService.toThousands(this.asset.bPoSNFTInfo.rewards),
+      })
+
       // bpos node
     //   let targetNode = null;
     //   let targetOwnerKey = this.asset.bPoSNFTInfo.targetOwnerKey.startsWith('0x') ? this.asset.bPoSNFTInfo.targetOwnerKey.substring(2) : this.asset.bPoSNFTInfo.targetOwnerKey;
