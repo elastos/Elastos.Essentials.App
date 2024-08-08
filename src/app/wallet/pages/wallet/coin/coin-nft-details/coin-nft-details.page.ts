@@ -48,6 +48,7 @@ import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
+import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 
 @Component({
     selector: 'app-coin-nft-details',
@@ -80,6 +81,7 @@ export class CoinNFTDetailsPage implements OnInit {
         public theme: GlobalThemeService,
         public currencyService: CurrencyService,
         private coinTransferService: CoinTransferService,
+        private erc721service: ERC721Service,
         public uiService: UiService,
         private uxService: UXService,
         public globalPopupService: GlobalPopupService,
