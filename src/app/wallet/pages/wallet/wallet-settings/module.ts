@@ -9,6 +9,7 @@ import { ComponentsModule } from 'src/app/wallet/components/components.module';
 import { StdTransactionComponentModule } from 'src/app/wallet/components/std-transaction/module';
 import { WalletSettingsPage } from './wallet-settings.page';
 import { LedgerSignComponentModule } from 'src/app/wallet/components/ledger-sign/module';
+import { InlineSVGModule } from 'ng-inline-svg-2';
 
 @NgModule({
     declarations: [WalletSettingsPage],
@@ -16,6 +17,7 @@ import { LedgerSignComponentModule } from 'src/app/wallet/components/ledger-sign
         SharedComponentsModule,
         CommonModule,
         FormsModule,
+        InlineSVGModule,
         IonicModule,
         TranslateModule,
         ComponentsModule,
