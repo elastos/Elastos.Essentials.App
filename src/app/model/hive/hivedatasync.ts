@@ -386,7 +386,15 @@ export class HiveDataSync {
                 this.log("Synchronizing context:", context);
 
                 // Make sure the collection exists
-                await this.createContextCollection(context.name);
+                try {
+                    await this.createContextCollection(context.name);
+                }
+                catch (e) {
+                    // if the hive storage provider is invalid, we will get this exception:
+                    // Unknown network exception with message: Failed to get token with signin()
+                    this.logWarn("The collection " + context.name + " doesn't exists");
+                    continue;
+                }
 
                 let vaultModifiedEntries: BackupRestoreEntry[];
                 if (remotelyModifiedEntriesOnly) {
