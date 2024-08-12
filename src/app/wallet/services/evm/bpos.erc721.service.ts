@@ -101,9 +101,9 @@ export class BPoSERC721Service {
         }
     }
 
-    // the bposNFTId is a decimal string and needs to be converted to a hexadecimal string
+    // the bposNFTId is a decimal string and needs to be converted to a hexadecimal string, the string length is 64
     private convertBPoSNFTId(bposNFTId: string) {
         let nftID = new BigNumber(bposNFTId, 10);
-        return nftID.toString(16);
+        return nftID.toString(16).padStart(64, '0');
     }
 }
