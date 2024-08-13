@@ -10,7 +10,7 @@ import { NFTAsset } from "../../../../evms/nfts/nftasset";
 
 export class ElastosBPoSERC721Provider extends ERC721Provider {
   public supportedContractAddresses = [
-    // "0xcfaBC7302a9294444741a9705E57c660aa7FC651", // BPoS NFT testnet
+    "0x8e286664c6b8811015f936592dd654e94af3f494", // BPoS NFT mainnet
     "0x6C91352F89b169843D8B50E1A34B60a46e363841", // BPoS NFT testnet
   ];
 

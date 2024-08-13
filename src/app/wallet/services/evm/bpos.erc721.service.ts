@@ -84,7 +84,7 @@ export class BPoSERC721Service {
             let hash = '0x' + Util.reverseHexToBE(elaHash);
             return await bposClaimErc721Contract.methods.canClaim(hash).call();
         } catch (err) {
-            // Logger.warn('wallet', 'BPoSERC721Service canClaim exception', err);
+            Logger.warn('wallet', 'BPoSERC721Service canClaim exception', err);
             // After the main chain mint BPoS NFT, it needs to wait for 6 blocks to confirm.
             return null;
         }
