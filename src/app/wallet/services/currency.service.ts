@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import BigNumber from 'bignumber.js';
 import { BehaviorSubject } from 'rxjs';
@@ -14,8 +13,7 @@ import { DexScreenerCurrencyService } from './evm/dexscreener.currency.service';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
-
-const TOKEN_VALUE_REFRESH_DELAY = 20;//(60 * 5); // 5 minutes - Number of seconds without refreshing a token price if alerady in cache
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 
 type DisplayableCurrency = {
   symbol: string;
@@ -69,6 +67,19 @@ export const displayableCurrencies: DisplayableCurrency[] = [
   }
 ];
 
+type CurrenciesExchangeRate = {
+  amount: number;
+  base: string;
+  date: string;
+  rates: {
+    [symbol: string]: number
+  };
+}
+
+type PriceAPITokenStats = {
+  [symbol: string]: number
+}
+
 // List of symbol -> value in USD
 type ExchangeRateCache = { [symbol: string]: number };
 
@@ -104,7 +115,6 @@ export class CurrencyService {
   private usdExchangeRateUrl = 'https://currencies.elastos.io/latest?from=USD';
 
   constructor(
-    private http: HttpClient,
     private storage: LocalStorage,
     private globalStorage: GlobalStorageService,
     private walletNetworkService: WalletNetworkService,
@@ -238,41 +248,40 @@ export class CurrencyService {
   /**
    * Fetches prices from the price api and returns only a target item
    */
-  private fetchTokenStatsFromPriceService(): Promise<boolean> {
+  private async fetchTokenStatsFromPriceService(): Promise<boolean> {
     Logger.log("wallet", "Fetching token prices");
 
-    return new Promise((resolve, reject) => {
-      // eslint-disable-next-line @typescript-eslint/no-misused-promises
-      this.http.get<any>(this.tokenPriceUrl).subscribe(async (res: PriceAPITokenStats[]) => {
-        if (res) {
-          for (let tokenSymbol in this.networkMainTokenPrice) {
-            let tokenStats = res[tokenSymbol];
-            if (tokenStats) {
-              this.networkMainTokenPrice[tokenSymbol] = tokenStats;
-            }
-            // else {
-            //   this.networkMainTokenPrice[tokenSymbol] = null;
-            // }
+    try {
+      let res: PriceAPITokenStats = await GlobalJsonRPCService.instance.httpGet(this.tokenPriceUrl)
+      if (res) {
+        for (let tokenSymbol in this.networkMainTokenPrice) {
+          let tokenStats = res[tokenSymbol];
+          if (tokenStats) {
+            this.networkMainTokenPrice[tokenSymbol] = tokenStats;
           }
-          // Set exchange for BTC => USD
-          this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
-          void this.saveMainTokenPrice();
-          void this.saveExchangeRates();
+          // else {
+          //   this.networkMainTokenPrice[tokenSymbol] = null;
+          // }
+        }
+        // Set exchange for BTC => USD
+        this.exchangeRates['BTC'] = parseFloat((1 / res['BTC']).toFixed(8));
+        void this.saveMainTokenPrice();
+        void this.saveExchangeRates();
 
-          await this.updateAllNetworkMainTokenValue();
-          this.pricesFetchedSubject.next(true);
-          // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
-          resolve(true);
-        }
-        else {
-          Logger.error('walletprice', 'Fetch CMC Stats err, the result is empty');
-          reject('Fetch CMC Stats err, the result is empty')
-        }
-      }, (err) => {
-        Logger.error('walletprice', 'Fetch CMC Stats err', err);
-        reject('Fetch CMC Stats err,' + err);
-      });
-    })
+        await this.updateAllNetworkMainTokenValue();
+        this.pricesFetchedSubject.next(true);
+        // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
+        return true;
+      }
+      else {
+        Logger.warn('walletprice', 'Fetch CMC Stats error, the result is empty');
+        return false;
+      }
+    }
+    catch (e) {
+      Logger.warn('walletprice', 'Fetch CMC Stats error:', e);
+      return false;
+    }
   }
 
   private async fetchTokenStatsFromCosmosService() {
@@ -506,33 +515,20 @@ export class CurrencyService {
   /**
    * Get USD exchange from currencies service.
    */
-  private fetchUSDExchangeRate() {
-    return new Promise(resolve => {
-      this.http.get<any>(this.usdExchangeRateUrl).subscribe((res: CurrenciesExchangeRate) => {
-        if (res) {
-          Logger.log('wallet', 'Fetch USD exchange rate successfully')
-          resolve(res.rates);
-        }
-        else {
-          resolve(null);
-        }
-      }, (err) => {
-        Logger.error('wallet', 'Fetch USD exchange rate err', err);
-        resolve(null);
-      });
-    })
+  private async fetchUSDExchangeRate() {
+    try {
+      let res: CurrenciesExchangeRate = await GlobalJsonRPCService.instance.httpGet(this.usdExchangeRateUrl)
+      if (res) {
+        Logger.log('wallet', 'Fetch USD exchange rate successfully')
+        return res.rates;
+      }
+      else {
+        return null;
+      }
+    }
+    catch (e) {
+      return null;
+    }
   }
 }
 
-type CurrenciesExchangeRate = {
-  amount: number;
-  base: string;
-  date: string;
-  rates: {
-    [symbol: string]: string
-  };
-}
-
-type PriceAPITokenStats = {
-  [symbol: string]: string
-}
