@@ -188,15 +188,14 @@ export class CoinNFTDetailsPage implements OnInit {
     public async destroyBPoSNFT() {
       Logger.log('wallet', 'destroyBPoSNFT', this);
 
-      await this.native.showLoading(this.translate.instant('common.please-wait'));
-
       // get stake address
       let elaMainChainSubwallet = await this.getELAMainChainSubwallet();
       if (!elaMainChainSubwallet) {
-          return this.native.toast('wallet.nft-no-ela-mainchain-wallet');
+        return this.native.toast('wallet.nft-no-ela-mainchain-wallet');
       }
 
       let stakeAddress = elaMainChainSubwallet.getOwnerStakeAddress();
+      await this.native.showLoading(this.translate.instant('common.please-wait'));
 
       // approve
       let ret = await this.approveNFT();

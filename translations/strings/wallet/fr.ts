@@ -505,6 +505,7 @@ export const fr = {
         'nft-attributes': 'Attributs',
         'nft-bpos-info': 'Informations de vote BPoS NFT',
         'nft-destroy': 'DESTROY',
+        'nft-no-ela-mainchain-wallet':'This wallet is unsupported on the Elastos Main Chain network',
 
         /************
         * Claim BPoS NFT pages *

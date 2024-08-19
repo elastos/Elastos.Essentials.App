@@ -504,6 +504,7 @@ export const zh = {
         'nft-attributes': '属性',
         'nft-bpos-info': 'BPoS NFT 投票信息',
         'nft-destroy': '销毁',
+        'nft-no-ela-mainchain-wallet':'此钱包不支持Elastos Main Chain网络',
 
         /************
         * Claim BPoS NFT pages *
