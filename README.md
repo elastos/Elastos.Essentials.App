@@ -1,3 +1,5 @@
+This project has been transfered to the Cyber Republic. Please check [https://github.com/CyberRepublic/Elastos.Essentials.App](https://github.com/CyberRepublic/Elastos.Essentials.App)
+
 ## FATAL ERROR: ... JavaScript heap out of memory
 
 NODE_OPTIONS=--max_old_space_size=8192 ionic cordova run android --livereload --external
