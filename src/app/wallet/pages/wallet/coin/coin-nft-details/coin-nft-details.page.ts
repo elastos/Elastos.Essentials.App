@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
@@ -72,6 +72,11 @@ export class CoinNFTDetailsPage implements OnInit {
   private gasPrice: string = null;
   private gasLimit: string = null;
 
+  /** EIP-5192: while true, send button stays disabled until on-chain check finishes. */
+  public erc5192CheckPending = false;
+  /** EIP-5192: token is locked (soulbound). */
+  public erc5192Locked = false;
+
   constructor(
     public router: Router,
     public walletManager: WalletService,
@@ -84,13 +89,15 @@ export class CoinNFTDetailsPage implements OnInit {
     private erc721service: ERC721Service,
     public uiService: UiService,
     private uxService: UXService,
-    public globalPopupService: GlobalPopupService
+    public globalPopupService: GlobalPopupService,
+    private cdr: ChangeDetectorRef
   ) {
     this.init();
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.nft-overview'));
+    void this.refreshErc5192TransferState();
   }
 
   ionViewDidLeave() {}
@@ -152,15 +159,69 @@ export class CoinNFTDetailsPage implements OnInit {
     }
   }
 
+  /** Whether this NFT type supports receive (QR) in Essentials. */
+  public canReceiveNFT(): boolean {
+    return !!(this.nft && (this.nft.type === NFTType.ERC721 || this.nft.type === NFTType.ERC1155));
+  }
+
+  /** Show the send button for ERC-721 / ERC-1155 (may be disabled if non-transferable). */
+  public showSendNFTButton(): boolean {
+    return this.canReceiveNFT();
+  }
+
+  /** EIP-5192 locked or still checking chain: disable send. */
+  public isSendNFTDisabled(): boolean {
+    return this.erc5192CheckPending || this.erc5192Locked;
+  }
+
+  /** Show notice after on-chain check confirms the token is non-transferable. */
+  public showNonTransferableNotice(): boolean {
+    return this.canReceiveNFT() && this.erc5192Locked && !this.erc5192CheckPending;
+  }
+
+  private async refreshErc5192TransferState(): Promise<void> {
+    this.erc5192Locked = false;
+    if (!this.nft || !this.asset || !this.canReceiveNFT()) {
+      this.erc5192CheckPending = false;
+      return;
+    }
+    this.erc5192CheckPending = true;
+    this.cdr.markForCheck();
+    try {
+      this.erc5192Locked = await this.erc721service.isErc5192Locked(this.nft.contractAddress, this.asset.id);
+    } catch (e) {
+      Logger.warn('wallet', 'refreshErc5192TransferState', e);
+      this.erc5192Locked = false;
+    } finally {
+      this.erc5192CheckPending = false;
+      this.cdr.detectChanges();
+    }
+  }
+
   /**
-   * For now, only handle transfers of ERC721 NFTs
+   * Column width (12-grid) for footer actions that are visible.
    */
-  public canSendReceive(): boolean {
-    return this.nft && (this.nft.type === NFTType.ERC721 || this.nft.type === NFTType.ERC1155);
+  public getFooterActionColumnSize(): number {
+    let count = 0;
+    if (this.showSendNFTButton()) {
+      count++;
+    }
+    if (this.canReceiveNFT()) {
+      count++;
+    }
+    if (this.canDestroy()) {
+      count++;
+    }
+    if (count === 0) {
+      return 12;
+    }
+    return Math.floor(12 / count);
   }
 
   public sendNFT() {
-    if (!this.nft || !this.asset) return;
+    if (!this.nft || !this.asset || this.erc5192Locked || this.erc5192CheckPending) {
+      return;
+    }
 
     this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
     this.coinTransferService.subWalletId = this.mainEvmSubwallet.id;
@@ -217,14 +278,6 @@ export class CoinNFTDetailsPage implements OnInit {
     let network = WalletNetworkService.instance.getNetworkByKey('elastos');
     let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
     return networkWallet?.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
-  }
-
-  /**
-   * Returns the ion-col size for the send/receive/destroy row, based on the available features.
-   */
-  public getColumnSize(): number {
-    if (this.canDestroy()) return 4; // 3 columns - 3x4 = 12
-    else return 6; // 2 columns - 2x6 = 12
   }
 
   public canDestroy() {

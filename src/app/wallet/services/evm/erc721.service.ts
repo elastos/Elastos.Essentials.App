@@ -115,6 +115,22 @@ export class ERC721Service {
   }
 
   /**
+   * EIP-5192: returns true if the token is locked (non-transferable / soulbound).
+   * If the contract does not implement `locked(uint256)`, returns false.
+   */
+  public async isErc5192Locked(contractAddress: string, tokenId: string): Promise<boolean> {
+    try {
+      const erc5192ABI = require('../../../../assets/wallet/ethereum/Erc5192ABI.json');
+      const contract = new (await this.getWeb3()).eth.Contract(erc5192ABI, contractAddress);
+      const locked = await contract.methods.locked(tokenId).call();
+      return !!locked;
+    } catch (err) {
+      Logger.log('wallet', 'isErc5192Locked', contractAddress, tokenId, err);
+      return false;
+    }
+  }
+
+  /**
    * Refreshes all assets owned by a given user for a given NFT contract.
    * - If assetIDs list is not given (we don't know the list of NFT asset ids from the TX providers), then we first try to fetch
    *   info about the NFTs.

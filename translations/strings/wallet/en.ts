@@ -557,6 +557,8 @@ export const en = {
     'nft-attributes': 'Attributes',
     'nft-bpos-info': 'BPoS NFT voting information',
     'nft-destroy': 'REDEEM',
+    'nft-non-transferable-notice':
+      'This NFT is non-transferable. It cannot be sent to another address.',
     'nft-no-ela-mainchain-wallet': 'This wallet is unsupported on the Elastos Main Chain network',
 
     /************

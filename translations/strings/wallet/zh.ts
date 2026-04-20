@@ -549,6 +549,7 @@ export const zh = {
     'nft-attributes': '属性',
     'nft-bpos-info': 'BPoS NFT 投票信息',
     'nft-destroy': '赎回',
+    'nft-non-transferable-notice': '此 NFT 不可转让，无法发送至其它地址',
     'nft-no-ela-mainchain-wallet': '此钱包不支持Elastos Main Chain网络',
 
     /************
