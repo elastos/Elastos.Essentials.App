@@ -668,7 +668,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async estimateTransferTransactionGas() {
-    let gasLimit = 100000; // Default value
+    let gasLimit = 210000; // Default value
     try {
       const address = await this.getAccountAddress();
       let tempGasLimit = await GlobalEthereumRPCService.instance.eth_estimateGas(

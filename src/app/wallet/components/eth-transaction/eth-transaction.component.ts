@@ -24,7 +24,7 @@ export class ETHTransactionComponent implements OnInit {
   // public gasPrice: number = null;
   public gasPrice: string = null;// GWEI
   // public gasLimit: string = null;
-  public gasLimit = '200000';
+  public gasLimit = '210000';
   public nonce = -1;
 
   constructor(

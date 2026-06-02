@@ -631,7 +631,7 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
     let toAddress = '0x298163B65453Dcd05418A9a5333E4605eDA6D998'; // Fake address, doesn't impact the transfer cost
     const method = erc20Contract.methods.transfer(toAddress, highPriorityWeb3.utils.toBN(1));
 
-    let gasLimit = 100000;
+    let gasLimit = 210000;
     try {
       // Estimate gas cost
       let gasTemp = await method.estimateGas();
