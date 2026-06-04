@@ -9,12 +9,13 @@ import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { Config } from '../../../config/Config';
-import { StandardCoinName } from '../../../model/coin';
 import { IntentTransfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 import { WalletAccessService } from '../../../services/walletaccess.service';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { ElastosPGPNetworkBase } from 'src/app/wallet/model/networks/elastos/evms/pgp/network/pgp.networks';
 
 
 type ClaimRequest = {
@@ -127,14 +128,19 @@ export class AccessPage implements OnInit {
         let value = '';
         switch (key) {
             case 'elaaddress':
-                value = await this.getAddress(StandardCoinName.ELA);
+                value = await this.getAddress('elastos');
                 break;
             case 'elaamount':
-                // for now just return the amount of ELA Chain, not include IDChain
-                value = this.networkWallet.subWallets.ELA.getRawBalance().toFixed();
+                value = await this.getElaAmount();
                 break;
             case 'ethaddress':
-                value = await this.getAddress(StandardCoinName.ETHSC);
+                value = await this.getAddress('elastossmartchain');
+                break;
+            case 'btcaddress':
+                value = await this.getAddress('btc');
+                break;
+            case 'tronaddress':
+                value = await this.getAddress('tron');
                 break;
             default:
                 Logger.log('wallet', 'Not support ', key);
@@ -155,6 +161,12 @@ export class AccessPage implements OnInit {
             case 'ethaddress':
                 value = 'wallet.ethaddress';
                 break;
+            case 'btcaddress':
+                value = 'wallet.btcaddress';
+                break;
+            case 'tronaddress':
+                value = 'wallet.tronaddress';
+                break;
             default:
                 Logger.log('wallet', 'Not support ', key);
                 break;
@@ -162,8 +174,61 @@ export class AccessPage implements OnInit {
         return value;
     }
 
-    getAddress(subWalletId: string) {
-        return this.networkWallet.getSubWallet(subWalletId).getCurrentReceiverAddress();
+    async getAddress(networkKey: string) {
+        let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
+        if (!network) {
+            return null;
+        }
+        let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+        if (!networkWallet) {
+          return null; // eg. Multi signature wallet does not support EVM chain.
+        }
+
+        let mainTokenSubWallet = networkWallet.getMainTokenSubWallet();
+        if (!mainTokenSubWallet) {
+            return null;
+        }
+        return mainTokenSubWallet.getCurrentReceiverAddress();
+    }
+
+    async getElaAmount() {
+        let networkKey = WalletNetworkService.instance.activeNetwork.value.key;
+        switch (networkKey) {
+            case 'elastos':
+            case 'elastossmartchain':
+            case 'elastosidchain':
+            case 'elastoseco':
+            case 'elastosecopgp':
+            break;
+            default:
+                networkKey = 'elastos';
+            break;
+        }
+
+        let network = WalletNetworkService.instance.getNetworkByKey(networkKey);
+        if (!network) {
+            return null;
+        }
+        let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+        if (!networkWallet) {
+          return null; // eg. Multi signature wallet does not support EVM chain.
+        }
+
+        let elaTokenSubWallet = null;
+
+        if (networkKey === 'elastosecopgp') {
+            // The ela token is erc20 token on pgp sidechain.
+            let elaTokenAddress = (networkWallet.network as ElastosPGPNetworkBase).getELATokenContract();
+            elaTokenSubWallet = networkWallet.getSubWallet(elaTokenAddress);
+        } else {
+            elaTokenSubWallet = networkWallet.getMainTokenSubWallet();
+        }
+
+        if (!elaTokenSubWallet) {
+            return null;
+        }
+
+        return elaTokenSubWallet.getDisplayBalance().toFixed();
     }
 
     reduceArrayToDict(keyProperty: string) {

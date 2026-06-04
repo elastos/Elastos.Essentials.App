@@ -1,0 +1,96 @@
+<ion-header>
+  <app-titlebar title="{{ 'wallet.aa.create.title' | translate }}"></app-titlebar>
+</ion-header>
+
+<ion-content>
+  <div class="container">
+    <!-- Header Section -->
+    <div class="header-section">
+      <div class="header-icon">
+        <ion-icon name="wallet-outline"></ion-icon>
+      </div>
+      <h1 class="page-title">{{ 'wallet.aa.create.title' | translate }}</h1>
+      <p class="page-description">{{ 'wallet.aa.create.description' | translate }}</p>
+      <p class="page-description">{{ 'wallet.aa.create.descriptionSencond' | translate }}</p>
+    </div>
+
+    <!-- Form Cards Section -->
+    <div class="form-section">
+      <!-- Controller Wallet Card -->
+      <div class="form-card">
+        <div class="card-header">
+          <ion-icon name="key-outline" class="card-icon"></ion-icon>
+          <h3 class="card-title">{{ 'wallet.aa.create.controller-wallet' | translate }}</h3>
+        </div>
+        <div class="custom-select-button" (click)="showControllerWalletSelect()">
+          <span class="select-text" *ngIf="wallet.controllerWalletId; else controllerPlaceholder">
+            {{ getControllerWalletName(wallet.controllerWalletId) }}
+          </span>
+          <ng-template #controllerPlaceholder>
+            <span class="select-placeholder">{{ 'wallet.aa.create.controller-wallet-placeholder' | translate }}</span>
+          </ng-template>
+          <ion-icon name="chevron-down" class="select-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Chain Selection Card -->
+      <div class="form-card">
+        <div class="card-header">
+          <ion-icon name="git-network-outline" class="card-icon"></ion-icon>
+          <h3 class="card-title">{{ 'wallet.aa.create.chain' | translate }}</h3>
+        </div>
+        <div class="custom-select-button" (click)="showNetworkSelect()">
+          <span class="select-text" *ngIf="wallet.chainId; else chainPlaceholder">
+            {{ getNetworkDisplayName(wallet.chainId) }}
+          </span>
+          <ng-template #chainPlaceholder>
+            <span class="select-placeholder">{{ 'wallet.aa.create.chain-placeholder' | translate }}</span>
+          </ng-template>
+          <ion-icon name="chevron-down" class="select-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- Provider Selection Card -->
+      <div class="form-card" *ngIf="wallet.chainId">
+        <div class="card-header">
+          <ion-icon name="server-outline" class="card-icon"></ion-icon>
+          <h3 class="card-title">{{ 'wallet.aa.create.provider' | translate }}</h3>
+        </div>
+        <div class="custom-select-button" (click)="showProviderSelect()">
+          <span class="select-text" *ngIf="wallet.providerName; else providerPlaceholder">
+            {{ wallet.providerName }}
+          </span>
+          <ng-template #providerPlaceholder>
+            <span class="select-placeholder">{{ 'wallet.aa.create.provider-placeholder' | translate }}</span>
+          </ng-template>
+          <ion-icon name="chevron-down" class="select-icon"></ion-icon>
+        </div>
+      </div>
+
+      <!-- AA Account Address Card -->
+      <div class="form-card">
+        <div class="card-header">
+          <ion-icon name="location-outline" class="card-icon"></ion-icon>
+          <h3 class="card-title">{{ 'wallet.aa.create.account-address' | translate }}</h3>
+        </div>
+        <div class="address-input-container">
+          <ion-input type="text" [(ngModel)]="wallet.aaContractAddress"
+            placeholder="{{ 'wallet.aa.create.account-address-placeholder' | translate }}" clearInput="true"
+            readonly="true" class="form-input">
+          </ion-input>
+          <div class="spinner-container" *ngIf="isFetchingAddress">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Section -->
+    <div class="action-section">
+      <ebutton [disabled]="!allInputsValid() || walletIsCreating" (clicked)="createWallet()"
+        [title]="walletIsCreating ? ('common.please-wait' | translate) : ('wallet.aa.create.create-button' | translate)"
+        class="create-button">
+      </ebutton>
+    </div>
+  </div>
+</ion-content>

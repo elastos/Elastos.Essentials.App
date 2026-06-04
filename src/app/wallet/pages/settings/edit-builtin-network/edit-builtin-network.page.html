@@ -1,0 +1,96 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <!-- Network logo -->
+        <ion-row class="logo-row">
+            <ion-col size="12" class="logo-col">
+                <img class="network-logo" [src]="network?.logo" alt="Network logo">
+            </ion-col>
+        </ion-row>
+
+        <!-- Network name -->
+        <div class="item-label">{{ 'wallet.network-name' | translate }}</div>
+        <div class="input-container">
+            <ion-row class="item-row">
+                <ion-col size="12">
+                    <ion-input type="text" clearInput [(ngModel)]="editedName" name="networkName" ngDefaultControl
+                        class="padded-input">
+                    </ion-input>
+                </ion-col>
+            </ion-row>
+            <ion-icon name="refresh" class="reset-icon" (click)="resetName()"></ion-icon>
+        </div>
+
+        <!-- Currency symbol (read-only) -->
+        <div class="item-label">{{ 'wallet.network-token-symbol' | translate }}</div>
+        <ion-row class="item-row">
+            <ion-col size="12">
+                <ion-input type="text" [value]="network?.getMainTokenSymbol()" readonly
+                    class="padded-input disabled-input">
+                </ion-input>
+            </ion-col>
+        </ion-row>
+
+        <!-- Chain ID (read-only) -->
+        <div class="item-label">{{ 'wallet.network-chain-id' | translate }}</div>
+        <ion-row class="item-row">
+            <ion-col size="12">
+                <ion-input type="text" [value]="getChainId()" readonly class="padded-input disabled-input">
+                </ion-input>
+            </ion-col>
+        </ion-row>
+
+        <!-- Selected RPC Provider -->
+        <div class="item-label">{{ 'wallet.network-rpc-provider' | translate }}</div>
+        <div class="selected-rpc-section" (click)="editRpcProviders()">
+            <ion-row class="selected-rpc-row">
+                <ion-col size="10" class="selected-rpc-info">
+                    <div class="rpc-provider-name">{{ getSelectedRpcProvider()?.name || 'Unnamed Provider' }}</div>
+                    <div class="rpc-provider-url">{{ getSelectedRpcProvider()?.url }}</div>
+                    <div class="rpc-provider-meta">
+                        <div class="rpc-provider-type" *ngIf="isBuiltinProvider(getSelectedRpcProvider())">
+                            <span class="builtin-badge">{{ 'wallet.builtin' | translate }}</span>
+                        </div>
+                        <div class="rpc-provider-quality">
+                            <ion-icon [name]="getStatusIcon(getSelectedRpcProvider())"
+                                [class]="getStatusColorClass(getSelectedRpcProvider())" class="status-icon"></ion-icon>
+                            <span class="ping-time">{{ formatPingTime(getSelectedRpcProvider()) }}</span>
+                        </div>
+                    </div>
+                </ion-col>
+                <ion-col size="2" class="selected-rpc-action">
+                    <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+                </ion-col>
+            </ion-row>
+        </div>
+
+        <!-- Network Visibility -->
+        <div class="item-label">{{ 'wallet.network-visibility' | translate }}</div>
+        <div class="input-container">
+            <ion-row class="item-row visibility-row">
+                <ion-col size="10" class="visibility-label-col">
+                    <div class="visibility-label">{{ 'wallet.network-visibility-description' | translate }}</div>
+                </ion-col>
+                <ion-col size="2" class="visibility-toggle">
+                    <ion-toggle mode="ios" [(ngModel)]="isNetworkVisible" (ionChange)="onVisibilityChange($event)">
+                    </ion-toggle>
+                </ion-col>
+            </ion-row>
+        </div>
+    </ion-grid>
+
+    <div class="footer" [class.dark-container]="theme.darkMode">
+        <ion-grid>
+            <ion-row>
+                <ion-col size="6">
+                    <ebutton mode="cancel" (clicked)="cancel()" [title]="'common.cancel' | translate">
+                    </ebutton>
+                </ion-col>
+                <ion-col size="6">
+                    <ebutton (clicked)="saveChanges()" [disabled]="!canSave()"
+                        [title]="'common.save-changes' | translate"></ebutton>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+</ion-content>

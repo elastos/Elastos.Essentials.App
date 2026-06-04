@@ -5,7 +5,7 @@
   <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
 
   <ion-row class="network-row" (click)="pickNetwork()">
-    <div class="name">{{ walletNetworkService.activeNetwork.value.name }}</div>
+    <div class="name">{{ walletNetworkService.activeNetwork.value.getEffectiveName() }}</div>
     <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
   </ion-row>
   <ion-row class="price-row">

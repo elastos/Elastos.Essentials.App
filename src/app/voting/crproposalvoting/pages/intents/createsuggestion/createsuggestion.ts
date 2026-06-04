@@ -41,10 +41,10 @@ export class CreateSuggestionPage {
 
     public suggestionDetailFetched = false;
     public suggestionDetail: SuggestionDetail;
-    private onGoingCommand: CreateSuggestionCommand;
+    public onGoingCommand: CreateSuggestionCommand;
     public signingAndSendingSuggestionResponse = false;
-    public creationDate: string = "";
-    public bugetAmount: number = 0;
+    public creationDate = "";
+    public bugetAmount = 0;
     public Config = Config;
     public proposaltype: string;
 
@@ -99,7 +99,7 @@ export class CreateSuggestionPage {
     async signAndCreateSuggestion() {
         this.signingAndSendingSuggestionResponse = true;
 
-        // Sign the digest with user's DID, and get a JWT ready to be sent back to the CR website
+        // Sign the digest with user's DID, and get a JWT ready to be sent back to the Elastos DAO website
         try {
             // Create the suggestion/proposal digest - ask the SPVSDK to do this with a silent intent.
 

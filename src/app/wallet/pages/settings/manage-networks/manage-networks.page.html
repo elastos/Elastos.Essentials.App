@@ -6,21 +6,61 @@
                 <p>{{ 'wallet.manage-networks-intro' | translate }}</p>
             </ion-col>
         </ion-row>
-        <ion-row class="network-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
-            *ngFor="let networkWithVisibility of availableNetworks" (click)="onNetworkClicked(networkWithVisibility)">
-            <ion-col size="2" class="left-col">
-                <img class="logo" [src]="networkWithVisibility.network.logo">
+
+        <!-- Tabs -->
+        <ion-row class="tabs-row">
+            <ion-col size="6">
+                <div class="tab-button" [class.active]="activeTab === 'builtin'" (click)="switchTab('builtin')">
+                    {{ 'wallet.builtin' | translate }}
+                </div>
             </ion-col>
-            <ion-col size="8" class="middle-col">
-                {{ networkWithVisibility.network.name }}
+            <ion-col size="6">
+                <div class="tab-button" [class.active]="activeTab === 'custom'" (click)="switchTab('custom')">
+                    {{ 'wallet.custom' | translate }}
+                </div>
             </ion-col>
-            <ion-col size="2" class="right-col">
-                <ion-toggle mode="ios" [(ngModel)]="networkWithVisibility.isShown"
-                    (ionChange)="onVisibilityChange($event, networkWithVisibility)" (click)="$event.stopPropagation()"
-                    [disabled]="clickOngoing">
-                </ion-toggle>
-            </ion-col>
-            <ion-ripple-effect *ngIf="networkWithVisibility.isCustom"></ion-ripple-effect>
         </ion-row>
+
+        <!-- Built-in Networks -->
+        <div *ngIf="activeTab === 'builtin'">
+            <ion-row class="network-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                *ngFor="let networkWithVisibility of builtinNetworks"
+                (click)="editBuiltinNetwork(networkWithVisibility.network)">
+                <ion-col size="2" class="left-col">
+                    <img class="logo" [src]="networkWithVisibility.network.logo">
+                </ion-col>
+                <ion-col size="8" class="middle-col">
+                    {{ networkWithVisibility.network.getEffectiveName() }}
+                </ion-col>
+                <ion-col size="2" class="right-col">
+                    <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+        </div>
+
+        <!-- Custom Networks -->
+        <div *ngIf="activeTab === 'custom'">
+            <ion-row class="network-row ripple ion-activatable" [class.dark-subwallet-row]="theme.darkMode"
+                *ngFor="let networkWithVisibility of customNetworks" (click)="onNetworkClicked(networkWithVisibility)">
+                <ion-col size="2" class="left-col">
+                    <img class="logo" [src]="networkWithVisibility.network.logo">
+                </ion-col>
+                <ion-col size="8" class="middle-col">
+                    {{ networkWithVisibility.network.getEffectiveName() }}
+                </ion-col>
+                <ion-col size="2" class="right-col">
+                    <ion-icon name="chevron-forward" class="chevron-icon"></ion-icon>
+                </ion-col>
+                <ion-ripple-effect></ion-ripple-effect>
+            </ion-row>
+
+            <!-- No custom networks message -->
+            <ion-row *ngIf="!customNetworks || customNetworks.length === 0" class="no-networks-row">
+                <ion-col size="12" class="no-networks-message">
+                    {{ 'wallet.no-custom-networks' | translate }}
+                </ion-col>
+            </ion-row>
+        </div>
     </ion-grid>
 </ion-content>

@@ -23,5 +23,18 @@
           [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
       </ion-col>
     </ion-row>
+
+    <ion-row class="section">
+      <ion-col size="10.5" class="title-col">
+        <h1>{{ 'settings.configure-interface-style' | translate }}</h1>
+        <h2 class="secondary-text">{{ getLightweightModeTitle() }}</h2>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <div (click)="toggleLightweightMode()">
+          <ion-toggle *ngIf="isLightweightMode" checked mode="ios"></ion-toggle>
+          <ion-toggle *ngIf="!isLightweightMode" mode="ios"></ion-toggle>
+        </div>
+      </ion-col>
+    </ion-row>
   </ion-grid>
 </ion-content>

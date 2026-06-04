@@ -1,16 +1,17 @@
-import Queue from "promise-queue";
-import type { AbstractProvider } from "web3-core";
-import type { JsonRpcPayload, JsonRpcResponse } from "web3-core-helpers";
-import { GlobalJsonRPCService } from "../services/global.jsonrpc.service";
+import { JsonRpcProvider } from '@ethersproject/providers';
+import Queue from 'promise-queue';
+import type { JsonRpcPayload, JsonRpcResponse } from 'web3-core-helpers';
+import { GlobalJsonRPCService } from '../services/global.jsonrpc.service';
 
 // Concurrency queues to ensure that we don't send too many API calls to the same RPC URL at the same
 // time, as rate limiting systems on nodes would reject some of our requests.
 const callJsonRPCQueue = new Queue(1); // Concurrency: 1
-export class EssentialsWeb3Provider implements AbstractProvider {
-    constructor(private rpcApiUrl: string, private limitatorName: string, private highPriority = false) {
-    }
+export class EssentialsWeb3Provider extends JsonRpcProvider {
+  constructor(private rpcApiUrl: string, private limitatorName: string, private highPriority = false) {
+    super(rpcApiUrl);
+  }
 
-    /*  private callJsonRPC(payload): Promise<any> {
+  /*  private callJsonRPC(payload): Promise<any> {
          // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
          return callJsonRPCQueue.add(() => {
              return new Promise((resolve, reject) => {
@@ -53,20 +54,26 @@ export class EssentialsWeb3Provider implements AbstractProvider {
          });
      } */
 
-    // Mandatory method: sendAsync()
-    async sendAsync(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
-        //Logger.log("global", "Essentials Web3 provider sendAsync payload", payload);
-        switch (payload.method) {
-            // All methods not handled above are sent through JSON RPC API to the user-defined node url.
-            default:
-                try {
-                    let result = await GlobalJsonRPCService.instance.httpPost(this.rpcApiUrl, payload, this.limitatorName, 5000, true, this.highPriority);
-                    callback(null, result);
-                }
-                catch (e) {
-                    //Logger.error("global", "callJsonRPC catched");
-                    callback(e);
-                }
+  // Mandatory method: sendAsync()
+  async sendAsync(payload: JsonRpcPayload, callback: (error: Error, result?: JsonRpcResponse) => void) {
+    //Logger.log("global", "Essentials Web3 provider sendAsync payload", payload);
+    switch (payload.method) {
+      // All methods not handled above are sent through JSON RPC API to the user-defined node url.
+      default:
+        try {
+          let result = await GlobalJsonRPCService.instance.httpPost(
+            this.rpcApiUrl,
+            payload,
+            this.limitatorName,
+            5000,
+            true,
+            this.highPriority
+          );
+          callback(null, result);
+        } catch (e) {
+          //Logger.error("global", "callJsonRPC catched");
+          callback(e);
         }
     }
+  }
 }

@@ -13,9 +13,9 @@ export class FantomAPI {
         switch (type) {
         //   case FantomApiType.RPC: return 'https://rpcapi.fantom.network';
         //   case FantomApiType.RPC: return 'https://rpc.ankr.com/fantom';
-          case FantomApiType.RPC: return 'https://rpc.ftm.tools';
+          case FantomApiType.RPC: return 'https://rpc.fantom.network';
           case FantomApiType.ETHERSCAN_API: return 'https://api.ftmscan.com/api';
-          case FantomApiType.BLOCK_EXPLORER: return 'https://ftmscan.com';
+          case FantomApiType.BLOCK_EXPLORER: return 'https://explorer.fantom.network';
           default:
             throw new Error("Fantom API - Unknown api type " + type);
         }

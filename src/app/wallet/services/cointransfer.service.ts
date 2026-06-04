@@ -25,132 +25,130 @@ import { NFT } from '../model/networks/evms/nfts/nft';
 import { NetworkInfo } from '../pages/wallet/coin/coin-select/coin-select.page';
 
 export class Transfer {
-    masterWalletId: string = null;
-    action: string = null;
-    intentId: number = null;
-    memo = '';
-    did: string = null;
-    nickname: string = null;
-    url: string = null;
-    crPublicKey: string = null;
-    account: string = null;
-    // rawTransaction: any = null;
-    location: number = null;
-    crDID: string = null;
-    from: string = null;
-    fee = 0;
-    subWalletId: string = null;
-    votes: any; // TODO
-    amount: number;
-    publickey: string;
-    toAddress = '';
-    publicKeys: any;
-    didrequest: string;
-    // type: string = 'payment-confirm';
-    toSubWalletId: string;
-    currency: string; // pay
-    rate: number;
-    payPassword: string;
+  masterWalletId: string = null;
+  action: string = null;
+  intentId: number = null;
+  memo = '';
+  did: string = null;
+  nickname: string = null;
+  url: string = null;
+  crPublicKey: string = null;
+  account: string = null;
+  // rawTransaction: any = null;
+  location: number = null;
+  crDID: string = null;
+  from: string = null;
+  fee = 0;
+  subWalletId: string = null;
+  votes: any; // TODO
+  amount: number;
+  publickey: string;
+  toAddress = '';
+  publicKeys: any;
+  didrequest: string;
+  // type: string = 'payment-confirm';
+  toSubWalletId: string;
+  currency: string; // pay
+  rate: number;
+  payPassword: string;
 }
 
 export class IntentTransfer {
-    action: string = null;
-    intentId: any = null;
+  action: string = null;
+  intentId: any = null;
 }
 
 export class PayTransfer {
-    toAddress = '';
-    amount = 0;
-    memo = '';
+  toAddress = '';
+  amount = 0;
+  memo = '';
 }
 
 export enum TransferType {
-    RECHARGE = 1, // Transfer between subwallets
-    SEND = 2, // Sending
-    PAY = 3, // Pay intent
-    WITHDRAW = 4,
-    SEND_NFT = 5, // Send a ERC721 or ERC1155 NFT
-    FREEZE = 6,
-    UNFREEZE = 7,
-    TRONWITHDRAW = 8,
-    CLAIM_NFT = 9,
-    APPROVE = 10,
-    DESTROY_NFT = 11
+  RECHARGE = 1, // Transfer between subwallets
+  SEND = 2, // Sending
+  PAY = 3, // Pay intent
+  WITHDRAW = 4,
+  SEND_NFT = 5, // Send a ERC721 or ERC1155 NFT
+  FREEZE = 6,
+  UNFREEZE = 7,
+  TRONWITHDRAW = 8,
+  CLAIM_NFT = 9,
+  APPROVE = 10,
+  DESTROY_NFT = 11
 }
 export class ContractPayloadParam {
-    data?: string = null;
-    from?: string = null;
-    gas?: string = null;
-    gasPrice?: string = null;
-    to?: string = null;
-    value?: string = null;
+  data?: string = null;
+  from?: string = null;
+  gas?: string = null;
+  gasPrice?: string = null;
+  to?: string = null;
+  value?: string = null;
 }
 
 type NFTTransfer = {
-    nft: NFT; // Mostly, the NFT contract address
-    assetID: string; // Asset ID inside the contract, to be transferred
-    needApprove?: boolean; // Need approve for BPoS NFT.
-}
+  nft: NFT; // Mostly, the NFT contract address
+  assetID: string; // Asset ID inside the contract, to be transferred
+  needApprove?: boolean; // Need approve for BPoS NFT.
+};
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
-
 export class CoinTransferService {
+  /******************
+   * Dynamic Values *
+   ******************/
 
-    /******************
-     * Dynamic Values *
-     ******************/
+  // Send, receive, transfer, send nft...
+  public transferType: TransferType;
+  // Main master wallet on which to operate
+  public masterWalletId: string;
+  // From subwallet
+  public subWalletId: string;
+  // To subwallet (only for recharging funds)
+  public toSubWalletId: string;
+  // To Network infomation (only for recharging funds), the multi-sign wallet doesn't support sidechain,
+  // so we can't get the to subwallet, user only select the destination Network.
+  public networkInfo: NetworkInfo;
 
-    // Send, receive, transfer, send nft...
-    public transferType: TransferType;
-    // Main master wallet on which to operate
-    public masterWalletId: string;
-    // From subwallet
-    public subWalletId: string;
-    // To subwallet (only for recharging funds)
-    public toSubWalletId: string;
-    // To Network infomation (only for recharging funds), the multi-sign wallet doesn't support sidechain,
-    // so we can't get the to subwallet, user only select the destination Network.
-    public networkInfo: NetworkInfo;
+  /******************
+   * Intent Values *
+   ******************/
 
-    /******************
-    * Intent Values *
-    ******************/
+  // Intent params
+  public intentTransfer: IntentTransfer;
+  // intent: pay
+  public payTransfer: PayTransfer;
+  // intent: dposvotetransaction
+  public publickeys: any;
+  // intent: didtransaction
+  public didrequest: any;
+  // intent: EVMs
+  public evmChainId: number; // For EVM intents
+  public payloadParam: ContractPayloadParam;
+  // NFT transfer info
+  public nftTransfer: NFTTransfer;
 
-    // Intent params
-    public intentTransfer: IntentTransfer;
-    // intent: pay
-    public payTransfer: PayTransfer;
-    // intent: dposvotetransaction
-    public publickeys: any;
-    // intent: didtransaction
-    public didrequest: any;
-    // intent: esctransaction
-    public sendTransactionChainId: number; // For esctransaction intents, optional "chainid" numeric value representing the EVM chain to send transaction to.
-    public payloadParam: ContractPayloadParam;
-    // NFT transfer info
-    public nftTransfer: NFTTransfer;
+  // In the process of deprecating
+  public transfer: Transfer = null;
 
-    // In the process of deprecating
-    public transfer: Transfer = null;
+  constructor() {
+    this.reset();
+  }
 
-    constructor() {
-        this.reset();
-    }
+  /**
+   * Resets all service fields to their default value to restart a new transfer.
+   */
+  public reset() {
+    this.transfer = new Transfer();
 
-    /**
-     * Resets all service fields to their default value to restart a new transfer.
-     */
-    public reset() {
-        this.transfer = new Transfer();
-
-        this.transferType = null;
-        this.masterWalletId = null;
-        this.subWalletId = null;
-        this.toSubWalletId = null;
-        this.intentTransfer = new IntentTransfer();
-        this.payTransfer = new PayTransfer();
-        this.publickeys = null;
-        this.didrequest = null;
-    }
+    this.transferType = null;
+    this.masterWalletId = null;
+    this.subWalletId = null;
+    this.toSubWalletId = null;
+    this.intentTransfer = new IntentTransfer();
+    this.payTransfer = new PayTransfer();
+    this.publickeys = null;
+    this.didrequest = null;
+  }
 }

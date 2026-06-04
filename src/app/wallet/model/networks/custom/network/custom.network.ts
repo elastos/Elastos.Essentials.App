@@ -8,6 +8,8 @@ import { EVMNetwork } from "../../evms/evm.network";
  * Custom EVM compatible network.
  */
 export class CustomNetwork extends EVMNetwork {
+  private accountRpcUrl: string;
+
   constructor(
     key: string, // unique identifier
     name: string, // Human readable network name - Elastos, HECO
@@ -16,10 +18,12 @@ export class CustomNetwork extends EVMNetwork {
     mainTokenFriendlyName: string, // Ex: Huobi Token
     networkTemplate: string, // For which network template is this network available
     rpcUrl: string,
+    accountRpcUrl: string,
     chainID: number
   ) {
     super(key, name, name, logo, mainTokenSymbol, mainTokenFriendlyName, networkTemplate, chainID);
     this.mainRpcUrl = rpcUrl;
+    this.accountRpcUrl = accountRpcUrl;
   }
 
   public async newNetworkWallet(masterWallet: MasterWallet): Promise<AnyNetworkWallet> {
@@ -40,7 +44,16 @@ export class CustomNetwork extends EVMNetwork {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     switch (type) {
       case NetworkAPIURLType.RPC: return this.mainRpcUrl;
+      case NetworkAPIURLType.ETHERSCAN: return this.accountRpcUrl;
       default: throw new Error(`CustomNetwork: getAPIUrlOfType() has no entry for url type ${type.toString()}`);
     }
+  }
+
+  public isCustom(): boolean {
+    return true;
+  }
+
+  public hasAccountRPC(): boolean {
+    return this.accountRpcUrl !== null && this.accountRpcUrl.length > 0;
   }
 }

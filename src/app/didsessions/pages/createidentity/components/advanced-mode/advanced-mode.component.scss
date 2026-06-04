@@ -1,0 +1,74 @@
+@import "src/app/didsessions/root.scss";
+
+ion-slides {
+  height: calc(100% - (150px + 40px)); // Substract height of slides on approximate height of footer
+}
+
+ion-slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 90px 45px 45px;
+  height: 100%;
+
+  ion-label {
+    font-size: 20px;
+    margin-top: 60px;
+    font-weight: 300;
+  }
+}
+
+#slide1 {
+  img {
+    //width: 80px;
+    //height: 80px;
+
+    animation: imgAnimate;
+    animation-duration: 800ms;
+    animation-fill-mode: forwards;
+
+    @keyframes imgAnimate {
+      0% {
+        width: 0px;
+      }
+      100% {
+        width: 200px;
+      }
+    }
+  }
+}
+
+#slide2 {
+  img {
+    position: absolute;
+    bottom: 50%;
+    animation: imgAnimate2;
+    animation-duration: 2600ms;
+    animation-iteration-count: infinite;
+    animation-fill-mode: forwards;
+
+    @keyframes imgAnimate2 {
+      0% {
+        width: 190px;
+      }
+      25% {
+        width: 200px;
+      }
+      50% {
+        width: 190px;
+      }
+      75% {
+        width: 200px;
+      }
+      100% {
+        width: 190px;
+      }
+    }
+  }
+
+  ion-label {
+    position: relative;
+    top: 50px;
+  }
+}

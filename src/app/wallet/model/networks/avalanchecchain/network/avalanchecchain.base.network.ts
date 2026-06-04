@@ -4,7 +4,6 @@ import { WalletType } from "../../../masterwallets/wallet.types";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnyNetworkWallet } from "../../base/networkwallets/networkwallet";
 import { EVMNetwork } from "../../evms/evm.network";
-import { CovalentHelper } from "../../evms/tx-providers/covalent.helper";
 import { AvalancheCChainAPI, AvalancheCChainApiType } from "./avalanchecchain.api";
 
 export abstract class AvalancheCChainBaseNetwork extends EVMNetwork {
@@ -34,8 +33,10 @@ export abstract class AvalancheCChainBaseNetwork extends EVMNetwork {
   public getAPIUrlOfType(type: NetworkAPIURLType): string {
     if (type === NetworkAPIURLType.RPC)
       return AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.RPC, this.networkTemplate);
-    else if (type === NetworkAPIURLType.COVALENTHQ)
-      return CovalentHelper.apiUrl();
+    // else if (type === NetworkAPIURLType.COVALENTHQ)
+    //   return CovalentHelper.apiUrl();
+    else if (type === NetworkAPIURLType.ETHERSCAN)
+      return AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.ETHERSCAN_API, this.networkTemplate);
     else if (type === NetworkAPIURLType.BLOCK_EXPLORER)
       return AvalancheCChainAPI.getApiUrl(AvalancheCChainApiType.BLOCK_EXPLORER, this.networkTemplate);
     else

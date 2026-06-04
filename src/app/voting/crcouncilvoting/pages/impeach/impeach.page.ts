@@ -181,7 +181,7 @@ export class ImpeachCRMemberPage {
             Contents: voteContents
         };
 
-        Logger.log(App.CRCOUNCIL_VOTING, 'CR Impeachment payload', payload);
+        Logger.log(App.CRCOUNCIL_VOTING, 'Elastos DAO Impeachment payload', payload);
 
         try {
             const rawTx = await this.voteService.sourceSubwallet.createDPoSV2VoteTransaction(

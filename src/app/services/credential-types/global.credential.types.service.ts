@@ -1,30 +1,33 @@
-import { HttpClient } from "@angular/common/http";
-import { Injectable, NgZone } from "@angular/core";
-import { ToastController } from "@ionic/angular";
+import { HttpClient } from '@angular/common/http';
+import { Injectable, NgZone } from '@angular/core';
+import { ToastController } from '@ionic/angular';
 //import * as jsonld from "jsonld";
 import { Url } from 'jsonld/jsonld-spec';
-import moment from "moment";
-import Queue from "promise-queue";
-import { firstValueFrom } from "rxjs";
-import { lazyJsonLdImport } from "src/app/helpers/import.helper";
-import type { DIDDocument } from "src/app/identity/model/diddocument.model";
-import { DIDURL } from "src/app/identity/model/didurl.model";
-import { DIDDocumentsService } from "src/app/identity/services/diddocuments.service";
-import { Logger } from "src/app/logger";
-import type { JSONObject } from "src/app/model/json";
-import { GlobalEvents } from "src/app/services/global.events.service";
-import { TimeBasedPersistentCache } from "src/app/wallet/model/timebasedpersistentcache";
-import { LocalStorage } from "../../identity/services/localstorage";
-import { Native } from "../../identity/services/native";
+import moment from 'moment';
+import Queue from 'promise-queue';
+import { firstValueFrom } from 'rxjs';
+import { lazyJsonLdImport } from 'src/app/helpers/import.helper';
+import type { DIDDocument } from 'src/app/identity/model/diddocument.model';
+import { DIDURL } from 'src/app/identity/model/didurl.model';
+import { DIDDocumentsService } from 'src/app/identity/services/diddocuments.service';
+import { Logger } from 'src/app/logger';
+import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import type { JSONObject } from 'src/app/model/json';
+import { GlobalEvents } from 'src/app/services/global.events.service';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
+import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
+import { TimeBasedPersistentCache } from 'src/app/wallet/model/timebasedpersistentcache';
+import { LocalStorage } from '../../identity/services/localstorage';
+import { Native } from '../../identity/services/native';
 
 export type CredentialTypeWithContext = {
   context: string;
   shortType: string;
-}
+};
 
 type ContextPayload = JSONObject & {
-  "@context": unknown;
-}
+  '@context': unknown;
+};
 
 /**
  * Service responsible for helping in using full url credential types. Historically, we used short types
@@ -42,9 +45,9 @@ type ContextPayload = JSONObject & {
  * correctly implemented, meaning that its content can relate to proper credential types.
  */
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root'
 })
-export class GlobalCredentialTypesService {
+export class GlobalCredentialTypesService extends GlobalService {
   // Cache for fetched context JSON (from http urls or from the eid chain)
   // This cache is NOT persistent, it is populated again at every app start (for instance,
   // to make sure we get the latest types from DID document, if the service endpoint is updated).
@@ -59,13 +62,29 @@ export class GlobalCredentialTypesService {
     public events: GlobalEvents,
     public localStorage: LocalStorage,
     public native: Native,
-    private http: HttpClient
+    private http: HttpClient,
+    private lightweightService: GlobalLightweightService
   ) {
+    super();
   }
 
   // Called at boot, not related to the active user
   public async init(): Promise<void> {
-    this.contextsCache = await TimeBasedPersistentCache.loadOrCreate("credentialcontextpayloads", true);
+    GlobalServiceManager.getInstance().registerService(this);
+    this.contextsCache = await TimeBasedPersistentCache.loadOrCreate('credentialcontextpayloads', true);
+  }
+
+  public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // Only initialize credential types functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      Logger.log('GlobalCredentialTypesService', 'Initializing credential types functionality for user');
+    }
+    return;
+  }
+
+  public onUserSignOut(): Promise<void> {
+    // Clean up credential types specific resources if needed
+    return;
   }
 
   /**
@@ -87,16 +106,18 @@ export class GlobalCredentialTypesService {
     let credentialJson: any = null;
     try {
       credentialJson = JSON.parse(await credential.toJson());
-    }
-    catch (e) {
+    } catch (e) {
       // Credential's toJson() could throw an exception (not bound to a did store because of legacy DID plugin reasons)
-      Logger.warn("credentialtypes", "Credential could not be parsed, returning empty types");
+      Logger.warn('credentialtypes', 'Credential could not be parsed, returning empty types');
       return [];
     }
 
     // Make sure we have "https://www.w3.org/2018/credentials/v1" has first entry in the context,
     // this is a W3C spec requirement
-    if (!("@context" in credentialJson) || credentialJson["@context"].indexOf("https://www.w3.org/2018/credentials/v1") !== 0) {
+    if (
+      !('@context' in credentialJson) ||
+      credentialJson['@context'].indexOf('https://www.w3.org/2018/credentials/v1') !== 0
+    ) {
       return [];
     }
 
@@ -122,13 +143,12 @@ export class GlobalCredentialTypesService {
         let resultJsonLDNode = expanded[0];
 
         // Expanded types identifiers can be a string or an array of string. We make this become an array, always.
-        return Array.isArray(resultJsonLDNode["@type"]) ? resultJsonLDNode["@type"] : [resultJsonLDNode["@type"]];
-      }
-      else {
-        console.log("error");
+        return Array.isArray(resultJsonLDNode['@type']) ? resultJsonLDNode['@type'] : [resultJsonLDNode['@type']];
+      } else {
+        console.log('error');
       }
     } catch (e) {
-      Logger.warn("credentialtypes", "Credential could not be expanded, returning empty types.", e);
+      Logger.warn('credentialtypes', 'Credential could not be expanded, returning empty types.', e);
     }
 
     return [];
@@ -141,7 +161,9 @@ export class GlobalCredentialTypesService {
    * The JSONLD library does something similar but can only expand context+types to
    * return their actual @ids, but it doesn't help us know thich type was found in which context definition.
    */
-  public async resolveTypesWithContexts(credential: DIDPlugin.VerifiableCredential): Promise<CredentialTypeWithContext[]> {
+  public async resolveTypesWithContexts(
+    credential: DIDPlugin.VerifiableCredential
+  ): Promise<CredentialTypeWithContext[]> {
     let credentialJson: any = null;
 
     try {
@@ -150,23 +172,26 @@ export class GlobalCredentialTypesService {
 
       // Make sure we have "https://www.w3.org/2018/credentials/v1" has first entry in the context,
       // this is a W3C spec requirement
-      if (!("@context" in credentialJson) || credentialJson["@context"].indexOf("https://www.w3.org/2018/credentials/v1") !== 0) {
+      if (
+        !('@context' in credentialJson) ||
+        credentialJson['@context'].indexOf('https://www.w3.org/2018/credentials/v1') !== 0
+      ) {
         return [];
       }
 
       // Resolve all contexts
-      let contexts = credentialJson["@context"];
-      let contextPayloadsWithUrls: { url: string, payload: ContextPayload }[] = [];
+      let contexts = credentialJson['@context'];
+      let contextPayloadsWithUrls: { url: string; payload: ContextPayload }[] = [];
       for (let context of contexts) {
         let contextPayload = await this.fetchContext(context);
         if (!contextPayload) {
-          Logger.warn("credentialtypes", "Failed to fetch credential type context for", context);
+          Logger.warn('credentialtypes', 'Failed to fetch credential type context for', context);
           continue;
         }
 
         //console.log("context payload", context, contextPayload)
 
-        if ("@context" in contextPayload) {
+        if ('@context' in contextPayload) {
           contextPayloadsWithUrls.push({
             url: context,
             payload: contextPayload
@@ -176,22 +201,22 @@ export class GlobalCredentialTypesService {
 
       // Now that we have all context payloads, search short types in each of them
       let pairs: CredentialTypeWithContext[] = [];
-      for (let type of credential.getTypes()) { // Short types
-        let contextInfo = contextPayloadsWithUrls.find(c => Object.keys(c.payload["@context"]).indexOf(type) >= 0);
+      for (let type of credential.getTypes()) {
+        // Short types
+        let contextInfo = contextPayloadsWithUrls.find(c => Object.keys(c.payload['@context']).indexOf(type) >= 0);
         if (contextInfo) {
           pairs.push({
             context: contextInfo.url,
             shortType: type
-          })
+          });
         }
       }
 
       return pairs;
-    }
-    catch (e) {
+    } catch (e) {
       // Credential's toJson() could throw an exception (not bound to a did store because of legacy DID plugin reasons)
       //
-      Logger.warn("credentialtypes", "Credential could not be parsed or , returning empty types.", e);
+      Logger.warn('credentialtypes', 'Credential could not be parsed or , returning empty types.', e);
       return [];
     }
   }
@@ -205,13 +230,15 @@ export class GlobalCredentialTypesService {
 
     return this.fetchContextQueue.add(async () => {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-      if (contextUrl.startsWith("http")) {
+      if (contextUrl.startsWith('http')) {
         try {
-          let payload = await firstValueFrom(this.http.get(contextUrl, {
-            headers: {
-              'Accept': 'application/json'
-            }
-          }));
+          let payload = await firstValueFrom(
+            this.http.get(contextUrl, {
+              headers: {
+                Accept: 'application/json'
+              }
+            })
+          );
 
           this.contextsCache.set(contextUrl, payload as ContextPayload, moment().unix());
           // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
@@ -219,16 +246,16 @@ export class GlobalCredentialTypesService {
           return payload as ContextPayload;
         } catch (e) {
           // TODO: maybe the context is invalid or the network is error.
-          Logger.warn("credentialtypes", "Failed to get payload from context.", e);
+          Logger.warn('credentialtypes', 'Failed to get payload from context.', e);
           return null;
         }
-      }
-      else if (contextUrl.startsWith("did:")) { // EID url
+      } else if (contextUrl.startsWith('did:')) {
+        // EID url
         // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
         // Compute publisher's DID string based on context url
         let { publisher, shortType } = this.extractEIDContext(contextUrl);
         if (!publisher) {
-          Logger.warn("credentialtypes", "Failed to extract publisher from context", contextUrl);
+          Logger.warn('credentialtypes', 'Failed to extract publisher from context', contextUrl);
           return null;
         }
 
@@ -241,14 +268,12 @@ export class GlobalCredentialTypesService {
           // NOTE - don't save the cache = not persistent on disk - await this.contextsCache.save();
 
           return contextPayload;
-        }
-        else {
+        } else {
           return null;
         }
-      }
-      else {
+      } else {
         // Unsupported
-        Logger.log("credentialtypes", "Unsupported credential context url", contextUrl);
+        Logger.log('credentialtypes', 'Unsupported credential context url', contextUrl);
         return null;
       }
     });
@@ -256,19 +281,19 @@ export class GlobalCredentialTypesService {
 
   // From: did://elastos/insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq/BenCredential
   // To: did:elastos:insTmxdDDuS9wHHfeYD1h5C2onEHh3D8Vq + BenCredential
-  private extractEIDContext(context: string): { publisher: string, shortType: string } {
+  private extractEIDContext(context: string): { publisher: string; shortType: string } {
     let regex = new RegExp(/^did:\/\/elastos\/([a-zA-Z0-9]+)\/([a-zA-Z0-9]+)/);
     let parts = regex.exec(context);
 
     if (!parts || parts.length < 3) {
-      Logger.warn("credentialtypes", 'Invalid url format, cannot find credential publisher and ID');
+      Logger.warn('credentialtypes', 'Invalid url format, cannot find credential publisher and ID');
       return null;
     }
 
     return {
       publisher: `did:elastos:${parts[1]}`,
       shortType: parts[2]
-    }
+    };
   }
 
   /**
@@ -278,7 +303,7 @@ export class GlobalCredentialTypesService {
   public getContextPayloadFromDIDDocument(document: DIDDocument, serviceId: string): ContextPayload {
     let service = document.getService(serviceId);
     if (!service) {
-      Logger.warn("credentialtypes", "The DID document has no service with ID: " + serviceId);
+      Logger.warn('credentialtypes', 'The DID document has no service with ID: ' + serviceId);
       return null;
     }
 
@@ -286,7 +311,12 @@ export class GlobalCredentialTypesService {
 
     let credential = document.getCredentialById(new DIDURL(targetCredentialId));
     if (!credential) {
-      Logger.warn("credentialtypes", "The DID document has no credential context credential that matches (service id, credential id): ", serviceId, targetCredentialId);
+      Logger.warn(
+        'credentialtypes',
+        'The DID document has no credential context credential that matches (service id, credential id): ',
+        serviceId,
+        targetCredentialId
+      );
       return null;
     }
 
@@ -299,12 +329,16 @@ export class GlobalCredentialTypesService {
      * }
      */
     let subject = credential.getSubject();
-    if (!("definition" in subject) || !("@context" in subject["definition"])) {
-      Logger.warn("credentialtypes", `Credential ${targetCredentialId} found but no definition/@context in the subject. Invalid format.`, subject);
+    if (!('definition' in subject) || !('@context' in subject['definition'])) {
+      Logger.warn(
+        'credentialtypes',
+        `Credential ${targetCredentialId} found but no definition/@context in the subject. Invalid format.`,
+        subject
+      );
       return null;
     }
 
-    return subject["definition"];
+    return subject['definition'];
   }
 
   /**
@@ -315,7 +349,7 @@ export class GlobalCredentialTypesService {
       // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
       return new Promise(async (resolve, reject) => {
         try {
-          if (url.startsWith("did")) {
+          if (url.startsWith('did')) {
             // NOTE: normally fetchcontext could be used to resolve "http" urls as well but for now
             // we use the json ld's "defaultLoader" as it also deals wit hmore advanced cases like
             // following header redirection for special types, etc (more things than our fetcher).
@@ -326,19 +360,17 @@ export class GlobalCredentialTypesService {
               documentUrl: url,
               document: context
             });
-          }
-          else {
+          } else {
             const jsonld = await lazyJsonLdImport();
             let defaultLoader = (jsonld as any).documentLoaders.xhr();
             let data = await defaultLoader(url);
             resolve(data);
           }
-        }
-        catch (e) {
+        } catch (e) {
           reject(e);
         }
       });
-    }
+    };
   }
 
   /**
@@ -351,49 +383,53 @@ export class GlobalCredentialTypesService {
       let credentialContent = JSON.parse(await credential.toJson());
 
       let credentialContentJson = credentialContent;
-      if (typeof credentialContentJson !== "object") {
+      if (typeof credentialContentJson !== 'object') {
         return false;
       }
 
       // Make sure we have "https://www.w3.org/2018/credentials/v1" has first entry in the context,
       // this is a W3C spec requirement
-      if (!("@context" in credentialContentJson) || credentialContentJson["@context"].indexOf("https://www.w3.org/2018/credentials/v1") !== 0) {
+      if (
+        !('@context' in credentialContentJson) ||
+        credentialContentJson['@context'].indexOf('https://www.w3.org/2018/credentials/v1') !== 0
+      ) {
         return false;
       }
 
       // Make sure there is a credentialSubject
-      if (!("credentialSubject" in credentialContentJson)) {
+      if (!('credentialSubject' in credentialContentJson)) {
         return false;
       }
 
       // Make sure there is a proof
-      if (!("proof" in credentialContentJson)) {
+      if (!('proof' in credentialContentJson)) {
         return false;
       }
 
       const jsonld = await lazyJsonLdImport();
-      let compacted = await jsonld.compact(credentialContentJson, credentialContentJson["@context"], {
+      let compacted = await jsonld.compact(credentialContentJson, credentialContentJson['@context'], {
         documentLoader: this.buildElastosJsonLdDocLoader()
       });
 
       if (compacted) {
         // If the credential subject is empty (only id), JsonLD returns credentialSubject: "theid".
         // We turn this back to an object for our display to work better right after.
-        if (!("credentialSubject" in compacted) || typeof compacted["credentialSubject"] === "string") {
+        if (!('credentialSubject' in compacted) || typeof compacted['credentialSubject'] === 'string') {
           compacted.credentialSubject = {
             id: compacted.credentialSubject
-          }
+          };
         }
 
         // Check what original fields are missing after compacting. Is some warnings are generated,
         // this means the document is not conform
-        let { modifiedDoc, warningsGenerated } = this.addMissingFieldsToCompactHtmlResult(credentialContentJson, compacted);
+        let { modifiedDoc, warningsGenerated } = this.addMissingFieldsToCompactHtmlResult(
+          credentialContentJson,
+          compacted
+        );
 
-        if (!warningsGenerated)
-          return true;
+        if (!warningsGenerated) return true;
       }
-    }
-    catch (e) {
+    } catch (e) {
       return false;
     }
 
@@ -401,14 +437,17 @@ export class GlobalCredentialTypesService {
   }
 
   // TODO: RECURSIVE
-  private addMissingFieldsToCompactHtmlResult(originalUserDoc: any, compactedDoc: any): { modifiedDoc: any, warningsGenerated: boolean } {
+  private addMissingFieldsToCompactHtmlResult(
+    originalUserDoc: any,
+    compactedDoc: any
+  ): { modifiedDoc: any; warningsGenerated: boolean } {
     let warningsGenerated = false;
     let modifiedCompactedDoc = Object.assign({}, compactedDoc);
 
     // Credential subject
     for (let key of Object.keys(originalUserDoc.credentialSubject)) {
       if (!(key in compactedDoc.credentialSubject)) {
-        modifiedCompactedDoc.credentialSubject["MISSING_KEY_" + key] = "This field is missing in credential types";
+        modifiedCompactedDoc.credentialSubject['MISSING_KEY_' + key] = 'This field is missing in credential types';
         warningsGenerated = true;
       }
     }
@@ -416,7 +455,7 @@ export class GlobalCredentialTypesService {
     // Proof
     for (let key of Object.keys(originalUserDoc.proof)) {
       if (!(key in compactedDoc.proof)) {
-        modifiedCompactedDoc.proof["MISSING_KEY_" + key] = "This field is missing in credential types";
+        modifiedCompactedDoc.proof['MISSING_KEY_' + key] = 'This field is missing in credential types';
         warningsGenerated = true;
       }
     }

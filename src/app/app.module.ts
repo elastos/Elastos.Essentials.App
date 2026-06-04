@@ -4,8 +4,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouteReuseStrategy } from '@angular/router';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
-
+// import { FirebaseX } from "@awesome-cordova-plugins/firebase-x/ngx";
+import { AppMinimize } from '@ionic-native/app-minimize/ngx';
 import { HTTP } from '@awesome-cordova-plugins/http/ngx';
 import { Keyboard } from '@awesome-cordova-plugins/keyboard/ngx';
 import { ScreenOrientation } from '@awesome-cordova-plugins/screen-orientation/ngx';
@@ -15,7 +15,6 @@ import { IonicModule, IonicRouteStrategy, Platform } from '@ionic/angular';
 import { IonicStorageModule } from '@ionic/storage';
 import { MissingTranslationHandler, MissingTranslationHandlerParams, TranslateLoader, TranslateModule, TranslateService } from '@ngx-translate/core';
 import * as Sentry from '@sentry/browser';
-import { Integrations } from '@sentry/tracing';
 import { Observable } from 'rxjs';
 import { TranslationsLoader } from 'src/translationsloader';
 import { AppRoutingModule } from './app-routing.module';
@@ -37,12 +36,23 @@ import { DPoSRegistrationInitModule } from './voting/dposregistration/init.modul
 import { DPoSVotingInitModule } from './voting/dposvoting/init.module';
 import { WalletInitModule } from './wallet/init.module';
 
+// Ignore errors with specific messages
+const silentErrorMessages = [
+  'Missing or invalid topic field', // Error unhandled by the wallet connect 1.0 library, but this is not a real error (caused by calling
+                                    // disconnect when not connected). This can be removed after upgrading to wallet connect 2.0.
+  'socket stalled when trying to connect to', // walletconnect connect error.
+  'WebSocket connection failed for host', // walletconnect connect error.
+  'Unsupported accounts. update() namespace, account eip155:1', // walletconnect connect error for some apps. (switch network from evm network to non evm mainchain)
+  '.terminate is not a function', // walletconnect error.
+];
+
+let sDebugVersion = false;
+
 @Injectable({
   providedIn: 'root'
 })
 export class SentryErrorHandler implements ErrorHandler {
   private version = '';
-  private debugVersion = false;
 
   constructor(
     private platform: Platform,
@@ -53,8 +63,11 @@ export class SentryErrorHandler implements ErrorHandler {
         this.version = res;
         Logger.log('Sentry', 'Version:', res);
         if (this.version.endsWith('.d')) {
-            this.debugVersion = true;
+          sDebugVersion = true;
         }
+
+        Sentry.setExtra('app-version', this.version);
+
       }).catch(error => {
         Logger.error('Sentry', 'getVersionNumber error:', error);
       });
@@ -67,26 +80,9 @@ export class SentryErrorHandler implements ErrorHandler {
   private shouldHandleAsSilentError(error) {
     let stringifiedError = "" + error;
 
-    // Error unhandled by the wallet connect 1.0 library, but this is not a real error (caused by calling
-    // disconnect when not connected). This can be removed after upgrading to wallet connect 2.0.
-    if (stringifiedError.indexOf("Missing or invalid topic field") >= 0)
+    if (silentErrorMessages.some(msg => stringifiedError.includes(msg))) {
       return true;
-
-    // walletconnect connect error.
-    if (stringifiedError.indexOf("socket stalled when trying to connect to") >= 0)
-      return true;
-
-    // walletconnect connect error.
-    if (stringifiedError.indexOf("WebSocket connection failed for host") >= 0)
-      return true;
-
-    // walletconnect connect error for some apps. (switch network from evm network to non evm mainchain)
-    if (stringifiedError.indexOf("Unsupported accounts. update() namespace, account eip155:1") >= 0)
-      return true;
-
-    // walletconnect error.
-    if (stringifiedError.indexOf("s.terminate is not a function") >= 0)
-      return true;
+    }
 
     return false;
   }
@@ -97,7 +93,8 @@ export class SentryErrorHandler implements ErrorHandler {
       if (stringifiedError.indexOf("QuotaExceededError") >= 0) {
           Logger.warn("Sentry", "QuotaExceededError, clear all localStorage");
           localStorage.clear();
-          lottie.splashscreen.show();
+          const lottie = (window as any).lottie;
+          void lottie.splashscreen.show();
           void GlobalServiceManager.getInstance().emitUserSignOut();
           window.location.href = "/";
           return true;
@@ -128,6 +125,7 @@ export class SentryErrorHandler implements ErrorHandler {
     }
 
     if (this.handleNetworkError(error)) {
+      Logger.warn("Sentry", "Globally catched exception (NetworkError):", error);
       GlobalNativeService.instance.genericToast('common.network-or-server-error', 5000);
       return;
     }
@@ -137,7 +135,7 @@ export class SentryErrorHandler implements ErrorHandler {
     Logger.log("Sentry", 'version:', this.version);
 
     // Only send reports to sentry if we are not debugging.
-    if (!this.debugVersion && document.URL.includes('localhost')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
+    if (!sDebugVersion && document.URL.includes('localhost')) { // Prod builds or --nodebug CLI builds use the app package id instead of a local IP
       /*const eventId = */ Sentry.captureException(error.originalError || error);
       // Sentry.showReportDialog({ eventId });
     }
@@ -252,8 +250,9 @@ let providers: Provider[] = [
   AppVersion,
   Keyboard,
   ScreenOrientation,
+  AppMinimize,
   StatusBar,
-  FirebaseX,
+  // FirebaseX,
   HTTP,
   { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
   // { provide: RouteReuseStrategy, useClass: CustomRouteReuseStrategy },
@@ -329,9 +328,25 @@ export class AppModule { }
 
 Sentry.init({
     dsn: "https://1de99f1d75654d479051bfdce1537821@o339076.ingest.sentry.io/5722236",
-    release: "default",
     integrations: [
-      new Integrations.BrowserTracing(),
+      // Registers and configures the Tracing integration,
+      // which automatically instruments your application to monitor its
+      // performance, including custom Angular routing instrumentation
+      Sentry.browserTracingIntegration(),
+      // Registers the Replay integration,
+      // which automatically captures Session Replays
+      Sentry.replayIntegration(),
     ],
+    // Called for message and error events
+    beforeSend(event, hint) {
+      // Modify or drop the event here
+      if (sDebugVersion) {
+        Logger.log('sentry', 'beforeSend: Debug Version, Ignore error')
+        return null;
+      }
+      return event;
+    },
+    ignoreErrors: [...silentErrorMessages,  ...["Network error"]],
+    denyUrls: ["https://0.0.0.0"], // For Debug
     tracesSampleRate: 1.0,
 });

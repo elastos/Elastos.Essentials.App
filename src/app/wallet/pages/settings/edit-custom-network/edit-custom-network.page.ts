@@ -5,6 +5,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { AddEthereumChainParameter } from 'src/app/model/ethereum/requestparams';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalNetworksService } from 'src/app/services/global.networks.service';
@@ -12,6 +13,7 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { CustomNetworkDiskEntry, CustomNetworkService } from 'src/app/wallet/services/evm/customnetwork.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { WalletService } from 'src/app/wallet/services/wallet.service';
 import { EditCustomNetworkIntentResult } from './intentresult';
 
 export type EditCustomNetworkRoutingParams = {
@@ -20,12 +22,12 @@ export type EditCustomNetworkRoutingParams = {
   intentId?: number; // Received intent id - for intent mode only
   customNetworkKey?: string; // Key of the edited network. Edition mode only
   preFilledRequest?: AddEthereumChainParameter; // Request to add a new network by an external api with prefilled information (intent mode)
-}
+};
 
 @Component({
   selector: 'app-edit-custom-network',
   templateUrl: './edit-custom-network.page.html',
-  styleUrls: ['./edit-custom-network.page.scss'],
+  styleUrls: ['./edit-custom-network.page.scss']
 })
 export class EditCustomNetworkPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -37,6 +39,8 @@ export class EditCustomNetworkPage implements OnInit {
   public editionMode = false;
   public intentMode = false;
   public intentId: number;
+
+  public isNetworkVisible = false;
 
   private alreadySentIntentResponse = false;
 
@@ -53,7 +57,7 @@ export class EditCustomNetworkPage implements OnInit {
     private http: HttpClient,
     public globalPopupService: GlobalPopupService,
     private zone: NgZone
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.init();
@@ -62,10 +66,10 @@ export class EditCustomNetworkPage implements OnInit {
   ngOnDestroy() {
     void this.native.hideLoading(); // Maybe RPC request timeout
     if (this.intentMode && !this.alreadySentIntentResponse) {
-        let result: EditCustomNetworkIntentResult = {
-            networkAdded: false
-        };
-        void this.globalIntentService.sendIntentResponse(result, this.intentId);
+      let result: EditCustomNetworkIntentResult = {
+        networkAdded: false
+      };
+      void this.globalIntentService.sendIntentResponse(result, this.intentId);
     }
   }
 
@@ -73,58 +77,64 @@ export class EditCustomNetworkPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     this.zone.run(() => {
       let params = navigation.extras.state as EditCustomNetworkRoutingParams;
+
       if (params.forEdition) {
         this.editionMode = true;
 
-        this.editedNetworkEntry = Object.assign({}, this.customNetworksService.getCustomNetworkEntries().find(n => n.key === navigation.extras.state.customNetworkKey));
+        this.editedNetworkEntry = Object.assign(
+          {},
+          this.customNetworksService
+            .getCustomNetworkEntries()
+            .find(n => n.key === navigation.extras.state.customNetworkKey)
+        );
+
+        this.isNetworkVisible = this.networkService.getNetworkVisible(this.editedNetworkEntry.key);
 
         //this.editedNetworkEntry.rpcUrl = "https://http-mainnet.hecochain.com" // TMP TEST
         //this.editedNetworkEntry.accountRpcUrl = "https://api.hecoinfo.com" // TMP TEST
 
         return;
-      }
-      else {
+      } else {
         this.editionMode = false;
         this.intentMode = params.intentMode;
 
         if (!params.intentMode) {
           // User mode, start with blank inputs
           this.editedNetworkEntry = {
-            key: "custom" + Date.now(),
-            name: "",
-            rpcUrl: "",
-            accountRpcUrl: "",
-            chainId: "",
+            key: 'custom' + Date.now(),
+            name: '',
+            rpcUrl: '',
+            accountRpcUrl: '',
+            chainId: '',
             networkTemplate: this.globalNetworksService.activeNetworkTemplate.value,
-            mainCurrencySymbol: "",
+            mainCurrencySymbol: '',
             colorScheme: '#9A67EB'
           };
-        }
-        else {
+        } else {
           // Intent mode - use prefilled data
           this.intentId = params.intentId;
           this.editedNetworkEntry = {
-            key: "custom" + Date.now(),
+            key: 'custom' + Date.now(),
             name: params.preFilledRequest.chainName,
             rpcUrl: params.preFilledRequest.rpcUrls[0],
-            accountRpcUrl: "",
-            chainId: "" + parseInt(params.preFilledRequest.chainId), // Possiblity convert from hex before converting back to string
+            accountRpcUrl: '',
+            chainId: '' + parseInt(params.preFilledRequest.chainId), // Possiblity convert from hex before converting back to string
             networkTemplate: this.globalNetworksService.activeNetworkTemplate.value,
             mainCurrencySymbol: params.preFilledRequest.nativeCurrency.symbol,
             colorScheme: '#9A67EB'
           };
         }
+        this.isNetworkVisible = true;
       }
-      //this.editedNetworkEntry.rpcUrl = "https://http-mainnet.hecochain.com" // TMP TEST
-      //this.editedNetworkEntry.accountRpcUrl = "https://api.hecoinfo.com" // TMP TEST
     });
   }
 
   ionViewWillEnter() {
-    if (this.editionMode)
-      this.titleBar.setTitle(this.translate.instant('wallet.add-custom-network-title'));
-    else
+    if (this.editionMode) {
       this.titleBar.setTitle(this.translate.instant('wallet.edit-custom-network-title'));
+    } else {
+      this.titleBar.setTitle(this.translate.instant('wallet.add-custom-network-title'));
+    }
   }
 
   cancel() {
@@ -134,20 +144,20 @@ export class EditCustomNetworkPage implements OnInit {
       };
       this.alreadySentIntentResponse = true;
       void this.globalIntentService.sendIntentResponse(result, this.intentId);
-    }
-    else {
+    } else {
       void this.globalNav.navigateBack();
     }
   }
 
   async delete(): Promise<void> {
     if (this.customNetworksService.customNetworkIsActiveNetwork(this.editedNetworkEntry)) {
-      this.native.genericToast("wallet.cant-delete-active-network");
-    }
-    else {
-      let deletionConfirmation = await this.globalPopupService.ionicConfirm("wallet.delete-network-prompt-title", "wallet.delete-network-prompt-text");
-      if (!deletionConfirmation)
-        return;
+      this.native.genericToast('wallet.cant-delete-active-network');
+    } else {
+      let deletionConfirmation = await this.globalPopupService.ionicConfirm(
+        'wallet.delete-network-prompt-title',
+        'wallet.delete-network-prompt-text'
+      );
+      if (!deletionConfirmation) return;
 
       await this.customNetworksService.deleteCustomNetwork(this.editedNetworkEntry);
       void this.globalNav.navigateBack();
@@ -155,68 +165,92 @@ export class EditCustomNetworkPage implements OnInit {
   }
 
   public canSave(): boolean {
-    return this.editedNetworkEntry.name !== "" && this.editedNetworkEntry.rpcUrl != "" && this.editedNetworkEntry.chainId !== "";
+    return (
+      this.editedNetworkEntry.name !== '' &&
+      this.editedNetworkEntry.rpcUrl != '' &&
+      this.editedNetworkEntry.chainId !== ''
+    );
   }
 
   public async saveChanges(): Promise<void> {
     // First, check that the RPC URL is accessible
     let rpcUrlIsReachable = false;
     try {
-      await this.native.showLoading("wallet.checking-rpc-url");
+      await this.native.showLoading('wallet.checking-rpc-url');
 
       const httpOptions = {
         headers: new HttpHeaders({
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         })
       };
 
       // Some servers return "{}" when the request body is "{}".
       // So it is better to call eth_blockNumber.
-      let testCallResult = await this.http.post(this.editedNetworkEntry.rpcUrl, JSON.stringify({ "method": "eth_blockNumber", "jsonrpc": "2.0", "id": "test01" }), httpOptions).toPromise();
-      if (testCallResult && "jsonrpc" in testCallResult)
-        rpcUrlIsReachable = true;
-    }
-    catch (err) {
-    }
-    finally {
+      let testCallResult = await this.http
+        .post(
+          this.editedNetworkEntry.rpcUrl,
+          JSON.stringify({ method: 'eth_blockNumber', jsonrpc: '2.0', id: 'test01' }),
+          httpOptions
+        )
+        .toPromise();
+      if (testCallResult && 'jsonrpc' in testCallResult) rpcUrlIsReachable = true;
+    } catch (err) {
+    } finally {
       await this.native.hideLoading();
     }
 
     if (!rpcUrlIsReachable) {
-      this.native.errToast("wallet.wrong-rpc-url");
+      this.native.errToast('wallet.wrong-rpc-url');
       return;
     }
 
     // Next, if there is a account url (optional), check it too
-    if (this.editedNetworkEntry.accountRpcUrl && this.editedNetworkEntry.accountRpcUrl !== "") {
+    if (this.editedNetworkEntry.accountRpcUrl && this.editedNetworkEntry.accountRpcUrl !== '') {
       let accountRpcUrlIsReachable = false;
       try {
-        await this.native.showLoading("wallet.checking-account-rpc-url");
+        await this.native.showLoading('wallet.checking-account-rpc-url');
 
-        const httpOptions = {
-          headers: new HttpHeaders({
-            'Content-Type': 'application/json',
-          })
-        };
+        let address = '0x0000000000000000000000000000000000000064';
+        let networkWallet = await WalletService.instance.getActiveNetworkWallet();
+        if (networkWallet) {
+          let receiverAddress = networkWallet.getMainEvmSubWallet()?.getCurrentReceiverAddress();
+          if (receiverAddress) {
+            address = receiverAddress;
+          }
+        }
 
-        let testCallResult = await this.http.post(this.editedNetworkEntry.accountRpcUrl, JSON.stringify({}), httpOptions).toPromise();
-        if (testCallResult && "status" in testCallResult)
-          accountRpcUrlIsReachable = true;
-      }
-      catch (err) {
-      }
-      finally {
+        let txListUrl =
+          this.editedNetworkEntry.accountRpcUrl +
+          '?module=account&action=txlist&page=0&offset=10&sort=desc&address=' +
+          address;
+        let testCallResult = await GlobalJsonRPCService.instance.httpGet(txListUrl);
+        if (testCallResult && 'status' in testCallResult) accountRpcUrlIsReachable = true;
+      } catch (err) {
+      } finally {
         await this.native.hideLoading();
       }
 
       if (!accountRpcUrlIsReachable) {
-        this.native.errToast("wallet.wrong-account-rpc-url");
+        this.native.errToast('wallet.wrong-account-rpc-url');
         return;
       }
     }
 
     // Everything ok, save the network
     await this.customNetworksService.upsertCustomNetwork(this.editedNetworkEntry);
+
+    if (this.editionMode) {
+      const currentVisibility = this.networkService.getNetworkVisible(this.editedNetworkEntry.key);
+      const visibilityChanged = this.isNetworkVisible !== currentVisibility;
+      // Save visibility setting
+      if (visibilityChanged) {
+        await this.networkService.setNetworkVisible(this.editedNetworkEntry.key, this.isNetworkVisible);
+      }
+    }
+    else {
+      await this.networkService.setNetworkVisible(this.editedNetworkEntry.key, this.isNetworkVisible);
+    }
+
 
     if (this.intentMode) {
       let result: EditCustomNetworkIntentResult = {
@@ -225,9 +259,12 @@ export class EditCustomNetworkPage implements OnInit {
       };
       this.alreadySentIntentResponse = true;
       void this.globalIntentService.sendIntentResponse(result, this.intentId);
-    }
-    else {
+    } else {
       void this.globalNav.navigateBack();
     }
+  }
+
+  public onVisibilityChange(event: CustomEvent): void {
+    this.isNetworkVisible = event.detail.checked;
   }
 }

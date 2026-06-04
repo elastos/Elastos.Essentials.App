@@ -236,7 +236,7 @@ export class ActiveWalletWidget extends WidgetBase implements OnInit, OnDestroy 
     event.preventDefault();
     event.stopPropagation();
 
-    let confirmationMessage = this.translate.instant('launcher.address-copied-to-clipboard', { address });
+    let confirmationMessage = this.translate.instant('common.copied-to-clipboard');
     this.globalNative.genericToast(confirmationMessage);
     void this.globalNative.copyClipboard(address);
   }

@@ -53,6 +53,10 @@ export class TelosEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<Any
     return false; // TODO
   }
 
+  public getInitialFetchSize(): number {
+    return MAX_RESULTS_PER_FETCH;
+  }
+
   // https://rpc1.us.telos.net/evm_explorer/get_transactions?address=0x123
   // TODO: No parameters in get_transactions for now.
   public async fetchTransactions(subWallet: AnySubWallet, afterTransaction?: EthTransaction): Promise<void> {
@@ -111,7 +115,7 @@ export class TelosEvmSubWalletProvider extends EtherscanEVMSubWalletProvider<Any
         transactions.push(transaction);
       }
 
-      await this.saveTransactions(transactions);
+      await this.saveTransactions(transactions, true);
     } catch (e) {
       Logger.error('wallet', 'TelosEvmSubWalletProvider fetchTransactions error:', e)
     }

@@ -7,8 +7,7 @@ export class EvmosMainNetNetwork extends EvmosBaseNetwork {
   private uniswapCurrencyProvider: EvmosMainnetUniswapCurrencyProvider = null;
 
   constructor() {
-    super(
-      "evmos",
+    super("evmos",
       "Evmos",
       "Evmos",
       "assets/wallet/networks/evmos.png",
@@ -18,12 +17,17 @@ export class EvmosMainNetNetwork extends EvmosBaseNetwork {
       9001,
       [],
       [
+        {
+          name: 'Evmos Mainnet RPC',
+          url: 'https://evmos.lava.build'
+        }
       ],
       [
       ],
       [
-      ]
-    );
+      ],
+      [
+      ]);
 
     this.builtInCoins = [
         // new ERC20Coin(this, "ceUSDC", "USD Coin(Celer)", "0xe46910336479f254723710d57e7b683f3315b22b", 6, false, true)

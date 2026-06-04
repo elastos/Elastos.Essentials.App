@@ -60,6 +60,7 @@ export class CRMemberPage {
             this.member = await this.crCouncilService.getCRMemberInfo(this.crCouncilService.selectedMemberDid);
             Logger.log(App.CRCOUNCIL_VOTING, 'member info', this.member);
             if (this.member) {
+                this.member.nickname = this.crCouncilService.selectedMemberNickname;
                 this.member.impeachmentThroughVotes = Math.ceil(this.crCouncilService.selectedMember.impeachmentThroughVotes);
                 this.current = this.member.impeachmentVotes;
                 this.max = this.member.impeachmentThroughVotes;

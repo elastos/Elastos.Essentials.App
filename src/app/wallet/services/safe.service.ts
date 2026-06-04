@@ -20,15 +20,16 @@
  * SOFTWARE.
  */
 
-import { Injectable } from '@angular/core';
-import { PrivateKeyType } from '../model/masterwallets/wallet.types';
+import { Injectable } from "@angular/core";
+import { PrivateKeyType } from "../model/masterwallets/wallet.types";
+import { LocalStorage } from "./storage.service";
 
 export type StandardWalletSafe = {
-    seed?: string;
-    mnemonic?: string;
-    privateKey?: string;
-    privateKeyType?: PrivateKeyType;
-}
+  seed?: string;
+  mnemonic?: string;
+  privateKey?: string;
+  privateKeyType?: PrivateKeyType;
+};
 
 /**
  * Service used to store sensitive wallet information such as seeds.
@@ -36,27 +37,27 @@ export type StandardWalletSafe = {
  * in wallet objects, as those object tend to be logged often. Secret wallet information should not be
  * output to logs.
  */
-@Injectable({ providedIn: 'root' })
+@Injectable({ providedIn: "root" })
 export class SafeService {
-    public static instance: SafeService = null;
+  public static instance: SafeService = null;
 
-    private standardWalletSafes: { [walletId: string]: StandardWalletSafe } = {};
+  private standardWalletSafes: { [walletId: string]: StandardWalletSafe } = {};
 
-    constructor() {
-        SafeService.instance = this;
+  constructor(private localStorage: LocalStorage) {
+    SafeService.instance = this;
+  }
+
+  /**
+   * Gets a safe entry that is initialized with empty content if not yet existing.
+   * This entry can be edited directly.
+   */
+  public getStandardWalletSafe(walletId: string): StandardWalletSafe {
+    let safe = this.standardWalletSafes[walletId];
+    if (!safe) {
+      safe = {};
+      this.standardWalletSafes[walletId] = safe;
     }
 
-    /**
-     * Gets a safe entry that is initialized with empty content if not yet existing.
-     * This entry can be edited directly.
-     */
-    public getStandardWalletSafe(walletId: string): StandardWalletSafe {
-        let safe = this.standardWalletSafes[walletId];
-        if (!safe) {
-            safe = {};
-            this.standardWalletSafes[walletId] = safe;
-        }
-
-        return safe;
-    }
+    return safe;
+  }
 }

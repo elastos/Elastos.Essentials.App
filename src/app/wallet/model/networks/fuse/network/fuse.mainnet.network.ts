@@ -1,21 +1,28 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
-import { FuseMainnetUniswapCurrencyProvider } from "../currency/fuse.uniswap.currency.provider";
-import { FuseBaseNetwork } from "./fuse.base.network";
+import { MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { UniswapCurrencyProvider } from '../../evms/uniswap.currencyprovider';
+import { FuseMainnetUniswapCurrencyProvider } from '../currency/fuse.uniswap.currency.provider';
+import { FuseBaseNetwork } from './fuse.base.network';
 
 export class FuseMainNetNetwork extends FuseBaseNetwork {
   private uniswapCurrencyProvider: FuseMainnetUniswapCurrencyProvider = null;
 
   constructor() {
     super(
-      "fuse",
-      "Fuse",
-      "Fuse",
-      "assets/wallet/networks/fuse.png",
-      "FUSE",
-      "FUSE",
+      'fuse',
+      'Fuse',
+      'Fuse',
+      'assets/wallet/networks/fuse.png',
+      'FUSE',
+      'FUSE',
       MAINNET_TEMPLATE,
       122,
+      [],
+      [
+        {
+          name: 'Fuse RPC',
+          url: 'https://rpc.fuse.io'
+        }
+      ]
     );
 
     this.uniswapCurrencyProvider = new FuseMainnetUniswapCurrencyProvider(this);

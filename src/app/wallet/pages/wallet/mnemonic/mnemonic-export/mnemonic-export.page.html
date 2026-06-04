@@ -28,6 +28,12 @@
         <div *ngIf="tronPrivateKey" class="key" (click)="copyPrivateKey(tronPrivateKey)">
             {{ tronPrivateKey }}
         </div>
+
+        <p *ngIf="btcPrivateKey">{{ 'wallet.export-btc-private-key-intro' | translate }}</p>
+        <div *ngIf="btcPrivateKey" class="key" (click)="copyPrivateKey(btcPrivateKey)">
+            {{ btcPrivateKey }}
+        </div>
+
         <ion-row *ngIf="!hideMnemonic && isFromIntent" class="btn-container">
             <ebutton (clicked)="onShare()" [title]="'wallet.text-allow' | translate"> </ebutton>
         </ion-row>

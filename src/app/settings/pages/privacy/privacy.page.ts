@@ -2,7 +2,8 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { App } from "src/app/model/app.enum";
+import { App } from 'src/app/model/app.enum';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -14,7 +15,7 @@ import { SettingsService } from '../../services/settings.service';
 @Component({
   selector: 'app-privacy',
   templateUrl: './privacy.page.html',
-  styleUrls: ['./privacy.page.scss'],
+  styleUrls: ['./privacy.page.scss']
 })
 export class PrivacyPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
@@ -24,8 +25,10 @@ export class PrivacyPage implements OnInit {
   public sendCredentialToolboxStats = true;
   public useHiveDataSync = false;
   public enableCreatingRedPackets = false;
+  public allowBitcoinSignData = false;
 
   public isIOS = false;
+  public lightweightMode = false;
 
   constructor(
     public settings: SettingsService,
@@ -34,8 +37,9 @@ export class PrivacyPage implements OnInit {
     public translate: TranslateService,
     private nav: GlobalNavService,
     private prefs: GlobalPreferencesService,
-    private platform: Platform
-  ) { }
+    private platform: Platform,
+    private lightweightService: GlobalLightweightService
+  ) {}
 
   ngOnInit() {
     // From 3.0.7, we remove the create red package button on iOS as apple complains about this.
@@ -45,20 +49,27 @@ export class PrivacyPage implements OnInit {
 
   async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('settings.privacy'));
+
+    // Get current lightweight mode from service
+    this.lightweightMode = this.lightweightService.getCurrentLightweightMode();
+
     await this.fetchUseBuiltInBrowser();
+    await this.fetchAllowBitcoinSignData();
     await this.fetchPublishIdentityMedium();
     await this.fetchCredentialToolboxStats();
     if (this.isIOS) {
-      await this.fetchEnableCreatingOfRedPacket()
+      await this.fetchEnableCreatingOfRedPacket();
     }
     void this.fetchHiveDataSync();
   }
 
-  ionViewWillLeave() {
-  }
+  ionViewWillLeave() {}
 
   private async fetchUseBuiltInBrowser(): Promise<void> {
-    this.useBuiltInBrowser = await this.prefs.getUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.useBuiltInBrowser = await this.prefs.getUseBuiltInBrowser(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate
+    );
   }
 
   public getUseBuiltInBrowserTitle(): string {
@@ -71,11 +82,37 @@ export class PrivacyPage implements OnInit {
 
   async toggleUseBuiltInBrowser(): Promise<void> {
     this.useBuiltInBrowser = !this.useBuiltInBrowser;
-    await this.prefs.setUseBuiltInBrowser(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.useBuiltInBrowser);
+    await this.prefs.setUseBuiltInBrowser(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.useBuiltInBrowser
+    );
+  }
+
+  private async fetchAllowBitcoinSignData(): Promise<void> {
+    this.allowBitcoinSignData = await this.prefs.getBitcoinSignData(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate
+    );
+  }
+
+  public getAllowBitcoinSignDataTitle(): string {
+    return this.translate.instant('settings.developer-bitcoin-signdata-prompt');
+  }
+
+  public toggleAllowBitcoinSignDataChanged() {
+    void this.prefs.setBitcoinSignData(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.allowBitcoinSignData
+    );
   }
 
   private async fetchPublishIdentityMedium(): Promise<void> {
-    this.publishIdentityMedium = await this.prefs.getPublishIdentityMedium(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.publishIdentityMedium = await this.prefs.getPublishIdentityMedium(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate
+    );
   }
 
   public getPublishIdentityTitle(): string {
@@ -88,16 +125,22 @@ export class PrivacyPage implements OnInit {
 
   async togglePublishIdentityMedium(): Promise<void> {
     if (this.publishIdentityMedium === 'assist') {
-      this.publishIdentityMedium = "wallet";
+      this.publishIdentityMedium = 'wallet';
+    } else {
+      this.publishIdentityMedium = 'assist';
     }
-    else {
-      this.publishIdentityMedium = "assist";
-    }
-    await this.prefs.setPublishIdentityMedium(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.publishIdentityMedium as any);
+    await this.prefs.setPublishIdentityMedium(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.publishIdentityMedium as any
+    );
   }
 
   private async fetchCredentialToolboxStats(): Promise<void> {
-    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.sendCredentialToolboxStats = await this.prefs.getSendStatsToCredentialToolbox(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate
+    );
   }
 
   public getCredentialToolboxTitle(): string {
@@ -110,7 +153,11 @@ export class PrivacyPage implements OnInit {
 
   async toggleCredentialToolboxStats(): Promise<void> {
     this.sendCredentialToolboxStats = !this.sendCredentialToolboxStats;
-    await this.prefs.setSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.sendCredentialToolboxStats);
+    await this.prefs.setSendStatsToCredentialToolbox(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.sendCredentialToolboxStats
+    );
   }
 
   open(router: string) {
@@ -131,11 +178,18 @@ export class PrivacyPage implements OnInit {
 
   public async toggleHiveDataSync() {
     this.useHiveDataSync = !this.useHiveDataSync;
-    await this.prefs.setUseHiveSync(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.useHiveDataSync);
+    await this.prefs.setUseHiveSync(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.useHiveDataSync
+    );
   }
 
   private async fetchEnableCreatingOfRedPacket(): Promise<void> {
-    this.enableCreatingRedPackets = await this.prefs.getEnableCreatingOfRedPacket(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.enableCreatingRedPackets = await this.prefs.getEnableCreatingOfRedPacket(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate
+    );
   }
 
   public getEnableCreatingOfRedPacketTitle(): string {
@@ -148,6 +202,10 @@ export class PrivacyPage implements OnInit {
 
   async toggleEnableCreationOfRedPacket(): Promise<void> {
     this.enableCreatingRedPackets = !this.enableCreatingRedPackets;
-    await this.prefs.setEnableCreatingOfRedPacket(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, this.enableCreatingRedPackets);
+    await this.prefs.setEnableCreatingOfRedPacket(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.enableCreatingRedPackets
+    );
   }
 }

@@ -192,6 +192,18 @@
         }
     }
 
+    .nft-non-transferable-notice {
+        padding: 14px 18px;
+
+        p {
+            margin: 0;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.45;
+            color: var(--ion-text-color);
+        }
+    }
+
     .attributes {
         display: flex;
         flex-direction: row;

@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import type { TxData } from '@ethereumjs/tx';
+import { JsonRpcProvider } from '@ethersproject/providers';
 import { ModalController } from '@ionic/angular';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { Subject } from 'rxjs';
 import { lazyWeb3Import } from 'src/app/helpers/import.helper';
 import { Logger } from 'src/app/logger';
@@ -9,7 +10,7 @@ import { EssentialsWeb3Provider } from 'src/app/model/essentialsweb3provider';
 import { Util } from 'src/app/model/util';
 import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
-import type Web3 from 'web3';
+import type { Web3 } from 'web3';
 import type { TransactionReceipt } from 'web3-core';
 import { EVMNetwork } from '../../model/networks/evms/evm.network';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
@@ -27,13 +28,13 @@ export type ETHTransactionStatusInfo = {
   status: ETHTransactionStatus;
   txId: string;
   nonce: number;
-}
+};
 
 export type ETHTransactionSpeedup = {
   gasPrice: string;
   gasLimit: string;
   nonce: number;
-}
+};
 
 class ETHTransactionManager {
   private checkTimes = 0;
@@ -45,12 +46,12 @@ class ETHTransactionManager {
     private publicationService: EVMService,
     private modalCtrl: ModalController,
     private transactionService: TransactionService,
-    public globalPopupService: GlobalPopupService,
-  ) { }
+    public globalPopupService: GlobalPopupService
+  ) {}
 
   /**
-  * Emit a public publication status event.
-  */
+   * Emit a public publication status event.
+   */
   public emitEthTransactionStatusChange(status: ETHTransactionStatusInfo) {
     this.publicationService.ethTransactionStatus.next(status);
     void this.resetStatus();
@@ -68,10 +69,14 @@ class ETHTransactionManager {
    *
    * @returns The published transaction ID, if any.
    */
-  public async publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, signedTransaction: string, transfer: Transfer, visualFeedback = true): Promise<string> {
+  public async publishTransaction(
+    subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet,
+    signedTransaction: string,
+    transfer: Transfer,
+    visualFeedback = true
+  ): Promise<string> {
     try {
-      if (visualFeedback)
-        await this.displayPublicationLoader();
+      if (visualFeedback) await this.displayPublicationLoader();
 
       let result: RawTransactionPublishResult;
       try {
@@ -81,8 +86,12 @@ class ETHTransactionManager {
           return null;
         } */
 
-        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(subwallet.networkWallet.network.getRPCUrl(), signedTransaction/* obj.TxSigned */, subwallet.networkWallet.network.key);
-        console.log("POST eth_sendRawTransaction");
+        let txid = await GlobalEthereumRPCService.instance.eth_sendRawTransaction(
+          subwallet.networkWallet.network.getRPCUrl(),
+          signedTransaction /* obj.TxSigned */,
+          subwallet.networkWallet.network.key
+        );
+        console.log('POST eth_sendRawTransaction');
 
         let published = true;
         let status = 'published';
@@ -95,23 +104,22 @@ class ETHTransactionManager {
           status,
           txid
         };
-      }
-      catch (err) {
+      } catch (err) {
         // err format from EVM RPC: { code: number, message: string, txid?: string }
         result = {
           published: false,
           txid: null,
           status: 'error',
           code: err.code,
-          message: err.message,
-        }
+          message: err.message
+        };
       }
 
-      Logger.log('wallet', 'EVM publishTransaction result:', result)
+      Logger.log('wallet', 'EVM publishTransaction result:', result);
       if (result.published) {
-        const isPublishingOnGoing = await this.CheckPublishing(result)
+        const isPublishingOnGoing = await this.checkPublishing(result);
         if (!isPublishingOnGoing) {
-          Logger.warn('wallet', 'publishTransaction error ', result)
+          Logger.warn('wallet', 'publishTransaction error ', result);
 
           let defaultGasprice = await subwallet.getGasPrice();
           let status: ETHTransactionStatusInfo = {
@@ -121,7 +129,7 @@ class ETHTransactionManager {
             status: ETHTransactionStatus.UNPACKED,
             txId: null,
             nonce: -1
-          }
+          };
           void this.emitEthTransactionStatusChange(status);
           return result.txid;
         }
@@ -136,7 +144,7 @@ class ETHTransactionManager {
             status: ETHTransactionStatus.UNPACKED,
             txId: null,
             nonce: -1
-          }
+          };
           void this.emitEthTransactionStatusChange(status);
         } else {
           setTimeout(() => {
@@ -145,8 +153,7 @@ class ETHTransactionManager {
         }
 
         return result.txid;
-      }
-      else {
+      } else {
         // The previous transaction needs to be accelerated.
         if (this.needToSpeedup(result)) {
           if (result.txid) {
@@ -160,8 +167,8 @@ class ETHTransactionManager {
               gasLimit: this.defaultGasLimit,
               status: ETHTransactionStatus.UNPACKED,
               txId: null,
-              nonce: parseInt(tx.nonce),
-            }
+              nonce: parseInt(tx.nonce)
+            };
             void this.emitEthTransactionStatusChange(status);
           }
         } else {
@@ -174,28 +181,30 @@ class ETHTransactionManager {
               status: ETHTransactionStatus.PACKED,
               txId: null,
               nonce: -1
-            }
+            };
             this.emitEthTransactionStatusChange(status);
-          }
-          else {
-            this.closePublicationLoader()
+          } else {
+            this.closePublicationLoader();
             let message = result.message ? result.message : '';
-            if (message.includes("insufficient funds for gas * price + value")) {
-                message = 'wallet.insufficient-balance';
+            if (message.includes('insufficient funds for gas * price + value')) {
+              message = 'wallet.insufficient-balance';
             }
             await this.globalPopupService.ionicAlert('wallet.transaction-fail', message);
           }
         }
         return result.txid;
       }
-    }
-    catch (err) {
-      Logger.error('wallet', 'ETHTransactionManager publishTransaction error:', err)
-      throw err;
+    } catch (err) {
+      Logger.error('wallet', 'ETHTransactionManager publishTransaction error:', err);
+
+      this.closePublicationLoader();
+      await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'common.network-or-server-error');
+
+      return null;
     }
   }
 
-  private async CheckPublishing(result: RawTransactionPublishResult) {
+  private async checkPublishing(result: RawTransactionPublishResult) {
     if (result.message) {
       if (result.message.includes('insufficient funds for gas * price + value')) {
         await this.modalCtrl.dismiss();
@@ -207,7 +216,7 @@ class ETHTransactionManager {
   }
 
   private needToSpeedup(result: RawTransactionPublishResult) {
-    if ((result.published === false) && (result.message)) {
+    if (result.published === false && result.message) {
       // Use code == -32000 ?
       if (result.message.includes('replacement transaction underpriced')) {
         return true;
@@ -224,13 +233,16 @@ class ETHTransactionManager {
       // 'insufficient funds for gas * price + value'
       return false;
     } else {
-      return false
+      return false;
     }
   }
 
-  private async checkPublicationStatusAndUpdate(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, txid: string): Promise<void> {
+  private async checkPublicationStatusAndUpdate(
+    subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet,
+    txid: string
+  ): Promise<void> {
     let result = await subwallet.getTransactionDetails(txid);
-    Logger.log('wallet', 'checkPublicationStatusAndUpdate ', result)
+    Logger.log('wallet', 'checkPublicationStatusAndUpdate ', result);
     if (result.blockHash) {
       let status: ETHTransactionStatusInfo = {
         chainId: subwallet.id,
@@ -239,8 +251,16 @@ class ETHTransactionManager {
         status: ETHTransactionStatus.PACKED,
         txId: txid,
         nonce: parseInt(result.nonce)
-      }
+      };
       this.emitEthTransactionStatusChange(status);
+
+      // Save to cache when tx is packed (for chains where fetchTransactions fails)
+      try {
+        if (!result.hash) result.hash = txid;
+        await subwallet.savePublishedTransactionToCache(result);
+      } catch (err) {
+        Logger.warn('wallet', 'savePublishedTransactionToCache failed:', err);
+      }
     } else {
       this.checkTimes++;
       if (this.checkTimes < this.waitforTimes) {
@@ -255,7 +275,7 @@ class ETHTransactionManager {
           status: ETHTransactionStatus.UNPACKED,
           nonce: parseInt(result.nonce),
           txId: txid
-        }
+        };
         this.emitEthTransactionStatusChange(status);
       }
     }
@@ -267,16 +287,16 @@ class ETHTransactionManager {
    * TODO: MAKE A SIMILAR COMPONENT DIALOG FOR OTHER NETWORK, SAME UI
    */
   public async displayPublicationLoader(): Promise<void> {
-      this.modal = await this.modalCtrl.create({
+    this.modal = await this.modalCtrl.create({
       // eslint-disable-next-line import/no-cycle
       component: (await import('../../components/eth-transaction/eth-transaction.component')).ETHTransactionComponent,
       componentProps: {},
       backdropDismiss: false, // Not closeable
-      cssClass: "wallet-component-base",
+      cssClass: 'wallet-component-base',
       id: 'evmtransactionloader'
     });
 
-    void this.modal.onDidDismiss().then((params) => {
+    void this.modal.onDidDismiss().then(params => {
       //
       this.modal = null;
     });
@@ -285,8 +305,7 @@ class ETHTransactionManager {
   }
 
   public closePublicationLoader() {
-    if (this.modal)
-      void this.modal.dismiss();
+    if (this.modal) void this.modal.dismiss();
   }
 }
 
@@ -301,7 +320,7 @@ export class EVMService {
   // Cached web3 instances per network
   private web3s: {
     [networkName: string]: Web3;
-  } = {}
+  } = {};
 
   public ethTransactionStatus: Subject<ETHTransactionStatusInfo> = null;
   public ethTransactionSpeedup: Subject<ETHTransactionSpeedup> = null;
@@ -309,15 +328,11 @@ export class EVMService {
   constructor(
     private modalCtrl: ModalController,
     private transactionService: TransactionService,
-    public globalPopupService: GlobalPopupService,
+    public globalPopupService: GlobalPopupService
   ) {
     EVMService.instance = this;
 
-    this.manager = new ETHTransactionManager(
-      this,
-      this.modalCtrl,
-      this.transactionService,
-      this.globalPopupService);
+    this.manager = new ETHTransactionManager(this, this.modalCtrl, this.transactionService, this.globalPopupService);
   }
 
   public init(): void {
@@ -329,7 +344,12 @@ export class EVMService {
     this.manager.resetStatus();
   }
 
-  public publishTransaction(subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet, transaction: string, transfer: Transfer, visualFeedback = true): Promise<string> {
+  public publishTransaction(
+    subwallet: ERC20SubWallet | AnyMainCoinEVMSubWallet,
+    transaction: string,
+    transfer: Transfer,
+    visualFeedback = true
+  ): Promise<string> {
     return this.manager.publishTransaction(subwallet, transaction, transfer, visualFeedback);
   }
 
@@ -337,17 +357,29 @@ export class EVMService {
    * Creates a new Web3 instance or return a cached one, for the given network.
    */
   public async getWeb3(network: AnyNetwork, highPriority = false): Promise<Web3> {
-    let cacheEntry = `${network.name}_${highPriority ? 'high' : 'normal'}`;
+    let cacheEntry = `${network.getEffectiveName()}_${highPriority ? 'high' : 'normal'}`;
 
     if (cacheEntry in this.web3s) {
       return this.web3s[cacheEntry];
-    }
-    else {
+    } else {
       const Web3 = await lazyWeb3Import();
       let web3 = new Web3(new EssentialsWeb3Provider(network.getRPCUrl(), network.key, highPriority));
+
       this.web3s[cacheEntry] = web3;
       return web3;
     }
+  }
+
+  public clearWeb3Cache() {
+    this.web3s = {};
+    Logger.log('wallet', 'Web3 cache cleared');
+  }
+
+  /**
+   * Returns a ETHERSJS json rpc provider. Beware, don't mix Web3 and Ethers providers...
+   */
+  public getJsonRPCProvider(network: AnyNetwork) {
+    return new JsonRpcProvider(network.getRPCUrl());
   }
 
   /**
@@ -373,19 +405,27 @@ export class EVMService {
    */
   public async getNonce(network: AnyNetwork, accountAddress: string): Promise<number> {
     try {
-      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(network.getRPCUrl(), accountAddress, network.key);
+      let nonce = await GlobalEthereumRPCService.instance.getETHSCNonce(
+        network.getRPCUrl(),
+        accountAddress,
+        network.key
+      );
       return nonce;
-    }
-    catch (err) {
+    } catch (err) {
       Logger.error('wallet', 'Failed to get nonce', network, accountAddress, err);
     }
 
     return -1;
   }
 
-  public async methodGasAndNonce(webMethod: any, network: EVMNetwork, from: string, value?: string): Promise<{ gasLimit: string, nonce: number }> {
+  public async methodGasAndNonce(
+    webMethod: any,
+    network: EVMNetwork,
+    from: string,
+    value?: string
+  ): Promise<{ gasLimit: string; nonce: number }> {
     // Estimate gas cost - don't catch, we need a real estimation from chain
-    Logger.log("wallet", "Estimating gas for method", webMethod, network, from, value);
+    Logger.log('wallet', 'Estimating gas for method', webMethod, network, from, value);
     let gasTemp = await webMethod.estimateGas({
       from: from,
       value: value
@@ -394,7 +434,7 @@ export class EVMService {
     // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
     let gasLimit = Math.ceil(gasTemp * 1.5).toString();
 
-    Logger.log("wallet", "Getting nonce");
+    Logger.log('wallet', 'Getting nonce');
     let nonce = await this.getNonce(network, from);
 
     return { gasLimit, nonce };
@@ -406,9 +446,8 @@ export class EVMService {
     try {
       let receipt = await web3.eth.getTransactionReceipt(txHash);
       return receipt;
-    }
-    catch (e) {
-      Logger.warn("wallet", "Failed to get transaction receipt", e);
+    } catch (e) {
+      Logger.warn('wallet', 'Failed to get transaction receipt', e);
       return null;
     }
   }
@@ -426,36 +465,50 @@ export class EVMService {
    * Cost of a native coin transfer, in readable native coin amount.
    */
   public async estimateTransferTransactionFees(network: AnyNetwork): Promise<BigNumber> {
-    let gasLimit = "21000"; // All EVM seem to use this amount of gas for native coin transfer
+    let gasLimit = '21000'; // All EVM seem to use this amount of gas for native coin transfer
     let gasPrice = await (await this.getWeb3(network)).eth.getGasPrice();
     return this.getTransactionFees(gasLimit, gasPrice);
   }
 
   public async isAddress(network: AnyNetwork, address: string): Promise<boolean> {
-    const isAddress = (await import("web3-utils")).isAddress;
+    const isAddress = (await import('web3-utils')).isAddress;
     return isAddress(address);
   }
 
   public async isContractAddress(network: AnyNetwork, address: string): Promise<boolean> {
+    if (!network || !address) return false;
     const contractCode = await (await this.getWeb3(network)).eth.getCode(address);
     return contractCode === '0x' ? false : true;
   }
 
-  public async createUnsignedTransferTransaction(toAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number) {
+  public async createUnsignedTransferTransaction(
+    toAddress: string,
+    amount: string,
+    gasPrice: string,
+    gasLimit: string,
+    nonce: number
+  ) {
     const Web3 = await lazyWeb3Import();
     let web3 = new Web3();
     const txData: TxData = {
-        nonce: web3.utils.toHex(nonce),
-        gasLimit: web3.utils.toHex(gasLimit),
-        gasPrice: web3.utils.toHex(gasPrice),
-        to: toAddress,
-        value: web3.utils.toHex(amount) // the unit of amount is wei
-    }
+      nonce: web3.utils.toHex(nonce),
+      gasLimit: web3.utils.toHex(gasLimit),
+      gasPrice: web3.utils.toHex(gasPrice),
+      to: toAddress,
+      value: web3.utils.toHex(amount) // the unit of amount is wei
+    };
     Logger.log('wallet', 'EVMService::createUnsignedTransferTransaction:', txData);
     return Promise.resolve(txData);
   }
 
-  public async createUnsignedContractTransaction(contractAddress: string, amount: string, gasPrice: string, gasLimit: string, nonce: number, data: any): Promise<TxData> {
+  public async createUnsignedContractTransaction(
+    contractAddress: string,
+    amount: string,
+    gasPrice: string,
+    gasLimit: string,
+    nonce: number,
+    data: any
+  ): Promise<TxData> {
     const Web3 = await lazyWeb3Import();
     let web3 = new Web3();
 
@@ -466,7 +519,7 @@ export class EVMService {
       to: contractAddress,
       data: data,
       value: web3.utils.toHex(amount) // the unit of amount is wei
-    }
+    };
     Logger.log('wallet', 'EVMService::createUnsignedContractTransaction:', txData);
     return Promise.resolve(txData);
   }

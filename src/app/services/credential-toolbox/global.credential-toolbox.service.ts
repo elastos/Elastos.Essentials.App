@@ -9,20 +9,21 @@ import { Logger } from 'src/app/logger';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { environment } from 'src/environments/environment';
 import { GlobalCredentialTypesService } from '../credential-types/global.credential.types.service';
+import { GlobalLightweightService } from '../global.lightweight.service';
 import { GlobalPreferencesService } from '../global.preferences.service';
 import { GlobalService, GlobalServiceManager } from '../global.service.manager';
 import { GlobalStorageService } from '../global.storage.service';
 import { NetworkTemplateStore } from '../stores/networktemplate.store';
 import { DIDSessionsStore } from './../stores/didsessions.store';
 
-const DID_CHALLENGE = "essentials-credential-toolbox"; // Arbitrary string signed by DID to generate recoverable unique identitiers on the stats service
+const DID_CHALLENGE = 'essentials-credential-toolbox'; // Arbitrary string signed by DID to generate recoverable unique identitiers on the stats service
 
-export const CRED_TOOLBOX_STORAGE_CTX = "credtoolbox";
-export const CRED_TOOLBOX_LOG_TAG = "credtoolbox";
+export const CRED_TOOLBOX_STORAGE_CTX = 'credtoolbox';
+export const CRED_TOOLBOX_LOG_TAG = 'credtoolbox';
 
 // PROD
-const SEND_STATS_DELAY_SEC = (24 * 60 * 60); // Min 1 day between each stats upload, min
-const CHECK_SEND_STATS_INTERVAL_MS = (5 * 60 * 1000); // Check if it's a right time to send stats every 5 minutes
+const SEND_STATS_DELAY_SEC = 24 * 60 * 60; // Min 1 day between each stats upload, min
+const CHECK_SEND_STATS_INTERVAL_MS = 5 * 60 * 1000; // Check if it's a right time to send stats every 5 minutes
 // DEV
 //const SEND_STATS_DELAY_SEC = 0;
 //const CHECK_SEND_STATS_INTERVAL_MS = (20 * 1000);
@@ -30,28 +31,28 @@ const CHECK_SEND_STATS_INTERVAL_MS = (5 * 60 * 1000); // Check if it's a right t
 type CredentialTypeWithContext = {
   context: string; // Context url: 'https://ns.elastos.org/credentials/v1'
   shortType: string; // Short type that such as: 'SelfProclaimedCredential'
-}
+};
 
 type OwnedCredential = {
   issuanceDate: number; // Timestamp secs
   issuer: string; // DID string of the credential issuer
   types: CredentialTypeWithContext[]; // Short type with associated context - eg: "did://elastos/iXMsb6ippqkCHN3EeWc4QCA9ySnrSgLc4u/DiplomaCredential1234" + "DiplomaCredential"
-}
+};
 
-export type UsedCredentialOperation = "request" | "import";
+export type UsedCredentialOperation = 'request' | 'import';
 
 type UsedCredential = {
   operation: UsedCredentialOperation; // Type of DID operation requested by a third party app: request existing user credentials, import new credential...
   usedAt: number; // timestamp (sec)
   types: CredentialTypeWithContext[]; // Short type with associated context - eg: "did://elastos/iXMsb6ippqkCHN3EeWc4QCA9ySnrSgLc4u/DiplomaCredential1234" + "DiplomaCredential"
   appDid?: string; // DID string of the application requesting the DID operation
-}
+};
 
 type CredentialStats = {
   userId: string;
   ownedCredentials: OwnedCredential[];
   usedCredentials: UsedCredential[];
-}
+};
 
 /**
  * Service responsible for collecting statistics about credential OWNED and USED by the current user.
@@ -69,8 +70,9 @@ export class GlobalCredentialToolboxService implements GlobalService {
     private storage: GlobalStorageService,
     private didAuthService: AuthService,
     private prefs: GlobalPreferencesService,
-    private credentialTypesService: GlobalCredentialTypesService
-  ) { }
+    private credentialTypesService: GlobalCredentialTypesService,
+    private lightweightService: GlobalLightweightService
+  ) {}
 
   public init(): Promise<void> {
     GlobalServiceManager.getInstance().registerService(this);
@@ -78,7 +80,11 @@ export class GlobalCredentialToolboxService implements GlobalService {
   }
 
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    void this.checkIfRightTimeToSendStats();
+    // Only initialize credential toolbox functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      void this.checkIfRightTimeToSendStats();
+      Logger.log('GlobalCredentialToolboxService', 'Initializing credential toolbox functionality for user');
+    }
     return;
   }
 
@@ -90,16 +96,26 @@ export class GlobalCredentialToolboxService implements GlobalService {
 
   private async checkIfRightTimeToSendStats() {
     // Only send stats if allowed in privacy settings
-    if (await this.prefs.getSendStatsToCredentialToolbox(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate)) {
-      let lastUploadedTimestamp = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", 0);
-      if (moment.unix(lastUploadedTimestamp).add(SEND_STATS_DELAY_SEC, "seconds").isBefore(moment())) {
+    if (
+      await this.prefs.getSendStatsToCredentialToolbox(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate
+      )
+    ) {
+      let lastUploadedTimestamp = await this.storage.getSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        CRED_TOOLBOX_STORAGE_CTX,
+        'lastuploaded',
+        0
+      );
+      if (moment.unix(lastUploadedTimestamp).add(SEND_STATS_DELAY_SEC, 'seconds').isBefore(moment())) {
         Logger.log(CRED_TOOLBOX_LOG_TAG, "It's a good time to send stats");
 
         await this.sendStatsToService();
       }
-    }
-    else {
-      Logger.log(CRED_TOOLBOX_LOG_TAG, "Not sending credential toolbox stats - disabled by the user");
+    } else {
+      Logger.log(CRED_TOOLBOX_LOG_TAG, 'Not sending credential toolbox stats - disabled by the user');
     }
 
     this.checkSendTimer = setTimeout(() => {
@@ -112,7 +128,13 @@ export class GlobalCredentialToolboxService implements GlobalService {
    * Otherwise creates and stores a new one.
    */
   private async getOrCreateStatIdentifier(): Promise<string> {
-    let identifier = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, CRED_TOOLBOX_STORAGE_CTX, "identifier", null);
+    let identifier = await this.storage.getSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      CRED_TOOLBOX_STORAGE_CTX,
+      'identifier',
+      null
+    );
     if (!identifier) {
       identifier = await this.createStatIdentifier();
     }
@@ -130,31 +152,33 @@ export class GlobalCredentialToolboxService implements GlobalService {
     // we don't bother user with a master password prompt and we will collect stats later when the
     // password is unlocked
     let didStorePassword = this.didAuthService.getCurrentUserPassword();
-    if (!didStorePassword)
-      return null;
+    if (!didStorePassword) return null;
 
     let statsIdentifier = await this.didService.getActiveDid().signData(DID_CHALLENGE, didStorePassword);
-    if (!statsIdentifier)
-      return null; // Should not happen, but just in cas
+    if (!statsIdentifier) return null; // Should not happen, but just in cas
 
     // Store this identifier locally for reuse
     await this.storeStatIdentifier(statsIdentifier);
   }
 
   private async storeStatIdentifier(identifier: string): Promise<void> {
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, CRED_TOOLBOX_STORAGE_CTX, "identifier", identifier);
+    await this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      CRED_TOOLBOX_STORAGE_CTX,
+      'identifier',
+      identifier
+    );
   }
 
   /**
    * Goes through the list of all user credentials and builds stats.
    */
   private async buildCredentialsStats(): Promise<CredentialStats> {
-    if (!this.didService.getActiveDid())
-      return null;
+    if (!this.didService.getActiveDid()) return null;
 
     let userId = await this.getOrCreateStatIdentifier();
-    if (!userId)
-      return null;
+    if (!userId) return null;
 
     let stats: CredentialStats = {
       userId,
@@ -167,21 +191,22 @@ export class GlobalCredentialToolboxService implements GlobalService {
     // For every credential, get its types and add them to the stats.
     for (let credential of credentials) {
       // Resolve pairs of associated context/types
-      let credentialTypesWithContexts = await this.credentialTypesService.resolveTypesWithContexts(credential.pluginVerifiableCredential);
+      let credentialTypesWithContexts = await this.credentialTypesService.resolveTypesWithContexts(
+        credential.pluginVerifiableCredential
+      );
       if (credentialTypesWithContexts && credentialTypesWithContexts.length > 0) {
         // Send the issuer information only for non self-proclaimed credentials, to preserve
         // user's anonimity. "Real" issuers of credentials for others are for now considered
         // as "public apps" for which we don't need to preserve anonimity (at least for now).
         let credentialIssuer = credential.pluginVerifiableCredential.getIssuer();
         let issuer: string = null;
-        if (this.didService.getActiveDid().getDIDString() !== credentialIssuer)
-          issuer = credentialIssuer;
+        if (this.didService.getActiveDid().getDIDString() !== credentialIssuer) issuer = credentialIssuer;
 
         let ownedStat: OwnedCredential = {
           issuanceDate: moment(credential.pluginVerifiableCredential.getIssuanceDate()).unix(),
           issuer,
           types: credentialTypesWithContexts
-        }
+        };
         stats.ownedCredentials.push(ownedStat);
       }
     }
@@ -192,17 +217,21 @@ export class GlobalCredentialToolboxService implements GlobalService {
   private async sendStatsToService(): Promise<void> {
     let credentialsStats = await this.buildCredentialsStats();
     if (!credentialsStats) {
-      Logger.log(CRED_TOOLBOX_LOG_TAG, "Not sending credential stats for now, stats not built (probably no master password)");
+      Logger.log(
+        CRED_TOOLBOX_LOG_TAG,
+        'Not sending credential stats for now, stats not built (probably no master password)'
+      );
       return;
     }
 
-    Logger.log(CRED_TOOLBOX_LOG_TAG, "Sending stats", credentialsStats);
+    Logger.log(CRED_TOOLBOX_LOG_TAG, 'Sending stats', credentialsStats);
 
     try {
-      await firstValueFrom(this.http.post<void>(`${environment.CredentialsToolbox.serviceUrl}/statistics`, credentialsStats));
-    }
-    catch (e) {
-      Logger.warn(CRED_TOOLBOX_LOG_TAG, "Failure from the credentials toolbox api", e);
+      await firstValueFrom(
+        this.http.post<void>(`${environment.CredentialsToolbox.serviceUrl}/statistics`, credentialsStats)
+      );
+    } catch (e) {
+      Logger.warn(CRED_TOOLBOX_LOG_TAG, 'Failure from the credentials toolbox api', e);
       return;
     }
 
@@ -212,7 +241,13 @@ export class GlobalCredentialToolboxService implements GlobalService {
   }
 
   private saveLastUploaded(): Promise<void> {
-    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, CRED_TOOLBOX_STORAGE_CTX, "lastuploaded", moment().unix());
+    return this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      CRED_TOOLBOX_STORAGE_CTX,
+      'lastuploaded',
+      moment().unix()
+    );
   }
 
   /**
@@ -225,13 +260,19 @@ export class GlobalCredentialToolboxService implements GlobalService {
    * @param credentialsInvolved List of credentials (DID app format) involved in the operation.
    * @param callingAppDID If known, DID of the external application asking user to do something with the credentials.
    */
-  public async recordCredentialUsage(operation: UsedCredentialOperation, credentialsInvolved: VerifiableCredential[], callingAppDID?: string) {
+  public async recordCredentialUsage(
+    operation: UsedCredentialOperation,
+    credentialsInvolved: VerifiableCredential[],
+    callingAppDID?: string
+  ) {
     let usedCredentials = await this.loadUsedCredentials();
 
     let now = moment().unix();
     for (let credential of credentialsInvolved) {
       // Resolve pairs of associated context/types
-      let credentialTypesWithContexts = await this.credentialTypesService.resolveTypesWithContexts(credential.pluginVerifiableCredential);
+      let credentialTypesWithContexts = await this.credentialTypesService.resolveTypesWithContexts(
+        credential.pluginVerifiableCredential
+      );
 
       usedCredentials.push({
         operation,
@@ -241,7 +282,7 @@ export class GlobalCredentialToolboxService implements GlobalService {
       });
     }
 
-    Logger.log(CRED_TOOLBOX_LOG_TAG, "Recording new credential usage to local storage", usedCredentials);
+    Logger.log(CRED_TOOLBOX_LOG_TAG, 'Recording new credential usage to local storage', usedCredentials);
 
     // Save locally
     await this.saveUsedCredentials(usedCredentials);
@@ -251,10 +292,22 @@ export class GlobalCredentialToolboxService implements GlobalService {
    * Loads the list of used credentials stats we have on the local storage so far.
    */
   private loadUsedCredentials(): Promise<UsedCredential[]> {
-    return this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, CRED_TOOLBOX_STORAGE_CTX, "usedcredentials", []);
+    return this.storage.getSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      CRED_TOOLBOX_STORAGE_CTX,
+      'usedcredentials',
+      []
+    );
   }
 
   private saveUsedCredentials(usedCredentials: UsedCredential[]): Promise<void> {
-    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, CRED_TOOLBOX_STORAGE_CTX, "usedcredentials", usedCredentials);
+    return this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      CRED_TOOLBOX_STORAGE_CTX,
+      'usedcredentials',
+      usedCredentials
+    );
   }
 }

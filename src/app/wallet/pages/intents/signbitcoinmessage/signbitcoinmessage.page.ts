@@ -22,9 +22,13 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import BigNumber from "bignumber.js";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -32,6 +36,7 @@ import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { BTCSafe } from 'src/app/wallet/model/networks/btc/safes/btc.safe';
 import { BTCSubWallet } from 'src/app/wallet/model/networks/btc/subwallets/btc.subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
@@ -39,14 +44,11 @@ import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
-import * as BTC from 'bitcoinjs-lib';
-import { BTCSafe } from 'src/app/wallet/model/networks/btc/safes/btc.safe';
-
 
 @Component({
   selector: 'app-signbitcoinmessage',
   templateUrl: './signbitcoinmessage.page.html',
-  styleUrls: ['./signbitcoinmessage.page.scss'],
+  styleUrls: ['./signbitcoinmessage.page.scss']
 })
 export class SignBitcoinMessagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -62,7 +64,7 @@ export class SignBitcoinMessagePage implements OnInit {
 
   private alreadySentIntentResponse = false;
 
-  public currentNetworkName = ''
+  public currentNetworkName = '';
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -77,12 +79,17 @@ export class SignBitcoinMessagePage implements OnInit {
     public theme: GlobalThemeService,
     public uiService: UiService,
     private router: Router,
-    public globalPopupService: GlobalPopupService,
+    public globalPopupService: GlobalPopupService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
+      this.message = this.receivedIntent?.params?.payload?.params[0];
+    }
   }
 
   ngOnInit() {
-    GlobalFirebaseService.instance.logEvent("wallet_signbitcoinmessage_enter");
+    GlobalFirebaseService.instance.logEvent('wallet_signbitcoinmessage_enter');
 
     void this.init();
   }
@@ -91,14 +98,16 @@ export class SignBitcoinMessagePage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.signtypeddata-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
   }
 
   ionViewDidEnter() {
@@ -120,34 +129,31 @@ export class SignBitcoinMessagePage implements OnInit {
   }
 
   async init() {
-    const navigation = this.router.getCurrentNavigation();
-    this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.message = this.receivedIntent?.params?.payload?.params[0];
-
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
-    this.currentNetworkName = this.targetNetwork.name;
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
 
     let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
     this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    if (!this.networkWallet)
-      return;
+    if (!this.networkWallet) return;
 
     this.btcSubWallet = <BTCSubWallet>this.networkWallet.getMainTokenSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-    if (!this.btcSubWallet)
-      return;
+    if (!this.btcSubWallet) return;
 
     this.loading = false;
   }
 
   async signData() {
     try {
+      this.actionIsGoing = true;
       let signature = await (this.networkWallet.safe as unknown as BTCSafe).signMessage(this.message);
       // Logger.log('wallet', 'SignBitcoinMessagePage signature:', signature)
       await this.sendIntentResponse({ signature: signature, status: 'ok' });
     } catch (e) {
-      Logger.warn('wallet', 'SignBitcoinMessagePage sign data error:', e)
+      Logger.warn('wallet', 'SignBitcoinMessagePage sign data error:', e);
       await this.sendIntentResponse({ signature: null, status: 'error' });
+    } finally {
+      this.actionIsGoing = false;
     }
   }
 
@@ -162,5 +168,28 @@ export class SignBitcoinMessagePage implements OnInit {
   private async sendIntentResponse(result, navigateBack = true) {
     this.alreadySentIntentResponse = true;
     await this.globalIntentService.sendIntentResponse(result, this.receivedIntent.intentId, navigateBack);
+  }
+
+  /**
+   * Get the signing wallet name
+   */
+  public getSigningWalletName(): string {
+    if (this.networkWallet && this.networkWallet.masterWallet) {
+      return this.networkWallet.masterWallet.name;
+    }
+    return '';
+  }
+
+  /**
+   * Get the signing wallet address
+   */
+  public getSigningWalletAddress(): string {
+    if (this.networkWallet) {
+      const addresses = this.networkWallet.getAddresses();
+      if (addresses && addresses.length > 0) {
+        return addresses[0].address;
+      }
+    }
+    return '';
   }
 }

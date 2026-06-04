@@ -24,6 +24,7 @@ class TranslationsLoader {
         "easybridge",
         "multiswap",
         "staking",
+        "mainchainpolls",
     ];
     static languagesToLoad = [
         "en",

@@ -1,21 +1,28 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
+import { MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { UniswapCurrencyProvider } from '../../evms/uniswap.currencyprovider';
 import { GlobalJsonRPCService } from './../../../../../services/global.jsonrpc.service';
-import { BttcBaseNetwork } from "./bttc.base.network";
+import { BttcBaseNetwork } from './bttc.base.network';
 
 export class BttcMainNetNetwork extends BttcBaseNetwork {
   // private uniswapCurrencyProvider: BttcMainnetUniswapCurrencyProvider = null;
 
   constructor() {
     super(
-      "bttc",
-      "BTTC",
-      "BTTC",
-      "assets/wallet/networks/bittorrent.svg",
-      "BTT",
-      "BTTC Coin",
+      'bttc',
+      'BTTC',
+      'BTTC',
+      'assets/wallet/networks/bittorrent.svg',
+      'BTT',
+      'BTTC Coin',
       MAINNET_TEMPLATE,
       199,
+      [],
+      [
+        {
+          name: 'Bttc Mainnet RPC',
+          url: 'https://rpc.bt.io'
+        }
+      ]
     );
 
     // this.uniswapCurrencyProvider = new BttcMainnetUniswapCurrencyProvider(this);

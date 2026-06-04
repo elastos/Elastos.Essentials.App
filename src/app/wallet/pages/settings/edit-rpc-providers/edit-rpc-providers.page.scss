@@ -1,0 +1,203 @@
+@import "src/app/wallet/root.scss";
+
+ion-content {
+  .footer {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    padding: 20px;
+    background: var(--essentials-box-color);
+    box-shadow: 0 0px 20px rgb(0 0 0 / 20%);
+    display: flex;
+    flex-direction: row !important;
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+
+    .cancel {
+      --background: #f0f0f0;
+      --background-activated: #e0e0e0;
+      color: #640fd4;
+      transition: all 0.3s ease;
+    }
+  }
+
+  .dark-container.footer {
+    .transfer-progress {
+      color: #acb1b6;
+
+      .heading {
+        color: white;
+      }
+    }
+
+    .cancel {
+      --background: linear-gradient(to bottom, #3c3c3c, #2c2c2c);
+      --background-activated: linear-gradient(to bottom, #4c4c4c, #2c2c2c);
+      color: #fff;
+    }
+  }
+}
+
+.container {
+  min-height: 100%;
+  padding: 20px;
+  padding-bottom: 50px; // For the footer
+
+  .network-header {
+    margin-bottom: 30px;
+
+    .network-name {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .network-subtitle {
+      font-size: 14px;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .rpc-providers-section {
+    margin-bottom: 30px;
+
+    .rpc-provider {
+      margin-bottom: 10px;
+      padding: 15px;
+
+      // Only apply styling to custom providers
+      &:not(.builtin-provider) {
+        border-radius: 10px;
+        background: var(--essentials-box-color);
+      }
+
+      .rpc-provider-row {
+        align-items: center;
+
+        .rpc-provider-info {
+          .rpc-provider-name {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 4px;
+          }
+
+          .rpc-provider-url {
+            font-size: 12px;
+            color: var(--ion-color-medium);
+            word-break: break-all;
+          }
+
+          .rpc-provider-meta {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            .rpc-provider-type {
+              .type-badge {
+                padding: 2px 6px;
+                border-radius: 4px;
+                font-size: 10px;
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                &.builtin {
+                  background: var(--ion-text-color);
+                  color: var(--ion-background-color);;
+                }
+
+                &.custom {
+                  .custom-icon {
+                    font-size: 12px;
+                    margin: 0;
+                  }
+                }
+              }
+            }
+
+            .rpc-provider-quality {
+              display: flex;
+              align-items: center;
+              gap: 4px;
+
+              .status-icon {
+                font-size: 14px;
+
+                &.status-fast {
+                  color: #10dc60; // green
+                }
+
+                &.status-slow {
+                  color: #ffcc00; // yellow
+                }
+
+                &.status-timeout {
+                  color: #f04141; // red
+                }
+
+                &.status-unknown {
+                  color: #8e8e93; // gray
+                }
+              }
+
+              .ping-time {
+                font-size: 11px;
+                color: var(--ion-color-medium);
+                font-weight: 500;
+              }
+            }
+          }
+        }
+
+        .rpc-provider-actions {
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+          gap: 8px;
+          min-height: 32px; // Ensure consistent height for alignment
+
+          ion-radio-group {
+            margin: 0;
+            display: flex;
+            align-items: center;
+
+            ion-radio {
+              --size: 20px; // Match typical icon size
+              margin: 0;
+            }
+          }
+
+          ion-button {
+            --padding-start: 0px;
+            --padding-end: 0px;
+            --padding-top: 0px;
+            --padding-bottom: 0px;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            // Ensure the delete icon is perfectly centered
+            ion-icon {
+              font-size: 18px;
+            }
+          }
+        }
+      }
+    }
+
+    .add-provider-row {
+      margin-top: 15px;
+
+      ion-button {
+        width: 100%;
+        --border-radius: 10px;
+      }
+    }
+  }
+}

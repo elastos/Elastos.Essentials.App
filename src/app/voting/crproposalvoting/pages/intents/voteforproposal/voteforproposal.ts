@@ -31,7 +31,7 @@ type VoteForProposalCommand = CRCommand & {
 export class VoteForProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private onGoingCommand: VoteForProposalCommand;
+    public onGoingCommand: VoteForProposalCommand;
     public proposalDetail: ProposalDetails;
     public proposalDetailFetched = false;
     public signingAndSendingProposalResponse = false;

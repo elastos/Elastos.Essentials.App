@@ -53,3 +53,21 @@
 .deleteContainer {
   border: 1.2px solid #fdd034;
 }
+
+.darkContainer {
+  background: #2b2c49;
+
+  .header {
+    h1 {
+      color: #fdfeff;
+    }
+  }
+
+  .message {
+    background: #2b2c49;
+
+    p {
+      color: #fdfeff;
+    }
+  }
+}

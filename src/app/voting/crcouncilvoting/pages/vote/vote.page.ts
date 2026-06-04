@@ -40,7 +40,7 @@ export class VotePage implements OnInit, OnDestroy {
     public castingVote = false;
     public votesCasted = false;
     public totalEla = 0;
-    private votedEla = 0;
+    public votedEla = 0;
     private toast: any;
     public signingAndTransacting = false;
     public remainingTime: string;

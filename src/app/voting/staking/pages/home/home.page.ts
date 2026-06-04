@@ -70,6 +70,7 @@ export class StakingHomePage implements OnInit {
     }
 
     ngOnInit() {
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async (activeNetworkWallet) => {
             if (activeNetworkWallet) {
               this.dataFetched = false;
@@ -100,7 +101,7 @@ export class StakingHomePage implements OnInit {
         }
     }
 
-    async ionViewWillEnter() {
+    ionViewWillEnter() {
         this.titleBar.setTitle(this.translate.instant('launcher.app-elastos-staking'));
     }
 

@@ -44,6 +44,8 @@ export class WalletPrefsService {
         Config.ETHSC_GENESISBLOCKHASH = Config.ETHSC_GENESISBLOCKHASH_TESTNET;
         Config.ETHSC_BPoSNFT_CONTRACTADDRESS = Config.ETHSC_BPoSNFT_CONTRACTADDRESS_TESTNET;
         Config.ETHSC_CLAIMNFT_CONTRACTADDRESS = Config.ETHSC_CLAIMNFT_CONTRACTADDRESS_TESTNET;
+        Config.ETHECO_DEPOSIT_ADDRESS = Config.ETHECO_DEPOSIT_ADDRESS_TESTNET;
+        Config.ETHECO_WITHDRAW_ADDRESS = Config.ETHECO_WITHDRAW_ADDRESS_TESTNET;
         break;
       case LRW_TEMPLATE:
         Config.ETHDID_DEPOSIT_ADDRESS = Config.ETHDID_DEPOSIT_ADDRESS_LRW;
@@ -64,6 +66,8 @@ export class WalletPrefsService {
         Config.ETHSC_GENESISBLOCKHASH = Config.ETHSC_GENESISBLOCKHASH_MAINNET;
         Config.ETHSC_BPoSNFT_CONTRACTADDRESS = Config.ETHSC_BPoSNFT_CONTRACTADDRESS_MAINNET;
         Config.ETHSC_CLAIMNFT_CONTRACTADDRESS = Config.ETHSC_CLAIMNFT_CONTRACTADDRESS_MAINNET;
+        Config.ETHECO_DEPOSIT_ADDRESS = Config.ETHECO_DEPOSIT_ADDRESS_MAINNET;
+        Config.ETHECO_WITHDRAW_ADDRESS = Config.ETHECO_WITHDRAW_ADDRESS_MAINNET;
         break;
     }
   }
@@ -83,7 +87,8 @@ export class WalletPrefsService {
   }
 
   public getMnemonicLang(): string {
-    return this.mnemonicLang;
+    // return this.mnemonicLang;
+    return "english"; // TODO: let user choose?
   }
 
   public setMnemonicLang(lang) {

@@ -1,12 +1,13 @@
 <!-- Wallets -->
-<div class="widget" [class.darkContainer]="theme.darkMode" *ngIf="onReadyToDisplay.value && walletNetworkService.activeNetwork.value">
+<div class="widget" [class.darkContainer]="theme.darkMode"
+  *ngIf="onReadyToDisplay.value && walletNetworkService.activeNetwork.value">
   <!-- External header -->
   <ion-row class="header-row">
     <ion-col size="6" class="title-col" (click)="openWallet()">
       <ion-label>{{ 'launcher.active-wallet' | translate }}</ion-label>
     </ion-col>
     <ion-col size="6" class="network-col" (click)="pickNetwork()">
-      {{ walletNetworkService.activeNetwork.value.name }}
+      {{ walletNetworkService.activeNetwork.value.getEffectiveName() }}
       <img class="network-logo" [src]="walletNetworkService.activeNetwork.value.logo">
     </ion-col>
   </ion-row>
@@ -19,7 +20,8 @@
       </div>
 
       <!-- Wallets list - horizontal slide -->
-      <div class="wallet-widget-row ripple ion-activatable" [style.background]="backgroundGradient" *ngIf="activeWalletEntry">
+      <div class="wallet-widget-row ripple ion-activatable" [style.background]="backgroundGradient"
+        *ngIf="activeWalletEntry">
         <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
         <ion-row class="card-label-row" (click)="openWallet()">
           <!-- Wallet name and balance -->
@@ -28,7 +30,7 @@
             <!-- Balance -->
             <div *ngIf="activeWalletEntry.networkWallet && !currencyService.useCurrency" class="balance">
               {{ WalletUtil.getFriendlyBalance(activeWalletEntry.networkWallet.getDisplayBalance(),
-                activeWalletEntry.networkWallet.getDecimalPlaces()) }}
+              activeWalletEntry.networkWallet.getDecimalPlaces()) }}
               {{ activeWalletEntry.networkWallet.getDisplayTokenName() }}
             </div>
             <div *ngIf="activeWalletEntry.networkWallet && currencyService.useCurrency" class="balance">
@@ -39,7 +41,7 @@
             <!-- Not supported -->
             <div *ngIf="!activeWalletEntry.networkWallet" class="unsupported-wallet">
               {{ 'wallet.unsupported-on-network' | translate:{network:
-              walletNetworkService.activeNetwork.value.name} }}
+              walletNetworkService.activeNetwork.value.getEffectiveName()} }}
             </div>
           </div>
 
@@ -47,7 +49,8 @@
           <div class="single-address"
             *ngIf="activeWalletEntry.networkWallet && getWalletAddresses(activeWalletEntry.networkWallet).length === 1"
             (click)="copySingleAddressToClipboard($event, getWalletAddresses(activeWalletEntry.networkWallet)[0].address)">
-            <div class="title">{{ getWalletAddresses(activeWalletEntry.networkWallet)[0].title }} {{ 'launcher.address' | translate }}</div>
+            <div class="title">{{ getWalletAddresses(activeWalletEntry.networkWallet)[0].title }} {{ 'launcher.address'
+              | translate }}</div>
             <div class="bottom">
               <div class="address">
                 {{getReducedWalletAddress(getWalletAddresses(activeWalletEntry.networkWallet)[0].address)}}
@@ -69,7 +72,8 @@
         <ion-ripple-effect></ion-ripple-effect>
       </div>
       <div class="pager" *ngIf="masterWalletWithNetworkWalletList.length > 1">
-        <div class="bullet" *ngFor="let wallet of masterWalletWithNetworkWalletList; let i = index" [class.active]="i === activeWalletIndex" (click)="goToWalletIndex(i)"></div>
+        <div class="bullet" *ngFor="let wallet of masterWalletWithNetworkWalletList; let i = index"
+          [class.active]="i === activeWalletIndex" (click)="goToWalletIndex(i)"></div>
         <!-- <ion-icon name="chevron-back-outline" class="left" (click)="prevWallet()"></ion-icon>
         <ion-icon name="chevron-forward-outline" class="right" (click)="nextWallet()"></ion-icon> -->
       </div>
@@ -80,7 +84,7 @@
     <ion-col size="12" class="wallets-col">
       <div class="wallet-loading-row ripple ion-activatable" [style.background]="backgroundGradient">
         <img class="melted-logo" [src]="walletNetworkService.activeNetwork.value.logo">
-        <ion-row class="card-label-row" >
+        <ion-row class="card-label-row">
           <div class="main-content">
             <ion-skeleton-text animated style="width: 50%"></ion-skeleton-text>
           </div>

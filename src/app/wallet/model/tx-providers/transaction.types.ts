@@ -105,6 +105,7 @@ export type TransactionInfo = {
   txid: string,
   type: TransactionType,
   isCrossChain: boolean,
+  crossChainToAddress?: string, // for cross chain tx
   erc20TokenSymbol?: string,
   erc20TokenValue?: string,
   erc20TokenContractAddress?: string,
@@ -318,4 +319,7 @@ export type RawTransactionPublishResult = {
   status?: string; // published, cancelled, error, delegated
   code?: number;  // Error code.
   message?: string; // Errror message.
+  // For multisig wallets, need save the transaction key and id of the offline transaction for mainchain polling voting.
+  offlineTransactionKey?: string; // For multisig wallets, the transaction key of the offline transaction.
+  offlineTransactionId?: string; // For multisig wallets, the transaction id of the offline transaction.
 }

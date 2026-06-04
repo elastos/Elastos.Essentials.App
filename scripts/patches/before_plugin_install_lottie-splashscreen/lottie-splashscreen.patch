@@ -1,3 +1,5 @@
+===================================================================
+diff -ruN  origin_plugins/cordova-plugin-lottie-splashscreen/src/android/ColorHelper.kt plugins/cordova-plugin-lottie-splashscreen/src/android/ColorHelper.kt
 --- origin_plugins/cordova-plugin-lottie-splashscreen/src/android/ColorHelper.kt	null
 +++ plugins/cordova-plugin-lottie-splashscreen/src/android/ColorHelper.kt	null
 @@ -25,6 +25,7 @@
@@ -8,3 +10,24 @@
          xColorString.length == 6 -> color = color or -0x1000000
          xColorString.length != 8 -> throw IllegalArgumentException("Unknown color")
      }
+===================================================================
+diff -ruN  origin_plugins/cordova-plugin-lottie-splashscreen/src/ios/LottieSplashScreen.swift plugins/cordova-plugin-lottie-splashscreen/src/ios/LottieSplashScreen.swift
+--- origin_plugins/cordova-plugin-lottie-splashscreen/src/ios/LottieSplashScreen.swift	2025-04-02 14:32:12
++++ plugins/cordova-plugin-lottie-splashscreen/src/ios/LottieSplashScreen.swift	2025-04-02 14:23:44
+@@ -181,11 +181,11 @@
+             var autoresizingMask: UIView.AutoresizingMask = [
+                 .flexibleTopMargin, .flexibleLeftMargin, .flexibleBottomMargin, .flexibleRightMargin
+             ]
+-
+-            let portrait =
+-                UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.portrait ||
+-                UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.portraitUpsideDown
+-            autoresizingMask.insert(portrait ? .flexibleWidth : .flexibleHeight)
++            // No need to execute insert, otherwise the boot animation will not be displayed completely.
++            // let portrait =
++            //     UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.portrait ||
++            //     UIApplication.shared.statusBarOrientation == UIInterfaceOrientation.portraitUpsideDown
++            // autoresizingMask.insert(portrait ? .flexibleWidth : .flexibleHeight)
+
+             animationView?.autoresizingMask = autoresizingMask
+             animationWidth = fullScreenzSize.width

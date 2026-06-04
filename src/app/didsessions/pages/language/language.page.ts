@@ -11,7 +11,7 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 @Component({
   selector: 'app-language',
   templateUrl: './language.page.html',
-  styleUrls: ['./language.page.scss'],
+  styleUrls: ['./language.page.scss']
 })
 export class LanguagePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -26,21 +26,18 @@ export class LanguagePage implements OnInit {
     public translate: TranslateService,
     private uxService: UXService,
     private didSessions: GlobalDIDSessionsService
-  ) { }
+  ) {}
 
-  ngOnInit() {
-    this.theme.activeTheme.subscribe(theme => {
-      this.updateTitleBarIcons();
-    })
-  }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.titleBar.setTitle(' ');
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
-    this.updateTitleBarIcons();
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.uxService.onTitleBarItemClicked(icon);
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        this.uxService.onTitleBarItemClicked(icon);
+      })
+    );
     this.titleBar.setNavigationMode(null);
     void this.checkForIdentities();
   }
@@ -51,13 +48,7 @@ export class LanguagePage implements OnInit {
   }
 
   ionViewWillLeave() {
-    //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, null);
     this.titleBar.removeOnItemClickedListener(this.titleBarIconClickedListener);
-  }
-
-  private updateTitleBarIcons() {
-    //let themeIconPath = !this.theme.activeTheme.value.config.usesDarkMode ? 'assets/didsessions/icon/palette.svg' : 'assets/didsessions/icon/dark_mode/palette.svg';
-    //this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "theme", iconPath: themeIconPath });
   }
 
   async checkForIdentities() {
@@ -65,6 +56,6 @@ export class LanguagePage implements OnInit {
   }
 
   continue() {
-    this.identities.length ? void this.uxService.navigateRoot() : this.uxService.go("/didsessions/createidentity");
+    this.identities.length ? void this.uxService.navigateRoot() : this.uxService.go('/didsessions/createidentity');
   }
 }

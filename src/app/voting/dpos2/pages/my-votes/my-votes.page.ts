@@ -5,7 +5,6 @@ import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
-import { Util } from 'src/app/model/util';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -25,7 +24,8 @@ import { DPoS2Service } from '../../services/dpos2.service';
 export class MyVotesPage implements OnInit, OnDestroy {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private votes = [];
+    public votes = [];
+
     // DPoS2Node Detail
     public showNode = false;
     public nodeIndex: number;
@@ -86,7 +86,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
             event: ev,
             translucent: false
         });
-        popover.onWillDismiss().then((ret) => {
+        void popover.onWillDismiss().then((ret) => {
             void this.doActionAccordingToOptions(ret.data, index, node);
         });
         return await popover.present();
@@ -115,15 +115,13 @@ export class MyVotesPage implements OnInit, OnDestroy {
 
     async mintBPosNFT(index: number, node: any) {
         try {
-            if (node.nodeState != 'Active') {
-                let confirmed = await this.popupProvider.showConfirmationPopup(
-                    this.translate.instant('dposvoting.confirm-mintnft-title'),
-                    this.translate.instant('dposvoting.confirm-mintnft-prompt'),
-                    this.translate.instant('common.continue'),
-                    "/assets/identity/default/publishWarning.svg");
-                if (!confirmed) {
-                    return;
-                }
+            let confirmed = await this.popupProvider.showConfirmationPopup(
+                this.translate.instant('dposvoting.confirm-mintnft-title'),
+                this.translate.instant('dposvoting.confirm-mintnft-prompt'),
+                this.translate.instant('common.continue'),
+                "/assets/identity/default/publishWarning.svg");
+            if (!confirmed) {
+                return;
             }
 
             this.signingAndTransacting = true;
@@ -153,7 +151,7 @@ export class MyVotesPage implements OnInit, OnDestroy {
 
             let result = await this.voteService.signAndSendRawTransaction(rawTx, App.DPOS2, "/dpos2/menu/my-votes");
             if (result && result.published) {
-                this.voteService.sourceSubwallet.saveMintNFTTxToCache({txid: result.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
+                await this.voteService.sourceSubwallet.saveMintNFTTxToCache({txid: result.txid, status: MintBPoSNFTTxStatus.Unconfirmed})
             }
         }
         catch (e) {

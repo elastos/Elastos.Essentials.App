@@ -37,7 +37,7 @@ export class WalletAddressChooserComponent implements OnInit {
 
   public copyAddress(addressInfo: WalletAddressInfo) {
     let address = addressInfo.address;
-    let confirmationMessage = this.translate.instant('launcher.address-copied-to-clipboard', { address });
+    let confirmationMessage = this.translate.instant('common.copied-to-clipboard');
     this.globalNative.genericToast(confirmationMessage);
     void this.globalNative.copyClipboard(address);
 

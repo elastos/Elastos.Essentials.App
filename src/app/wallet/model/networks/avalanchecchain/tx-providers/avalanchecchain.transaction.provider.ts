@@ -1,19 +1,21 @@
+import { EtherscanAPIVersion } from "../../evms/evm.types";
 import { AnyMainCoinEVMSubWallet } from "../../evms/subwallets/evm.subwallet";
-import { CovalentEvmSubWalletProvider } from "../../evms/tx-providers/covalent.evm.subwallet.provider";
-import { CovalentSubWalletTokenProvider } from "../../evms/tx-providers/covalent.token.subwallet.provider";
+import { EtherscanEVMSubWalletInternalTransactionProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.internaltx.provider";
+import { EtherscanEVMSubWalletProvider } from "../../evms/tx-providers/etherscan.evm.subwallet.provider";
+import { EtherscanEVMSubWalletTokenProvider, FetchMode } from "../../evms/tx-providers/etherscan.token.subwallet.provider";
 import { EVMTransactionProvider } from "../../evms/tx-providers/evm.transaction.provider";
 
+const ACC_SCAN_API_KEY = "6HWHU4FX4FBPE7TM1BMF7WCDIUPZPS5XSI";
 export class AvalancheCChainTransactionProvider extends EVMTransactionProvider {
   protected createEVMSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.mainProvider = new CovalentEvmSubWalletProvider(this, mainCoinSubWallet);
+    this.mainProvider = new EtherscanEVMSubWalletProvider(this, mainCoinSubWallet, ACC_SCAN_API_KEY, EtherscanAPIVersion.V2);
   }
 
   protected createEVMTokenSubWalletProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    this.tokenProvider = new CovalentSubWalletTokenProvider(this, mainCoinSubWallet);
+    this.tokenProvider = new EtherscanEVMSubWalletTokenProvider(this, mainCoinSubWallet, FetchMode.Compatibility2, ACC_SCAN_API_KEY, EtherscanAPIVersion.V2);
   }
 
   protected createEVMSubWalletInternalTransactionProvider(mainCoinSubWallet: AnyMainCoinEVMSubWallet) {
-    // Not implemented
-    this.internalTXProvider = null;
+    this.internalTXProvider = new EtherscanEVMSubWalletInternalTransactionProvider(this, mainCoinSubWallet, ACC_SCAN_API_KEY, EtherscanAPIVersion.V2);
   }
 }

@@ -54,7 +54,7 @@ export const fr = {
 
         // Status
         'status': 'Statut',
-        'registered': 'Revue par le conseil CR',
+        'registered': 'Revue par le conseil Elastos',
         'cragreed': 'Revue par la communauté',
         'voteragreed': 'Actif',
         'finished': 'Final',
@@ -95,7 +95,7 @@ export const fr = {
         'proposaltype-changeproposaladdress': 'Change Proposal Address',
         'proposaltype-changeproposal': 'Change Proposal',
         'proposaltype-closeproposal': 'Terminate Proposal',
-        'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+        'proposaltype-secretarygeneral': 'Motion for new Elastos Council Secretary General',
         'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',
         'proposaltype-receivecustomizedid': 'Enable Customized DID',
         'proposaltype-changecustomizedidfee': 'Change DID fee',
@@ -165,13 +165,13 @@ export const fr = {
         'withdraw-successfully': 'Withdraw is successfully, please wait for transaction confirmation.',
         'withdraw-failed': 'Withdraw failed, please withdraw again.',
 
-        'crc-proposals-today': 'Nouvelles propositions CR',
-        'crc-proposals-today-msg': 'Il y a une nouvelle proposition CR aujourd\'hui, touchez pour la voir.',
+        'crc-proposals-today': 'Nouvelles propositions',
+        'crc-proposals-today-msg': 'Il y a une nouvelle proposition aujourd\'hui, touchez pour la voir.',
         'crc-proposals-today-msg1': 'Il y a ',
         'crc-proposals-today-msg2': ' touchez pour les voir.',
 
-        'new-crc-proposals': 'Nouvelles propositions CR',
-        'new-crc-proposals-msg': 'Il y a une nouvelle proposition CR depuis votre dernière visite. Touchez pour la voir.',
+        'new-crc-proposals': 'Nouvelles propositions',
+        'new-crc-proposals-msg': 'Il y a une nouvelle proposition depuis votre dernière visite. Touchez pour la voir.',
         'new-crc-proposals-msg1': 'Il y a ',
         'new-crc-proposals-msg2': ' nouvelles propositions depuis votre dernière visite, touchez pour les voir.',
 
@@ -197,7 +197,7 @@ export const fr = {
         'no-draft-data': 'Can not get the draft data for now.',
         'no-message-data': 'Can not get the message data for now.',
         'no-opinion-data': 'Can not get the opinion data for now.',
-        'no-command-type': 'This CR commond type is currently not supported.',
+        'no-command-type': 'This Elastos DAO commond type is currently not supported.',
         'no-data': 'Can not get the data for now, please try again.',
     }
 

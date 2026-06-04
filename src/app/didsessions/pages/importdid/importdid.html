@@ -2,7 +2,7 @@
   <app-titlebar></app-titlebar>
   <div class="ion-text-center container" [class.blur]="loadingIdentity" [class.dark-container]="theme.darkMode">
 
-    <p>{{ 'didsessions.import-prompt' | translate }}</p>
+    <p>{{ (isLightweightMode ? 'didsessions.import-wallet-prompt' : 'didsessions.import-prompt') | translate }}</p>
 
     <div class="mnemonic-rows">
       <ion-row class="mnemonic-row" *ngFor="let i of [1,4,7,10]" (click)="startMnemonicInput()">

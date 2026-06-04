@@ -1,0 +1,101 @@
+// Account Abstraction Component Styles
+
+.aa-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: var(--ion-color-light);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin: 15px 0;
+
+  ion-icon {
+    font-size: 18px;
+    color: var(--ion-color-primary);
+  }
+}
+
+// Flexbox-based layout for transaction items
+.item-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &.ripple {
+    &:hover {
+      background-color: var(--ion-color-light);
+    }
+  }
+}
+
+// Label styling
+.item-label {
+  flex: 0 0 40%;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: left;
+  align-items: flex-start;
+}
+
+// Value styling
+.item-value {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+
+  span {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ion-color-dark);
+  }
+}
+
+// Better alignment for fee information
+.fee-primary {
+  text-align: left;
+
+  span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ion-color-dark);
+  }
+}
+
+.fee-secondary {
+  text-align: left;
+
+  span {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+  }
+}
+
+// Additional AA-specific styles can be added here
+
+// Footer buttons styling
+.footer-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+
+  .btn {
+    flex: 1;
+    max-width: 200px;
+
+    &.expand {
+      flex: 2;
+      max-width: none;
+    }
+  }
+}

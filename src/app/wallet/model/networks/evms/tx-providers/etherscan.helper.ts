@@ -3,10 +3,10 @@ import { Logger } from "src/app/logger";
 import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
 import { TransactionDirection } from "../../../tx-providers/transaction.types";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
-import { EthTransaction } from "../evm.types";
+import { EtherscanAPIVersion, EthTransaction } from "../evm.types";
 
 export class EtherscanHelper {
-  public static async fetchTokenTransactions(subWallet: AnySubWallet, etherscanApiUrl: string, accountAddress: string, contractAddress: string, page: number, pageSize: number, apiKey?: string): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
+  public static async fetchTokenTransactions(subWallet: AnySubWallet, etherscanApiUrl: string, accountAddress: string, contractAddress: string, page: number, pageSize: number, apiKey?: string, apiVersion = EtherscanAPIVersion.V1, chainId?: number): Promise<{ transactions: EthTransaction[], canFetchMore?: boolean }> {
     let txListUrl = etherscanApiUrl + '?module=account';
     txListUrl += '&action=tokentx';
     txListUrl += '&page=' + page;
@@ -18,12 +18,16 @@ export class EtherscanHelper {
     if (apiKey)
       txListUrl += '&apikey=' + apiKey;
 
+    if (apiVersion === EtherscanAPIVersion.V2) {
+      txListUrl += `&chainid=${chainId}`
+    }
+
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, subWallet.networkWallet.network.key);
       let transactions = result.result as EthTransaction[];
 
       if (!(transactions instanceof Array)) {
-        Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)
+        Logger.warn('wallet', 'EtherscanHelper fetchTransactions invalid transactions:', transactions, txListUrl)
         return { transactions: null };
       }
 

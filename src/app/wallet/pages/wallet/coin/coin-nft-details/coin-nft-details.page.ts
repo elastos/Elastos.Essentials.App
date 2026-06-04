@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import moment from 'moment';
@@ -43,227 +43,280 @@ import { NFT, NFTType } from 'src/app/wallet/model/networks/evms/nfts/nft';
 import { NFTAsset, NFTAssetAttribute } from 'src/app/wallet/model/networks/evms/nfts/nftasset';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { CoinTransferService, Transfer, TransferType } from 'src/app/wallet/services/cointransfer.service';
+import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
 import { CurrencyService } from '../../../../services/currency.service';
 import { Native } from '../../../../services/native.service';
 import { UiService } from '../../../../services/ui.service';
 import { WalletService } from '../../../../services/wallet.service';
-import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
 
 @Component({
-    selector: 'app-coin-nft-details',
-    templateUrl: './coin-nft-details.page.html',
-    styleUrls: ['./coin-nft-details.page.scss'],
+  selector: 'app-coin-nft-details',
+  templateUrl: './coin-nft-details.page.html',
+  styleUrls: ['./coin-nft-details.page.scss']
 })
 export class CoinNFTDetailsPage implements OnInit {
-    @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
+  @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-    public networkWallet: AnyNetworkWallet = null;
-    public mainEvmSubwallet: AnyMainCoinEVMSubWallet = null;
-    public escTxBuilder: ESCTransactionBuilder = null;
-    public nft: NFT = null;
-    public asset: NFTAsset = null;
-    public bposNFTInfos: {
-      title: string,
-      value: string
-    }[] = [];
+  public networkWallet: AnyNetworkWallet = null;
+  public mainEvmSubwallet: AnyMainCoinEVMSubWallet = null;
+  public escTxBuilder: ESCTransactionBuilder = null;
+  public nft: NFT = null;
+  public asset: NFTAsset = null;
+  public bposNFTInfos: {
+    title: string;
+    value: string;
+  }[] = [];
 
-    // User can set gas price and limit.
-    private gasPrice: string = null;
-    private gasLimit: string = null;
+  // User can set gas price and limit.
+  private gasPrice: string = null;
+  private gasLimit: string = null;
 
-    constructor(
-        public router: Router,
-        public walletManager: WalletService,
-        public translate: TranslateService,
-        public native: Native,
-        public events: GlobalEvents,
-        public theme: GlobalThemeService,
-        public currencyService: CurrencyService,
-        private coinTransferService: CoinTransferService,
-        private erc721service: ERC721Service,
-        public uiService: UiService,
-        private uxService: UXService,
-        public globalPopupService: GlobalPopupService,
-    ) {
-        this.init();
+  /** EIP-5192: while true, send button stays disabled until on-chain check finishes. */
+  public erc5192CheckPending = false;
+  /** EIP-5192: token is locked (soulbound). */
+  public erc5192Locked = false;
+
+  constructor(
+    public router: Router,
+    public walletManager: WalletService,
+    public translate: TranslateService,
+    public native: Native,
+    public events: GlobalEvents,
+    public theme: GlobalThemeService,
+    public currencyService: CurrencyService,
+    private coinTransferService: CoinTransferService,
+    private erc721service: ERC721Service,
+    public uiService: UiService,
+    private uxService: UXService,
+    public globalPopupService: GlobalPopupService,
+    private cdr: ChangeDetectorRef
+  ) {
+    this.init();
+  }
+
+  ionViewWillEnter() {
+    this.titleBar.setTitle(this.translate.instant('wallet.nft-overview'));
+    void this.refreshErc5192TransferState();
+  }
+
+  ionViewDidLeave() {}
+
+  init() {
+    const navigation = this.router.getCurrentNavigation();
+    if (!Util.isEmptyObject(navigation.extras.state)) {
+      //console.log("NAVSTATE", navigation.extras.state)
+      // Retrieve the master wallet
+      let masterWalletId = navigation.extras.state.masterWalletId;
+      this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
+      this.mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
+
+      // Retrieve the NFT
+      let nftContractAddress = navigation.extras.state.nftContractAddress;
+      this.nft = this.networkWallet.getNFTByAddress(nftContractAddress);
+
+      // Retrieve the NFT asset
+      let assetID = navigation.extras.state.assetID;
+      this.asset = this.nft.getAssetById(assetID);
+      if (this.asset.bPoSNFTInfo) {
+        void this.prepareForBPoSNFTDisplay();
+      }
+
+      Logger.log('wallet', 'Initialization complete for NFT details', this.networkWallet, this.nft, this.asset);
     }
+  }
 
-    ionViewWillEnter() {
-        this.titleBar.setTitle(this.translate.instant("wallet.nft-overview"));
-    }
+  ngOnInit() {}
 
-    ionViewDidLeave() {
-    }
+  public getDisplayableAssetName(): string {
+    return this.asset.name || this.translate.instant('wallet.nft-unnamed-asset');
+  }
 
-    init() {
-        const navigation = this.router.getCurrentNavigation();
-        if (!Util.isEmptyObject(navigation.extras.state)) {
-            //console.log("NAVSTATE", navigation.extras.state)
-            // Retrieve the master wallet
-            let masterWalletId = navigation.extras.state.masterWalletId;
-            this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(masterWalletId);
-            this.mainEvmSubwallet = this.networkWallet.getMainEvmSubWallet();
+  public getDisplayableAssetID(): string {
+    return this.asset.displayableId;
 
-            // Retrieve the NFT
-            let nftContractAddress = navigation.extras.state.nftContractAddress;
-            this.nft = this.networkWallet.getNFTByAddress(nftContractAddress);
-
-            // Retrieve the NFT asset
-            let assetID = navigation.extras.state.assetID;
-            this.asset = this.nft.getAssetById(assetID);
-            if (this.asset.bPoSNFTInfo) {
-                void this.prepareForBPoSNFTDisplay();
-            }
-
-            Logger.log("wallet", "Initialization complete for NFT details", this.networkWallet, this.nft, this.asset);
-        }
-    }
-
-    ngOnInit() {
-    }
-
-    public getDisplayableAssetName(): string {
-        return this.asset.name || this.translate.instant("wallet.nft-unnamed-asset");
-    }
-
-    public getDisplayableAssetID(): string {
-        return this.asset.displayableId;
-
-        /* if (this.asset.displayableId.length < 20)
+    /* if (this.asset.displayableId.length < 20)
             return this.asset.displayableId;
 
         return this.asset.displayableId.substr(0, 20) + "..."; */
+  }
+
+  public hasRealAssetIcon(): boolean {
+    return !!this.asset.imageURL;
+  }
+
+  public getAssetIcon(): string {
+    if (this.hasRealAssetIcon()) return this.asset.imageURL;
+    else return 'assets/wallet/coins/eth-purple.svg';
+  }
+
+  public getAttributeValue(attribute: NFTAssetAttribute): string {
+    switch (attribute.display_type) {
+      case 'date':
+        return moment.unix(<number>attribute.value).format('YYYY-MM-DD');
+      default:
+        return `${attribute.value}`;
+    }
+  }
+
+  /** Whether this NFT type supports receive (QR) in Essentials. */
+  public canReceiveNFT(): boolean {
+    return !!(this.nft && (this.nft.type === NFTType.ERC721 || this.nft.type === NFTType.ERC1155));
+  }
+
+  /** Show the send button for ERC-721 / ERC-1155 (may be disabled if non-transferable). */
+  public showSendNFTButton(): boolean {
+    return this.canReceiveNFT();
+  }
+
+  /** EIP-5192 locked or still checking chain: disable send. */
+  public isSendNFTDisabled(): boolean {
+    return this.erc5192CheckPending || this.erc5192Locked;
+  }
+
+  /** Show notice after on-chain check confirms the token is non-transferable. */
+  public showNonTransferableNotice(): boolean {
+    return this.canReceiveNFT() && this.erc5192Locked && !this.erc5192CheckPending;
+  }
+
+  private async refreshErc5192TransferState(): Promise<void> {
+    this.erc5192Locked = false;
+    if (!this.nft || !this.asset || !this.canReceiveNFT()) {
+      this.erc5192CheckPending = false;
+      return;
+    }
+    this.erc5192CheckPending = true;
+    this.cdr.markForCheck();
+    try {
+      this.erc5192Locked = await this.erc721service.isErc5192Locked(this.nft.contractAddress, this.asset.id);
+    } catch (e) {
+      Logger.warn('wallet', 'refreshErc5192TransferState', e);
+      this.erc5192Locked = false;
+    } finally {
+      this.erc5192CheckPending = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+  /**
+   * Column width (12-grid) for footer actions that are visible.
+   */
+  public getFooterActionColumnSize(): number {
+    let count = 0;
+    if (this.showSendNFTButton()) {
+      count++;
+    }
+    if (this.canReceiveNFT()) {
+      count++;
+    }
+    if (this.canDestroy()) {
+      count++;
+    }
+    if (count === 0) {
+      return 12;
+    }
+    return Math.floor(12 / count);
+  }
+
+  public sendNFT() {
+    if (!this.nft || !this.asset || this.erc5192Locked || this.erc5192CheckPending) {
+      return;
     }
 
-    public hasRealAssetIcon(): boolean {
-        return !!(this.asset.imageURL);
+    this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
+    this.coinTransferService.subWalletId = this.mainEvmSubwallet.id;
+    this.coinTransferService.transferType = TransferType.SEND_NFT;
+    this.coinTransferService.nftTransfer = {
+      nft: this.nft,
+      assetID: this.asset.id,
+      needApprove: this.asset.bPoSNFTInfo ? true : false // approve for bpos nft
+    };
+    this.native.go('/wallet/coin-transfer');
+  }
+
+  /**
+   * Opens the screen that shows user's address and qr code to receive more NFTs.
+   */
+  public receiveNFT() {
+    this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
+    this.coinTransferService.subWalletId = this.mainEvmSubwallet.id;
+    this.native.go('/wallet/coin-receive');
+  }
+
+  public async destroyBPoSNFT() {
+    Logger.log('wallet', 'destroyBPoSNFT', this);
+
+    // get stake address
+    let elaMainChainSubwallet = await this.getELAMainChainSubwallet();
+    if (!elaMainChainSubwallet) {
+      return this.native.toast('wallet.nft-no-ela-mainchain-wallet');
     }
 
-    public getAssetIcon(): string {
-        if (this.hasRealAssetIcon())
-            return this.asset.imageURL;
-        else
-            return "assets/wallet/coins/eth-purple.svg";
-    }
+    let stakeAddress = elaMainChainSubwallet.getOwnerStakeAddress();
+    await this.native.showLoading(this.translate.instant('common.please-wait'));
 
-    public getAttributeValue(attribute: NFTAssetAttribute): string {
-        switch (attribute.display_type) {
-            case "date": return moment.unix(<number>attribute.value).format("YYYY-MM-DD");
-            default: return `${attribute.value}`;
-        }
-    }
+    // approve
+    let ret = await this.approveNFT();
+    if (!ret) return;
 
-    /**
-     * For now, only handle transfers of ERC721 NFTs
-     */
-    public canSendReceive(): boolean {
-        return this.nft && (this.nft.type === NFTType.ERC721 || this.nft.type === NFTType.ERC1155);
-    }
-
-    public async sendNFT() {
-        if (!this.nft || !this.asset)
-            return;
-
-        this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
-        this.coinTransferService.subWalletId = this.mainEvmSubwallet.id;
-        this.coinTransferService.transferType = TransferType.SEND_NFT;
-        this.coinTransferService.nftTransfer = {
-            nft: this.nft,
-            assetID: this.asset.id,
-            needApprove: this.asset.bPoSNFTInfo ? true : false, // approve for bpos nft
-        }
-        this.native.go('/wallet/coin-transfer');
-    }
-
-    /**
-     * Opens the screen that shows user's address and qr code to receive more NFTs.
-     */
-    public receiveNFT() {
-        this.coinTransferService.masterWalletId = this.networkWallet.masterWallet.id;
-        this.coinTransferService.subWalletId = this.mainEvmSubwallet.id;
-        this.native.go('/wallet/coin-receive');
-    }
-
-    public async destroyBPoSNFT() {
-      Logger.log('wallet', 'destroyBPoSNFT', this);
-
-      // get stake address
-      let elaMainChainSubwallet = await this.getELAMainChainSubwallet();
-      if (!elaMainChainSubwallet) {
-        return this.native.toast('wallet.nft-no-ela-mainchain-wallet');
+    try {
+      if (!this.escTxBuilder) {
+        this.escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
       }
+      this.gasLimit = await this.escTxBuilder.estimateBurnBPoSNFTGas(this.asset.id, stakeAddress);
 
-      let stakeAddress = elaMainChainSubwallet.getOwnerStakeAddress();
-      await this.native.showLoading(this.translate.instant('common.please-wait'));
-
-      // approve
-      let ret = await this.approveNFT();
-      if (!ret) return;
-
-      try {
-          if (!this.escTxBuilder) {
-            this.escTxBuilder = new ESCTransactionBuilder(this.networkWallet);
-          }
-          this.gasLimit = await this.escTxBuilder.estimateBurnBPoSNFTGas(this.asset.id, stakeAddress);
-
-          await this.native.hideLoading();
-          await this.showConfirm(stakeAddress);
-      }
-      catch (e) {
-          Logger.warn('wallet', 'destroyBPoSNFT exception:', e);
-          await this.native.hideLoading();
-          await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
-      }
+      await this.native.hideLoading();
+      await this.showConfirm(stakeAddress);
+    } catch (e) {
+      Logger.warn('wallet', 'destroyBPoSNFT exception:', e);
+      await this.native.hideLoading();
+      await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'Unknown error, possibly a network issue');
     }
+  }
 
-    async getELAMainChainSubwallet() {
-      let network = WalletNetworkService.instance.getNetworkByKey('elastos');
-      let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
-      return networkWallet?.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
-    }
+  async getELAMainChainSubwallet() {
+    let network = WalletNetworkService.instance.getNetworkByKey('elastos');
+    let networkWallet = await network.createNetworkWallet(this.networkWallet.masterWallet, false);
+    return networkWallet?.getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
+  }
 
-    /**
-     * Returns the ion-col size for the send/receive/destroy row, based on the available features.
-     */
-    public getColumnSize(): number {
-      if (this.asset.bPoSNFTInfo)
-          return 4; // 3 columns - 3x4 = 12
-      else
-          return 6; // 2 columns - 2x6 = 12
-    }
+  public canDestroy() {
+    // Only the NFTs that can obtain voting information can be destroyed. eg. the token id is wrong
+    if (this.asset.bPoSNFTInfo) return true;
+    return false;
+  }
 
-    private async prepareForBPoSNFTDisplay() {
-      this.bposNFTInfos = [];
-      // votes
-      this.bposNFTInfos.push({
-        title: this.translate.instant('dposvoting.input-votes'),
-        value: this.uxService.toThousands(this.asset.bPoSNFTInfo.votes),
-      })
+  private async prepareForBPoSNFTDisplay() {
+    this.bposNFTInfos = [];
+    // votes
+    this.bposNFTInfos.push({
+      title: this.translate.instant('dposvoting.input-votes'),
+      value: this.uxService.toThousands(this.asset.bPoSNFTInfo.votes)
+    });
 
-      // voterights
-      this.bposNFTInfos.push({
-        title: this.translate.instant('voting.vote-rights'),
-        value: this.uxService.toThousands(this.asset.bPoSNFTInfo.votesright),
-      })
+    // voterights
+    this.bposNFTInfos.push({
+      title: this.translate.instant('voting.vote-rights'),
+      value: this.uxService.toThousands(this.asset.bPoSNFTInfo.votesright)
+    });
 
-      // endHeight
-      let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
-      let currentBlockTimestamp = moment().valueOf() / 1000;
-      let stakeTimestamp = (this.asset.bPoSNFTInfo.endheight - currentHeight) * 120 + currentBlockTimestamp;
+    // endHeight
+    let currentHeight = await GlobalElastosAPIService.instance.getCurrentHeight();
+    let currentBlockTimestamp = moment().valueOf() / 1000;
+    let stakeTimestamp = (this.asset.bPoSNFTInfo.endheight - currentHeight) * 120 + currentBlockTimestamp;
 
-      this.bposNFTInfos.push({
-        title: this.translate.instant('dposvoting.stake-until'),
-        value: this.uxService.formatDate(stakeTimestamp),
-      })
+    this.bposNFTInfos.push({
+      title: this.translate.instant('dposvoting.stake-until'),
+      value: this.uxService.formatDate(stakeTimestamp)
+    });
 
-      //reward
-      this.bposNFTInfos.push({
-        title: this.translate.instant('staking.voting-reward'),
-        value: this.uxService.toThousands(this.asset.bPoSNFTInfo.rewards),
-      })
+    //reward
+    this.bposNFTInfos.push({
+      title: this.translate.instant('staking.voting-reward'),
+      value: this.uxService.toThousands(this.asset.bPoSNFTInfo.rewards)
+    });
 
-      // bpos node
+    // bpos node
     //   let targetNode = null;
     //   let targetOwnerKey = this.asset.bPoSNFTInfo.targetOwnerKey.startsWith('0x') ? this.asset.bPoSNFTInfo.targetOwnerKey.substring(2) : this.asset.bPoSNFTInfo.targetOwnerKey;
     //   const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.BPoS);
@@ -274,87 +327,92 @@ export class CoinNFTDetailsPage implements OnInit {
     //     title: this.translate.instant('dposvoting.node-name'),
     //     value: targetNode? targetNode.nickname : targetOwnerKey,
     //   })
+  }
+
+  async approveNFT() {
+    let methodData = await this.erc721service.approve(
+      this.nft.contractAddress,
+      Config.ETHSC_CLAIMNFT_CONTRACTADDRESS,
+      this.asset.id
+    );
+    if (methodData) {
+      this.coinTransferService.masterWalletId = this.networkWallet.id;
+      this.coinTransferService.payloadParam = {
+        data: methodData,
+        to: this.nft.contractAddress
+      };
+
+      void this.native.go('/wallet/intents/esctransaction', {
+        intentMode: false
+      });
+
+      return new Promise<boolean>(resolve => {
+        let approveSubscription: Subscription = this.events.subscribe('esctransaction', ret => {
+          approveSubscription.unsubscribe();
+          if (ret.result.published) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        });
+      });
     }
 
-    async approveNFT() {
-      let methodData = await this.erc721service.approve(this.nft.contractAddress, Config.ETHSC_CLAIMNFT_CONTRACTADDRESS, this.asset.id);
-      if (methodData) {
-        this.coinTransferService.masterWalletId = this.networkWallet.id;
-        this.coinTransferService.payloadParam = {
-            data: methodData,
-            to: this.nft.contractAddress
-        }
+    return true;
+  }
 
-        void this.native.go("/wallet/intents/esctransaction", {intentMode: false});
+  async showConfirm(stakeAddress: string) {
+    const txInfo = {
+      type: TransferType.DESTROY_NFT,
+      transferFrom: this.mainEvmSubwallet.getCurrentReceiverAddress(),
+      transferTo: null,
+      toChainId: StandardCoinName.ELA,
+      amount: null,
+      sendAll: false,
+      precision: this.mainEvmSubwallet.tokenDecimals,
+      memo: null,
+      tokensymbol: this.mainEvmSubwallet.getDisplayTokenName(),
+      fee: null,
+      gasLimit: this.gasLimit,
+      coinType: this.mainEvmSubwallet.type
+    };
 
-        return new Promise<boolean>((resolve) => {
-          let approveSubscription: Subscription = this.events.subscribe("esctransaction", async (ret) => {
-
-            approveSubscription.unsubscribe();
-            if (ret.result.published) {
-              resolve(true);
-            } else {
-              resolve(false);
-            }
-          })
-        });
+    this.native.popup = await this.native.popoverCtrl.create({
+      mode: 'ios',
+      cssClass: 'wallet-tx-component',
+      component: TxConfirmComponent,
+      componentProps: {
+        txInfo: txInfo
       }
+    });
+    this.native.popup.onWillDismiss().then(params => {
+      this.native.popup = null;
+      Logger.log('wallet', 'Confirm tx params', params);
+      if (params.data && params.data.confirm) {
+        if (params.data.gasPrice) this.gasPrice = params.data.gasPrice;
+        if (params.data.gasLimit) this.gasLimit = params.data.gasLimit;
+        void this.sendDestroyNFTTransaction(stakeAddress);
+      }
+    });
 
-      return true;
+    return await this.native.popup.present();
+  }
+
+  async sendDestroyNFTTransaction(stakeAddress: string) {
+    await this.native.showLoading(this.translate.instant('common.please-wait'));
+
+    const rawTx = await this.escTxBuilder.burnBPoSNFT(this.asset.id, stakeAddress, this.gasPrice, this.gasLimit);
+    await this.native.hideLoading();
+    if (rawTx) {
+      const transfer = new Transfer();
+      Object.assign(transfer, {
+        masterWalletId: this.networkWallet.id,
+        subWalletId: this.mainEvmSubwallet.id,
+        payPassword: '',
+        action: null,
+        intentId: null
+      });
+      await this.mainEvmSubwallet.signAndSendRawTransaction(rawTx, transfer);
     }
-
-    async showConfirm(stakeAddress: string) {
-        const txInfo = {
-            type: TransferType.DESTROY_NFT,
-            transferFrom: this.mainEvmSubwallet.getCurrentReceiverAddress(),
-            transferTo: null,
-            toChainId: StandardCoinName.ELA,
-            amount: null,
-            sendAll: false,
-            precision: this.mainEvmSubwallet.tokenDecimals,
-            memo: null,
-            tokensymbol: this.mainEvmSubwallet.getDisplayTokenName(),
-            fee: null,
-            gasLimit: this.gasLimit,
-            coinType: this.mainEvmSubwallet.type
-        }
-
-        this.native.popup = await this.native.popoverCtrl.create({
-            mode: 'ios',
-            cssClass: 'wallet-tx-component',
-            component: TxConfirmComponent,
-            componentProps: {
-                txInfo: txInfo
-            }
-        });
-        this.native.popup.onWillDismiss().then((params) => {
-            this.native.popup = null;
-            Logger.log('wallet', 'Confirm tx params', params);
-            if (params.data && params.data.confirm) {
-                if (params.data.gasPrice) this.gasPrice = params.data.gasPrice;
-                if (params.data.gasLimit) this.gasLimit = params.data.gasLimit;
-                void this.sendDestroyNFTTransaction(stakeAddress);
-            }
-        });
-
-        return await this.native.popup.present();
-    }
-
-    async sendDestroyNFTTransaction(stakeAddress: string) {
-        await this.native.showLoading(this.translate.instant('common.please-wait'));
-
-        const rawTx = await this.escTxBuilder.burnBPoSNFT(this.asset.id, stakeAddress, this.gasPrice, this.gasLimit);
-        await this.native.hideLoading();
-        if (rawTx) {
-            const transfer = new Transfer();
-            Object.assign(transfer, {
-                masterWalletId: this.networkWallet.id,
-                subWalletId: this.mainEvmSubwallet.id,
-                payPassword: '',
-                action: null,
-                intentId: null,
-            });
-            await this.mainEvmSubwallet.signAndSendRawTransaction(rawTx, transfer);
-        }
-    }
+  }
 }

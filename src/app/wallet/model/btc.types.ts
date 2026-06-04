@@ -170,3 +170,18 @@ export type InscriptionUtxoData = {
 
 // sign data type
 export type BTCSignDataType = "ecdsa" | "schnorr";
+
+/** Matches UniSat `signPsbt` / `toSignInputs` item shape. */
+export type BTCSignPsbtToSignInput = {
+  index: number;
+  address?: string;
+  publicKey?: string;
+  sighashTypes?: number[];
+  disableTweakSigner?: boolean;
+  useTweakedSigner?: boolean;
+};
+
+export type BTCSignPsbtOptions = {
+  autoFinalized?: boolean;
+  toSignInputs?: BTCSignPsbtToSignInput[];
+};

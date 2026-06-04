@@ -1,7 +1,13 @@
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarForegroundMode, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarForegroundMode,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { IdentityGroup, IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
 import { Logger } from 'src/app/logger';
@@ -10,7 +16,12 @@ import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.se
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
-import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import {
+  GlobalNetworksService,
+  LRW_TEMPLATE,
+  MAINNET_TEMPLATE,
+  TESTNET_TEMPLATE
+} from 'src/app/services/global.networks.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 
@@ -37,17 +48,17 @@ export class PickIdentityPage {
     private events: GlobalEvents,
     private globalNetworksService: GlobalNetworksService,
     private didSessions: GlobalDIDSessionsService,
-    private nativeService: GlobalNativeService,
+    private nativeService: GlobalNativeService
   ) {
-    GlobalFirebaseService.instance.logEvent("didsessions_pick_enter");
+    GlobalFirebaseService.instance.logEvent('didsessions_pick_enter');
 
-    this.events.subscribe("identityadded", newIdentity => {
-      Logger.log('didsessions', "PickIdentiy - Identity added, reloading content");
+    this.events.subscribe('identityadded', newIdentity => {
+      Logger.log('didsessions', 'PickIdentity - Identity added, reloading content');
       void this.loadIdentities();
     });
 
-    this.events.subscribe("identityremoved", newIdentity => {
-      Logger.log('didsessions', "PickIdentiy - Identity deleted, reloading content");
+    this.events.subscribe('identityremoved', newIdentity => {
+      Logger.log('didsessions', 'PickIdentity - Identity deleted, reloading content');
       void this.loadIdentities();
     });
   }
@@ -62,10 +73,12 @@ export class PickIdentityPage {
     this.setTitle();
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, null);
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "settings", iconPath: BuiltInIcon.SETTINGS });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.uxService.onTitleBarItemClicked(icon);
-    });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'settings', iconPath: BuiltInIcon.SETTINGS });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        this.uxService.onTitleBarItemClicked(icon);
+      })
+    );
 
     void this.loadIdentities();
 
@@ -84,7 +97,7 @@ export class PickIdentityPage {
   setTitle() {
     switch (this.globalNetworksService.activeNetworkTemplate.value) {
       case MAINNET_TEMPLATE:
-        this.titleBar.setTitle(this.translate.instant("didsessions.pick-identity"));
+        this.titleBar.setTitle(this.translate.instant('didsessions.pick-identity'));
         break;
       case TESTNET_TEMPLATE:
         this.titleBar.setTitle('TEST NET Active');
@@ -101,7 +114,7 @@ export class PickIdentityPage {
     this.sortIdentities();
 
     this.changeDetector.detectChanges(); // Force angular to catch change in the array, in case of update
-    Logger.log("didsessions", "Grouped identities:", this.groupedIdentities);
+    Logger.log('didsessions', 'Grouped identities:', this.groupedIdentities);
 
     if (this.availableIdentitiesCount() === 0) {
       // Maybe we've just deleted the last identity. Then go back to the identity creation screen
@@ -130,25 +143,25 @@ export class PickIdentityPage {
   }
 
   addAvatars() {
-    this.groupedIdentities.map((group) => {
-      group.entries.forEach((entry) => {
+    this.groupedIdentities.map(group => {
+      group.entries.forEach(entry => {
         Logger.log('didsessions', 'Identity', entry);
       });
-    })
+    });
   }
 
   async signIn(identityEntry: IdentityEntry) {
-    Logger.log('didsessions', "Trying to sign in with DID " + identityEntry.didString);
-    await this.nativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));
+    Logger.log('didsessions', 'Trying to sign in with DID ' + identityEntry.didString);
+    await this.nativeService.showLoading(this.translate.instant('didsessions.prepare.sign-in-title'));
     try {
       await this.identityService.signIn(identityEntry, true);
     } catch (e) {
-      Logger.error('didsessions', "Sign exception:", e);
+      Logger.error('didsessions', 'Sign exception:', e);
       if (e && e.message) {
         GlobalNativeService.instance.genericToast(e.message, 3000);
       }
     }
-    Logger.log('didsessions', "Sign in complete");
+    Logger.log('didsessions', 'Sign in complete');
     await this.nativeService.hideLoading();
   }
 
@@ -166,8 +179,7 @@ export class PickIdentityPage {
     let couldDelete = await this.identityService.deleteIdentity(identityEntry);
     if (!couldDelete) {
       // TODO: visual error feedback to user
-    }
-    else {
+    } else {
       // TODO: visual success feedback to user
     }
   }
@@ -176,7 +188,7 @@ export class PickIdentityPage {
     let identities = await this.didSessions.getIdentityEntries();
 
     for (let identity of identities) {
-      await this.didSessions.deleteIdentityEntry(identity.didString)
+      await this.didSessions.deleteIdentityEntry(identity.didString);
     }
   }
 

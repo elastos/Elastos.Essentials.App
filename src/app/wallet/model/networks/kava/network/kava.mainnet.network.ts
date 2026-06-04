@@ -7,8 +7,7 @@ export class KavaMainNetNetwork extends KavaBaseNetwork {
   private dexScreenerCurrencyProvider: KavaMainnetDexScreenerCurrencyProvider = null;
 
   constructor() {
-    super(
-      "kava",
+    super("kava",
       "Kava EVM Co-Chain",
       "Kava",
       "assets/wallet/networks/kava.svg",
@@ -18,12 +17,17 @@ export class KavaMainNetNetwork extends KavaBaseNetwork {
       2222,
       [],
       [
+        {
+          name: 'Kava Mainnet RPC',
+          url: 'https://evm.kava.io'
+        }
       ],
       [
       ],
       [
-      ]
-    );
+      ],
+      [
+      ]);
 
     this.builtInCoins = [
         // new ERC20Coin(this, "USDC", "USDC Coin", "0xfA9343C3897324496A05fC75abeD6bAC29f8A40f", 6, false, true),

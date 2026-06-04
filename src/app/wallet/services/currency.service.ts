@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js';
 import { BehaviorSubject } from 'rxjs';
 import { runDelayed, sleep } from 'src/app/helpers/sleep.helper';
 import { Logger } from 'src/app/logger';
-import { GlobalCosmosService } from 'src/app/services/global.cosmos.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { ERC20Coin, TRC20Coin } from '../model/coin';
 import type { EVMNetwork } from '../model/networks/evms/evm.network';
@@ -13,7 +13,6 @@ import { DexScreenerCurrencyService } from './evm/dexscreener.currency.service';
 import { UniswapCurrencyService } from './evm/uniswap.currency.service';
 import { WalletNetworkService } from './network.service';
 import { LocalStorage } from './storage.service';
-import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
 
 type DisplayableCurrency = {
   symbol: string;
@@ -72,13 +71,13 @@ type CurrenciesExchangeRate = {
   base: string;
   date: string;
   rates: {
-    [symbol: string]: number
+    [symbol: string]: number;
   };
-}
+};
 
 type PriceAPITokenStats = {
-  [symbol: string]: number
-}
+  [symbol: string]: number;
+};
 
 // List of symbol -> value in USD
 type ExchangeRateCache = { [symbol: string]: number };
@@ -86,7 +85,7 @@ type ExchangeRateCache = { [symbol: string]: number };
 type CachedTokenPrice = {
   usdValue: number; // Valuation of this token in USD
   //fetchTimestamp: number; // Timestamp (seconds) at which this information was last fetched
-}
+};
 
 /**
  * - For the main tokens (ELA, ETH, BNB...) we rely on price api's data in USD.
@@ -126,7 +125,7 @@ export class CurrencyService {
 
   async init() {
     // Load or create a cache and store this cache globally to share fetched values among several DID users.
-    this.pricesCache = await TimeBasedPersistentCache.loadOrCreate("tokenprices", true);
+    this.pricesCache = await TimeBasedPersistentCache.loadOrCreate('tokenprices', true);
 
     await this.loadAllTokenSymbol();
     await this.loadExchangeRates();
@@ -145,14 +144,14 @@ export class CurrencyService {
         if (!isPriceUpdated) {
           await sleep(1000);
         }
-      } while (!isPriceUpdated && retryTimes++ < 3)
+      } while (!isPriceUpdated && retryTimes++ < 3);
 
       this.updateInterval = setInterval(() => {
         void this.updateExchangeRatesAndPrice();
-      }, 30000);// 30s
+      }, 60000); // 60s
     }, 1000);
 
-    Logger.log('wallet', "Currency service initialization complete");
+    Logger.log('wallet', 'Currency service initialization complete');
   }
 
   stop() {
@@ -166,10 +165,9 @@ export class CurrencyService {
     try {
       await this.computeExchangeRatesFromCurrenciesService();
       await this.fetchTokenStatsFromPriceService();
-      await this.fetchTokenStatsFromCosmosService();
       return true;
     } catch (e) {
-      Logger.warn('wallet', "Failed to update exchange rates and price", e);
+      Logger.warn('wallet', 'Failed to update exchange rates and price', e);
       return false;
     }
   }
@@ -183,18 +181,17 @@ export class CurrencyService {
   }
 
   private async loadAllTokenSymbol() {
-    this.networkMainTokenPrice = await this.globalStorage.getSetting(null, null, "wallet", "maintokenprice", {});
+    this.networkMainTokenPrice = await this.globalStorage.getSetting(null, null, 'wallet', 'maintokenprice', {});
 
     let networks = this.walletNetworkService.getAvailableNetworks();
     for (let i = 0; i < networks.length; i++) {
-      let tokenSymbol = networks[i].getMainTokenSymbol()
-      if (!this.networkMainTokenPrice[tokenSymbol])
-        this.networkMainTokenPrice[tokenSymbol] = null;
+      let tokenSymbol = networks[i].getMainTokenSymbol();
+      if (!this.networkMainTokenPrice[tokenSymbol]) this.networkMainTokenPrice[tokenSymbol] = null;
     }
   }
 
   private async saveMainTokenPrice(): Promise<void> {
-    await this.globalStorage.setSetting(null, null, "wallet", "maintokenprice", this.networkMainTokenPrice);
+    await this.globalStorage.setSetting(null, null, 'wallet', 'maintokenprice', this.networkMainTokenPrice);
   }
 
   /**
@@ -202,22 +199,22 @@ export class CurrencyService {
    */
   private async loadExchangeRates(): Promise<void> {
     let defaultRates: ExchangeRateCache = {};
-    this.exchangeRates = await this.globalStorage.getSetting(null, null, "wallet", "exchangerates", defaultRates);
+    this.exchangeRates = await this.globalStorage.getSetting(null, null, 'wallet', 'exchangerates', defaultRates);
     this.exchangeRates['USD'] = 1;
   }
 
   private async saveExchangeRates(): Promise<void> {
-    await this.globalStorage.setSetting(null, null, "wallet", "exchangerates", this.exchangeRates);
+    await this.globalStorage.setSetting(null, null, 'wallet', 'exchangerates', this.exchangeRates);
   }
 
   async getSavedCurrency(): Promise<void> {
     let symbol = await this.storage.getCurrency();
-    Logger.log('wallet', "Got storage currency", symbol);
+    Logger.log('wallet', 'Got storage currency', symbol);
     if (symbol) {
-      this.selectedCurrency = displayableCurrencies.find((currency) => currency.symbol === symbol);
+      this.selectedCurrency = displayableCurrencies.find(currency => currency.symbol === symbol);
       Logger.log('wallet', 'Currency saved', this.selectedCurrency);
     } else {
-      this.selectedCurrency = displayableCurrencies.find((currency) => currency.symbol === 'USD');
+      this.selectedCurrency = displayableCurrencies.find(currency => currency.symbol === 'USD');
       Logger.log('wallet', 'No currency saved, using default USD', this.selectedCurrency);
     }
 
@@ -239,8 +236,7 @@ export class CurrencyService {
     return new Promise(resolve => {
       // Wait until we receive the price fetched completion signal. Could be instant or pending a http call
       this.pricesFetchedSubject.subscribe(fetched => {
-        if (fetched)
-          resolve(true);
+        if (fetched) resolve(true);
       });
     });
   }
@@ -249,13 +245,20 @@ export class CurrencyService {
    * Fetches prices from the price api and returns only a target item
    */
   private async fetchTokenStatsFromPriceService(): Promise<boolean> {
-    Logger.log("wallet", "Fetching token prices");
+    Logger.log('wallet', 'Fetching token prices');
 
     try {
-      let res: PriceAPITokenStats = await GlobalJsonRPCService.instance.httpGet(this.tokenPriceUrl)
+      let res: PriceAPITokenStats = await GlobalJsonRPCService.instance.httpGet(this.tokenPriceUrl);
       if (res) {
+        // Normalize all symbols to lowercase
+        const resLower: PriceAPITokenStats = Object.keys(res).reduce((acc, sym) => {
+          acc[sym.toLowerCase()] = res[sym];
+          return acc;
+        }, {} as PriceAPITokenStats);
+
         for (let tokenSymbol in this.networkMainTokenPrice) {
-          let tokenStats = res[tokenSymbol];
+          const key = tokenSymbol.toLowerCase();
+          let tokenStats = resLower[key];
           if (tokenStats) {
             this.networkMainTokenPrice[tokenSymbol] = tokenStats;
           }
@@ -272,29 +275,15 @@ export class CurrencyService {
         this.pricesFetchedSubject.next(true);
         // Logger.log('wallet', 'All Token price:', this.networkMainTokenPrice);
         return true;
-      }
-      else {
+      } else {
         Logger.warn('walletprice', 'Fetch CMC Stats error, the result is empty');
         return false;
       }
-    }
-    catch (e) {
+    } catch (e) {
       Logger.warn('walletprice', 'Fetch CMC Stats error:', e);
       return false;
     }
   }
-
-  private async fetchTokenStatsFromCosmosService() {
-    if (this.walletNetworkService.activeNetwork.value.key == 'atom') {
-        let usdValue = await GlobalCosmosService.instance.getAtomPrice();
-        if (usdValue) {
-            this.networkMainTokenPrice['ATOM'] = usdValue;
-        } else {
-            this.networkMainTokenPrice['ATOM'] = null;
-        }
-    }
-  }
-
 
   // Saves user's choice about which display currency to use: USD, CNY, BTC...
   async saveCurrency(currency: DisplayableCurrency): Promise<void> {
@@ -325,15 +314,16 @@ export class CurrencyService {
    * or in the given currency.
    * Ex: 30 ELA -> 300 USD
    */
-  public getMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
-    if (!network)
-      network = this.walletNetworkService.activeNetwork.value;
+  public getMainTokenValue(
+    quantity: BigNumber,
+    network?: AnyNetwork,
+    currencySymbol = this.selectedCurrency.symbol
+  ): BigNumber | null {
+    if (!network) network = this.walletNetworkService.activeNetwork.value;
 
-    if (!quantity || quantity.isNaN())
-      return null;
+    if (!quantity || quantity.isNaN()) return null;
 
-    if (quantity.eq(0))
-      return new BigNumber(0);
+    if (quantity.eq(0)) return new BigNumber(0);
 
     // Return cache if existing
     let cacheKey = network.key + network.getMainTokenSymbol();
@@ -341,15 +331,19 @@ export class CurrencyService {
 
     if (!tokenValue) {
       return null;
-    }
-    else {
+    } else {
       // Return the currently cached value
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
       return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol);
     }
   }
 
-  public async fetchMainTokenValue(quantity: BigNumber, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol, pricesFetched = false): Promise<void> {
+  public async fetchMainTokenValue(
+    quantity: BigNumber,
+    network?: AnyNetwork,
+    currencySymbol = this.selectedCurrency.symbol,
+    pricesFetched = false
+  ): Promise<void> {
     let cacheKey = network.key + network.getMainTokenSymbol();
     let currentTime = Date.now() / 1000;
     let priceUpdated = false;
@@ -357,42 +351,77 @@ export class CurrencyService {
     //void this.pricesCache.delete(); // DEV
     //return;
 
-    if (!pricesFetched)
-      await this.pricesFetched();
+    if (!pricesFetched) await this.pricesFetched();
 
     let tokenStats = this.networkMainTokenPrice[network.getMainTokenSymbol()];
     if (tokenStats) {
-      this.pricesCache.set(cacheKey, {
-        usdValue: parseFloat(tokenStats)
-      }, currentTime);
+      this.pricesCache.set(
+        cacheKey,
+        {
+          usdValue: parseFloat(tokenStats)
+        },
+        currentTime
+      );
       priceUpdated = true;
-    }
-    else {
-      Logger.log("wallet", "No currency in token API for", network.getMainTokenSymbol(), ". Trying other methods");
+    } else {
       if (network.isEVMNetwork()) {
+        let pricesCache = this.pricesCache.get(cacheKey);
+        if (pricesCache && pricesCache.timeValue && pricesCache.timeValue > currentTime - 60) {
+          return;
+        }
+
+        Logger.log('wallet', 'No currency in token API for', network.getMainTokenSymbol(), '. Trying other methods');
+
         if ((<EVMNetwork>network).getUniswapCurrencyProvider()) {
-            // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
-            let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(<EVMNetwork>network, (<EVMNetwork>network).getUniswapCurrencyProvider().getWrappedNativeCoin());
-            if (usdValue) {
-                this.pricesCache.set(cacheKey, {
-                    usdValue
-                }, currentTime);
-                priceUpdated = true;
-            } else {
-                Logger.log("wallet", "Can't get", network.getMainTokenSymbol(), "price from uniswap");
-            }
+          // If this is a EVM network, try to get price from the wrapped ETH on uniswap compatible DEX.
+          let usdValue = await this.uniswapCurrencyService.getTokenUSDValue(
+            <EVMNetwork>network,
+            (<EVMNetwork>network).getUniswapCurrencyProvider().getWrappedNativeCoin()
+          );
+          if (usdValue) {
+            this.pricesCache.set(
+              cacheKey,
+              {
+                usdValue
+              },
+              currentTime
+            );
+            priceUpdated = true;
+          } else {
+            Logger.log('wallet', "Can't get", network.getMainTokenSymbol(), 'price from uniswap');
+          }
         } else if ((<EVMNetwork>network).getDexScreenerCurrencyProvider()) {
-            void this.dexScreenerTokenFetch(cacheKey, <EVMNetwork>network, (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin());
+          void this.dexScreenerTokenFetch(
+            cacheKey,
+            <EVMNetwork>network,
+            (<EVMNetwork>network).getDexScreenerCurrencyProvider().getWrappedNativeCoin()
+          );
+        } else {
+          let providers = (<EVMNetwork>network).getCustomCurrencyProviders();
+          for (let i = 0; i < providers.length; i++) {
+            let provider = providers[i];
+            let wrappedNativeCoin = provider.getWrappedNativeCoin();
+            if (wrappedNativeCoin) {
+              let value = await provider.getTokenPrice(wrappedNativeCoin);
+              if (value) {
+                let currentTime = Date.now() / 1000;
+                this.pricesCache.set(cacheKey, { usdValue: value }, currentTime);
+              }
+              priceUpdated = true;
+              break;
+            }
+          }
         }
       } else {
         this.pricesCache.remove(cacheKey);
       }
     }
-    if (priceUpdated)
-      void this.pricesCache.save();
+    if (priceUpdated) void this.pricesCache.save();
   }
 
-  // Update pricesCache
+  /**
+   * Update pricesCache
+   */
   public async updateAllNetworkMainTokenValue(): Promise<void> {
     let networks = this.walletNetworkService.getDisplayableNetworks();
 
@@ -402,15 +431,17 @@ export class CurrencyService {
   }
 
   // ERC20 tokens
-  public getERC20TokenValue(quantity: BigNumber, coin: ERC20Coin | TRC20Coin, network?: AnyNetwork, currencySymbol = this.selectedCurrency.symbol): BigNumber | null {
-    if (!network)
-      network = this.walletNetworkService.activeNetwork.value;
+  public getERC20TokenValue(
+    quantity: BigNumber,
+    coin: ERC20Coin | TRC20Coin,
+    network?: AnyNetwork,
+    currencySymbol = this.selectedCurrency.symbol
+  ): BigNumber | null {
+    if (!network) network = this.walletNetworkService.activeNetwork.value;
 
-    if (!quantity || quantity.isNaN())
-      return null;
+    if (!quantity || quantity.isNaN()) return null;
 
-    if (quantity.eq(0))
-      return new BigNumber(0);
+    if (quantity.eq(0)) return new BigNumber(0);
 
     // return cache if not expired
     let cacheKey = network.key + coin.getContractAddress();
@@ -418,20 +449,37 @@ export class CurrencyService {
 
     if (!tokenValue) {
       return null;
-    }
-    else {
+    } else {
       // Return the currently cached value
       let tokenUsdtValue = quantity.multipliedBy(tokenValue.data.usdValue);
       return this.usdToCurrencyAmount(tokenUsdtValue, currencySymbol);
     }
   }
 
-  public fetchERC20TokenValue(coin: ERC20Coin, network?: EVMNetwork): Promise<void> {
+  public async fetchERC20TokenValue(coin: ERC20Coin, network?: AnyNetwork): Promise<void> {
+    let buildInNetwork = network;
+    // If this network is custom network, try to resolve a built-in EVM network by chain id to fetch prices
+    if (network.isCustom()) {
+      buildInNetwork = this.walletNetworkService.getNetworkByChainId((network as EVMNetwork).getMainChainID());
+    }
+
     let cacheKey = network.key + coin.getContractAddress();
-    if ((<EVMNetwork>network).getUniswapCurrencyProvider()) {
-        this.queueUniswapTokenFetch(cacheKey, network, coin);
+    const evmNetwork = buildInNetwork as EVMNetwork;
+    if (evmNetwork.getUniswapCurrencyProvider()) {
+      this.queueUniswapTokenFetch(cacheKey, evmNetwork, coin);
+    } else if (evmNetwork.getDexScreenerCurrencyProvider()) {
+      void this.dexScreenerTokenFetch(cacheKey, evmNetwork, coin);
     } else {
-        void this.dexScreenerTokenFetch(cacheKey, network, coin);
+      let providers = evmNetwork.getCustomCurrencyProviders();
+      for (let i = 0; i < providers.length; i++) {
+        let provider = providers[i];
+        let value = await provider.getTokenPrice(coin);
+        if (value) {
+          let currentTime = Date.now() / 1000;
+          this.pricesCache.set(cacheKey, { usdValue: value }, currentTime);
+        }
+        break;
+      }
     }
     return;
   }
@@ -444,7 +492,7 @@ export class CurrencyService {
     [cacheKey: string]: {
       network: EVMNetwork;
       coin: ERC20Coin;
-    }
+    };
   } = {};
   private onGoingUniswapTokenFetch: string = null; // Cache key of the token being fetched, if any.
   private queueUniswapTokenFetch(cacheKey: string, network: EVMNetwork, coin: ERC20Coin) {
@@ -474,9 +522,13 @@ export class CurrencyService {
           delete this.uniswapTokenFetchQueue[cacheKey];
 
           let currentTime = Date.now() / 1000;
-          this.pricesCache.set(cacheKey, {
-            usdValue: value
-          }, currentTime);
+          this.pricesCache.set(
+            cacheKey,
+            {
+              usdValue: value
+            },
+            currentTime
+          );
 
           this.checkFetchNextUniswapToken();
         });
@@ -488,10 +540,14 @@ export class CurrencyService {
     let price = await this.dexScreenerCurrencyService.getTokenUSDValue(<EVMNetwork>network, coin);
     // Logger.log('wallet', 'dexScreenerTokenFetch got price:', price, coin);
     if (price) {
-        let currentTime = Date.now() / 1000;
-        this.pricesCache.set(cacheKey, {
-            usdValue: price
-        }, currentTime);
+      let currentTime = Date.now() / 1000;
+      this.pricesCache.set(
+        cacheKey,
+        {
+          usdValue: price
+        },
+        currentTime
+      );
     }
   }
 
@@ -503,32 +559,28 @@ export class CurrencyService {
     if (rates) {
       for (let i = 0; i < displayableCurrencies.length; i++) {
         if (rates[displayableCurrencies[i].symbol]) {
-          this.exchangeRates[displayableCurrencies[i].symbol] = rates[displayableCurrencies[i].symbol]
+          this.exchangeRates[displayableCurrencies[i].symbol] = rates[displayableCurrencies[i].symbol];
         }
       }
-      Logger.log('wallet', 'computeExchangeRatesFromCurrenciesService ', this.exchangeRates)
+      Logger.log('wallet', 'computeExchangeRatesFromCurrenciesService ', this.exchangeRates);
       void this.saveExchangeRates();
     }
   }
-
 
   /**
    * Get USD exchange from currencies service.
    */
   private async fetchUSDExchangeRate() {
     try {
-      let res: CurrenciesExchangeRate = await GlobalJsonRPCService.instance.httpGet(this.usdExchangeRateUrl)
+      let res: CurrenciesExchangeRate = await GlobalJsonRPCService.instance.httpGet(this.usdExchangeRateUrl);
       if (res) {
-        Logger.log('wallet', 'Fetch USD exchange rate successfully')
+        Logger.log('wallet', 'Fetch USD exchange rate successfully');
         return res.rates;
-      }
-      else {
+      } else {
         return null;
       }
-    }
-    catch (e) {
+    } catch (e) {
       return null;
     }
   }
 }
-

@@ -49,8 +49,8 @@ a {
 }
 
 .dark-custom-loader {
-  --spinner-color: var(--ion-text-color);;
-  --background: var(--essentials-box-color);;
+  --spinner-color: var(--ion-text-color);
+  --background: var(--essentials-box-color);
   color: var(--ion-text-color);
 }
 
@@ -272,6 +272,73 @@ a {
 .switch-network-component-base {
   --height: 35%;
   --min-height: 280px;
+}
+
+/********************** MENU CHOOSER MODAL **********************/
+
+.menu-chooser-component {
+  --height: 35%;
+  --min-height: 300px;
+  --max-height: 80vh;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.menu-chooser-component-dark {
+  --height: 35%;
+  --min-height: 300px;
+  --max-height: 80vh;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
+}
+
+// Larger height variant for menus with more items (4+ items)
+.menu-chooser-component-larger {
+  --height: 45%;
+  --min-height: 350px;
+  --max-height: 80vh;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 30px;
+    border-top-right-radius: 30px;
+  }
+}
+
+.menu-chooser-component-larger-dark {
+  --height: 45%;
+  --min-height: 350px;
+  --max-height: 80vh;
+  align-items: flex-end;
+
+  .modal-wrapper {
+    position: absolute;
+    left: 0;
+    display: block;
+    width: 100%;
+    border-top-left-radius: 50px;
+    border-top-right-radius: 50px;
+  }
 }
 
 /********************** WALLET **********************/

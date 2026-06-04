@@ -1,9 +1,9 @@
-import { IdentityAvatar } from "./identityavatar";
+import { IdentityAvatar } from './identityavatar';
 
 export type IdentityEntry = {
   /** ID of the DID store that contains this DID entry */
   didStoreId: string;
-  /** DID string (ex: did:elastos:abcdef) */
+  /** DID string (eg: did:elastos:abcdef) */
   didString: string;
   /** Identity entry display name, set by the user */
   name: string;
@@ -13,4 +13,4 @@ export type IdentityEntry = {
   didStoragePath: string;
   /** Date at which this identity entry was created. NOTE: some old sessions don't have this info */
   creationDate?: number;
-}
+};

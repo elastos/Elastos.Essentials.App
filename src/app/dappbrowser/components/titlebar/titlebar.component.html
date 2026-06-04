@@ -29,12 +29,12 @@
         <!-- Right icons -->
         <ion-col *ngIf="browserMode" size="1.25">
             <div class="img-btn img-btn-mark">
-                <img [src]="getIconPath(2)" (click)="onIconClicked(2)">
+                <img *ngIf="icons[2].visible" [src]="getIconPath(2)" (click)="onIconClicked(2)">
             </div>
         </ion-col>
         <ion-col *ngIf="browserMode" size="1.25">
             <div class="img-btn img-btn-mark">
-                <img [src]="getIconPath(3)" (click)="onIconClicked(3)">
+                <img *ngIf="icons[3].visible" [src]="getIconPath(3)" (click)="onIconClicked(3)">
             </div>
         </ion-col>
     </ion-row>

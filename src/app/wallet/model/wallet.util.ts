@@ -211,7 +211,7 @@ export class WalletUtil {
   public static estimateBTCFee(inputCount: number, outputCount: number, feeInSatPerKB: number) {
     // Native Segwit
     // Legacy
-    let estimateSize = inputCount * 148 + outputCount * 34 + 10;
+    let estimateSize = inputCount * 148 + outputCount * 34 + 30;
     let estimateFee = estimateSize * feeInSatPerKB / 1000;
     return Math.ceil(estimateFee);
   }

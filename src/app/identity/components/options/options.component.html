@@ -9,7 +9,7 @@
     <ion-row
       *ngIf="profileService.publishStatusFetched && profileService.didNeedsToBePublished"
       class="ion-activatable ripple"
-      (click)="profileService.showWarning('publishIdentity')"
+      (click)="profileService.showWarning('publishIdentity', null)"
     >
       <ion-label id="publish">{{ 'identity.publish' | translate }}</ion-label>
       <img src="/assets/identity/default/publish.svg">

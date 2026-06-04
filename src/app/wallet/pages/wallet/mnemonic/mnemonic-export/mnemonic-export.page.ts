@@ -40,6 +40,7 @@ export class MnemonicExportPage implements OnInit {
     public hasMnemonic = true;
     public evmPrivateKey = '';
     public tronPrivateKey = ''; // Only for tron network.
+    public btcPrivateKey = ''; // Only for Bitcoin network.
     public intentTransfer: IntentTransfer;
     private alreadySentIntentResponse = false;
 
@@ -166,6 +167,8 @@ export class MnemonicExportPage implements OnInit {
         if (!this.hasMnemonic) {
             this.titleBar.setTitle(this.translate.instant('wallet.privatekey'));
         } else {
+            this.btcPrivateKey = await this.masterWallet.getBTCPrivateKey(this.payPassword);
+
             if (this.networkService.activeNetwork.value.key === 'tron')
                 this.tronPrivateKey = await this.masterWallet.getTronPrivateKey(this.payPassword);
         }

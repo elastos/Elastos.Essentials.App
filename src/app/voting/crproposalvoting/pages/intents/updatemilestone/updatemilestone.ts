@@ -36,7 +36,7 @@ export class UpdatMilestonePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
     private originalRequestJWT: string;
-    private onGoingCommand: UpdateMilestoneCommand;
+    public onGoingCommand: UpdateMilestoneCommand;
     public signingAndSendingProposalResponse = false;
     public proposalDetail: ProposalDetails;
     public proposalDetailFetched = false;
