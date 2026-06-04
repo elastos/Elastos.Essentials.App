@@ -1,76 +1,83 @@
-import { lazyEthersImport } from "src/app/helpers/import.helper";
-import { Logger } from "src/app/logger";
-import { GlobalEthereumRPCService } from "src/app/services/global.ethereum.service";
+import { lazyEthersImport } from 'src/app/helpers/import.helper';
+import { Logger } from 'src/app/logger';
+import { GlobalEthereumRPCService } from 'src/app/services/global.ethereum.service';
 import { AnySubWallet } from 'src/app/wallet/model/networks/base/subwallets/subwallet';
-import { ERC1155Service } from "src/app/wallet/services/evm/erc1155.service";
-import { ERC721Service } from "src/app/wallet/services/evm/erc721.service";
-import { TRC20CoinService } from "src/app/wallet/services/tvm/trc20coin.service";
-import type { TransactionReceipt } from "web3-core";
-import { ERC20CoinInfo, ERC20CoinService } from "../../../services/evm/erc20coin.service";
-import { InscriptionOperation, InscriptionUtil } from "../../inscription";
-import { TransactionType } from "../../tx-providers/transaction.types";
-import type { AnyNetwork } from "../network";
-import { TronNetworkBase } from "../tron/network/tron.base.network";
-import { TronSubWallet } from "../tron/subwallets/tron.subwallet";
-import { EthTransaction } from "./evm.types";
-import { NFTResolvedInfo } from "./nfts/resolvedinfo";
-import { ERC20SubWallet } from "./subwallets/erc20.subwallet";
-import { AnyMainCoinEVMSubWallet } from "./subwallets/evm.subwallet";
+import { ERC1155Service } from 'src/app/wallet/services/evm/erc1155.service';
+import { ERC721Service } from 'src/app/wallet/services/evm/erc721.service';
+import { TRC20CoinService } from 'src/app/wallet/services/tvm/trc20coin.service';
+import type { TransactionReceipt } from 'web3-core';
+import { ERC20CoinInfo, ERC20CoinService } from '../../../services/evm/erc20coin.service';
+import { InscriptionOperation, InscriptionUtil } from '../../inscription';
+import { TransactionType } from '../../tx-providers/transaction.types';
+import type { AnyNetwork } from '../network';
+import { TronNetworkBase } from '../tron/network/tron.base.network';
+import { TronSubWallet } from '../tron/subwallets/tron.subwallet';
+import { EthTransaction } from './evm.types';
+import { NFTResolvedInfo } from './nfts/resolvedinfo';
+import { ERC20SubWallet } from './subwallets/erc20.subwallet';
+import { AnyMainCoinEVMSubWallet } from './subwallets/evm.subwallet';
 
 export enum ETHOperationType {
-  ERC20_TOKEN_APPROVE = "erc20_token_approve", // The contract seems to be a request to approve a caller to spend ERC20 tokens on behalf of the user
-  ERC721_TOKEN_APPROVE = "erc721_token_approve", // The contract seems to be a request to approve a caller to spend ERC721 tokens on behalf of the user
-  SEND_ERC20 = "send_erc20",
-  SEND_NFT = "send_nft",
-  SWAP = "swap",
-  ADD_LIQUIDITY = "add_liquidity",
-  REMOVE_LIQUIDITY = "remove_liquidity",
-  BRIDGE = "bridge",
-  WITHDRAW = "withdraw",
-  DEPOSIT = "deposit",
-  GET_REWARDS = "get_rewards",
-  STAKE = "stake",
-  INSCRIPTION = "inscription",
+  ERC20_TOKEN_APPROVE = 'erc20_token_approve', // The contract seems to be a request to approve a caller to spend ERC20 tokens on behalf of the user
+  ERC721_TOKEN_APPROVE = 'erc721_token_approve', // The contract seems to be a request to approve a caller to spend ERC721 tokens on behalf of the user
+  SEND_ERC20 = 'send_erc20',
+  RECEIVE_ERC20 = 'receive_erc20',
+  SEND_NFT = 'send_nft',
+  SWAP = 'swap',
+  ADD_LIQUIDITY = 'add_liquidity',
+  REMOVE_LIQUIDITY = 'remove_liquidity',
+  BRIDGE = 'bridge',
+  WITHDRAW = 'withdraw',
+  DEPOSIT = 'deposit',
+  GET_REWARDS = 'get_rewards',
+  STAKE = 'stake',
+  INSCRIPTION = 'inscription',
+  BTCD = 'btcd', // BTCD transaction
   // TODO: ERC721 and ERC1155 approve methods
-  OTHER_CONTRACT_CALL = "other_contract_call", // Generic / undetected transaction type
-  NOT_A_CONTRACT_CALL = "not_a_contract_call" // Standard transfer, no contract data payload
+  OTHER_CONTRACT_CALL = 'other_contract_call', // Generic / undetected transaction type
+  NOT_A_CONTRACT_CALL = 'not_a_contract_call' // Standard transfer, no contract data payload
 }
 
 export type EthContractOperation = {
   //opSignature4Bytes: string; // Event or method operation signature. Extracted from receipt topics. eg: 0xddf252ad for Transfer(address,address,uint256)
   description: string; // Operation description, human readable, not yet translated. Eg: wallet.ext-info-approve --> Send 218.56 ELK, Approve third party to spend USDC
   descriptionTranslationParams?: any; // Object containing parameters passed to the translation module along with the description key
-}
+};
 
 export type ApproveERC20Operation = EthContractOperation & {
   tokenName: string;
   symbol: string;
   decimals: number;
   spendingCap: string;
-}
+};
 
 export type SwapExactTokensOperation = EthContractOperation & {
   tokenName: string;
   symbol: string;
   amountIn: string; // WEI
   amountOut: string; // WEI
-  type: TransactionType
-}
+  type: TransactionType;
+};
 
 export type EthContractEvent = {
   description: string; // Event description, human readable, already translated. Eg: Sent 218.56 ELK, Approved third party to spend my USDC
-}
+};
 
 export type ETHTransactionInfo = {
   type: ETHOperationType; // Main transaction type based on the entry method calls in a contract.
   operation: EthContractOperation; // Main operation / method called in the contract
   events: EthContractEvent[];
-}
+};
 
 /**
  * Utility to extract various information such as a called method name, from a received web3 transaction
  * data (ex: 0x.......).
  */
+/** ERC20 transfer(address,uint256) */
+const ERC20_TRANSFER_SELECTOR = '0xa9059cbb';
+/** ERC20/ERC721 transferFrom(address,address,uint256) */
+const ERC20_TRANSFER_FROM_SELECTOR = '0x23b872dd';
+
 export class ETHTransactionInfoParser {
   constructor(private network: AnyNetwork) {}
 
@@ -79,8 +86,10 @@ export class ETHTransactionInfoParser {
    * @param txTo contract call destination address
    */
   public async computeFromTxData(txData: string, txTo: string): Promise<ETHTransactionInfo> {
-    if (!txData || !txData.startsWith("0x")) {
-      throw new Error("ETHTransactionInfoParser can be created only with a valid transaction data string starting with 0x");
+    if (!txData || !txData.startsWith('0x')) {
+      throw new Error(
+        'ETHTransactionInfoParser can be created only with a valid transaction data string starting with 0x'
+      );
     }
 
     let txInfo = this.createEmptyTransactionInfo();
@@ -92,20 +101,30 @@ export class ETHTransactionInfoParser {
    * @param receipt Published transaction receipt
    * @param txData Publish transaction input data (when contract was called)
    */
-  public async computeFromTxReceipt(receipt: TransactionReceipt, txData: string, subWallet: AnySubWallet): Promise<ETHTransactionInfo> {
-    if (!txData || !txData.startsWith("0x")) {
+  public async computeFromTxReceipt(
+    receipt: TransactionReceipt,
+    txData: string,
+    subWallet: AnySubWallet
+  ): Promise<ETHTransactionInfo> {
+    if (!txData || !txData.startsWith('0x')) {
       // Some transaction providers such as covalent don't provide the 'input'. So we try here to fetch that from the get transaction by hash API
       try {
-        let ethTransaction = <EthTransaction>await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.network.getRPCUrl(), receipt.transactionHash, subWallet.networkWallet.network.key);
-        if (ethTransaction)
-          txData = ethTransaction.input;
-      }
-      catch (e) {
+        let ethTransaction = <EthTransaction>(
+          await GlobalEthereumRPCService.instance.eth_getTransactionByHash(
+            this.network.getRPCUrl(),
+            receipt.transactionHash,
+            subWallet.networkWallet.network.key
+          )
+        );
+        if (ethTransaction) txData = ethTransaction.input;
+      } catch (e) {
         // Silent catch
       }
 
-      if (!txData || !txData.startsWith("0x")) {
-        throw new Error("ETHTransactionInfoParser can be created only with a valid transaction data string starting with 0x");
+      if (!txData || !txData.startsWith('0x')) {
+        throw new Error(
+          'ETHTransactionInfoParser can be created only with a valid transaction data string starting with 0x'
+        );
       }
     }
 
@@ -116,10 +135,15 @@ export class ETHTransactionInfoParser {
     return txInfo;
   }
 
-  public async computeOperation(subWallet: AnyMainCoinEVMSubWallet | ERC20SubWallet | TronSubWallet, txInfo: ETHTransactionInfo, txData: string, txTo?: string): Promise<void> {
+  public async computeOperation(
+    subWallet: AnyMainCoinEVMSubWallet | ERC20SubWallet | TronSubWallet,
+    txInfo: ETHTransactionInfo,
+    txData: string,
+    txTo?: string
+  ): Promise<void> {
     txInfo.type = ETHOperationType.OTHER_CONTRACT_CALL; // Default, if we don't find/want more specific
 
-    if (txData === "0x") {
+    if (txData === '0x') {
       txInfo.type = ETHOperationType.NOT_A_CONTRACT_CALL;
       return;
     }
@@ -150,15 +174,16 @@ export class ETHTransactionInfoParser {
         try {
           let coinInfo = await this.getERC1155TokenInfoOrThrow(txTo);
           if (coinInfo) {
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft-name', descriptionTranslationParams: { name: coinInfo.name } };
+            txInfo.operation = {
+              description: 'wallet.ext-tx-info-type-send-nft-name',
+              descriptionTranslationParams: { name: coinInfo.name }
+            };
+          } else {
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft' };
           }
-          else {
-            txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
-          }
-        }
-        catch (e) {
-          Logger.warn('wallet', 'ERC1155 exception', e)
-          txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
+        } catch (e) {
+          Logger.warn('wallet', 'ERC1155 exception', e);
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft' };
         }
         break;
 
@@ -167,15 +192,16 @@ export class ETHTransactionInfoParser {
         try {
           let coinInfo = await this.getERC721TokenInfoOrThrow(txTo);
           if (coinInfo) {
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft-name', descriptionTranslationParams: { name: coinInfo.name } };
+            txInfo.operation = {
+              description: 'wallet.ext-tx-info-type-send-nft-name',
+              descriptionTranslationParams: { name: coinInfo.name }
+            };
+          } else {
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft' };
           }
-          else {
-            txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
-          }
-        }
-        catch (e) {
-          Logger.warn('wallet', 'ERC721 exception', e)
-          txInfo.operation = { description: "wallet.ext-tx-info-type-send-nft" };
+        } catch (e) {
+          Logger.warn('wallet', 'ERC721 exception', e);
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-send-nft' };
         }
         break;
       case '0x23b872dd': // ERC20 or ERC721 transferFrom(address,address,uint256)
@@ -183,16 +209,29 @@ export class ETHTransactionInfoParser {
         try {
           let coinInfo = await this.getERC20TokenInfoOrThrow(txTo);
           if (coinInfo) {
-            txInfo.type = ETHOperationType.SEND_ERC20;
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol } };
-          }
-          else {
+            let params = await this.extractTransactionParamValues(
+              ['function transferFrom(address,address,uint256) public returns (bool success)'],
+              txData
+            );
+            let toAddress = this.stringTransactionParamAt(params, 1);
+            let description = '';
+            if (subWallet.getCurrentReceiverAddress().toLowerCase() == toAddress.toLowerCase()) {
+              txInfo.type = ETHOperationType.RECEIVE_ERC20;
+              description = 'wallet.ext-tx-info-type-receive-erc20';
+            } else {
+              txInfo.type = ETHOperationType.SEND_ERC20;
+              description = 'wallet.ext-tx-info-type-send-erc20';
+            }
+            txInfo.operation = {
+              description: description,
+              descriptionTranslationParams: { symbol: coinInfo.coinSymbol }
+            };
+          } else {
             txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
           }
 
           // TODO: Check if ERC721
-        }
-        catch (e) {
+        } catch (e) {
           txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
         }
         break;
@@ -201,49 +240,64 @@ export class ETHTransactionInfoParser {
         try {
           let coinInfo = await this.getERC20TokenInfoOrThrow(txTo);
           if (coinInfo) {
-            txInfo.type = ETHOperationType.SEND_ERC20;
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol } };
-          }
-          else
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
-        }
-        catch (e) {
+            let params = await this.extractTransactionParamValues(
+              ['function transfer(address,uint256) public returns (bool success)'],
+              txData
+            );
+            let toAddress = this.stringTransactionParamAt(params, 0);
+            let description = '';
+            if (subWallet.getCurrentReceiverAddress().toLowerCase() == toAddress.toLowerCase()) {
+              txInfo.type = ETHOperationType.RECEIVE_ERC20;
+              description = 'wallet.ext-tx-info-type-receive-erc20';
+            } else {
+              txInfo.type = ETHOperationType.SEND_ERC20;
+              description = 'wallet.ext-tx-info-type-send-erc20';
+            }
+            txInfo.operation = {
+              description: description,
+              descriptionTranslationParams: { symbol: coinInfo.coinSymbol }
+            };
+          } else txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
+        } catch (e) {
           txInfo.operation = { description: 'wallet.ext-tx-info-type-send-tokens' };
         }
         break;
 
       case '0x095ea7b3': // approve(address,uint256)
         try {
-          let params = await this.extractTransactionParamValues(["function approve(address,uint256) public returns (bool success)"], txData);
-          let amountIn = this.bigNumberTransactionParamAt(params, 1).toString()
+          let params = await this.extractTransactionParamValues(
+            ['function approve(address,uint256) public returns (bool success)'],
+            txData
+          );
+          let amountIn = this.bigNumberTransactionParamAt(params, 1).toString();
           // Method is "approve". "to" must be a ERC20 contract and we'll try to resolve the token name.
           let coinInfo = await this.getERC20TokenInfoOrThrow(txTo);
           let operation: ApproveERC20Operation = {
-            description: 'wallet.ext-tx-info-type-approve-erc20', descriptionTranslationParams: { symbol: coinInfo.coinSymbol },
+            description: 'wallet.ext-tx-info-type-approve-erc20',
+            descriptionTranslationParams: { symbol: coinInfo.coinSymbol },
             tokenName: coinInfo.coinName,
             symbol: coinInfo.coinSymbol,
             decimals: coinInfo.coinDecimals,
             spendingCap: amountIn
-          }
+          };
 
           txInfo.type = ETHOperationType.ERC20_TOKEN_APPROVE;
           txInfo.operation = operation;
-        }
-        catch (e) {
+        } catch (e) {
           try {
             let coinInfo = await this.getERC721TokenInfoOrThrow(txTo);
             let operation = {
-              description: 'wallet.ext-tx-info-type-approve-erc20', descriptionTranslationParams: { symbol: coinInfo.name },
+              description: 'wallet.ext-tx-info-type-approve-erc20',
+              descriptionTranslationParams: { symbol: coinInfo.name },
               tokenName: coinInfo.name,
               symbol: null,
               decimals: null,
               spendingCap: null
-            }
+            };
 
             txInfo.type = ETHOperationType.ERC721_TOKEN_APPROVE;
             txInfo.operation = operation;
-          }
-          catch (e) {
+          } catch (e) {
             txInfo.type = ETHOperationType.ERC20_TOKEN_APPROVE;
 
             let operation: ApproveERC20Operation = {
@@ -252,7 +306,7 @@ export class ETHTransactionInfoParser {
               symbol: null,
               decimals: null,
               spendingCap: null
-            }
+            };
             txInfo.operation = operation;
           }
         }
@@ -261,151 +315,291 @@ export class ETHTransactionInfoParser {
       case '0x18cbafe5': // swapExactTokensForETH(uint256,uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = await this.extractTransactionParamValues(["function swapExactTokensForETH(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(
+            ['function swapExactTokensForETH(uint256,uint256,address[],address,uint256) public returns (bool success)'],
+            txData
+          );
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
-          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString()
-          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString()
+          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString();
+          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString();
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source ERC20 token.
           let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
           let operation: SwapExactTokensOperation = {
-            description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() },
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: {
+              fromSymbol: fromCoinInfo.coinSymbol,
+              toSymbol: this.network.getMainTokenSymbol()
+            },
             tokenName: fromCoinInfo.coinName,
             symbol: fromCoinInfo.coinSymbol,
             amountIn: amountIn,
             amountOut: amountOut,
             type: TransactionType.RECEIVED
-          }
+          };
           txInfo.operation = operation;
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         }
         break;
 
       case '0x791ac947': // swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = await this.extractTransactionParamValues(["function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
-          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString()
-          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString()
+          let params = await this.extractTransactionParamValues(
+            [
+              'function swapExactTokensForETHSupportingFeeOnTransferTokens(uint256,uint256,address[],address,uint256) public returns (bool success)'
+            ],
+            txData
+          );
+          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString();
+          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString();
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source ERC20 token.
           let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
           let operation: SwapExactTokensOperation = {
-            description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: this.network.getMainTokenSymbol() },
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: {
+              fromSymbol: fromCoinInfo.coinSymbol,
+              toSymbol: this.network.getMainTokenSymbol()
+            },
             tokenName: fromCoinInfo.coinName,
             symbol: fromCoinInfo.coinSymbol,
             amountIn: amountIn,
             amountOut: amountOut,
             type: TransactionType.RECEIVED
-          }
+          };
           txInfo.operation = operation;
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         }
         break;
 
       case '0x7ff36ab5': // swapExactETHForTokens(uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = await this.extractTransactionParamValues(["function swapExactETHForTokens(uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(
+            ['function swapExactETHForTokens(uint256,address[],address,uint256) public returns (bool success)'],
+            txData
+          );
           let tokensPath = this.arrayTransactionParamAt(params, 1, 2);
           let toTokenAddress = tokensPath[tokensPath.length - 1]; // Last entry of tokensPath is the destination ERC20 token.
           let toCoinInfo = await this.getERC20TokenInfoOrThrow(toTokenAddress);
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: this.network.getMainTokenSymbol(), toSymbol: toCoinInfo.coinSymbol } };
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: {
+              fromSymbol: this.network.getMainTokenSymbol(),
+              toSymbol: toCoinInfo.coinSymbol
+            }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         }
         break;
 
       case '0xf253aaa7': // swapExactTokensForTokens(uint256 amountIn, uint256 amountOutMin, address[] path, address to, uint256 deadline, uint256[] time) returns (uint256[] amounts)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = await this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256, uint256[]) public returns (uint256[] amounts)"], txData);
+          let params = await this.extractTransactionParamValues(
+            [
+              'function swapExactTokensForTokens(uint256,uint256,address[],address,uint256, uint256[]) public returns (uint256[] amounts)'
+            ],
+            txData
+          );
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source token.
           let toTokenAddress = tokensPath[tokensPath.length - 1]; // Last entry is the destination token.
           let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
           let toCoinInfo = await this.getERC20TokenInfoOrThrow(toTokenAddress);
 
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: toCoinInfo.coinSymbol } };
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: toCoinInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         }
         break;
 
       case '0x38ed1739': // swapExactTokensForTokens(uint256,uint256,address[],address,uint256)
         txInfo.type = ETHOperationType.SWAP;
         try {
-          let params = await this.extractTransactionParamValues(["function swapExactTokensForTokens(uint256,uint256,address[],address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(
+            [
+              'function swapExactTokensForTokens(uint256,uint256,address[],address,uint256) public returns (bool success)'
+            ],
+            txData
+          );
           let tokensPath = this.arrayTransactionParamAt(params, 2, 2);
           let fromTokenAddress = tokensPath[0]; // First entry of tokensPath is the source token.
           let toTokenAddress = tokensPath[tokensPath.length - 1]; // Last entry is the destination token.
           let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
           let toCoinInfo = await this.getERC20TokenInfoOrThrow(toTokenAddress);
 
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-erc20', descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: toCoinInfo.coinSymbol } };
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: toCoinInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-swap-tokens" };
+        break;
+
+      case '0x14a559fb': // FastSwapEthToToken(uint256 amountOutMin, address token, address to, uint256 deadline)
+        txInfo.type = ETHOperationType.SWAP;
+        try {
+          let params = await this.extractTransactionParamValues(
+            [
+              'function FastSwapEthToToken(uint256,address,address,uint256) public returns (bool success)'
+            ],
+            txData
+          );
+
+          let toTokenAddress = this.stringTransactionParamAt(params, 1);
+          let toCoinInfo = await this.getERC20TokenInfoOrThrow(toTokenAddress);
+
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: {
+              fromSymbol: this.network.getMainTokenSymbol(),
+              toSymbol: toCoinInfo.coinSymbol
+            }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         }
+        break;
+      case '0x52a7c262': // FastSwapTokenToEth(uint256 amountIn, uint256 amountOutMin, address token, address to, uint256 deadline)
+        txInfo.type = ETHOperationType.SWAP;
+        try {
+          let params = await this.extractTransactionParamValues(
+            ['function FastSwapTokenToEth(uint256,uint256,address,address,uint256) public returns (bool success)'],
+            txData
+          );
+          let amountIn = this.bigNumberTransactionParamAt(params, 0).toString();
+          let amountOut = this.bigNumberTransactionParamAt(params, 1).toString();
+          let fromTokenAddress = this.stringTransactionParamAt(params, 2);
+          let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
+
+          let operation: SwapExactTokensOperation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: {
+              fromSymbol: fromCoinInfo.coinSymbol,
+              toSymbol: this.network.getMainTokenSymbol()
+            },
+            tokenName: fromCoinInfo.coinName,
+            symbol: fromCoinInfo.coinSymbol,
+            amountIn: amountIn,
+            amountOut: amountOut,
+            type: TransactionType.RECEIVED
+          };
+          txInfo.operation = operation;
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
+        }
+        break;
+      case '0x02af03f3': // FastSwapTokenToToken(uint256 amountIn, uint256 amountOutMin, address tokena, address tokenb, address to, uint256 deadline)
+        txInfo.type = ETHOperationType.SWAP;
+        try {
+          let params = await this.extractTransactionParamValues(
+            [
+              'function FastSwapTokenToToken(uint256,uint256,address,address,address,uint256) public returns (bool success)'
+            ],
+            txData
+          );
+          let fromTokenAddress = this.stringTransactionParamAt(params, 2);
+          let fromCoinInfo = await this.getERC20TokenInfoOrThrow(fromTokenAddress);
+          let toTokenAddress = this.stringTransactionParamAt(params, 3);
+          let toCoinInfo = await this.getERC20TokenInfoOrThrow(toTokenAddress);
+
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-swap-erc20',
+            descriptionTranslationParams: { fromSymbol: fromCoinInfo.coinSymbol, toSymbol: toCoinInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
+        }
+        break;
+      case '0xc38ae80d': // swap
+        txInfo.type = ETHOperationType.SWAP;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-swap-tokens' };
         break;
 
       case '0xad58bdd1': // relayTokens(address,address,uint256)
         txInfo.type = ETHOperationType.BRIDGE;
         try {
-          let params = await this.extractTransactionParamValues(["function relayTokens(address,address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(
+            ['function relayTokens(address,address,uint256) public returns (bool success)'],
+            txData
+          );
           let tokenAddress = this.stringTransactionParamAt(params, 0); // From
           let tokenInfo = await this.getERC20TokenInfoOrThrow(tokenAddress);
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-bridge-erc20', descriptionTranslationParams: { symbol: tokenInfo.coinSymbol }, };
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-bridge-tokens" };
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-bridge-erc20',
+            descriptionTranslationParams: { symbol: tokenInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-bridge-tokens' };
         }
         break;
 
       case '0xe8e33700': // addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256)
         txInfo.type = ETHOperationType.ADD_LIQUIDITY;
         try {
-          let params = await this.extractTransactionParamValues(["function addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(
+            [
+              'function addLiquidity(address,address,uint256,uint256,uint256,uint256,address,uint256) public returns (bool success)'
+            ],
+            txData
+          );
           let tokenAAddress = this.stringTransactionParamAt(params, 0);
           let tokenBAddress = this.stringTransactionParamAt(params, 1);
           let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
           let tokenBInfo = await this.getERC20TokenInfoOrThrow(tokenBAddress);
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-add-liquidity-with-symbols', descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol, symbolB: tokenBInfo.coinSymbol } };
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-liquidity-deposit" };
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-add-liquidity-with-symbols',
+            descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol, symbolB: tokenBInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-liquidity-deposit' };
         }
         break;
       case '0xf305d719': // addLiquidityETH(address token, uint256 amountTokenDesired, uint256 amountTokenMin, uint256 amountETHMin, address to, uint256 deadline)
         txInfo.type = ETHOperationType.ADD_LIQUIDITY;
         try {
-            let params = await this.extractTransactionParamValues(["function addLiquidityETH(address,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
-            let tokenAAddress = this.stringTransactionParamAt(params, 0);
-            let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
-            txInfo.operation = { description: 'wallet.ext-tx-info-type-add-liquidity-with-one-symbols', descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol } };
-          }
-          catch (e) {
-            txInfo.operation = { description: "wallet.ext-tx-info-type-liquidity-deposit" };
-          }
+          let params = await this.extractTransactionParamValues(
+            ['function addLiquidityETH(address,uint256,uint256,uint256,address,uint256) public returns (bool success)'],
+            txData
+          );
+          let tokenAAddress = this.stringTransactionParamAt(params, 0);
+          let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-add-liquidity-with-one-symbols',
+            descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-liquidity-deposit' };
+        }
         break;
 
       case '0xbaa2abde': // removeLiquidity(address,address,uint256,uint256,uint256,address,uint256)
         txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
         try {
-          let params = await this.extractTransactionParamValues(["function removeLiquidity(address,address,uint256,uint256,uint256,address,uint256) public returns (bool success)"], txData);
+          let params = await this.extractTransactionParamValues(
+            [
+              'function removeLiquidity(address,address,uint256,uint256,uint256,address,uint256) public returns (bool success)'
+            ],
+            txData
+          );
           let tokenAAddress = this.stringTransactionParamAt(params, 0);
           let tokenBAddress = this.stringTransactionParamAt(params, 1);
           let tokenAInfo = await this.getERC20TokenInfoOrThrow(tokenAAddress);
           let tokenBInfo = await this.getERC20TokenInfoOrThrow(tokenBAddress);
-          txInfo.operation = { description: 'wallet.ext-tx-info-type-remove-liquidity-with-symbols', descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol, symbolB: tokenBInfo.coinSymbol } };
-        }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-remove-liquidity" };
+          txInfo.operation = {
+            description: 'wallet.ext-tx-info-type-remove-liquidity-with-symbols',
+            descriptionTranslationParams: { symbolA: tokenAInfo.coinSymbol, symbolB: tokenBInfo.coinSymbol }
+          };
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-remove-liquidity' };
         }
         break;
 
@@ -413,112 +607,213 @@ export class ETHTransactionInfoParser {
       case '0xded9382a': // removeLiquidityETHWithPermit(address,uint256,uint256,uint256,address,uint256,bool,uint8,bytes32,bytes32)
       case '0x02751cec': // removeLiquidityETH(address token, uint256 liquidity, uint256 amountTokenMin, uint256 amountETHMin, address to, uint256 deadline)
         txInfo.type = ETHOperationType.REMOVE_LIQUIDITY;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-remove-liquidity" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-remove-liquidity' };
         break;
 
+      case '0x3ccfd60b': // withdraw()
       case '0x2e1a7d4d': // withdraw(uint256)
       case '0xf1d5314a': // withdrawApplication(uint256)
       case '0x441a3e70': // withdraw(uint256,uint256)
       case '0xd1abb907': // withdrawAndHarvest(uint256 pid, uint256 amount, address to)
         txInfo.type = ETHOperationType.WITHDRAW;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw" }; // TODO: refine - withdraw what?
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-withdraw' }; // TODO: refine - withdraw what?
+        break;
+      case '0xf8737918': // withdraw(string _addr, uint256 _amount, uint256 _fee), Send ela from side chain to main chain
+        txInfo.type = ETHOperationType.WITHDRAW;
+        txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw-to-mainchain" };
+        try {
+          let params = await this.extractTransactionParamValues(["function withdraw(string _addr, uint256 _amount, uint256 _fee) public returns (bool success)"], txData);
+          // Get the real receiving address of the main chain
+          let toAddress = this.stringTransactionParamAt(params, 0);
+          txInfo.operation.descriptionTranslationParams = { toAddress: toAddress };
+        }
+        catch (e) {
+          // Do nothing
+        }
         break;
       case '0x3d18b912': // getReward()
         txInfo.type = ETHOperationType.GET_REWARDS;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-get-rewards" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-get-rewards' };
         break;
       case '0x2459a699': // getBoosterReward()
         txInfo.type = ETHOperationType.GET_REWARDS;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-get-booster-rewards" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-get-booster-rewards' };
         break;
       case '0xe2bbb158': // deposit(uint256,uint256)
       case '0xb6b55f25': // deposit(uint256)
       case '0xd0e30db0': // deposit()
         txInfo.type = ETHOperationType.DEPOSIT;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-deposit" }; // TODO: refine - deposit what?
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-deposit' }; // TODO: refine - deposit what?
+        break;
+      case '0x3e44a583': // Receive ela from main chain
+        txInfo.type = ETHOperationType.DEPOSIT;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-deposit-from-mainchain' };
         break;
       case '0xa694fc3a': // stake(uint256)
       case '0xecd9ba82': // stakeWithPermit(uint256,uint256,uint8,bytes32,bytes32)
         txInfo.type = ETHOperationType.STAKE;
-        txInfo.operation = { description: "wallet.ext-tx-info-type-stake" }; // TODO: refine - stake what?
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-stake' }; // TODO: refine - stake what?
         break;
       case '0x1249c58b': // mint()
       case '0xd0def521': // mint(address,string)
       case '0xa0712d68': // mint(uint256 _mintAmount)
-        txInfo.operation = { description: "wallet.ext-tx-info-type-mint" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-mint' };
         break;
       case '0xdb006a75': // redeem(uint256)
-        txInfo.operation = { description: "wallet.ext-tx-info-type-redeem" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-redeem' };
         break;
       case '0x60de1a9b': // lock(address,uint64,bytes,uint256,uint256,uint256)
-        txInfo.operation = { description: "wallet.ext-tx-info-type-lock" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-lock' };
         break;
       case '0x53b1a6ce': // claimXmdx()
       case '0x718489c5': // claimUnlocked(address)
       case '0x4e71d92d': // claim()
       case '0x1c3db2e0': // claimComp(address holder, address[] cTokens)
-        txInfo.operation = { description: "wallet.ext-tx-info-type-claim-tokens" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-claim-tokens' };
         break;
 
       // BPoS NFT
       case '0xbeb6ff65': // Claim BPoS NFT
-        txInfo.operation = { description: "wallet.ext-tx-info-type-claim-bpos-nft" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-claim-bpos-nft' };
         break;
       case '0x11656f55':
-        txInfo.operation = { description: "wallet.ext-tx-info-type-destroy-bpos-nft" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-destroy-bpos-nft' };
         break;
 
       case '0x67d630fa': // receivePayload(string _addr, uint256 _amount, uint256 _fee), Send ela from side chain to main chain
+        txInfo.type = ETHOperationType.WITHDRAW;
         txInfo.operation = { description: "wallet.ext-tx-info-type-withdraw-to-mainchain" };
+        try {
+          let params = await this.extractTransactionParamValues(["function receivePayload(string _addr, uint256 _amount, uint256 _fee) public returns (bool success)"], txData);
+          // Get the real receiving address of the main chain
+          let toAddress = this.stringTransactionParamAt(params, 0);
+          txInfo.operation.descriptionTranslationParams = { toAddress: toAddress };
+        }
+        catch (e) {
+          // Do nothing
+        }
         break;
 
       case '0x18fccc76': // harvest(uint256 pid, address to)
-        txInfo.operation = { description: "wallet.ext-tx-info-type-harvest" };
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-harvest' };
+        break;
+      case '0x4641257d': // harvest()
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-harvest' };
         break;
 
       case '0x259ca365': // buyItem(address _nftAddress, uint256 _tokenId, address _owner)
         try {
-            let params = await this.extractTransactionParamValues(["function buyItem(address _nftAddress, uint256 _tokenId, address _owner) public returns (bool success)"], txData);
-            // let nftAddress = this.stringTransactionParamAt(params, 0);
-            // let coinInfo = await this.getERC721TokenInfoOrThrow(nftAddress);
-            // let tokenId = this.bigNumberTransactionParamAt(params, 1).toString()
-            let ownerAddress = this.stringTransactionParamAt(params, 2).toLowerCase();
+          let params = await this.extractTransactionParamValues(
+            ['function buyItem(address _nftAddress, uint256 _tokenId, address _owner) public returns (bool success)'],
+            txData
+          );
+          // let nftAddress = this.stringTransactionParamAt(params, 0);
+          // let coinInfo = await this.getERC721TokenInfoOrThrow(nftAddress);
+          // let tokenId = this.bigNumberTransactionParamAt(params, 1).toString()
+          let ownerAddress = this.stringTransactionParamAt(params, 2).toLowerCase();
 
-            if (subWallet.getCurrentReceiverAddress().toLowerCase() == ownerAddress) {
-                txInfo.operation = { description: "wallet.ext-tx-info-type-sell-nft" };
-            } else {
-                txInfo.operation = { description: "wallet.ext-tx-info-type-buy-nft" };
-            }
+          if (subWallet.getCurrentReceiverAddress().toLowerCase() == ownerAddress) {
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-sell-nft' };
+          } else {
+            txInfo.operation = { description: 'wallet.ext-tx-info-type-buy-nft' };
           }
-          catch (e) {
-            txInfo.operation = { description: "wallet.ext-tx-info-type-nft-tx" };
-          }
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-nft-tx' };
+        }
         break;
       case '0x64617461': // inscription
         try {
           txInfo.type = ETHOperationType.INSCRIPTION;
-          let inscriptionInfo = await InscriptionUtil.parseData(txData)
+          let inscriptionInfo = await InscriptionUtil.parseData(txData);
           switch (inscriptionInfo.operation) {
             case InscriptionOperation.Deploy:
-              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-deploy" };
+              txInfo.operation = { description: 'wallet.ext-tx-info-type-inscription-deploy' };
               break;
             case InscriptionOperation.Mint:
-              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-mint" };
+              txInfo.operation = { description: 'wallet.ext-tx-info-type-inscription-mint' };
               break;
             case InscriptionOperation.Transfer:
-              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-transfer" };
+              txInfo.operation = { description: 'wallet.ext-tx-info-type-inscription-transfer' };
               break;
             case InscriptionOperation.List:
-              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription-list" };
+              txInfo.operation = { description: 'wallet.ext-tx-info-type-inscription-list' };
               break;
             default:
-              txInfo.operation = { description: "wallet.ext-tx-info-type-inscription" };
+              txInfo.operation = { description: 'wallet.ext-tx-info-type-inscription' };
               break;
           }
+        } catch (e) {
+          txInfo.operation = { description: 'wallet.ext-tx-info-type-inscription' };
         }
-        catch (e) {
-          txInfo.operation = { description: "wallet.ext-tx-info-type-inscription" };
-        }
+        break;
+
+      // BTCD
+      case '0x79109baa': // createOrder(uint256 arg0, uint256 arg1)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-create-order' };
+        break;
+      case '0x27588c82': // takeOrder(string,bytes,bytes32,address,string)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-take-order' };
+        break;
+      case '0x07dbd942': // submitToLenderTransferProof(bytes,uint32,(bytes32[],bytes32,bytes32,bool[]),uint32)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-submit-to-lender-transfer-proof' };
+        break;
+      case '0x9f1b4720': // borrow(bytes arg0)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-borrow' };
+        break;
+      case '0xf8063a95': // repay(bytes,bytes)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-repay' };
+        break;
+      case '0x929de493': // submitRegularUnlockTransferProof, then close order
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-close-order' };
+        break;
+      case '0x99b29871': // claimTimeoutCompensation(bytes32 id)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-claim-timeout-compensation' };
+        break;
+      case '0xb2c7f878': // requestArbitration(bytes unLockSignature)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-request-arbitration' };
+        break;
+      case '0x14719e7b': // timeoutRepay(string repayerBtcAddress)
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-repurchase' };
+        break;
+      case '0x6985636b': // renewalOrderRequest
+        txInfo.type = ETHOperationType.BTCD;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-renewal-order-request' };
+        break;
+
+      // Staking
+      case '0x8305e5af': // create staking contract
+        txInfo.type = ETHOperationType.STAKE;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-create-stake' };
+        break;
+      case '0x7b0472f0': // stake(uint256 arg0, uint256 arg1)
+        txInfo.type = ETHOperationType.STAKE;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-stake' };
+        break;
+      case '0xc35aef7b': // extendStake()
+        txInfo.type = ETHOperationType.STAKE;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-extend-stake' };
+        break;
+
+      case '0xcb722992': // cross chain transfer, send
+        txInfo.type = ETHOperationType.BRIDGE;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-bridge-tokens' };
+        break;
+      case '0xac7ecafe': // cross chain transfer, receive
+        txInfo.type = ETHOperationType.BRIDGE;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-bridge-tokens' };
+        break;
+      case '0x59a756bd': // crossChainTransfer(address token, address to, uint256 amount, bytes32 txHash)
+        txInfo.type = ETHOperationType.BRIDGE;
+        txInfo.operation = { description: 'wallet.ext-tx-info-type-bridge-tokens' };
         break;
 
       // Known signatures but no clear way to display information about them = consider as generic contract call
@@ -537,16 +832,16 @@ export class ETHTransactionInfoParser {
         };
         break;
       default:
-        Logger.log('wallet', 'Unhandled EVM contract method action:', methodAction)
+        Logger.log('wallet', 'Unknown EVM contract method action:', methodAction);
         // Not handled before - return a generic transaction.
         if (txTo) {
-            txInfo.operation = {
-              description: 'wallet.coin-op-contract-call'
-            };
+          txInfo.operation = {
+            description: 'wallet.coin-op-contract-call'
+          };
         } else {
-            txInfo.operation = {
-              description: 'wallet.coin-op-contract-create'
-            };
+          txInfo.operation = {
+            description: 'wallet.coin-op-contract-create'
+          };
         }
     }
   }
@@ -561,8 +856,7 @@ export class ETHTransactionInfoParser {
     const { utils } = await lazyEthersImport();
     const iface = new utils.Interface(abi);
     let decodedData = iface.parseTransaction({ data: txData });
-    if (!decodedData)
-      return [];
+    if (!decodedData) return [];
 
     return <any[]>decodedData.args;
   }
@@ -572,15 +866,12 @@ export class ETHTransactionInfoParser {
    * Also ensures that the final array has a minimal size of minArraySize.
    */
   private arrayTransactionParamAt(params: any[], index: number, minArraySize: number): any[] {
-    if (params.length <= index)
-      throw new Error("Not enough values in params array");
+    if (params.length <= index) throw new Error('Not enough values in params array');
 
     let value = params[index];
-    if (!(value instanceof Array))
-      throw new Error("Target parameter is not an array");
+    if (!(value instanceof Array)) throw new Error('Target parameter is not an array');
 
-    if (value.length < minArraySize)
-      throw new Error("Target array has not enough values");
+    if (value.length < minArraySize) throw new Error('Target array has not enough values');
 
     return value;
   }
@@ -589,12 +880,10 @@ export class ETHTransactionInfoParser {
    * Returns the indexTH param value, making sure that this is a string type.
    */
   private stringTransactionParamAt(params: any[], index: number): string {
-    if (params.length <= index)
-      throw new Error("Not enough values in params array");
+    if (params.length <= index) throw new Error('Not enough values in params array');
 
     let value = params[index];
-    if (!(typeof value === "string"))
-      throw new Error("Target parameter is not a string");
+    if (!(typeof value === 'string')) throw new Error('Target parameter is not a string');
 
     return value;
   }
@@ -603,12 +892,10 @@ export class ETHTransactionInfoParser {
    * Returns the indexTH param value, making sure that this is a object type.
    */
   private bigNumberTransactionParamAt(params: any[], index: number): object {
-    if (params.length <= index)
-      throw new Error("Not enough values in params array");
+    if (params.length <= index) throw new Error('Not enough values in params array');
 
     let value = params[index];
-    if (!(typeof value === "object"))
-      throw new Error("Target parameter is not a object");
+    if (!(typeof value === 'object')) throw new Error('Target parameter is not a object');
 
     return value;
   }
@@ -620,36 +907,31 @@ export class ETHTransactionInfoParser {
     } else {
       coinInfo = await ERC20CoinService.instance.getCoinInfo(this.network, contractAddress); // txTo is the contract address
     }
-    if (!coinInfo)
-      throw new Error("Unable to get ERC20 token info");
+    if (!coinInfo) throw new Error('Unable to get ERC20 token info');
 
-    return coinInfo
+    return coinInfo;
   }
 
   private async getERC721TokenInfoOrThrow(contractAddress: string): Promise<NFTResolvedInfo> {
     let coinInfo = await ERC721Service.instance.getCoinInfo(contractAddress);
-    if (!coinInfo)
-      throw new Error("Unable to get ERC721 token info");
+    if (!coinInfo) throw new Error('Unable to get ERC721 token info');
 
-    return coinInfo
+    return coinInfo;
   }
 
   private async getERC1155TokenInfoOrThrow(contractAddress: string): Promise<NFTResolvedInfo> {
     let coinInfo = await ERC1155Service.instance.getCoinInfo(contractAddress);
-    if (!coinInfo)
-      throw new Error("Unable to get ERC1155 token info");
+    if (!coinInfo) throw new Error('Unable to get ERC1155 token info');
 
-    return coinInfo
+    return coinInfo;
   }
 
   private computeEvents(txInfo: ETHTransactionInfo, receipt: TransactionReceipt): Promise<void> {
-    if (!receipt || !receipt.logs)
-      return;
+    if (!receipt || !receipt.logs) return;
 
     txInfo.events = [];
     for (let log of receipt.logs) {
-      if (!log.topics || log.topics.length === 0)
-        continue;
+      if (!log.topics || log.topics.length === 0) continue;
 
       let topicAction = log.topics[0].substring(0, 10); // 0x + 4 hex bytes
       this.fillTxInfoEventsFromTopicAction(topicAction, log.topics, txInfo);
@@ -662,19 +944,22 @@ export class ETHTransactionInfoParser {
     let event: EthContractEvent = null;
     switch (topicAction.toLowerCase()) {
       case '0xc3d58168': // TransferSingle(address,address,address,uint256,uint256)
-        event = { description: `Sent out NFT` }; break;
+        event = { description: `Sent out NFT` };
+        break;
       case '0x8c5be1e5': // Approval(address,address,uint256)
-        event = { description: `Approved token spending` }; break;
+        event = { description: `Approved token spending` };
+        break;
       case '0xddf252ad': // Transfer(address,address,uint256)
-        event = { description: `Sent out token` }; break;
+        event = { description: `Sent out token` };
+        break;
       case '0xd78ad95f': // Swap(address,uint256,uint256,uint256,uint256,address)
-        event = { description: `Swapped tokens` }; break;
+        event = { description: `Swapped tokens` };
+        break;
       default:
-        console.log("unhandled topic action", topicAction)
+        console.log('unhandled topic action', topicAction);
     }
 
-    if (event)
-      txInfo.events.push(event);
+    if (event) txInfo.events.push(event);
   }
 
   private createEmptyTransactionInfo(): ETHTransactionInfo {
@@ -684,5 +969,47 @@ export class ETHTransactionInfoParser {
       events: []
     };
     return txInfo;
+  }
+
+
+  /**
+   * Parse ERC20 transfer/transferFrom input to extract recipient and value.
+   * Supports: transfer(address,uint256), transferFrom(address,address,uint256)
+   * @returns {to, value} or null if not a supported ERC20 transfer
+   */
+  public static async parseERC20TransferInput(input: string): Promise<{ to: string; value: string } | null> {
+    if (!input || !input.startsWith('0x') || input.length < 10) return null;
+    const selector = input.substring(0, 10).toLowerCase();
+    const abiAndExtractor: [string[], (args: any[]) => { to: any; value: any }] = (() => {
+      switch (selector) {
+        case ERC20_TRANSFER_SELECTOR:
+          return [
+            ['function transfer(address,uint256) public returns (bool success)'],
+            args => ({ to: args[0], value: args[1] })
+          ];
+        case ERC20_TRANSFER_FROM_SELECTOR:
+          return [
+            ['function transferFrom(address,address,uint256) public returns (bool success)'],
+            args => ({ to: args[1], value: args[2] })
+          ];
+        default:
+          return null;
+      }
+    })();
+    if (!abiAndExtractor) return null;
+    try {
+      const { utils } = await lazyEthersImport();
+      const iface = new utils.Interface(abiAndExtractor[0]);
+      const decoded = iface.parseTransaction({ data: input });
+      if (!decoded?.args || decoded.args.length < (selector === ERC20_TRANSFER_FROM_SELECTOR ? 3 : 2)) return null;
+      const { to, value } = abiAndExtractor[1](Array.from(decoded.args));
+      const toStr = typeof to === 'string' ? to : (to?.toString?.() ?? '');
+      return {
+        to: toStr.toLowerCase(),
+        value: value != null ? String(value) : '0'
+      };
+    } catch {
+      return null;
+    }
   }
 }

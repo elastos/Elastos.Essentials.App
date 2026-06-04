@@ -12,6 +12,7 @@ import { WalletPendingTransactionException } from 'src/app/model/exceptions/wall
 import { Util } from 'src/app/model/util';
 import { ElastosApiUrlType, GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
 import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
@@ -29,74 +30,79 @@ import { StandardCoinName } from '../../wallet/model/coin';
 import { WalletService } from '../../wallet/services/wallet.service';
 
 export enum DposStatus {
-    UNKNOWN,
-    DPoSV1,
-    DPoSV1V2,
-    DPoSV2
+  UNKNOWN,
+  DPoSV1,
+  DPoSV1V2,
+  DPoSV2
 }
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class VoteService implements GlobalService {
-    public activeWallet: ElastosStandardNetworkWallet = null;
+  public activeWallet: ElastosStandardNetworkWallet = null;
 
-    public networkWallet: AnyNetworkWallet = null;
-    public masterWalletId: string;
-    public elastosChainCode: StandardCoinName = StandardCoinName.ELA;
-    public sourceSubwallet: MainChainSubWallet;
+  public networkWallet: AnyNetworkWallet = null;
+  public masterWalletId: string;
+  public elastosChainCode: StandardCoinName = StandardCoinName.ELA;
+  public sourceSubwallet: MainChainSubWallet;
 
-    public intentAction: string;
-    public intentId: number;
+  public intentAction: string;
+  public intentId: number;
 
-    private context: string;
-    private route: string;
-    private routerOptions?: NavigationOptions;
+  private context: string;
+  private route: string;
+  private routerOptions?: NavigationOptions;
 
-    public crmembers: any[] = [];
-    public secretaryGeneralDid: string = null;
-    public secretaryGeneralPublicKey: string = null;
+  public crmembers: any[] = [];
+  public secretaryGeneralDid: string = null;
+  public secretaryGeneralPublicKey: string = null;
 
-    public deposit2K = 200000000000; // 2000 ELA
-    public deposit5K = 500000000000; // 5000 ELA
+  public deposit2K = 200000000000; // 2000 ELA
+  public deposit5K = 500000000000; // 5000 ELA
 
-    public needFetchData = {};
+  public needFetchData = {};
 
-    public dPoSStatus = new BehaviorSubject<DposStatus>(DposStatus.UNKNOWN);
+  public dPoSStatus = new BehaviorSubject<DposStatus>(DposStatus.UNKNOWN);
 
-    constructor(
-        private walletManager: WalletService,
-        public globalPopupService: GlobalPopupService,
-        private nav: GlobalNavService,
-        private globalNavService: GlobalNavService,
-        public jsonRPCService: GlobalJsonRPCService,
-        private globalSwitchNetworkService: GlobalSwitchNetworkService,
-        private globalElastosAPIService: GlobalElastosAPIService,
-        public translate: TranslateService,
-        private globalNative: GlobalNativeService,
-    ) {
-        this.elastosChainCode = StandardCoinName.ELA;
+  constructor(
+    private walletManager: WalletService,
+    public globalPopupService: GlobalPopupService,
+    private nav: GlobalNavService,
+    private globalNavService: GlobalNavService,
+    public jsonRPCService: GlobalJsonRPCService,
+    private globalSwitchNetworkService: GlobalSwitchNetworkService,
+    private globalElastosAPIService: GlobalElastosAPIService,
+    public translate: TranslateService,
+    private globalNative: GlobalNativeService,
+    private lightweightService: GlobalLightweightService
+  ) {
+    this.elastosChainCode = StandardCoinName.ELA;
+  }
+
+  public init() {
+    GlobalServiceManager.getInstance().registerService(this);
+  }
+
+  onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
+    // Only initialize voting functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      // The mainnet is already a BPOS consensus, so hardcode to DPoSV2.
+      this.dPoSStatus.next(DposStatus.DPoSV2);
+      // void this.getDPoSStatus().then(status => {
+      //     this.dPoSStatus.next(status);
+      // });
+      Logger.log('VoteService', 'Initializing voting functionality for user');
     }
+    return;
+  }
 
-    public init() {
-        GlobalServiceManager.getInstance().registerService(this);
-    }
+  onUserSignOut(): Promise<void> {
+    this.dPoSStatus.next(DposStatus.UNKNOWN);
+    return;
+  }
 
-    onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-        // The mainnet is already a BPOS consensus, so hardcode to DPoSV2.
-        this.dPoSStatus.next(DposStatus.DPoSV2);
-        // void this.getDPoSStatus().then(status => {
-        //     this.dPoSStatus.next(status);
-        // });
-        return;
-    }
-
-    onUserSignOut(): Promise<void> {
-        this.dPoSStatus.next(DposStatus.UNKNOWN);
-        return;
-    }
-
-    /* public init() {
+  /* public init() {
         Logger.log(App.VOTING, "VoteService init");
 
         this.needFetchData[App.DPOS_VOTING] = true;
@@ -108,433 +114,448 @@ export class VoteService implements GlobalService {
         // }
     } */
 
-    public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
-        this.clear();
-        this.needFetchData[context] = true;
+  public async selectWalletAndNavTo(context: string, route: string, routerOptions?: NavigationOptions) {
+    this.clear();
+    this.needFetchData[context] = true;
 
-        // Make sure the active network is elastos, otherwise, ask user to change
-        const elastosNetwork = await this.globalSwitchNetworkService.promptSwitchToElastosNetworkIfDifferent();
-        if (!elastosNetwork) {
-            return;// User has denied to switch network. Can't continue.
-        }
-
-        this.context = context;
-        this.route = route;
-        this.routerOptions = routerOptions;
-
-        this.elastosChainCode = StandardCoinName.ELA;
-        this.activeWallet = this.walletManager.getActiveNetworkWallet() as ElastosStandardNetworkWallet;
-
-        if (!this.activeWallet) {
-            const toCreateWallet = await this.globalPopupService.ionicConfirm('wallet.intent-no-wallet-title', 'wallet.intent-no-wallet-msg', 'common.ok', 'common.cancel');
-            if (toCreateWallet) {
-                void this.globalNavService.navigateTo(App.WALLET, "/wallet/settings", {
-                    state: {
-                        createWallet: true
-                    }
-                });
-            }
-            else {
-                return;
-            }
-        }
-        else {
-            await this.navigateTo(this.activeWallet, context);
-        }
+    // Make sure the active network is elastos, otherwise, ask user to change
+    const elastosNetwork = await this.globalSwitchNetworkService.promptSwitchToElastosNetworkIfDifferent();
+    if (!elastosNetwork) {
+      return; // User has denied to switch network. Can't continue.
     }
 
-    private clear() {
-        this.networkWallet = null;
-        this.masterWalletId = null;
-        this.intentAction = null;
-        this.intentId = null;
-    }
+    this.context = context;
+    this.route = route;
+    this.routerOptions = routerOptions;
 
-    private clearRoute() {
-        this.context = null;
-        this.route = null;
-        this.routerOptions = null;
-    }
+    this.elastosChainCode = StandardCoinName.ELA;
+    this.activeWallet = this.walletManager.getActiveNetworkWallet() as ElastosStandardNetworkWallet;
 
-    public async setNetworkWallet(networkWallet: ElastosStandardNetworkWallet, context: string) {
-        this.networkWallet = networkWallet;
-        this.masterWalletId = networkWallet.id;
-
-        var supportMultiSign = false;
-        switch (context) {
-            case App.DPOS2:
-            case App.STAKING:
-            case App.VOTING:
-            case App.CRCOUNCIL_VOTING:
-            case App.CRPROPOSAL_VOTING:
-            case App.CRSUGGESTION:
-                supportMultiSign = true;
-                break;
-            default:
-                break;
-        }
-
-        switch (networkWallet.masterWallet.type) {
-            case WalletType.STANDARD:
-                break;
-            case WalletType.LEDGER:
-                await this.globalPopupService.ionicAlert('common.warning', 'voting.ledger-reject-voting');
-                return false;
-            case WalletType.MULTI_SIG_STANDARD:
-            case WalletType.MULTI_SIG_EVM_GNOSIS:
-                if (!supportMultiSign) {
-                    await this.globalPopupService.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
-                    return false;
-                }
-                break;
-            default:
-                // Should not happen.
-                Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type)
-                return false;
-        }
-
-        this.sourceSubwallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.masterWalletId).getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
-        return true;
-    }
-
-    //For select-wallet page call
-    private async navigateTo(networkWallet: ElastosStandardNetworkWallet, context: string) {
-        if (!await this.setNetworkWallet(networkWallet, context)) {
-          return;
-        }
-
-        void this.nav.navigateTo(this.context, this.route, this.routerOptions);
-        this.clearRoute();
-    }
-
-    public async signAndSendRawTransaction(rawTx: any, context?: string, customRoute?: string): Promise<RawTransactionPublishResult> {
-        Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
-
-        if (!rawTx) {
-            // 1.can not get the utxo.
-            if (await this.sourceSubwallet.hasPendingBalance(false)) {
-                await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
-            } else {
-                await this.globalPopupService.ionicAlert('common.warning', 'common.network-or-server-error', "common.close");
-            }
-            return null;
-        }
-
-        const transfer = new Transfer();
-        Object.assign(transfer, {
-            masterWalletId: this.masterWalletId,
-            elastosChainCode: this.elastosChainCode,
-            rawTransaction: rawTx,
-            payPassword: '',
-            action: this.intentAction,
-            intentId: this.intentId,
+    if (!this.activeWallet) {
+      const toCreateWallet = await this.globalPopupService.ionicConfirm(
+        'wallet.intent-no-wallet-title',
+        'wallet.intent-no-wallet-msg',
+        'common.ok',
+        'common.cancel'
+      );
+      if (toCreateWallet) {
+        void this.globalNavService.navigateTo(App.WALLET, '/wallet/settings', {
+          state: {
+            createWallet: true
+          }
         });
+      } else {
+        return;
+      }
+    } else {
+      await this.navigateTo(this.activeWallet, context);
+    }
+  }
 
-        const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer, false);
-        if (result && result.published) {
-            if (context) {
-                void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
+  private clear() {
+    this.networkWallet = null;
+    this.masterWalletId = null;
+    this.intentAction = null;
+    this.intentId = null;
+  }
+
+  private clearRoute() {
+    this.context = null;
+    this.route = null;
+    this.routerOptions = null;
+  }
+
+  public async setNetworkWallet(networkWallet: ElastosStandardNetworkWallet, context: string) {
+    this.networkWallet = networkWallet;
+    this.masterWalletId = networkWallet.id;
+
+    var supportMultiSign = false;
+    switch (context) {
+      case App.DPOS2:
+      case App.STAKING:
+      case App.VOTING:
+      case App.CRCOUNCIL_VOTING:
+      case App.CRPROPOSAL_VOTING:
+      case App.CRSUGGESTION:
+        supportMultiSign = true;
+        break;
+      default:
+        break;
+    }
+
+    switch (networkWallet.masterWallet.type) {
+      case WalletType.STANDARD:
+        break;
+      case WalletType.LEDGER:
+        await this.globalPopupService.ionicAlert('common.warning', 'voting.ledger-reject-voting');
+        return false;
+      case WalletType.MULTI_SIG_STANDARD:
+      case WalletType.MULTI_SIG_EVM_GNOSIS:
+        if (!supportMultiSign) {
+          await this.globalPopupService.ionicAlert('common.warning', 'voting.multi-sign-reject-voting');
+          return false;
+        }
+        break;
+      default:
+        // Should not happen.
+        Logger.error('wallet', 'Not support, pls check the wallet type:', networkWallet.masterWallet.type);
+        return false;
+    }
+
+    this.sourceSubwallet = this.walletManager
+      .getNetworkWalletFromMasterWalletId(this.masterWalletId)
+      .getSubWallet(StandardCoinName.ELA) as MainChainSubWallet;
+    return true;
+  }
+
+  //For select-wallet page call
+  private async navigateTo(networkWallet: ElastosStandardNetworkWallet, context: string) {
+    if (!(await this.setNetworkWallet(networkWallet, context))) {
+      return;
+    }
+
+    void this.nav.navigateTo(this.context, this.route, this.routerOptions);
+    this.clearRoute();
+  }
+
+  public async signAndSendRawTransaction(
+    rawTx: any,
+    context?: string,
+    customRoute?: string
+  ): Promise<RawTransactionPublishResult> {
+    Logger.log(App.VOTING, 'signAndSendRawTransaction rawTx:', rawTx);
+
+    if (!rawTx) {
+      // 1.can not get the utxo.
+      if (await this.sourceSubwallet.hasPendingBalance(false)) {
+        await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', 'common.understood');
+      } else {
+        await this.globalPopupService.ionicAlert('common.warning', 'common.network-or-server-error', 'common.close');
+      }
+      return null;
+    }
+
+    const transfer = new Transfer();
+    Object.assign(transfer, {
+      masterWalletId: this.masterWalletId,
+      elastosChainCode: this.elastosChainCode,
+      rawTransaction: rawTx,
+      payPassword: '',
+      action: this.intentAction,
+      intentId: this.intentId
+    });
+
+    const result = await this.sourceSubwallet.signAndSendRawTransaction(rawTx, transfer, false);
+    if (result && result.published) {
+      if (context) {
+        void this.nav.navigateRoot(context, customRoute, { state: { refreash: true } });
+      } else {
+        void this.nav.navigateBack();
+      }
+      return result;
+    }
+    return null;
+  }
+
+  public toastSuccessfully(subject: string) {
+    let msg = this.translate.instant(subject) + this.translate.instant('voting.successfully');
+    this.globalNative.genericToast(msg, 2000);
+  }
+
+  public async popupErrorMessage(error: any, context?: string) {
+    if (!error) {
+      return;
+    }
+
+    let reworkedEx = WalletExceptionHelper.reworkedWalletTransactionException(error);
+    if (reworkedEx instanceof WalletPendingTransactionException) {
+      return await this.globalPopupService.ionicAlert(
+        'common.warning',
+        'wallet.transaction-pending',
+        'common.understood'
+      );
+    } else if (reworkedEx instanceof WalletNotEnoughUtxoException) {
+      return await this.globalPopupService.ionicAlert('common.warning', 'wallet.insufficient-balance');
+    }
+
+    var message = '';
+    if (typeof error == 'string') {
+      message = error as string;
+    } else if (error instanceof String) {
+      message = error.toString();
+    } else if (error instanceof Object && error.message) {
+      message = error.message;
+    }
+
+    if (message == '') {
+      return;
+    }
+
+    if (!context) {
+      context = App.VOTING;
+    }
+    await this.globalPopupService.ionicAlert('common.error', message);
+    Logger.error(context, 'error:', message);
+  }
+
+  public async checkWalletAvailableForVote(): Promise<boolean> {
+    if (await this.sourceSubwallet.hasPendingBalance(true)) {
+      await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', 'common.understood');
+      return false;
+    }
+
+    // BPOS transactions use the ELA of the first external address as the fee.
+    let firstExternalAddress = this.sourceSubwallet.getCurrentReceiverAddress();
+    let au = await this.sourceSubwallet.getAvailableUtxo(20000, firstExternalAddress);
+    if (!au.utxo) {
+      let message = '';
+      if (this.sourceSubwallet.isSingleAddress()) {
+        message = 'voting.not-enough-ela-for-vote';
+      } else {
+        message = 'voting.not-enough-ela-on-first-address-for-vote';
+      }
+      await this.globalPopupService.ionicAlert('wallet.insufficient-balance', message);
+      return false;
+    }
+
+    return true;
+  }
+
+  async getCurrentCRMembers() {
+    this.crmembers = [];
+
+    try {
+      const crRpcApi = this.globalElastosAPIService.getRPCApiUrlWithOverride(ElastosApiUrlType.CR_RPC);
+      let result = await this.jsonRPCService.httpGet(crRpcApi + '/api/council/list');
+      Logger.log(App.VOTING, 'Get Current CRMembers:', result);
+      if (result && result.data) {
+        if (result.data.council) {
+          this.crmembers = result.data.council;
+        }
+
+        if (result.data.secretariat) {
+          for (let item of result.data.secretariat) {
+            if (item.status == 'CURRENT') {
+              this.secretaryGeneralDid = item.did;
+              Logger.log(App.VOTING, 'secretaryGeneralDid:', this.secretaryGeneralDid);
+              break;
             }
-            else {
-                void this.nav.navigateBack();
-            }
-            return result;
+          }
         }
-        return null;
+      }
+    } catch (err) {
+      Logger.error(App.VOTING, 'getCurrentCRMembers error:', err);
+    }
+  }
+
+  async isCRMember() {
+    await this.getCurrentCRMembers();
+    var ret = false;
+    Logger.log(App.VOTING, 'my did:', DIDSessionsStore.signedInDIDString);
+    for (let member of this.crmembers) {
+      if (Util.isSelfDid(member.did)) {
+        ret = true;
+      }
+    }
+    Logger.log(App.VOTING, 'isCRMember:', ret);
+    return ret;
+  }
+
+  public getCrRpcApi(): string {
+    return this.globalElastosAPIService.getRPCApiUrlWithOverride(ElastosApiUrlType.CR_RPC);
+  }
+
+  public getElaRpcApi(): string {
+    return this.globalElastosAPIService.getRPCApiUrlWithOverride(ElastosApiUrlType.ELA_RPC);
+  }
+
+  async getSecretaryGeneralDid() {
+    if (this.secretaryGeneralDid == null) {
+      await this.getCurrentCRMembers();
     }
 
-    public toastSuccessfully(subject: string) {
-        let msg = this.translate.instant(subject) + this.translate.instant('voting.successfully');
-        this.globalNative.genericToast(msg, 2000);
+    return this.secretaryGeneralDid;
+  }
+
+  async getSecretaryGeneralPublicKey() {
+    if (this.secretaryGeneralPublicKey == null) {
+      try {
+        const result = await GlobalElastosAPIService.instance.getSecretaryGeneral();
+        Logger.log(App.VOTING, 'getSecretaryGeneralPublicKey', result);
+        if (result && result.secretarygeneral) {
+          this.secretaryGeneralPublicKey = result.secretarygeneral;
+        }
+      } catch (err) {
+        Logger.error(App.VOTING, 'getSecretaryGeneralPublicKey error', err);
+      }
     }
 
+    return this.secretaryGeneralPublicKey;
+  }
 
-    public async popupErrorMessage(error: any, context?: string) {
-        if (!error) {
-            return;
-        }
+  async isSecretaryGeneral(): Promise<boolean> {
+    let secretaryGeneralDid = await this.getSecretaryGeneralDid();
+    return (
+      secretaryGeneralDid == DIDSessionsStore.signedInDIDString ||
+      'did:elastos:' + secretaryGeneralDid == DIDSessionsStore.signedInDIDString
+    );
+  }
 
-        let reworkedEx = WalletExceptionHelper.reworkedWalletTransactionException(error);
-        if (reworkedEx instanceof WalletPendingTransactionException) {
-            return await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
-        } else if (reworkedEx instanceof WalletNotEnoughUtxoException) {
-            return await this.globalPopupService.ionicAlert('common.warning', 'wallet.insufficient-balance');
-        }
+  // The wallet that has no ELA subwallet can't vote, eg. the wallet imported by privat key.
+  canVote() {
+    return this.sourceSubwallet ? true : false;
+  }
 
-        var message = "";
-        if (typeof error == 'string') {
-            message = error as string;
-        }
-        else if (error instanceof String) {
-            message = error.toString();
-        }
-        else if ((error instanceof Object) && error.message) {
-            message = error.message;
-        }
-
-        if (message == "") {
-            return;
-        }
-
-        if (!context) {
-            context = App.VOTING;
-        }
-        await this.globalPopupService.ionicAlert("common.error", message);
-        Logger.error(context, 'error:', message);
+  async getConfirmCount(txid: string): Promise<number> {
+    //Get ower dpos info
+    const result = await GlobalElastosAPIService.instance.getRawTransaction(txid);
+    if (result && result.confirmations) {
+      return result.confirmations;
     }
 
-    public async checkWalletAvailableForVote(): Promise<boolean> {
-        if (await this.sourceSubwallet.hasPendingBalance(true)) {
-            await this.globalPopupService.ionicAlert("common.warning", 'wallet.transaction-pending', "common.understood");
-            return false;
-        }
+    return -1;
+  }
 
-        // BPOS transactions use the ELA of the first external address as the fee.
-        let firstExternalAddress = this.sourceSubwallet.getCurrentReceiverAddress();
-        let au = await this.sourceSubwallet.getAvailableUtxo(20000, firstExternalAddress);
-        if (!au.utxo) {
-            let message = '';
-            if (this.sourceSubwallet.isSingleAddress()) {
-                message = 'voting.not-enough-ela-for-vote';
-            } else {
-                message = 'voting.not-enough-ela-on-first-address-for-vote';
-            }
-            await this.globalPopupService.ionicAlert('wallet.insufficient-balance', message);
-            return false;
-        }
+  /**
+   * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
+   * funds won't be enough to vote.
+   * Reserve some utxos so that other votes can be executed without changing the dpos voting.
+   */
+  votingFees(): number {
+    return 100000; // The unit is SELA, 100000 SELA = 0.001ELA. The real fee is 10000 SELA
+  }
 
-        return true;
+  getRawBalanceSpendable(): BigNumber {
+    let ret = this.sourceSubwallet.getRawBalanceSpendable();
+    if (ret == null) {
+      ret = new BigNumber(0);
+    }
+    return ret;
+  }
+
+  async getMaxVotes(): Promise<number> {
+    await this.sourceSubwallet.updateBalanceSpendable();
+    const stakeAmount = this.getRawBalanceSpendable().minus(this.votingFees());
+    if (!stakeAmount.isNegative()) {
+      return Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
+    } else {
+      return 0;
+    }
+  }
+
+  async checkBalanceForRegistration(depositAmount: number): Promise<boolean> {
+    let amount = depositAmount + this.votingFees();
+    await this.sourceSubwallet.updateBalanceSpendable();
+    if (this.getRawBalanceSpendable().lt(amount)) {
+      return false;
+    }
+    return true;
+  }
+
+  getRemainingTimeString(remainingBlockCount: number): Promise<string> {
+    var ret;
+    if (remainingBlockCount >= 720 * 2) {
+      //more 2 days
+      ret = ' ' + Math.floor(remainingBlockCount / 720) + ' ' + this.translate.instant('voting.days');
+    } else if (remainingBlockCount > 720) {
+      ret =
+        ' 1 ' +
+        this.translate.instant('voting.day') +
+        ' ' +
+        Math.floor((remainingBlockCount % 720) / 30) +
+        ' ' +
+        this.translate.instant('voting.hours');
+    } else if (remainingBlockCount == 720) {
+      ret = ' 1 ' + this.translate.instant('voting.day');
+    } else if (remainingBlockCount > 60) {
+      ret = ' ' + Math.floor(remainingBlockCount / 30) + ' ' + this.translate.instant('voting.hours');
+    } else if (remainingBlockCount > 30) {
+      ret =
+        ' ' +
+        Math.floor(remainingBlockCount / 30) +
+        ' ' +
+        this.translate.instant('voting.hours') +
+        ' ' +
+        Math.floor(remainingBlockCount % 30) * 2 +
+        ' ' +
+        this.translate.instant('voting.minutes');
+    } else if (remainingBlockCount == 30) {
+      ret = ' 1 ' + this.translate.instant('voting.hours');
+    } else {
+      ret = ' ' + remainingBlockCount * 2 + ' ' + this.translate.instant('voting.minutes');
+    }
+    return ret;
+  }
+
+  async checkPendingBalance(): Promise<boolean> {
+    if (await this.sourceSubwallet.hasPendingBalance(true)) {
+      await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', 'common.understood');
+      return false;
+    }
+    return true;
+  }
+
+  async getWalletFirstPublicKey() {
+    let ret = await this.sourceSubwallet.getPublicKeys(0, 1, false);
+    if (ret) {
+      if (ret instanceof Array) {
+        return ret[0];
+      } else return ret;
+    }
+  }
+
+  async getDidPublicKey() {
+    return await Util.getSelfPublicKey();
+  }
+
+  async isSamePublicKey(): Promise<boolean> {
+    let ret1 = await this.getDidPublicKey();
+    let ret2 = await this.getWalletFirstPublicKey();
+    return ret1 == ret2;
+  }
+
+  isMuiltWallet(): boolean {
+    if (
+      this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD ||
+      this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_EVM_GNOSIS
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  private async getDPoSStatus(): Promise<DposStatus> {
+    Logger.log(App.VOTING, 'getDPoSStatus...');
+
+    const param = {
+      method: 'getdposv2info'
+    };
+
+    try {
+      const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
+      Logger.log(App.VOTING, 'Received DPoS status response', result);
+      if (result && result.height) {
+        if (result.height < result.dposv2transitstartheight) {
+          return DposStatus.DPoSV1;
+        } else if (result.height >= result.dposv2transitstartheight && result.height < result.dposv2activeheight) {
+          return DposStatus.DPoSV1V2;
+        } else if (result.height >= result.dposv2activeheight) {
+          return DposStatus.DPoSV2;
+        }
+      }
+    } catch (err) {
+      Logger.error(App.VOTING, 'getDPoSStatus error', err);
+
+      if (typeof err === 'object' && 'code' in err) {
+        if (err.code === -32601) {
+          // On mainnet at first, getdposv2info doesn't exist. In that case, consider the
+          // status as v1, not as unknown.
+          // JSON-RPC method getdposv2info not found
+          return DposStatus.DPoSV1;
+        }
+      }
     }
 
-    async getCurrentCRMembers() {
-        this.crmembers = [];
-
-        try {
-            const crRpcApi = this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
-            let result = await this.jsonRPCService.httpGet(crRpcApi + "/api/council/list");
-            Logger.log(App.VOTING, 'Get Current CRMembers:', result);
-            if (result && result.data) {
-                if (result.data.council) {
-                    this.crmembers = result.data.council;
-                }
-
-                if (result.data.secretariat) {
-                    for (let item of result.data.secretariat) {
-                        if (item.status == 'CURRENT') {
-                            this.secretaryGeneralDid = item.did;
-                            Logger.log(App.VOTING, 'secretaryGeneralDid:', this.secretaryGeneralDid);
-                            break;
-                        }
-                    }
-                }
-            }
-
-        }
-        catch (err) {
-            Logger.error(App.VOTING, 'getCurrentCRMembers error:', err);
-        }
-    }
-
-    async isCRMember() {
-        await this.getCurrentCRMembers();
-        var ret = false;
-        Logger.log(App.VOTING, 'my did:', DIDSessionsStore.signedInDIDString);
-        for (let member of this.crmembers) {
-            if (Util.isSelfDid(member.did)) {
-                ret = true;
-            }
-        }
-        Logger.log(App.VOTING, 'isCRMember:', ret);
-        return ret;
-    }
-
-    public getCrRpcApi(): string {
-        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.CR_RPC);
-    }
-
-    public getElaRpcApi(): string {
-        return this.globalElastosAPIService.getApiUrl(ElastosApiUrlType.ELA_RPC);
-    }
-
-    async getSecretaryGeneralDid() {
-        if (this.secretaryGeneralDid == null) {
-            await this.getCurrentCRMembers();
-        }
-
-        return this.secretaryGeneralDid;
-    }
-
-    async getSecretaryGeneralPublicKey() {
-        if (this.secretaryGeneralPublicKey == null) {
-            try {
-                const result = await GlobalElastosAPIService.instance.getSecretaryGeneral();
-                Logger.log(App.VOTING, 'getSecretaryGeneralPublicKey', result);
-                if (result && result.secretarygeneral) {
-                    this.secretaryGeneralPublicKey = result.secretarygeneral;
-                }
-            }
-            catch (err) {
-                Logger.error(App.VOTING, 'getSecretaryGeneralPublicKey error', err);
-            }
-        }
-
-        return this.secretaryGeneralPublicKey;
-    }
-
-    async isSecretaryGeneral(): Promise<boolean> {
-        let secretaryGeneralDid = await this.getSecretaryGeneralDid();
-        return (secretaryGeneralDid == DIDSessionsStore.signedInDIDString) || (("did:elastos:" + secretaryGeneralDid) == DIDSessionsStore.signedInDIDString);
-    }
-
-    // The wallet that has no ELA subwallet can't vote, eg. the wallet imported by privat key.
-    canVote() {
-        return this.sourceSubwallet ? true : false;
-    }
-
-    async getConfirmCount(txid: string): Promise<number> {
-        //Get ower dpos info
-        const result = await GlobalElastosAPIService.instance.getRawTransaction(txid);
-        if (result && result.confirmations) {
-            return result.confirmations;
-        }
-
-        return -1;
-    }
-
-    /**
-     * Fees needed to pay for the vote transaction. They have to be deduced from the total amount otherwise
-     * funds won't be enough to vote.
-     * Reserve some utxos so that other votes can be executed without changing the dpos voting.
-     */
-    votingFees(): number {
-        return 100000; // The unit is SELA, 100000 SELA = 0.001ELA. The real fee is 10000 SELA
-    }
-
-    getRawBalanceSpendable(): BigNumber {
-        let ret = this.sourceSubwallet.getRawBalanceSpendable();
-        if (ret == null) {
-            ret = new BigNumber(0);
-        }
-        return ret;
-    }
-
-    async getMaxVotes(): Promise<number> {
-        await this.sourceSubwallet.updateBalanceSpendable();
-        const stakeAmount = this.getRawBalanceSpendable().minus(this.votingFees());
-        if (!stakeAmount.isNegative()) {
-            return Math.floor(stakeAmount.dividedBy(Config.SELAAsBigNumber).toNumber());
-        }
-        else {
-            return 0;
-        }
-    }
-
-    async checkBalanceForRegistration(depositAmount: number): Promise<boolean> {
-        let amount = depositAmount + this.votingFees();
-        await this.sourceSubwallet.updateBalanceSpendable();
-        if (this.getRawBalanceSpendable().lt(amount)) {
-            return false;
-        }
-        return true;
-    }
-
-    getRemainingTimeString(remainingBlockCount: number): Promise<string> {
-        var ret;
-        if (remainingBlockCount >= (720 * 2)) { //more 2 days
-            ret = " " + Math.floor(remainingBlockCount / 720) + " " + this.translate.instant('voting.days');
-        }
-        else if (remainingBlockCount > 720) {
-            ret = " 1 " + this.translate.instant('voting.day') + " " + Math.floor((remainingBlockCount % 720) / 30) + " " + this.translate.instant('voting.hours');
-        }
-        else if (remainingBlockCount == 720) {
-            ret = " 1 " + this.translate.instant('voting.day');
-        }
-        else if (remainingBlockCount > 60) {
-            ret = " " + Math.floor(remainingBlockCount / 30) + " " + this.translate.instant('voting.hours');
-        }
-        else if (remainingBlockCount > 30) {
-            ret = " " + Math.floor(remainingBlockCount / 30) + " " + this.translate.instant('voting.hours') + " "
-                + Math.floor(remainingBlockCount % 30) * 2 + " " + this.translate.instant('voting.minutes');
-        }
-        else if (remainingBlockCount == 30) {
-            ret = " 1 " + this.translate.instant('voting.hours');
-        }
-        else {
-            ret = " " + remainingBlockCount * 2 + " " + this.translate.instant('voting.minutes');
-        }
-        return ret;
-    }
-
-    async checkPendingBalance(): Promise<boolean> {
-        if (await this.sourceSubwallet.hasPendingBalance(true)) {
-            await this.globalPopupService.ionicAlert('common.warning', 'wallet.transaction-pending', "common.understood");
-            return false;
-        }
-        return true;
-    }
-
-    async getWalletFirstPublicKey() {
-        let ret = await this.sourceSubwallet.getPublicKeys(0, 1, false);
-        if (ret) {
-            if (ret instanceof Array) {
-                return ret[0]
-            } else return ret;
-        }
-    }
-
-    async getDidPublicKey() {
-        return await Util.getSelfPublicKey();
-    }
-
-    async isSamePublicKey(): Promise<boolean> {
-        let ret1 = await this.getDidPublicKey();
-        let ret2 = await this.getWalletFirstPublicKey();
-        return ret1 == ret2;
-    }
-
-    isMuiltWallet(): boolean {
-        if (this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_STANDARD
-            || this.sourceSubwallet.masterWallet.type == WalletType.MULTI_SIG_EVM_GNOSIS) {
-            return true;
-        }
-        return false
-    }
-
-    private async getDPoSStatus(): Promise<DposStatus> {
-        Logger.log(App.VOTING, 'getDPoSStatus...');
-
-        const param = {
-            method: 'getdposv2info',
-        };
-
-        try {
-            const result = await this.jsonRPCService.httpPost(this.getElaRpcApi(), param);
-            Logger.log(App.VOTING, 'Received DPoS status response', result);
-            if (result && result.height) {
-                if (result.height < result.dposv2transitstartheight) {
-                    return DposStatus.DPoSV1;
-                }
-                else if (result.height >= result.dposv2transitstartheight && result.height < result.dposv2activeheight) {
-                    return DposStatus.DPoSV1V2;
-                }
-                else if (result.height >= result.dposv2activeheight) {
-                    return DposStatus.DPoSV2;
-                }
-            }
-        }
-        catch (err) {
-            Logger.error(App.VOTING, 'getDPoSStatus error', err);
-
-            if (typeof err === "object" && "code" in err) {
-                if (err.code === -32601) {
-                    // On mainnet at first, getdposv2info doesn't exist. In that case, consider the
-                    // status as v1, not as unknown.
-                    // JSON-RPC method getdposv2info not found
-                    return DposStatus.DPoSV1;
-                }
-            }
-        }
-
-        return DposStatus.UNKNOWN;
-    }
+    return DposStatus.UNKNOWN;
+  }
 }

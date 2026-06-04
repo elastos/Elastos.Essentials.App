@@ -307,32 +307,35 @@ public class DappBrowserClient extends WebViewClient {
                     redirectUrl = connection.getHeaderField("Location");
                 }
                 else {
-                    InputStream inputStream = connection.getInputStream();
-                    inputStream = injectJSInHeadTag(inputStream);
+                    String mimeType = connection.getContentType(); // eg: text/html; charset=utf-8
+                    if (mimeType == null || mimeType.contains("text/html")) { // Don't handle non html files
+                        InputStream inputStream = connection.getInputStream();
+                        inputStream = injectJSInHeadTag(inputStream);
 
-                    if (inputStream != null) {
-                        String encoding = connection.getHeaderField("encoding");
-                        if (encoding == null) {
-                            //TODO:: maybe try get charset from mimeType.
-                            encoding = "UTF-8";
-                        }
+                        if (inputStream != null) {
+                            String encoding = connection.getHeaderField("encoding");
+                            if (encoding == null) {
+                                //TODO:: maybe try get charset from mimeType.
+                                encoding = "UTF-8";
+                            }
 
-                        resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
+                            resourceResponse = new WebResourceResponse("text/html", encoding, inputStream);
 
-                        //set headers
-                        Map<String, String> responseHeaders = new HashMap<String, String>();
-                        Map<String, List<String>> map = connection.getHeaderFields();
-                        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
-                            responseHeaders.put(entry.getKey(), connection.getHeaderField(entry.getKey()));
-                        }
-                        resourceResponse.setResponseHeaders(responseHeaders);
+                            //set headers
+                            Map<String, String> responseHeaders = new HashMap<String, String>();
+                            Map<String, List<String>> map = connection.getHeaderFields();
+                            for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+                                responseHeaders.put(entry.getKey(), connection.getHeaderField(entry.getKey()));
+                            }
+                            resourceResponse.setResponseHeaders(responseHeaders);
 
-                        //set response code
-                        if (responseCode != 200) {
-                            //use reflection to set the actual response code, if don't will crash
-                            Field f = WebResourceResponse.class.getDeclaredField("mStatusCode");
-                            f.setAccessible(true);
-                            f.setInt(resourceResponse, responseCode);
+                            //set response code
+                            if (responseCode != 200) {
+                                //use reflection to set the actual response code, if don't will crash
+                                Field f = WebResourceResponse.class.getDeclaredField("mStatusCode");
+                                f.setAccessible(true);
+                                f.setInt(resourceResponse, responseCode);
+                            }
                         }
                     }
                 }

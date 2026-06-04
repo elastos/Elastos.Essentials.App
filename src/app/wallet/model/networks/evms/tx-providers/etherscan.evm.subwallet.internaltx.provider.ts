@@ -5,15 +5,21 @@ import { SubWalletTransactionProvider } from "../../../tx-providers/subwallet.pr
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
-import { EthTransaction } from "../evm.types";
+import { EtherscanAPIVersion, EthTransaction } from "../evm.types";
+import { EVMNetwork } from "../evm.network";
 
 const MAX_RESULTS_PER_FETCH = 30;
 
 export class EtherscanEVMSubWalletInternalTransactionProvider<SubWalletType extends AnySubWallet> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   protected canFetchMore = true;
+  private chainid = -1;
 
-  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private apiKey?: string) {
+  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private apiKey?: string, private apiVersion = EtherscanAPIVersion.V1) {
     super(provider, subWallet);
+
+    if (apiVersion === EtherscanAPIVersion.V2) {
+      this.chainid = (this.subWallet.networkWallet.network as EVMNetwork).getMainChainID()
+    }
   }
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
@@ -62,11 +68,15 @@ export class EtherscanEVMSubWalletInternalTransactionProvider<SubWalletType exte
     if (this.apiKey)
       txListUrl += '&apikey=' + this.apiKey;
 
+    if (this.apiVersion === EtherscanAPIVersion.V2) {
+      txListUrl += `&chainid=${this.chainid}`
+    }
+
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, this.subWallet.networkWallet.network.key);
       let transactions = result.result as EthTransaction[];
       if (!(transactions instanceof Array)) {
-        Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)
+        Logger.warn('wallet', 'Etherscan internal transaction fetchTransactions: invalid transactions:', transactions)
         return null;
       }
       if (transactions.length < MAX_RESULTS_PER_FETCH) {
@@ -75,7 +85,7 @@ export class EtherscanEVMSubWalletInternalTransactionProvider<SubWalletType exte
         this.canFetchMore = false;
       }
 
-      await this.saveTransactions(transactions);
+      await this.saveTransactions(transactions, !afterTransaction);
     } catch (e) {
       Logger.error('wallet', 'EVMSubWalletInternalTransactionProvider fetchTransactions error:', e)
     }

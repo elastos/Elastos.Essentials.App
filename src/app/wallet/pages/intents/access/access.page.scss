@@ -7,7 +7,7 @@
     padding: 20px 10px;
     background-image: url('/assets/wallet/background/intent.svg');
     object-fit: cover;
-  
+
     ion-card {
         margin: 0;
         background: #ffffff;
@@ -18,21 +18,12 @@
         box-shadow: 0 3px 15px 0 #ededf0;
         border-radius: 15px;
         padding: 25px 15px 30px;
-    
-        img {
-            object-fit: contain;
+
+        .inline-svg {
+            width: 50px;
+            height: 50px;
         }
 
-        .wallet {
-            width: 61.4px;
-            height: 41.6px;
-        }
-
-        .warning {
-            width: 56px;
-            height: 56px;
-        }
-    
         ion-card-title {
             font-size: 21px;
             font-weight: 600;
@@ -40,7 +31,7 @@
             color: #2e2f4e;
             margin: 15px 15px 10px;
         }
-    
+
         ion-card-subtitle {
             text-transform: none;
             font-size: 13px;
@@ -50,10 +41,10 @@
             margin: 0 15px;
         }
     }
-  
+
     .msg-container {
         padding: 20px 20px 5px;
-    
+
         p {
             font-size: 16px;
             font-weight: 600;
@@ -61,14 +52,14 @@
             text-align: center;
             color: #2e2f4e;
         }
-    
+
         .second-msg {
             color: #8888b0;
             text-align: left;
             margin: 30px 0 10px;
         }
     }
-  
+
     .data-row {
         box-shadow: 0 3px 15px 0 #ededf0;
         background: #ffffff;
@@ -77,7 +68,7 @@
         margin-bottom: 7.5px;
         display: flex;
         flex-direction: column;
-    
+
         p {
             font-size: 13px;
             font-weight: 600;
@@ -86,7 +77,7 @@
             color: #2e2f4e;
             margin: 10px 0 2.5px;
         }
-    
+
         h5 {
             margin: 0 0 10px;
             font-size: 13px;
@@ -99,39 +90,17 @@
     }
 
     .btn {
-        height: 47px;
         width: 46.5%;
         position: fixed;
         bottom: 20px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 8px;
-
-        ion-label {
-            font-size: 17px;
-            font-weight: 500;
-        }
     }
 
     .cancel {
         left: 2%;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #ffffff;
-
-        ion-label {
-            color: #000000;
-        }
     }
 
     .confirm {
         right: 2%;
-        box-shadow: 0 3px 15px 0 #ededf0;
-        background-color: #6e23d0;
-
-        ion-label {
-            color: #ffffff;
-        }
     }
 }
 

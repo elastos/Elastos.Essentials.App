@@ -250,7 +250,11 @@ export class ScanPage {
                                 }
                             }
 
-                            image.src = "data:image/png;base64," + data; // base64 string
+                            if (data.startsWith("data:")) {
+                                image.src = data;
+                            } else {
+                                image.src = "data:image/png;base64," + data; // base64 string
+                            }
 
                             // Free the memory
                             navigator.camera.cleanup(() => { }, (err) => { });

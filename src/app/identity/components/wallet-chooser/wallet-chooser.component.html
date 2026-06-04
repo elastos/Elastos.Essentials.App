@@ -8,8 +8,7 @@
             </ion-row>
             <ion-row *ngFor="let masterWallet of masterWalletsToShowInList" class="wallet-row ion-activatable ripple"
                 [class.disable]="!supportsWalletCredentials(masterWallet)"
-                [class.selected-wallet]="isSelectedWallet(masterWallet)"
-                (click)="selectWallet(masterWallet)">
+                [class.selected-wallet]="isSelectedWallet(masterWallet)" (click)="selectWallet(masterWallet)">
                 <ion-col size="2" class="color-col">
                     <div class="inline-svg" inlineSVG="/assets/wallet/settings/curcol-wallet.svg"></div>
                 </ion-col>
@@ -37,7 +36,7 @@
                     </div>
                     <div class="wallet-amount" *ngIf="!netWallet">
                         {{ 'wallet.unsupported-on-network' | translate:{network:
-                        networkService.activeNetwork.value.name} }}
+                        networkService.activeNetwork.value.getEffectiveName()} }}
                     </div>
                 </ion-col>
                 <ion-col size="2" class="right-col">
@@ -47,10 +46,10 @@
             </ion-row>
 
             <ion-row class="note-row">
-              <ion-col>
-                  <p>{{ 'identity.wallet-chooser-note' | translate }}</p>
-              </ion-col>
-          </ion-row>
+                <ion-col>
+                    <p>{{ 'identity.wallet-chooser-note' | translate }}</p>
+                </ion-col>
+            </ion-row>
         </div>
     </div>
 </ion-content>

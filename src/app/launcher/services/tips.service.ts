@@ -3,6 +3,7 @@ import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
@@ -25,51 +26,51 @@ export class TipsService {
   // NOTE: The following tips are displayed in the same order they are in the list below:
   private tips: Tip[] = [
     {
-      title: "launcher.tip-title-welcome",
-      message: "launcher.tip-message-welcome",
+      title: 'launcher.tip-title-welcome',
+      message: 'launcher.tip-message-welcome',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-dev-getting-support",
-      message: "launcher.tip-message-dev-getting-support",
+      title: 'launcher.tip-title-dev-getting-support',
+      message: 'launcher.tip-message-dev-getting-support',
       audience: TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS
     },
     {
-      title: "launcher.tip-title-what-is-did",
-      message: "launcher.tip-message-what-is-did",
+      title: 'launcher.tip-title-what-is-did',
+      message: 'launcher.tip-message-what-is-did',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-did-vs-wallet",
-      message: "launcher.tip-message-did-vs-wallet",
+      title: 'launcher.tip-title-did-vs-wallet',
+      message: 'launcher.tip-message-did-vs-wallet',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-what-is-hive",
-      message: "launcher.tip-message-what-is-hive",
+      title: 'launcher.tip-title-what-is-hive',
+      message: 'launcher.tip-message-what-is-hive',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-toolbox",
-      message: "launcher.tip-message-toolbox",
+      title: 'launcher.tip-title-toolbox',
+      message: 'launcher.tip-message-toolbox',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-not-only-for-crypto-players",
-      message: "launcher.tip-message-not-only-for-crypto-players",
+      title: 'launcher.tip-title-not-only-for-crypto-players',
+      message: 'launcher.tip-message-not-only-for-crypto-players',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-taking-screenshots",
-      message: "launcher.tip-message-taking-screenshots",
+      title: 'launcher.tip-title-taking-screenshots',
+      message: 'launcher.tip-message-taking-screenshots',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
     },
     {
-      title: "launcher.tip-title-bring-friends",
-      message: "launcher.tip-message-bring-friends",
+      title: 'launcher.tip-title-bring-friends',
+      message: 'launcher.tip-message-bring-friends',
       audience: TipAudience.FOR_ELASTOS_TRINITY_GENERIC
-    },
-  ]
+    }
+  ];
 
   private checkIfTimeToShowATipTimerout = null;
 
@@ -77,10 +78,12 @@ export class TipsService {
     private translate: TranslateService,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
-    private notifications: GlobalNotificationsService) { }
+    private notifications: GlobalNotificationsService,
+    private lightweightService: GlobalLightweightService
+  ) {}
 
   public init() {
-    Logger.log("Launcher", "Tips service is initializing");
+    Logger.log('Launcher', 'Tips service is initializing');
 
     // await this.resetAllTipsAsNotViewed(); // DEBUG ONLY
 
@@ -99,10 +102,15 @@ export class TipsService {
   }
 
   private async checkIfTimeToShowATip() {
-    Logger.log("Launcher", "Checking if it's a right time to show a tip");
+    Logger.log('Launcher', "Checking if it's a right time to show a tip");
 
-    if (!await this.userWantsToSeeTips()) {
+    if (!(await this.userWantsToSeeTips())) {
       Logger.log('Launcher', "User doesn't want to see tips. Skipping.");
+      return;
+    }
+
+    if (this.lightweightService.getCurrentLightweightMode()) {
+      Logger.log('Launcher', 'App is in lightweight mode. Skipping tip notifications.');
       return;
     }
 
@@ -119,23 +127,25 @@ export class TipsService {
 
   // Find the suitable tip to show next, and show it.
   private async showNextTip() {
-    Logger.log('Launcher', "All tips:", this.tips);
+    Logger.log('Launcher', 'All tips:', this.tips);
 
     // Load tips that user has already viewed
     let viewedTips = await this.loadViewedTips();
-    Logger.log('Launcher', "Viewed tips:", viewedTips);
+    Logger.log('Launcher', 'Viewed tips:', viewedTips);
 
     // Exclude developer tips if user is not a developer, etc.
     let usableTips = await this.getAllTipsUserCanView();
 
     // Exclude viewed tips from the whole list of tips
-    usableTips = this.tips.filter((tip) => {
-      return viewedTips.find((t) => {
-        return t.title == tip.title;
-      }) == null;
+    usableTips = this.tips.filter(tip => {
+      return (
+        viewedTips.find(t => {
+          return t.title == tip.title;
+        }) == null
+      );
     });
 
-    Logger.log('Launcher', "Usable tips:", usableTips);
+    Logger.log('Launcher', 'Usable tips:', usableTips);
 
     // Take the first usable tip of the list, if any.
     if (usableTips.length > 0) {
@@ -144,14 +154,14 @@ export class TipsService {
       // In order to be able to pass more advanced data, we send the message as a JSON string that is
       // parsed by the notification manager.
       let jsonMessage = {
-        type: "tip",
+        type: 'tip',
         key: tipToNotify.title,
         message: this.translate.instant(tipToNotify.message)
-      }
+      };
 
       void this.notifications.sendNotification({
         app: App.LAUNCHER,
-        key: "launcher_tip_of_the_day", // Always overwrite previous tip notifications, if any
+        key: 'launcher_tip_of_the_day', // Always overwrite previous tip notifications, if any
         title: this.translate.instant(tipToNotify.title),
         message: JSON.stringify(jsonMessage)
       });
@@ -163,9 +173,14 @@ export class TipsService {
 
   private async rightTimeToShowATip(): Promise<boolean> {
     try {
-      let value = await this.storage.getSetting<string>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "latest-sent-tip-time", null);
-      if (!value)
-        return true; // Nothing saved yet: so it's a right time to show a tip.
+      let value = await this.storage.getSetting<string>(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'launcher',
+        'latest-sent-tip-time',
+        null
+      );
+      if (!value) return true; // Nothing saved yet: so it's a right time to show a tip.
 
       // value must be a ISO string
       let latestSentTipTime = moment(value);
@@ -173,21 +188,25 @@ export class TipsService {
       //Logger.log('Launcher', latestSentTipTime, moment())
 
       // Right time to show if last time we have shown a tip was more than X hours ago.
-      return (latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_HOURS, "hours").isBefore(moment()));
-    }
-    catch (err) {
-      Logger.error('Launcher', "rightTimeToShowATip() error:", err);
+      return latestSentTipTime.add(DURATION_MIN_BETWEEN_2_TIPS_HOURS, 'hours').isBefore(moment());
+    } catch (err) {
+      Logger.error('Launcher', 'rightTimeToShowATip() error:', err);
       return true;
     }
   }
 
   private async saveSentTipTime() {
     try {
-      await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "latest-sent-tip-time", new Date().toISOString());
-    }
-    catch (err) {
+      await this.storage.setSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'launcher',
+        'latest-sent-tip-time',
+        new Date().toISOString()
+      );
+    } catch (err) {
       // Kind of blocking issue, but let's resolve anyway...
-      Logger.error('Launcher', "saveSentTipTime() error:", err);
+      Logger.error('Launcher', 'saveSentTipTime() error:', err);
     }
   }
 
@@ -200,7 +219,7 @@ export class TipsService {
 
     let tipsThatCanBeViewed = this.tips;
     if (!isDeveloperModeEnabled) {
-      tipsThatCanBeViewed = tipsThatCanBeViewed.filter((tip) => {
+      tipsThatCanBeViewed = tipsThatCanBeViewed.filter(tip => {
         return tip.audience != TipAudience.FOR_ELASTOS_TRINITY_DEVELOPERS;
       });
     }
@@ -210,10 +229,13 @@ export class TipsService {
 
   private async userWantsToSeeTips(): Promise<boolean> {
     try {
-      let value = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "help.dailytips.show");
+      let value = await this.prefs.getPreference(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'help.dailytips.show'
+      );
       return value;
-    }
-    catch (err) {
+    } catch (err) {
       // Preference does not exist - Consider this as a yes
       return true;
     }
@@ -234,35 +256,47 @@ export class TipsService {
   }
 
   public findTipByIdentifier(identifier: string): Tip {
-    return this.tips.find((tip) => {
+    return this.tips.find(tip => {
       return tip.title == identifier;
     });
   }
 
   private saveViewedTips(tips: Tip[]): Promise<void> {
-    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "viewed-tips", tips);
+    return this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'launcher',
+      'viewed-tips',
+      tips
+    );
   }
 
   private async loadViewedTips(): Promise<Tip[]> {
     try {
-      let tips = await this.storage.getSetting<Tip[]>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "viewed-tips", []);
+      let tips = await this.storage.getSetting<Tip[]>(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'launcher',
+        'viewed-tips',
+        []
+      );
       return tips;
-    }
-    catch (err) {
+    } catch (err) {
       return [];
     }
   }
 
   private async developerModeEnabled(): Promise<boolean> {
     try {
-      let devMode = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.mode");
-      if (devMode)
-        return true;
-      else
-        return false;
-    }
-    catch (err) {
-      Logger.warn('Launcher', "developerModeEnabled() error", err);
+      let devMode = await this.prefs.getPreference(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'developer.mode'
+      );
+      if (devMode) return true;
+      else return false;
+    } catch (err) {
+      Logger.warn('Launcher', 'developerModeEnabled() error', err);
       return false;
     }
   }

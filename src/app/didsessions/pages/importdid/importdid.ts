@@ -3,7 +3,12 @@ import { Router } from '@angular/router';
 import { IonInput, ModalController, Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { MnemonicPassCheckComponent } from 'src/app/didsessions/components/mnemonicpasscheck/mnemonicpasscheck.component';
 import { IdentityService } from 'src/app/didsessions/services/identity.service';
 import { UXService } from 'src/app/didsessions/services/ux.service';
@@ -12,9 +17,9 @@ import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalMnemonicKeypadService } from 'src/app/services/global.mnemonickeypad.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { DIDMnemonicHelper } from '../../helpers/didmnemonic.helper';
-
 
 /**
  * Import algorithm:
@@ -35,14 +40,15 @@ export class ImportDIDPage {
 
   private nextStepId: number;
   public loadingIdentity = false;
-  public mnemonicWords = new Array<string>()
-  public mnemonicSentence = "";
+  public mnemonicWords = new Array<string>();
+  public mnemonicSentence = '';
   //   public mnemonicSentence: string = "income diesel latin coffee tourist kangaroo lumber great ill amazing say left"; // TMP TESTNET
-  private mnemonicForImport = "";
+  private mnemonicForImport = '';
   private mnemonicLanguage: DIDPlugin.MnemonicLanguage;
   public readonly = false; // set true if import mnemonic form wallet app
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
+  public isLightweightMode = false;
 
   constructor(
     public router: Router,
@@ -56,7 +62,8 @@ export class ImportDIDPage {
     public theme: GlobalThemeService,
     private events: GlobalEvents,
     public element: ElementRef,
-    private mnemonicKeypadService: GlobalMnemonicKeypadService
+    private mnemonicKeypadService: GlobalMnemonicKeypadService,
+    private globalPreferencesService: GlobalPreferencesService
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
@@ -71,21 +78,34 @@ export class ImportDIDPage {
   }
 
   ngOnInit() {
-    this.events.subscribe('qrScanner', (qrData) => {
+    this.events.subscribe('qrScanner', qrData => {
       this.mnemonicSentence = qrData.mnemonic;
       this.onMnemonicSentenceChanged();
-    })
+    });
   }
 
-  ionViewWillEnter() {
-    this.titleBar.setTitle(this.translate.instant('didsessions.import-my-did'));
+  async checkLightweightMode() {
+    try {
+      this.isLightweightMode = await this.globalPreferencesService.getLightweightMode(null, null);
+    } catch (error) {
+      Logger.log('didsessions', 'Error checking lightweight mode:', error);
+      this.isLightweightMode = false;
+    }
+  }
+
+  async ionViewWillEnter() {
+    await this.checkLightweightMode();
+    const titleKey = this.isLightweightMode ? 'didsessions.import-wallet' : 'didsessions.import-my-did';
+    this.titleBar.setTitle(this.translate.instant(titleKey));
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'back', iconPath: BuiltInIcon.BACK });
-    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: "language", iconPath: BuiltInIcon.EDIT });
-    this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, { key: "scan", iconPath: BuiltInIcon.SCAN });
+    this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, { key: 'language', iconPath: BuiltInIcon.EDIT });
+    this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, { key: 'scan', iconPath: BuiltInIcon.SCAN });
     this.titleBar.setNavigationMode(null);
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.uxService.onTitleBarItemClicked(icon);
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        this.uxService.onTitleBarItemClicked(icon);
+      })
+    );
   }
 
   ionViewWillLeave() {
@@ -97,14 +117,14 @@ export class ImportDIDPage {
 
   isWord(word): boolean {
     if (word) {
-      return true
+      return true;
     } else {
       return false;
     }
   }
 
   onMnemonicSentenceChanged() {
-    let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g, "");
+    let standardMnemonicSentence = this.mnemonicSentence.trim().replace(/[\r\n]/g, '');
     let chineseMnemonic = Util.chinese(this.mnemonicSentence[0]);
     if (chineseMnemonic) {
       // Chinese mnemonics are entered without spaces.
@@ -114,7 +134,7 @@ export class ImportDIDPage {
         this.mnemonicWords.push(standardMnemonicSentence[i]);
       }
     } else {
-      this.mnemonicWords = standardMnemonicSentence.split(" ").filter(item => item !== '');
+      this.mnemonicWords = standardMnemonicSentence.split(' ').filter(item => item !== '');
     }
   }
 
@@ -122,14 +142,15 @@ export class ImportDIDPage {
   async promptPassPhrase() {
     this.uxService.modal = await this.modalCtrl.create({
       component: MnemonicPassCheckComponent,
-      componentProps: {
-      },
-      cssClass: !this.theme.darkMode ? 'didsessions-mnemonicpasscheck-component' : 'didsessions-mnemonicpasscheck-component-dark',
+      componentProps: {},
+      cssClass: !this.theme.darkMode
+        ? 'didsessions-mnemonicpasscheck-component'
+        : 'didsessions-mnemonicpasscheck-component-dark'
     });
-    this.uxService.modal.onDidDismiss().then((params) => {
+    this.uxService.modal.onDidDismiss().then(params => {
       this.uxService.modal = null;
       if (params && params.data) {
-        Logger.log('didsessions', "Import screen: import process is continuing");
+        Logger.log('didsessions', 'Import screen: import process is continuing');
 
         this.loadingIdentity = true;
         this.identityService.identityBeingCreated.mnemonicLanguage = this.mnemonicLanguage;
@@ -161,13 +182,18 @@ export class ImportDIDPage {
   }
 
   public async startMnemonicInput() {
-    await this.mnemonicKeypadService.promptMnemonic(12, this.mnemonicWords, words => {
-      // Update words in the input box when received from the mnemonic keypad
-      this.mnemonicSentence = words.join(" ");
-      this.onMnemonicSentenceChanged();
-    }, pasted => {
-      this.mnemonicSentence = pasted;
-      this.onMnemonicSentenceChanged();
-    });
+    await this.mnemonicKeypadService.promptMnemonic(
+      12,
+      this.mnemonicWords,
+      words => {
+        // Update words in the input box when received from the mnemonic keypad
+        this.mnemonicSentence = words.join(' ');
+        this.onMnemonicSentenceChanged();
+      },
+      pasted => {
+        this.mnemonicSentence = pasted;
+        this.onMnemonicSentenceChanged();
+      }
+    );
   }
 }

@@ -1,32 +1,15 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-slides #slide pager="true" [options]="slideOpts" [class.hidden]="hidden" (ionSlideWillChange)="getActiveSlide()"
-    class="ion-text-center">
-    <ion-slide id="slide1">
-      <img
-        [src]="!theme.darkMode ? 'assets/didsessions/onboard/essentials-top-logo.svg' : 'assets/didsessions/onboard/dark_mode/essentials-top-logo.svg'">
-      <ion-label>{{ 'didsessions.welcome-message1' | translate }}</ion-label>
-    </ion-slide>
 
-    <ion-slide id="slide2">
-      <img
-        [src]="!theme.darkMode ? 'assets/didsessions/onboard/essentials-top-logo.svg' : 'assets/didsessions/onboard/dark_mode/essentials-top-logo.svg'">
-      <ion-label>{{ 'didsessions.welcome-message2' | translate }}</ion-label>
-    </ion-slide>
+  <!-- Advanced Mode Component -->
+  <app-advanced-mode *ngIf="!isLightweightMode" [hidden]="hidden" [slideIndex]="slideIndex" [slideOpts]="slideOpts"
+    (slideIndexChange)="onSlideIndexChange($event)" (nextSlide)="onNextSlide()"
+    (createNewIdentity)="createNewIdentity()" (importIdentity)="importIdentity()">
+  </app-advanced-mode>
 
-    <ion-slide id="slide2">
-      <img
-        [src]="!theme.darkMode ? 'assets/didsessions/onboard/essentials-top-logo.svg' : 'assets/didsessions/onboard/dark_mode/essentials-top-logo.svg'">
-      <ion-label>{{ 'didsessions.welcome-message3' | translate }} </ion-label>
-    </ion-slide>
-
-  </ion-slides>
-  <div class="footer">
-    <ebutton *ngIf="slideIndex === 0" (clicked)="nextSlide()" [title]="'common.begin' | translate"></ebutton>
-    <ebutton *ngIf="slideIndex === 1" (clicked)="nextSlide()" [title]="'common.continue' | translate"></ebutton>
-    <div *ngIf="slideIndex >= 2">
-      <ebutton (clicked)="createNewIdentity()" [title]="'didsessions.new' | translate"> </ebutton>
-      <ebutton (clicked)="importIdentity()" [title]="'didsessions.import' | translate"></ebutton>
-    </div>
-  </div>
+  <!-- Lightweight Mode Component -->
+  <app-lightweight-mode *ngIf="isLightweightMode" [hidden]="hidden" [slideIndex]="slideIndex" [slideOpts]="slideOpts"
+    (slideIndexChange)="onSlideIndexChange($event)" (nextSlide)="onNextSlide()" (createWallet)="createWallet()"
+    (importWallet)="importWallet()">
+  </app-lightweight-mode>
 </ion-content>

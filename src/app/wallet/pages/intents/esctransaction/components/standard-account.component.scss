@@ -1,0 +1,127 @@
+// Standard Account Component Styles
+// These styles will inherit from the parent component's styles
+
+// Flexbox-based layout for transaction items
+.item-row {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &.ripple {
+    &:hover {
+      background-color: var(--ion-color-light);
+    }
+  }
+
+  // Gas price editing row (special case with 4 columns)
+  &:has(.item-input) {
+    flex-wrap: wrap;
+    gap: 15px;
+
+    .item-label {
+      flex: 0 0 45%;
+      min-width: 120px;
+    }
+
+    .item-input {
+      flex: 0 0 45%;
+      min-width: 120px;
+    }
+  }
+}
+
+// Label styling
+.item-label {
+  flex: 0 0 40%;
+  font-weight: 500;
+  color: var(--ion-color-medium);
+  font-size: 12px;
+  line-height: 1.25;
+  text-align: left;
+  align-items: flex-start;
+}
+
+// Value styling
+.item-value {
+  flex: 1;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+
+  span {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ion-color-dark);
+  }
+}
+
+// Edit gas column
+.edit-gas-col {
+  flex: 0 0 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  ion-icon {
+    font-size: 18px;
+    color: var(--ion-color-primary);
+    cursor: pointer;
+  }
+}
+
+// Better alignment for fee information
+.fee-primary {
+  text-align: right;
+
+  span {
+    font-weight: 600;
+    font-size: 18px;
+    color: var(--ion-color-dark);
+  }
+}
+
+.fee-secondary {
+  text-align: right;
+
+  span {
+    font-size: 14px;
+    color: var(--ion-color-medium);
+  }
+}
+
+// Input styling for gas editing
+.item-input {
+  ion-input {
+    background: var(--essentials-box-color);
+    height: 32px;
+    border-radius: 5px;
+    font-size: 14px;
+    --padding-start: 12px;
+    --padding-end: 10px;
+  }
+}
+
+// Additional component-specific styles can be added here if needed
+
+// Footer buttons styling
+.footer-buttons {
+  margin-top: 20px;
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  align-items: center;
+
+  .btn {
+    flex: 1;
+    max-width: 200px;
+
+    &.expand {
+      flex: 2;
+      max-width: none;
+    }
+  }
+}

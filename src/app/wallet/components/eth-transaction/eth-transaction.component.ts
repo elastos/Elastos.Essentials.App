@@ -8,6 +8,7 @@ import { Config } from '../../config/Config';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';
 import { WalletService } from '../../services/wallet.service';
+import { Native } from '../../services/native.service';
 
 @Component({
   selector: 'app-eth-transaction',
@@ -23,7 +24,7 @@ export class ETHTransactionComponent implements OnInit {
   // public gasPrice: number = null;
   public gasPrice: string = null;// GWEI
   // public gasLimit: string = null;
-  public gasLimit = '200000';
+  public gasLimit = '210000';
   public nonce = -1;
 
   constructor(
@@ -40,6 +41,9 @@ export class ETHTransactionComponent implements OnInit {
     this.publishing = true;
     this.publicationSuccessful = false;
     this.publicationFailed = false;
+
+    // Hide the loading indicator if it is still visible
+    void Native.instance.hideLoading();
 
     // Listen to publication event
     this.publicationStatusSub = this.evmService.ethTransactionStatus.subscribe((status) => {

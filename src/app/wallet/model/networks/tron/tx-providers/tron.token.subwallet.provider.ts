@@ -33,6 +33,10 @@ export class TronSubWalletTokenProvider<SubWalletType extends TronSubWallet> ext
         return this.canFetchMore;
     }
 
+    public getInitialFetchSize(): number {
+        return MAX_RESULTS_PER_FETCH;
+    }
+
     public async fetchTransactions(trc20SubWallet: TRC20SubWallet, afterTransaction?: TronTRC20Transaction): Promise<void> {
         let max_timestamp = 0; // maximum block_timestamp is now if max_timestamp = 0
         if (afterTransaction) {
@@ -54,7 +58,7 @@ export class TronSubWalletTokenProvider<SubWalletType extends TronSubWallet> ext
             }
 
             this.updateTransactionsInfo(transactions);
-            await this.saveTransactions(transactions);
+            await this.saveTransactions(transactions, !afterTransaction);
         } catch (e) {
             Logger.error('wallet', 'TronSubWalletTokenProvider fetchTransactions error:', e)
         }

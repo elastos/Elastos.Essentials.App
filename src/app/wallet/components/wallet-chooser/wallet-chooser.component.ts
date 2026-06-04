@@ -14,9 +14,18 @@ import { UiService } from '../../services/ui.service';
 import { WalletService } from '../../services/wallet.service';
 
 /**
- * Filter method to return only some master wallets to show in the chooser.
+ * Represents a wallet entry in the chooser, containing both master wallet and network wallet info when available.
  */
-export type WalletChooserFilter = (wallets: AnyNetworkWallet) => boolean;
+export interface WalletChooserEntry {
+  masterWallet: MasterWallet;
+  networkWallet?: AnyNetworkWallet; // May be undefined if wallet doesn't support the current network
+}
+
+/**
+ * Filter method to return only some wallets to show in the chooser.
+ * Receives a wallet entry that contains both master wallet and network wallet information.
+ */
+export type WalletChooserFilter = (walletEntry: WalletChooserEntry) => boolean;
 
 export type WalletChooserComponentOptions = {
   currentNetworkWallet: AnyNetworkWallet;
@@ -30,7 +39,17 @@ export type WalletChooserComponentOptions = {
    * in the same way.
    */
   showActiveWallet?: boolean;
-}
+  /**
+   * If true, use master wallet selection mode (for browser wallet connections).
+   * If false, use network wallet selection mode (legacy multisig behavior).
+   */
+  masterWalletMode?: boolean;
+  /**
+   * If true, display current network balances for wallets.
+   * Only applies when masterWalletMode is false.
+   */
+  showBalances?: boolean;
+};
 
 /**
  * This dialog shows the list of all master wallets so that user can pick one.
@@ -40,7 +59,7 @@ export type WalletChooserComponentOptions = {
 @Component({
   selector: 'app-wallet-chooser',
   templateUrl: './wallet-chooser.component.html',
-  styleUrls: ['./wallet-chooser.component.scss'],
+  styleUrls: ['./wallet-chooser.component.scss']
 })
 export class WalletChooserComponent implements OnInit {
   public CoinType = CoinType;
@@ -64,27 +83,72 @@ export class WalletChooserComponent implements OnInit {
     private modalCtrl: ModalController,
     public networkService: WalletNetworkService,
     private native: Native
-  ) {
-  }
+  ) {}
 
   ngOnInit() {
     this.options = this.navParams.data as WalletChooserComponentOptions;
 
-    if (this.options.showActiveWallet)
-      this.selectedMasterWallet = this.options.currentNetworkWallet ? this.options.currentNetworkWallet.masterWallet : this.walletService.getActiveMasterWallet();
-    else
+    // Set defaults
+    if (this.options.masterWalletMode === undefined) {
+      this.options.masterWalletMode = false;
+    }
+    if (this.options.showBalances === undefined) {
+      this.options.showBalances = !this.options.masterWalletMode; // Show balances by default for legacy mode, hide for master wallet mode
+    }
+
+    if (this.options.showActiveWallet) {
+      this.selectedMasterWallet = this.options.currentNetworkWallet
+        ? this.options.currentNetworkWallet.masterWallet
+        : this.walletService.getActiveMasterWallet();
+    } else {
       this.selectedMasterWallet = null;
+    }
 
-    let networkWallets = this.walletService.getNetworkWalletsList();
+    // Build wallet entries for filtering
+    const walletEntries = this.buildWalletEntries();
 
-    // Build the list of available network wallets from the master wallets
+    // Apply filter if provided
+    const filteredEntries = this.options.filter ? walletEntries.filter(this.options.filter) : walletEntries;
+
+    // Extract master wallets from filtered entries
+    this.masterWalletsToShowInList = filteredEntries.map(entry => entry.masterWallet);
+    Logger.log('wallet', 'wallet chooser - master wallets to show in list:', this.masterWalletsToShowInList);
+
+    // Build network wallet mapping for display purposes
     this.networkWalletsToShowInList = {};
-    networkWallets.forEach(networkWallet => {
-      if (!this.options.filter || this.options.filter(networkWallet))
-        this.networkWalletsToShowInList[networkWallet.id] = networkWallet;
+    filteredEntries.forEach(entry => {
+      if (entry.networkWallet) {
+        this.networkWalletsToShowInList[entry.masterWallet.id] = entry.networkWallet;
+      }
     });
+  }
 
-    this.masterWalletsToShowInList = Object.values(this.networkWalletsToShowInList).map(nw => nw.masterWallet);
+  /**
+   * Builds wallet entries based on the current mode
+   */
+  private buildWalletEntries(): WalletChooserEntry[] {
+    if (this.options.masterWalletMode) {
+      // Master wallet mode: include all master wallets
+      const allMasterWallets = this.walletService.getMasterWalletsList();
+      console.log('wallet', 'wallet chooser - master wallet mode, all master wallets:', allMasterWallets);
+
+      return allMasterWallets.map(masterWallet => {
+        const networkWallet = this.walletService.getNetworkWalletFromMasterWalletId(masterWallet.id);
+        return {
+          masterWallet,
+          networkWallet
+        };
+      });
+    } else {
+      // Legacy network wallet mode: only include wallets with network wallets
+      const networkWallets = this.walletService.getNetworkWalletsList();
+      console.log('wallet', 'wallet chooser - network wallet mode, network wallets:', networkWallets);
+
+      return networkWallets.map(networkWallet => ({
+        masterWallet: networkWallet.masterWallet,
+        networkWallet
+      }));
+    }
   }
 
   public getNetworkWallet(masterWallet: MasterWallet): AnyNetworkWallet {
@@ -92,7 +156,7 @@ export class WalletChooserComponent implements OnInit {
   }
 
   selectWallet(wallet: MasterWallet) {
-    Logger.log("wallet", "Wallet selected", wallet);
+    Logger.log('wallet', 'Wallet selected', wallet);
 
     void this.modalCtrl.dismiss({
       selectedMasterWalletId: wallet.id
@@ -100,12 +164,12 @@ export class WalletChooserComponent implements OnInit {
   }
 
   cancelOperation() {
-    Logger.log("wallet", "Wallet selection cancelled");
+    Logger.log('wallet', 'Wallet selection cancelled');
     void this.modalCtrl.dismiss();
   }
 
   goToCreateWallet() {
-    this.native.go("/wallet/settings", {
+    this.native.go('/wallet/settings', {
       createWallet: true
     });
     void this.modalCtrl.dismiss();

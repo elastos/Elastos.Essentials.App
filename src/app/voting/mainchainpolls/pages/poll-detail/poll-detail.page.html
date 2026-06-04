@@ -1,0 +1,161 @@
+<ion-content [class.dark-container]="theme.darkMode">
+    <app-titlebar></app-titlebar>
+
+    <div *ngIf="loading" class="loading">
+        <ion-spinner></ion-spinner>
+    </div>
+
+    <ion-grid *ngIf="!loading && pollDetails" class="container ion-no-padding">
+        <!-- Poll Header -->
+        <div class="poll-header">
+            <h1 class="poll-title">{{ pollDetails.description }}</h1>
+            <div class="poll-meta">
+                <span class="poll-status" [class]="getStatusClass(pollDetails.status)">
+                    {{ 'mainchainpolls.status.' + pollDetails.status.toLowerCase() | translate }}
+                </span>
+                <div class="poll-dates">
+                    <ion-row>
+                        <ion-col size="6">
+                            <p class="date-label">{{ 'mainchainpolls.start-time' | translate }}</p>
+                            <p class="date-value">{{ formatDate(pollDetails.startTime) }}</p>
+                        </ion-col>
+                        <ion-col size="6">
+                            <p class="date-label">{{ 'mainchainpolls.end-time' | translate }}</p>
+                            <p class="date-value">{{ formatDate(pollDetails.endTime) }}</p>
+                        </ion-col>
+                    </ion-row>
+                </div>
+
+                <div *ngIf="hasValidUrl()" class="poll-url">
+                    <p class="url-label">{{ 'mainchainpolls.info-url' | translate }}</p>
+                    <div class="url-value">
+                        <a [href]="pollDetails.url" target="_blank" rel="noopener noreferrer">
+                            {{ pollDetails.url }}
+                        </a>
+                        <ion-button fill="clear" size="small" class="copy-url-button" type="button"
+                            (click)="copyPollUrl()" [title]="'mainchainpolls.copy-url' | translate">
+                            <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+                        </ion-button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vote Section -->
+        <div class="vote-section">
+            <h2>{{ 'mainchainpolls.vote-status' | translate }}</h2>
+            <div *ngIf="hasAlreadyVoted()" class="voted-info">
+                <div *ngIf="!isTransactionPending" class="voted-badge">
+                    <ion-icon name="checkmark-circle"></ion-icon>
+                    <span>{{ 'mainchainpolls.voted' | translate }}</span>
+                </div>
+                <div *ngIf="isTransactionPending" class="vote-pending">
+                    <span>{{ 'wallet.coin-transaction-status-not-published' | translate }}</span>
+                </div>
+                <p class="vote-details" *ngIf="getDisplayVote()">
+                    {{ 'mainchainpolls.vote-amount' | translate }}: {{ formatVoteAmount(getDisplayVote().amount) }} ELA
+                </p>
+                <p class="vote-details" *ngIf="getDisplayVote() && pollDetails && getVoteOption() !== null">
+                    {{ 'mainchainpolls.vote-choice' | translate }}: {{ pollDetails.choices[getVoteOption()] }}
+                </p>
+                <p class="vote-details stored-vote-note" *ngIf="storedVote && !userVote && !isTransactionPending">
+                    <small>{{ 'mainchainpolls.vote-pending-confirmation' | translate }}</small>
+                </p>
+            </div>
+
+            <!-- Show choices and voting UI when poll is active and not voted -->
+            <div *ngIf="!hasAlreadyVoted() && isPollActive(pollDetails) && !loading" class="not-voted-info">
+                <div class="choices-list">
+                    <h3>{{ 'mainchainpolls.select-choice' | translate }}</h3>
+                    <ion-radio-group [(ngModel)]="selectedChoice">
+                        <ion-item *ngFor="let choice of pollDetails.choices; let i = index" (click)="selectChoice(i)"
+                            [class.selected]="selectedChoice === i" class="choice-item">
+                            <ion-label>
+                                <h2>{{ choice }}</h2>
+                            </ion-label>
+                            <ion-radio slot="end" [value]="i"></ion-radio>
+                        </ion-item>
+                    </ion-radio-group>
+                </div>
+
+                <!-- Show spinner while loading wallet balance -->
+                <div *ngIf="loadingWalletInfo" class="balance-loading">
+                    <ion-spinner name="crescent"></ion-spinner>
+                    <p>{{ 'mainchainpolls.loading' | translate }}</p>
+                </div>
+
+                <!-- Show wallet info when loaded -->
+                <div *ngIf="!loadingWalletInfo" class="wallet-balance-section">
+                    <div *ngIf="walletUnavailable" class="wallet-unavailable">
+                        <p>{{ 'mainchainpolls.no-wallet' | translate }}</p>
+                    </div>
+                    <div *ngIf="!walletUnavailable">
+                        <div class="wallet-info">
+                            <p class="wallet-address-label">{{ 'mainchainpolls.wallet-address' | translate }}</p>
+                            <p class="wallet-address">{{ walletAddress || ('mainchainpolls.loading' | translate) }}</p>
+                        </div>
+
+                        <p class="available-balance">
+                            {{ 'mainchainpolls.available-voting-power' | translate }}: {{
+                            formatBalance(availableBalance) }}
+                            ELA
+                        </p>
+
+                        <div *ngIf="availableBalance !== null && (!availableBalance || availableBalance.isLessThanOrEqualTo(0))"
+                            class="insufficient-balance-warning">
+                            <p>{{ 'mainchainpolls.insufficient-balance' | translate }}</p>
+                        </div>
+
+                        <div *ngIf="otherUnfinishedVotedPolls.length > 0" class="other-votes-warning">
+                            <ion-icon name="warning-outline" color="warning"></ion-icon>
+                            <p>{{ 'mainchainpolls.votes-will-be-cleared-warning' | translate }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="vote-button-container">
+                    <ebutton [disabled]="selectedChoice === null || voting || !canVote()" [spinning]="voting"
+                        [title]="'mainchainpolls.vote' | translate" (clicked)="vote()">
+                    </ebutton>
+                </div>
+            </div>
+
+            <!-- Show message when poll is not active -->
+            <div *ngIf="!hasAlreadyVoted() && isPollNotActive(pollDetails) && !loading"
+                [class]="getPollInactiveClasses(pollDetails)">
+                <p>{{ getPollInactiveMessage(pollDetails) }}</p>
+            </div>
+        </div>
+
+        <!-- Poll Results Section (shown when user has voted or poll is finished) -->
+        <div *ngIf="(hasAlreadyVoted() || pollDetails.status === 'finished') && pollDetails && getPollResults().length > 0"
+            class="poll-results-section">
+            <h2>{{ 'mainchainpolls.poll-results' | translate }}</h2>
+            <div class="results-summary">
+                <p class="total-votes">
+                    {{ 'mainchainpolls.total-votes' | translate }}: {{
+                    formatVoteAmount(getTotalVotesAmount().toString()) }} ELA
+                </p>
+            </div>
+            <div class="results-list">
+                <div *ngFor="let result of getPollResults()" class="result-item">
+                    <div class="result-header">
+                        <h3 class="choice-title">{{ result.choiceTitle }}</h3>
+                        <span class="result-percentage">{{ formatPercentage(result.percentage) }}%</span>
+                    </div>
+                    <div class="result-details">
+                        <p class="vote-amount">{{ formatVoteAmount(result.voteAmount.toString()) }} ELA</p>
+                        <p class="vote-count">{{ 'mainchainpolls.vote-count' | translate }}: {{ result.voteCount }}</p>
+                    </div>
+                    <div class="result-bar-container">
+                        <div class="result-bar" [style.width.%]="result.percentage"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ion-grid>
+
+    <div *ngIf="!loading && !pollDetails" class="no-data">
+        {{ 'mainchainpolls.poll-not-found' | translate }}
+    </div>
+</ion-content>

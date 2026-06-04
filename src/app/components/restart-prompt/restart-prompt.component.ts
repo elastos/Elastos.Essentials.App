@@ -5,22 +5,18 @@ import { GlobalThemeService } from 'src/app/services/theming/global.theme.servic
 @Component({
   selector: 'app-restart-prompt',
   templateUrl: './restart-prompt.component.html',
-  styleUrls: ['./restart-prompt.component.scss'],
+  styleUrls: ['./restart-prompt.component.scss']
 })
 export class RestartPromptComponent implements OnInit {
   public canCancel = false;
+  public customMessage = '';
 
-  constructor(
-    public theme: GlobalThemeService,
-    private navParams: NavParams,
-    private popoverCtrl: PopoverController,
-  ) {
+  constructor(public theme: GlobalThemeService, private navParams: NavParams, private popoverCtrl: PopoverController) {
     this.canCancel = this.navParams.get('showCancel') || false;
+    this.customMessage = this.navParams.get('customMessage') || '';
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
   public cancel() {
     void this.popoverCtrl.dismiss();

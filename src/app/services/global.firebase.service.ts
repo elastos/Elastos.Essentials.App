@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { NavigationEnd, Router, RouterEvent } from '@angular/router';
 import { AppVersion } from '@awesome-cordova-plugins/app-version/ngx';
-//import { FirebaseAnalytics } from '@awesome-cordova-plugins/firebase-analytics/ngx';
-import { FirebaseX } from '@awesome-cordova-plugins/firebase-x/ngx';
+//import { FirebaseX } from '@awesome-cordova-plugins/firebase-x/ngx';
 import { Platform } from '@ionic/angular';
 import { BehaviorSubject, filter } from 'rxjs';
 import { Logger } from '../logger';
+
+declare var cordova: any;
 
 /**
  * Manages interactions with Firebase, including device token creation and reception of push messages.
@@ -31,14 +32,15 @@ export class GlobalFirebaseService {
 
     private debugVersion = false;
 
-    constructor(private platform: Platform, private firebase: FirebaseX, private router: Router, private appVersion: AppVersion) {
+    constructor(private platform: Platform, private router: Router, private appVersion: AppVersion) {
         GlobalFirebaseService.instance = this;
 
         // Every time the router route changes, update the current screen name in firebase analytics for more accurate screen context of other events.
         this.router.events.pipe(
             filter((e: RouterEvent) => e instanceof NavigationEnd),
         ).subscribe((e: RouterEvent) => {
-            void this.firebase.setScreenName(e.url)
+            // void this.firebase.setScreenName(e.url)
+            void this.setScreenName(e.url)
         });
     }
 
@@ -50,19 +52,22 @@ export class GlobalFirebaseService {
                 }
             })
 
-            void this.firebase.getToken().then(token => {
-                Logger.log("firebase", "Got device FCM token:", token);
-                this.token.next(token);
-            }).catch(err => {
-                if (new String(err).startsWith("SERVICE_NOT_AVAILABLE"))
-                    Logger.warn("firebase", "Firebase was unable to renew the push notification token. Push notifications won't be received. Original error:", err);
-            });
+            // void this.firebase.getToken().then(token => {
+            //     Logger.log("firebase", "Got device FCM token:", token);
+            //     this.token.next(token);
+            // }).catch(err => {
+            //     if (new String(err).startsWith("SERVICE_NOT_AVAILABLE"))
+            //         Logger.warn("firebase", "Firebase was unable to renew the push notification token. Push notifications won't be received. Original error:", err);
+            // });
 
-            this.firebase.onMessageReceived().subscribe(msg => {
-                Logger.log("firebase", "Received message", msg);
-            });
+            // this.firebase.onMessageReceived().subscribe(msg => {
+            //     Logger.log("firebase", "Received message", msg);
+            // });
 
-            void this.firebase.setAnalyticsCollectionEnabled(true);
+            // void this.firebase.setAnalyticsCollectionEnabled(true);
+
+            // Enable analytics collection
+            void this.setAnalyticsCollectionEnabled(true);
         });
         return;
     }
@@ -71,9 +76,40 @@ export class GlobalFirebaseService {
         if (this.debugVersion) return;
 
         try {
-            void this.firebase.logEvent(eventName, data);
+            //void this.firebase.logEvent(eventName, data);
+            void this.logFirebaseEvent(eventName, data);
         }
         catch (e) {
+            Logger.error("firebase", "Log event error:", e);
+        }
+    }
+
+    private async setScreenName(screenName: string): Promise<void> {
+        if (!this.platform.is('cordova')) return;
+
+        try {
+            await cordova.plugins.firebase.analytics.setCurrentScreen(screenName);
+        } catch (e) {
+            Logger.error("firebase", "Set screen name error:", e);
+        }
+    }
+
+    private async setAnalyticsCollectionEnabled(enabled: boolean): Promise<void> {
+        if (!this.platform.is('cordova')) return;
+
+        try {
+            await cordova.plugins.firebase.analytics.setEnabled(enabled);
+        } catch (e) {
+            Logger.error("firebase", "Set analytics collection enabled error:", e);
+        }
+    }
+
+    private async logFirebaseEvent(eventName: string, data: any = {}): Promise<void> {
+        if (!this.platform.is('cordova')) return;
+
+        try {
+            await cordova.plugins.firebase.analytics.logEvent(eventName, data);
+        } catch (e) {
             Logger.error("firebase", "Log event error:", e);
         }
     }

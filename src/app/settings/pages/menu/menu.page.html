@@ -1,24 +1,6 @@
 <ion-content *ngIf="hasConfigSections">
     <app-titlebar></app-titlebar>
     <ion-grid class="container" [class.dark-container]="theme.darkMode">
-        <!-- Theme -->
-        <!-- <ion-row class="section theme-mode">
-            <ion-col size="8" class="title-col">
-                <h1>{{ 'settings.display-setting' | translate }}</h1>
-                <h2 class="secondary-text" *ngIf="!theme.darkMode">{{ 'settings.light-mode-on' | translate }}</h2>
-                <h2 class="secondary-text" *ngIf="theme.darkMode">{{ 'settings.dark-mode-on' | translate }}</h2>
-            </ion-col>
-            <ion-col size="4" class="arrow-col">
-                <div *ngIf="!theme.darkMode" class="theme-toggle light-toggled">
-                    <div class="dark-mode" (click)="theme.toggleTheme()"><p>{{ 'settings.dark' | translate }}</p></div>
-                    <div class="light-mode"><p>{{ 'settings.light' | translate }}</p></div>
-                </div>
-                <div *ngIf="theme.darkMode" class="theme-toggle dark-toggled">
-                    <div class="dark-mode"><p>{{ 'settings.dark' | translate }}</p></div>
-                    <div class="light-mode" (click)="theme.toggleTheme()"><p>{{ 'settings.light' | translate }}</p></div>
-                </div>
-            </ion-col>
-        </ion-row> -->
         <!-- Language selection -->
         <ion-row class="section" (click)="open('/settings/language')">
             <ion-col size="11" class="title-col">
@@ -42,7 +24,7 @@
             </ion-col>
         </ion-row>
         <!-- Wallet connect -->
-        <ion-row class="section" (click)="open('/settings/walletconnect/sessions')">
+        <ion-row class="section" *ngIf="!lightweightMode" (click)="open('/settings/walletconnect/sessions')">
             <ion-col size="11" class="title-col">
                 <h1>{{ 'settings.wallet-connect-sessions-setting' | translate }}</h1>
                 <h2 class="secondary-text">{{ 'settings.wallet-connect-sessions-intro-setting' | translate }}</h2>
@@ -53,7 +35,7 @@
             </ion-col>
         </ion-row>
         <!-- Startup screen -->
-        <ion-row class="section" (click)="open('/settings/startupscreen')">
+        <ion-row class="section" *ngIf="!lightweightMode" (click)="open('/settings/startupscreen')">
             <ion-col size="11" class="title-col">
                 <h1>{{ 'settings.startupscreen-setting' | translate }}</h1>
                 <h2 class="secondary-text">{{ 'settings.startupscreen-intro-setting' | translate }}</h2>
@@ -61,6 +43,18 @@
             <ion-col size="1" class="right-col arrow-col">
                 <img
                     [src]="!theme.darkMode ? 'assets/settings/icon/light_mode/detail-arrow.svg' : 'assets/settings/icon/dark_mode/detail-arrow.svg'">
+            </ion-col>
+        </ion-row>
+        <!-- Display mode -->
+        <ion-row class="section">
+            <ion-col size="9" class="title-col">
+                <h1>{{ 'settings.display-mode-setting' | translate }}</h1>
+                <h2 class="secondary-text" *ngIf="prefs.lightweightMode">{{ 'settings.lightweight' | translate }}</h2>
+                <h2 class="secondary-text" *ngIf="!prefs.lightweightMode">{{ 'settings.advanced' | translate }}</h2>
+            </ion-col>
+            <ion-col size="3" class="right-col arrow-col">
+                <ion-toggle mode="ios" [(ngModel)]="prefs.lightweightMode" (ngModelChange)="toggleDisplayMode()"
+                    ngDefaultControl></ion-toggle>
             </ion-col>
         </ion-row>
         <!-- Change password -->

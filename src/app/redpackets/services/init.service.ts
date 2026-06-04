@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { DIDService } from './did.service';
 import { NetworksService } from './networks.service';
@@ -14,7 +15,8 @@ export class RedPacketsInitService extends GlobalService {
     private paymentsService: PaymentService,
     private packetService: PacketService,
     private didService: DIDService,
-    private networksService: NetworksService
+    private networksService: NetworksService,
+    private lightweightService: GlobalLightweightService
   ) {
     super();
   }
@@ -27,8 +29,11 @@ export class RedPacketsInitService extends GlobalService {
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    await this.packetService.onUserSignIn();
-    await this.didService.onUserSignIn();
+    // Only initialize red packets functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      await this.packetService.onUserSignIn();
+      await this.didService.onUserSignIn();
+    }
   }
 
   public async onUserSignOut(): Promise<void> {

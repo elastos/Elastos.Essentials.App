@@ -14,39 +14,40 @@ export enum WalletType {
   /** Multi signature, following the elastos/bitcoin "public key based" multi-wallet mechanism */
   MULTI_SIG_STANDARD = "multi_sign_standard",
   /** Multi signature, following the gnosis EVM contract mechanism (account addresses) */
-  MULTI_SIG_EVM_GNOSIS = "multi_sign_evm_gnosis"
+  MULTI_SIG_EVM_GNOSIS = "multi_sign_evm_gnosis",
+  /** ERC4337 Account Abstraction wallet controlled by an existing EOA wallet */
+  ACCOUNT_ABSTRACTION = "account_abstraction",
 }
 
 export enum ImportWalletType {
   MNEMONIC = "mnemonic",
-  PRIVATEKEY = "privatekey"
+  PRIVATEKEY = "privatekey",
 }
 
 export type WalletNetworkOptions = {
   network: string; // Network key. eg: elastos, bsc...
-}
+};
 
 export type ElastosMainChainWalletNetworkOptions = WalletNetworkOptions & {
-  network: "elastos",
+  network: "elastos";
 
   singleAddress: boolean;
-}
+};
 
 export type BTCWalletNetworkOptions = WalletNetworkOptions & {
-  network: string,
+  network: string;
 
   bitcoinAddressType: string; // eg: legacy, nativesegwit, taproot
-}
-
+};
 
 export type Theme = {
-  background: string,
-  color: string
+  background: string;
+  color: string;
 };
 
 export enum WalletCreator {
   WALLET_APP = "wallet_app", // Wallet created by Essentials (eg: based on the same mnemonic as the DID)
-  USER = "user" // Wallet created by the user (new wallet, import wallet)
+  USER = "user", // Wallet created by the user (new wallet, import wallet)
 }
 
 /**
@@ -56,7 +57,7 @@ export enum WalletCreator {
 export enum PrivateKeyType {
   EVM = "evm",
   BTC_SEGWIT = "btc_segwit",
-  BTC_LEGACY = "btc_legacy"
+  BTC_LEGACY = "btc_legacy",
 }
 
 /**
@@ -80,7 +81,7 @@ export type SerializedMasterWallet = {
   networkOptions: WalletNetworkOptions[];
   /** Origin of this wallet creation */
   creator: WalletCreator;
-}
+};
 
 // TODO: move to another file
 export type SerializedStandardMasterWallet = SerializedMasterWallet & {
@@ -96,14 +97,14 @@ export type SerializedStandardMasterWallet = SerializedMasterWallet & {
   privateKey?: string;
   /**  */
   privateKeyType?: PrivateKeyType;
-}
+};
 
 export type LedgerAccountOptions = {
   type: LedgerAccountType;
   accountID: string;
   accountPath: string;
   publicKey?: string;
-}
+};
 
 // TODO: move to another file
 export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
@@ -114,8 +115,8 @@ export type SerializedLedgerMasterWallet = SerializedMasterWallet & {
   //   /** Identifier of the ledger accounts bound to this master wallet */
   //   accountID: string;
 
-  accountOptions: LedgerAccountOptions[]
-}
+  accountOptions: LedgerAccountOptions[];
+};
 
 export type SerializedStandardMultiSigMasterWallet = SerializedMasterWallet & {
   type: WalletType.MULTI_SIG_STANDARD;
@@ -128,4 +129,13 @@ export type SerializedStandardMultiSigMasterWallet = SerializedMasterWallet & {
   signersExtPubKeys: string[];
 
   // TODO: network options?
-}
+};
+
+export type SerializedAccountAbstractionMasterWallet =
+  SerializedMasterWallet & {
+    type: WalletType.ACCOUNT_ABSTRACTION;
+    /** Existing EOA wallet (standard) used as controller for this AA wallet */
+    controllerMasterWalletId: string;
+    /** ID of the AA provider used by this wallet */
+    aaProviderId: string;
+  };

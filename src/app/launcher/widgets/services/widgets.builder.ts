@@ -84,11 +84,11 @@ export class WidgetsBuilder {
                 case "hive": widgetComponentClass = (await import("../builtin/hive/hive.widget")).HiveWidget; break;
                 case "discover-dapps": widgetComponentClass = (await import("../builtin/discover-dapps/discover-dapps.widget")).DiscoverDAppsWidget; break;
                 case "notifications": widgetComponentClass = (await import("../builtin/notifications/notifications.widget")).NotificationsWidget; break;
-                case "swap":
-                    if (!WidgetsService.isIOS) {
-                        widgetComponentClass = (await import("../builtin/swap/swap.widget")).SwapWidget;
-                    }
-                    break;
+                // case "swap":
+                //     if (!WidgetsService.isIOS) {
+                //         widgetComponentClass = (await import("../builtin/swap/swap.widget")).SwapWidget;
+                //     }
+                //     break;
                 default:
                     Logger.warn("widgets", `Unhandled builtin widget type ${widgetState.builtInType}`);
             }

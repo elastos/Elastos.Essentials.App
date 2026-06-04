@@ -10,7 +10,7 @@
     <div>
       <ion-card>
         <img [src]="networkWallet.network.logo">
-        <h1>{{ networkWallet.network.name }}</h1>
+        <h1>{{ networkWallet.network.getEffectiveName() }}</h1>
       </ion-card>
 
       <ion-card-header>
@@ -24,11 +24,9 @@
     </div>
 
     <!-- BUTTONS FOOTER -->
-    <ebutton class="btn cancel" mode="cancel"
-      (clicked)="cancelOperation()"
-      [title]="'common.cancel' | translate">
+    <ebutton class="btn cancel" mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate">
     </ebutton>
-    <ebutton class="btn confirm" [disabled]="signingAndTransacting || actionIsGoing" (clicked)="pushTx()"
-      [title]="'common.confirm' | translate"></ebutton>
+    <ebutton class="btn confirm" [disabled]="actionIsGoing" (clicked)="pushTx()" [title]="'common.confirm' | translate">
+    </ebutton>
   </ion-grid>
 </ion-content>

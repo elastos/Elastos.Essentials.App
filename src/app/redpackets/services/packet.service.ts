@@ -1,23 +1,20 @@
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { ToastController } from "@ionic/angular";
-import { BehaviorSubject, Subscription } from "rxjs";
-import { runDelayed } from "src/app/helpers/sleep.helper";
-import { Logger } from "src/app/logger";
-import { App } from "src/app/model/app.enum";
-import { GlobalIntentService } from "src/app/services/global.intent.service";
-import { GlobalNavService } from "src/app/services/global.nav.service";
-import { GlobalStorageService } from "src/app/services/global.storage.service";
-import { NetworkTemplateStore } from "src/app/services/stores/networktemplate.store";
-import { EVMNetwork } from "src/app/wallet/model/networks/evms/evm.network";
-import { WalletNetworkService } from "src/app/wallet/services/network.service";
-import { environment } from "src/environments/environment";
-import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from "../model/grab.model";
-import {
-    Packet,
-    PacketToCreate,
-    SerializedPacket
-} from "../model/packets.model";
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { ToastController } from '@ionic/angular';
+import { BehaviorSubject, Subscription } from 'rxjs';
+import { runDelayed } from 'src/app/helpers/sleep.helper';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
+import { GlobalNavService } from 'src/app/services/global.nav.service';
+import { GlobalStorageService } from 'src/app/services/global.storage.service';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
+import { EVMNetwork } from 'src/app/wallet/model/networks/evms/evm.network';
+import { WalletNetworkService } from 'src/app/wallet/services/network.service';
+import { environment } from 'src/environments/environment';
+import { GrabbedPacket, GrabRequest, GrabResponse, GrabStatus, PacketWinner } from '../model/grab.model';
+import { Packet, PacketToCreate, SerializedPacket } from '../model/packets.model';
 import { DIDSessionsStore } from './../../services/stores/didsessions.store';
 
 @Injectable({
@@ -37,38 +34,57 @@ export class PacketService {
     private globalIntentService: GlobalIntentService,
     private globalNavService: GlobalNavService,
     private walletNetworkService: WalletNetworkService,
-    private storage: GlobalStorageService
-  ) { }
+    private storage: GlobalStorageService,
+    private lightweightService: GlobalLightweightService
+  ) {}
 
   public async onUserSignIn(): Promise<void> {
-    //await this.dev_clearLocalStorage(); // Development only
+    // Only initialize packet functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      //await this.dev_clearLocalStorage(); // Development only
 
-    await this.loadMyPackets();
-    await this.loadGrabbedPackets();
+      await this.loadMyPackets();
+      await this.loadGrabbedPackets();
 
-    this.intentSubscription = this.globalIntentService.intentListener.subscribe(receivedIntent => {
-      if (receivedIntent && receivedIntent.action.startsWith(`${environment.RedPackets.webUrl}/p`) && "g" in receivedIntent.params) {
-        // Send the intent response immediatelly
-        void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
-        this.handleGrabRequest(receivedIntent.params["g"]);
-      }
-    });
+      this.intentSubscription = this.globalIntentService.intentListener.subscribe(receivedIntent => {
+        if (
+          receivedIntent &&
+          receivedIntent.action.startsWith(`${environment.RedPackets.webUrl}/p`) &&
+          'g' in receivedIntent.params
+        ) {
+          // Send the intent response immediatelly
+          void this.globalIntentService.sendIntentResponse({}, receivedIntent.intentId, false);
+          this.handleGrabRequest(receivedIntent.params['g']);
+        }
+      });
 
-    // Load public packets asynchrinously
-    runDelayed(() => this.fetchPublicPackets(), 5000);
+      // Load public packets asynchrinously
+      runDelayed(() => this.fetchPublicPackets(), 5000);
+    }
   }
 
   public onUserSignOut() {
-    if (this.intentSubscription)
-      this.intentSubscription.unsubscribe();
+    if (this.intentSubscription) this.intentSubscription.unsubscribe();
 
     this.publicPackets.next([]);
     this.grabbedPackets.next([]);
   }
 
   private async dev_clearLocalStorage(): Promise<void> {
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "grabbedpackets", []);
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "mypackets", []);
+    await this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'redpackets',
+      'grabbedpackets',
+      []
+    );
+    await this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'redpackets',
+      'mypackets',
+      []
+    );
   }
 
   /**
@@ -77,8 +93,8 @@ export class PacketService {
    * Grab url example: https://packet.web3essentials.io/p?g=123f41a15a6047d1bd2a1620e50adbe4
    */
   private handleGrabRequest(packetHash: string) {
-    Logger.log("redpackets", "Handling red packet grab request for packet hash " + packetHash);
-    void this.globalNavService.navigateTo(App.RED_PACKETS, "/redpackets/packet-details", {
+    Logger.log('redpackets', 'Handling red packet grab request for packet hash ' + packetHash);
+    void this.globalNavService.navigateTo(App.RED_PACKETS, '/redpackets/packet-details', {
       state: {
         packetHash
       }
@@ -90,74 +106,80 @@ export class PacketService {
 
     return new Promise((resolve, reject) => {
       // Create a new packet
-      this.http.post<SerializedPacket>(`${environment.RedPackets.serviceUrl}/packets`, packet).subscribe(createdPacket => {
-        Logger.log("Created packet:", createdPacket);
-        if (createdPacket) {
-          resolve(Packet.fromSerializedPacket(createdPacket));
-        }
-        else {
+      this.http.post<SerializedPacket>(`${environment.RedPackets.serviceUrl}/packets`, packet).subscribe(
+        createdPacket => {
+          Logger.log('Created packet:', createdPacket);
+          if (createdPacket) {
+            resolve(Packet.fromSerializedPacket(createdPacket));
+          } else {
+            resolve(null);
+          }
+        },
+        err => {
+          Logger.error('redpackets', 'Failed to create packet with the backend:', err);
           resolve(null);
         }
-      }, (err) => {
-        Logger.error("redpackets", "Failed to create packet with the backend:", err);
-        resolve(null);
-      });
+      );
     });
   }
 
   public async requestToCheckPayment(packetHash: string): Promise<void> {
     try {
-      let response = await this.http.post(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/checkpayments`, {}).toPromise();
-      console.log("check payment response", response);
-    }
-    catch (err) {
-      Logger.error("redpackets", "Check payment request failure", err);
+      let response = await this.http
+        .post(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/checkpayments`, {})
+        .toPromise();
+      console.log('check payment response', response);
+    } catch (err) {
+      Logger.error('redpackets', 'Check payment request failure', err);
     }
   }
 
   public async getPacketInfo(packetHash: string): Promise<Packet> {
     try {
-      let packetInfo = await this.http.get<SerializedPacket>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}`, {}).toPromise();
+      let packetInfo = await this.http
+        .get<SerializedPacket>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}`, {})
+        .toPromise();
       if (packetInfo) {
         return Packet.fromSerializedPacket(packetInfo);
       }
-    }
-    catch (err) {
-      Logger.error("redpackets", "Get packet info request failure", err);
+    } catch (err) {
+      Logger.error('redpackets', 'Get packet info request failure', err);
       return null;
     }
   }
 
   public async getPacketWinners(packetHash: string): Promise<PacketWinner[]> {
     try {
-      let winners = await this.http.get<PacketWinner[]>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/winners`, {}).toPromise();
-      Logger.log("redpackets", "Packet winners", winners);
+      let winners = await this.http
+        .get<PacketWinner[]>(`${environment.RedPackets.serviceUrl}/packets/${packetHash}/winners`, {})
+        .toPromise();
+      Logger.log('redpackets', 'Packet winners', winners);
       return winners;
-    }
-    catch (err) {
-      Logger.error("redpackets", "Get packet info request failure", err);
+    } catch (err) {
+      Logger.error('redpackets', 'Get packet info request failure', err);
       return null;
     }
   }
 
   public async fetchPublicPackets(): Promise<void> {
     try {
-      let packets = await this.http.get<SerializedPacket[]>(`${environment.RedPackets.serviceUrl}/publicpackets`, {}).toPromise();
+      let packets = await this.http
+        .get<SerializedPacket[]>(`${environment.RedPackets.serviceUrl}/publicpackets`, {})
+        .toPromise();
       if (packets) {
         let deserializedPackets: Packet[] = [];
         packets.forEach(p => {
-          deserializedPackets.push(Packet.fromSerializedPacket(p))
+          deserializedPackets.push(Packet.fromSerializedPacket(p));
         });
 
         // Filter out some unwanted public packets
         deserializedPackets = this.removeUnsupportedPublicPackets(deserializedPackets);
 
-        Logger.log("redpackets", "Got public packets", deserializedPackets);
+        Logger.log('redpackets', 'Got public packets', deserializedPackets);
         this.publicPackets.next(deserializedPackets);
       }
-    }
-    catch (err) {
-      Logger.error("redpackets", "Get public packets request failure", err);
+    } catch (err) {
+      Logger.error('redpackets', 'Get public packets request failure', err);
       this.publicPackets.next([]);
     }
   }
@@ -181,10 +203,11 @@ export class PacketService {
    * Tells if the given packet hash is in our local list of opened packets
    */
   public wasPacketOpened(packetHash: string): boolean {
-    return !!this.grabbedPackets.value.find(p =>
-      p.packet.hash === packetHash &&
-      (p.status === GrabStatus.GRABBED || p.status === GrabStatus.MISSED || p.status === GrabStatus.DEPLETED
-      ));
+    return !!this.grabbedPackets.value.find(
+      p =>
+        p.packet.hash === packetHash &&
+        (p.status === GrabStatus.GRABBED || p.status === GrabStatus.MISSED || p.status === GrabStatus.DEPLETED)
+    );
   }
 
   public async createGrabPacketRequest(packet: Packet, walletAddress: string): Promise<GrabResponse> {
@@ -193,7 +216,9 @@ export class PacketService {
       let grabRequest: GrabRequest = {
         walletAddress
       };
-      let grabResponse = await this.http.post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest).toPromise();
+      let grabResponse = await this.http
+        .post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest)
+        .toPromise();
       Logger.log('redpackets', 'Grab packet response', grabResponse);
 
       // "Depleted" can be received instantly and must be saved to know that we tried to "open" the packet.
@@ -202,14 +227,19 @@ export class PacketService {
       }
 
       return grabResponse;
-    }
-    catch (err) {
-      Logger.error("redpackets", "Grab packet request failure", err);
+    } catch (err) {
+      Logger.error('redpackets', 'Grab packet request failure', err);
       return null;
     }
   }
 
-  public async createGrabCaptchaVerification(packet: Packet, previousGrabResponse: GrabResponse, captchaString: string, walletAddress: string, userDID?: string): Promise<GrabResponse> {
+  public async createGrabCaptchaVerification(
+    packet: Packet,
+    previousGrabResponse: GrabResponse,
+    captchaString: string,
+    walletAddress: string,
+    userDID?: string
+  ): Promise<GrabResponse> {
     Logger.log('redpackets', 'Sending captcha verification');
     try {
       let grabRequest: GrabRequest = {
@@ -218,21 +248,25 @@ export class PacketService {
         walletAddress,
         userDID
       };
-      let grabResponse = await this.http.post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest).toPromise();
+      let grabResponse = await this.http
+        .post<GrabResponse>(`${environment.RedPackets.serviceUrl}/packets/${packet.hash}/grab`, grabRequest)
+        .toPromise();
       Logger.log('redpackets', 'Grab packet with captcha response', grabResponse);
 
       // Save the "grabbed" (won or lost) status so we don't try to fetch again later
-      if (grabResponse.status === GrabStatus.GRABBED ||
+      if (
+        grabResponse.status === GrabStatus.GRABBED ||
         grabResponse.status === GrabStatus.MISSED ||
-        grabResponse.status === GrabStatus.DEPLETED) {
+        grabResponse.status === GrabStatus.DEPLETED
+      ) {
         await this.saveGrabbedPacket(packet, grabResponse.status, grabResponse.earnedAmount);
       }
 
       return grabResponse;
-    }
-    catch (err) {
+    } catch (err) {
       if (err instanceof HttpErrorResponse) {
-        if (err.status == 429) { // Too many requests - IP rate limitation
+        if (err.status == 429) {
+          // Too many requests - IP rate limitation
           return {
             status: GrabStatus.TOO_MANY_REQUEST
           };
@@ -240,7 +274,7 @@ export class PacketService {
       }
 
       // All other cases
-      Logger.error("redpackets", "Grab packet with captcha request failure", err);
+      Logger.error('redpackets', 'Grab packet with captcha request failure', err);
       return null;
     }
   }
@@ -253,13 +287,27 @@ export class PacketService {
       status,
       earnedAmount
     });
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "grabbedpackets", grabbedPackets);
+    await this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'redpackets',
+      'grabbedpackets',
+      grabbedPackets
+    );
 
     this.grabbedPackets.next(grabbedPackets);
   }
 
   private async loadGrabbedPackets(): Promise<void> {
-    this.grabbedPackets.next(await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "grabbedpackets", []));
+    this.grabbedPackets.next(
+      await this.storage.getSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'redpackets',
+        'grabbedpackets',
+        []
+      )
+    );
   }
 
   public getGrabbedPacket(hash: string): GrabbedPacket {
@@ -276,13 +324,25 @@ export class PacketService {
   }
 
   private async loadMyPackets(): Promise<void> {
-    let serializedPackets = await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "mypackets", []);
+    let serializedPackets = await this.storage.getSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'redpackets',
+      'mypackets',
+      []
+    );
     this.myPackets = serializedPackets.map(p => Packet.fromSerializedPacket(p));
   }
 
   private async saveMyPackets(): Promise<void> {
     let serializedPackets = this.myPackets.map(p => p.serialize());
-    await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "redpackets", "mypackets", serializedPackets);
+    await this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'redpackets',
+      'mypackets',
+      serializedPackets
+    );
   }
 
   public getMyPackets(): Packet[] {
@@ -298,7 +358,7 @@ export class PacketService {
   public updateToMyPackets(packet: Packet): Promise<void> {
     let packetIndex = this.myPackets.findIndex(p => p.hash === packet.hash);
     if (packetIndex < 0) {
-      Logger.warn("redpackets", `Cannot find packet ${packet.hash} to update it`);
+      Logger.warn('redpackets', `Cannot find packet ${packet.hash} to update it`);
       return;
     }
 

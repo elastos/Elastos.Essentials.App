@@ -61,7 +61,7 @@ export class InvalidVoteCandidatesHelper {
             }
             break;
           case VoteTypeString.CRCImpeachment:
-            // Check if a previously voted CR member has been impeached and is not a CR member any more
+            // Check if a previously voted Elastos DAO member has been impeached and is not a Elastos DAO member any more
             let validImpeachment = await this.computeValidCRCImpeachment(oldVotedContent[i].Candidates);
             if (validImpeachment && Object.keys(validImpeachment).length > 0) {
               oldVotedContent[i].Candidates = validImpeachment;
@@ -123,7 +123,7 @@ export class InvalidVoteCandidatesHelper {
       Logger.warn('wallet', 'council list:', councilList)
 
       for (let councilDid in crImpeachmentCandidates) {
-        Logger.log('wallet', "Checking vote for CR Impeachment invalidity:", councilDid);
+        Logger.log('wallet', "Checking vote for Elastos DAO Impeachment invalidity:", councilDid);
 
         let matching = councilList.data.council.find((currentlyCouncil) => {
           return currentlyCouncil.did === councilDid;
@@ -141,7 +141,7 @@ export class InvalidVoteCandidatesHelper {
           Logger.log('wallet', "Previous vote still in notification state, doing nothing");
         }
       }
-      Logger.warn('wallet', 'valid CR Impeachment Candidates:', validCRImpeachmentCandidates)
+      Logger.warn('wallet', 'valid Elastos DAO Impeachment Candidates:', validCRImpeachmentCandidates)
       return validCRImpeachmentCandidates;
     }
     catch (err) {
@@ -203,9 +203,9 @@ export class InvalidVoteCandidatesHelper {
       //      be added to our list of invalid proposals, so the spv sdk can cleanup stuff.
 
       for (let votedProposalHash in proposalsCandidates) {
-        Logger.log('wallet', "Checking vote for CR proposal invalidity:", votedProposalHash);
+        Logger.log('wallet', "Checking vote for Elastos DAO proposal invalidity:", votedProposalHash);
 
-        // Try to find this vote in the proposals currently in notificaion state on the CR website
+        // Try to find this vote in the proposals currently in notificaion state on the Elastos DAO website
         // Should have exactly one vote entry.
         let matchingProposal = proposalsInNotificationState.data.list.find((proposalCurrentlyInNotification) => {
           return proposalCurrentlyInNotification.proposalHash === votedProposalHash;

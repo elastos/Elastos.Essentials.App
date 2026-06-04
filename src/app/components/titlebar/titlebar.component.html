@@ -5,9 +5,9 @@
     </ion-col>
     <ion-col size="1.25">
       <img *ngIf="icons[1].visible && !needToShowRedDot()" [src]="getIconPath(1)"
-        (click)="innerLeftIconClicked($event)">
+        (click)="innerLeftIconClicked()">
       <div *ngIf="icons[1].visible && needToShowRedDot()" class="badge">
-        <img [src]="getIconPath(1)" (click)="innerLeftIconClicked($event)">
+        <img [src]="getIconPath(1)" (click)="innerLeftIconClicked()">
         <div class="red-dot"></div>
       </div>
     </ion-col>

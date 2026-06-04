@@ -1,7 +1,13 @@
 import { Injectable } from '@angular/core';
-import type { AppContextProvider, SubscriptionInfo, Vault, VaultInfo, VaultSubscription } from '@elastosfoundation/hive-js-sdk';
+import type {
+  AppContextProvider,
+  SubscriptionInfo,
+  Vault,
+  VaultInfo,
+  VaultSubscription
+} from '@elastosfoundation/hive-js-sdk';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subscription } from "rxjs";
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ElastosSDKHelper } from 'src/app/helpers/elastossdk.helper';
 import { Logger } from 'src/app/logger';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
@@ -12,6 +18,7 @@ import { rawImageToBase64DataUrl } from '../helpers/picture.helpers';
 import { runDelayed } from '../helpers/sleep.helper';
 import { IdentityEntry } from '../model/didsessions/identityentry';
 import { JSONObject } from '../model/json';
+import { GlobalLightweightService } from './global.lightweight.service';
 import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from './global.networks.service';
 import { GlobalPopupService } from './global.popup.service';
 import { GlobalPreferencesService } from './global.preferences.service';
@@ -23,15 +30,8 @@ import { NetworkTemplateStore } from './stores/networktemplate.store';
 declare let didManager: DIDPlugin.DIDManager;
 
 const availableHiveNodeProviders = {
-  MainNet: [
-    "https://hive1.elastos.io",
-    "https://hive2.elastos.io",
-    "https://hive3.elastos.io"
-  ],
-  TestNet: [
-    "https://hive-testnet1.elastos.io",
-    "https://hive-testnet2.elastos.io"
-  ]
+  MainNet: ['https://hive1.elastos.io', 'https://hive2.elastos.io', 'https://hive3.elastos.io'],
+  TestNet: ['https://hive-testnet1.elastos.io', 'https://hive-testnet2.elastos.io']
 };
 
 export enum VaultStatusState {
@@ -51,7 +51,7 @@ export type VaultStatus = {
   };
   vaultInfo?: SubscriptionInfo; // Current user's subscription info (used storage, etc) - retrieved by the subscription service
   vaultServices?: Vault; // Current user's vault services instance, if any
-}
+};
 
 @Injectable({
   providedIn: 'root'
@@ -74,7 +74,8 @@ export class GlobalHiveService extends GlobalService {
     private globalNetworksService: GlobalNetworksService,
     private storage: GlobalStorageService,
     private prefs: GlobalPreferencesService,
-    private popup: GlobalPopupService
+    private popup: GlobalPopupService,
+    private lightweightService: GlobalLightweightService
   ) {
     super();
 
@@ -95,11 +96,11 @@ export class GlobalHiveService extends GlobalService {
         default:
           this.availableHiveNodeProviders = [];
       }
-    })
+    });
 
     this.hiveAuthHelper = new ElastosSDKHelper().newHiveAuthHelper();
     if (!this.hiveAuthHelper) {
-      throw new Error("Hive auth helper failed to create");
+      throw new Error('Hive auth helper failed to create');
     }
   }
 
@@ -113,16 +114,20 @@ export class GlobalHiveService extends GlobalService {
   }
 
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    this.vaultStatus.next({
-      checkState: VaultStatusState.NOT_CHECKED,
-      vaultInfo: null,
-      publishedInfo: null
-    });
+    // Only initialize hive functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      this.vaultStatus.next({
+        checkState: VaultStatusState.NOT_CHECKED,
+        vaultInfo: null,
+        publishedInfo: null
+      });
 
-    // Wait a moment then check active user's vault status and get things ready to use.
-    this.retrieveVaultStatusTimeout = runDelayed(() => {
-      void this.retrieveVaultStatus();
-    }, 3000);
+      // Wait a moment then check active user's vault status and get things ready to use.
+      this.retrieveVaultStatusTimeout = runDelayed(() => {
+        void this.retrieveVaultStatus();
+      }, 3000);
+      Logger.log('GlobalHiveService', 'Initializing hive functionality for user');
+    }
 
     return;
   }
@@ -144,21 +149,21 @@ export class GlobalHiveService extends GlobalService {
    * Helper to get a vaults services instance for any DID.
    */
   public async getVaultServicesFor(targetDid: string): Promise<Vault> {
-    Logger.log("GlobalHiveService", "Getting vault services for", targetDid);
+    Logger.log('GlobalHiveService', 'Getting vault services for', targetDid);
 
     try {
-        let vaultServices = await this.hiveAuthHelper.getVaultServices(targetDid, (e) => {
-          // Auth error
-          Logger.error("GlobalHiveService", "Hive authentication error", e);
-          throw e;
-        });
-        return vaultServices;
+      let vaultServices = await this.hiveAuthHelper.getVaultServices(targetDid, e => {
+        // Auth error
+        Logger.error('GlobalHiveService', 'Hive authentication error', e);
+        throw e;
+      });
+      return vaultServices;
     } catch (e) {
-        // No vaults service on LRW.
-        if (GlobalNetworksService.instance.getActiveNetworkTemplate() !== LRW_TEMPLATE) {
-            Logger.error("GlobalHiveService", "getVaultServices exception:", e);
-            throw e;
-        }
+      // No vaults service on LRW.
+      if (GlobalNetworksService.instance.getActiveNetworkTemplate() !== LRW_TEMPLATE) {
+        Logger.error('GlobalHiveService', 'getVaultServices exception:', e);
+        throw e;
+      }
     }
 
     return null;
@@ -171,9 +176,7 @@ export class GlobalHiveService extends GlobalService {
   /**
    * Checks the current vault status for the active user and updates the RxSubject accordingly.
    */
-  private async checkActiveUserVaultServices(): Promise<void> {
-
-  }
+  private async checkActiveUserVaultServices(): Promise<void> {}
 
   /**
    * Convenience method to get a shared subscription services instance for the active user.
@@ -186,7 +189,7 @@ export class GlobalHiveService extends GlobalService {
    * Helper to get a subscription services instance for any DID.
    */
   public async getSubscriptionServicesFor(targetDid: string): Promise<VaultSubscription> {
-    Logger.log("GlobalHiveService", "Getting subscription services for", targetDid);
+    Logger.log('GlobalHiveService', 'Getting subscription services for', targetDid);
 
     let subscriptionServices = await this.hiveAuthHelper.getSubscriptionService(targetDid);
 
@@ -209,27 +212,39 @@ export class GlobalHiveService extends GlobalService {
       if (randomHiveNodeAddress) {
         let service = didManager.ServiceBuilder.createService('#hivevault', 'HiveVault', randomHiveNodeAddress);
         await this.removeHiveVaultServiceFromDIDDocument(localDIDDocument, storePassword);
-        localDIDDocument.addService(service, storePassword, () => {
-          // Success
-          resolve(randomHiveNodeAddress);
-        }, (err) => {
-          reject(err);
-        });
-      }
-      else {
-        reject("Hive node address cannot be null");
+        localDIDDocument.addService(
+          service,
+          storePassword,
+          () => {
+            // Success
+            resolve(randomHiveNodeAddress);
+          },
+          err => {
+            reject(err);
+          }
+        );
+      } else {
+        reject('Hive node address cannot be null');
       }
     });
   }
 
-  private removeHiveVaultServiceFromDIDDocument(localDIDDocument: DIDPlugin.DIDDocument, storePassword: string): Promise<void> {
-    return new Promise((resolve) => {
-      localDIDDocument.removeService("#hivevault", storePassword, () => {
-        resolve();
-      }, (err) => {
-        // Resolve normally in case of error, as this may be a "service does not exist" error which is fine.
-        resolve();
-      });
+  private removeHiveVaultServiceFromDIDDocument(
+    localDIDDocument: DIDPlugin.DIDDocument,
+    storePassword: string
+  ): Promise<void> {
+    return new Promise(resolve => {
+      localDIDDocument.removeService(
+        '#hivevault',
+        storePassword,
+        () => {
+          resolve();
+        },
+        err => {
+          // Resolve normally in case of error, as this may be a "service does not exist" error which is fine.
+          resolve();
+        }
+      );
     });
   }
 
@@ -237,12 +252,12 @@ export class GlobalHiveService extends GlobalService {
    * Tells if a given DIDDocument already contains a hive vault or not.
    */
   public documentHasVault(doc: DIDPlugin.DIDDocument): boolean {
-    let hiveService = doc.getService("#hivevault");
+    let hiveService = doc.getService('#hivevault');
     return hiveService != null;
   }
 
   public getDocumentVaultProviderUrl(doc: DIDPlugin.DIDDocument): string {
-    let hiveService = doc.getService("#hivevault");
+    let hiveService = doc.getService('#hivevault');
     return hiveService.getEndpoint();
   }
 
@@ -258,52 +273,48 @@ export class GlobalHiveService extends GlobalService {
    * Subscribes (= sign up with the vault provider, free tier) active user to the target hive vault provider.
    */
   public async subscribeToHiveProvider(vaultProviderAddress: string): Promise<boolean> {
-    Logger.log("GlobalHiveService", "Subscribing to hive provider", vaultProviderAddress);
+    Logger.log('GlobalHiveService', 'Subscribing to hive provider', vaultProviderAddress);
 
     let didString = DIDSessionsStore.signedInDIDString;
 
     let vaultInfo: VaultInfo = null;
     try {
       vaultInfo = await this.getVaultInfo(didString);
-      console.log("subscribeToHiveProvider vaultInfo", vaultInfo);
-    }
-    catch (e) {
+      console.log('subscribeToHiveProvider vaultInfo', vaultInfo);
+    } catch (e) {
       // Silent catch, probably not authorized because not subscribed, so we will try to subscribe to the vault.
     }
 
     if (vaultInfo) {
       // The hive vault is already subscribed, so we have nothing to do.
       return true;
-    }
-    else {
+    } else {
       // No subscription - subscribe
-      Logger.log("GlobalHiveService", "subscribeToHiveProvider(): no vault info, subscribing");
+      Logger.log('GlobalHiveService', 'subscribeToHiveProvider(): no vault info, subscribing');
       let subscriptionService = await this.hiveAuthHelper.getSubscriptionService(didString);
       vaultInfo = await subscriptionService.subscribe();
       if (!vaultInfo) {
         // TO CHECK - Failure ?
-        Logger.error("GlobalHiveService", "Failed to create vault on the hive node");
+        Logger.error('GlobalHiveService', 'Failed to create vault on the hive node');
         return false;
       }
     }
 
     let vaultServices = await this.hiveAuthHelper.getVaultServices(didString);
     if (!vaultServices) {
-      Logger.error("GlobalHiveService", "NULL vault returned, unable to get the vault for this DID.");
-    }
-    else {
+      Logger.error('GlobalHiveService', 'NULL vault returned, unable to get the vault for this DID.');
+    } else {
       // Now try to call an API to see if everything is ok. This will initiate a authentication flow.
       try {
-        Logger.log("GlobalHiveService", "Calling an api on the hive vault to make sure everything is fine");
+        Logger.log('GlobalHiveService', 'Calling an api on the hive vault to make sure everything is fine');
 
         vaultServices = await this.hiveAuthHelper.getVaultServices(didString);
         let nodeInfo = await vaultServices.getServiceContext().getNodeInfo();
 
         if (!nodeInfo) {
-          Logger.error("GlobalHiveService", "Error while calling a test hive vault API. No data returned");
-        }
-        else {
-          Logger.log("GlobalHiveService", "Vault API could be called, all good!");
+          Logger.error('GlobalHiveService', 'Error while calling a test hive vault API. No data returned');
+        } else {
+          Logger.log('GlobalHiveService', 'Vault API could be called, all good!');
 
           // Update the vault status for listeners to start using it
           void this.retrieveVaultStatus();
@@ -311,9 +322,8 @@ export class GlobalHiveService extends GlobalService {
           // Everything is all right, now we can consider the hive setup as successfully completed.
           return true;
         }
-      }
-      catch (e) {
-        Logger.error("GlobalHiveService", "Exception while calling a test vault API:", e);
+      } catch (e) {
+        Logger.error('GlobalHiveService', 'Exception while calling a test vault API:', e);
       }
     }
 
@@ -324,12 +334,12 @@ export class GlobalHiveService extends GlobalService {
    * Initial check of active user's hive vault status
    */
   private async retrieveVaultStatus(): Promise<void> {
-    Logger.log("GlobalHiveService", "Looking for vault status");
+    Logger.log('GlobalHiveService', 'Looking for vault status');
 
     let signedInDID = (await this.didSessions.getSignedInIdentity()).didString;
 
     // Check if we can find an existing vault provider address on DID chain for this user.
-    Logger.log("GlobalHiveService", "Retrieving vault of current user's DID " + signedInDID);
+    Logger.log('GlobalHiveService', "Retrieving vault of current user's DID " + signedInDID);
     try {
       let vaultInfo = await (await this.hiveAuthHelper.getSubscriptionService(signedInDID)).checkSubscription();
       let activeUserVaultServices = await this.hiveAuthHelper.getVaultServices(signedInDID);
@@ -339,13 +349,12 @@ export class GlobalHiveService extends GlobalService {
         vaultInfo,
         publishedInfo: {
           vaultAddress: await activeUserVaultServices.getServiceContext().getProviderAddress(),
-          vaultName: "Unknown Vault Name",
+          vaultName: 'Unknown Vault Name',
           vaultVersion: await (await activeUserVaultServices.getServiceContext().getNodeVersion()).toString()
         },
         vaultServices: activeUserVaultServices
       });
-    }
-    catch (e) {
+    } catch (e) {
       /* TODO if (hiveManager.errorOfType(e, "VAULT_NOT_FOUND")) {
         // Vault not created on this hive provider yet (old DIDs?) - force user to pick a provider, that will
         // create the vault at the same time.
@@ -356,18 +365,18 @@ export class GlobalHiveService extends GlobalService {
       else { */
       // No vaults service on LRW.
       if (GlobalNetworksService.instance.getActiveNetworkTemplate() !== LRW_TEMPLATE) {
-          Logger.error("GlobalHiveService", "Exception while calling getVault() in retrieveVaultLinkStatus():", e);
+        Logger.error('GlobalHiveService', 'Exception while calling getVault() in retrieveVaultLinkStatus():', e);
       }
       this.emitUnknownErrorStatus();
       return null;
       //}
     }
 
-    Logger.log("GlobalHiveService", "Vault status retrieval completed");
+    Logger.log('GlobalHiveService', 'Vault status retrieval completed');
   }
 
   private emitUnknownErrorStatus() {
-    Logger.log("GlobalHiveService", "Emiting unknown error status");
+    Logger.log('GlobalHiveService', 'Emiting unknown error status');
     this.vaultStatus.next({
       checkState: VaultStatusState.UNKNOWN_ERROR
     });
@@ -389,7 +398,14 @@ export class GlobalHiveService extends GlobalService {
 
     let subscriptionServices = await this.hiveAuthHelper.getSubscriptionService(signedInDID, vaultAddress);
     if (!subscriptionServices) {
-      Logger.error('HiveManager', "Failed to create vault on the vault provider for DID " + signedInDID + " at address " + vaultAddress + " because there is no active vault services instance.");
+      Logger.error(
+        'HiveManager',
+        'Failed to create vault on the vault provider for DID ' +
+          signedInDID +
+          ' at address ' +
+          vaultAddress +
+          ' because there is no active vault services instance.'
+      );
       return false;
     }
 
@@ -398,18 +414,19 @@ export class GlobalHiveService extends GlobalService {
       let createdVaultInfo = null;
       try {
         createdVaultInfo = await subscriptionServices.subscribe();
-      }
-      catch (e) {
+      } catch (e) {
         // Maybe already exist. Ignore this exception.
       }
 
       if (createdVaultInfo) {
-        Logger.log("GlobalHiveService", "Vault was newly created on the provider. Now updating vault address on user's DID");
+        Logger.log(
+          'GlobalHiveService',
+          "Vault was newly created on the provider. Now updating vault address on user's DID"
+        );
         // Vault creation succeeded, we can now save the provider address on ID chain.
-      }
-      else {
+      } else {
         // Vault already exists on this provider. Nothing to do
-        Logger.log("GlobalHiveService", "The vault already exists on the vault provider.");
+        Logger.log('GlobalHiveService', 'The vault already exists on the vault provider.');
       }
 
       let publicationStarted = await this.publishVaultProviderToIDChain(providerName, vaultAddress);
@@ -421,37 +438,41 @@ export class GlobalHiveService extends GlobalService {
       }
 
       return publicationStarted;
-    }
-    catch (err) {
-      Logger.error('GlobalHiveService', "Failed to create vault on the vault provider for DID " + signedInDID + " at address " + vaultAddress, err);
+    } catch (err) {
+      Logger.error(
+        'GlobalHiveService',
+        'Failed to create vault on the vault provider for DID ' + signedInDID + ' at address ' + vaultAddress,
+        err
+      );
       return false;
     }
   }
 
   private async publishVaultProviderToIDChain(providerName: string, vaultAddress: string): Promise<boolean> {
-    Logger.log("GlobalHiveService", "Requesting identity app to update the hive provider");
+    Logger.log('GlobalHiveService', 'Requesting identity app to update the hive provider');
 
     try {
-      let result: { result: { status: string } } = await this.globalIntentService.sendIntent("https://did.elastos.net/sethiveprovider", {
-        name: providerName,
-        address: vaultAddress
-      });
+      let result: { result: { status: string } } = await this.globalIntentService.sendIntent(
+        'https://did.elastos.net/sethiveprovider',
+        {
+          name: providerName,
+          address: vaultAddress
+        }
+      );
 
-      Logger.log("GlobalHiveService", "Got sethiveprovider intent result:", result);
+      Logger.log('GlobalHiveService', 'Got sethiveprovider intent result:', result);
 
-      if (result && result.result && result.result.status && result.result.status == "published") {
+      if (result && result.result && result.result.status && result.result.status == 'published') {
         // Vault address was added to user's DID document and publication is on going.
         // Now wait a moment
         return true; // Publishing
-      }
-      else {
+      } else {
         // Publication was cancelled or errored. Do nothing more. Maybe user will retry.
-        Logger.log("GlobalHiveService", "Publication cancelled or errored");
+        Logger.log('GlobalHiveService', 'Publication cancelled or errored');
         return false;
       }
-    }
-    catch (err) {
-      Logger.error("GlobalHiveService", "Error while trying to call the sethiveprovider intent: ", err);
+    } catch (err) {
+      Logger.error('GlobalHiveService', 'Error while trying to call the sethiveprovider intent: ', err);
       return false;
     }
   }
@@ -465,27 +486,33 @@ export class GlobalHiveService extends GlobalService {
   public fetchHiveScriptPicture(hiveScriptUrl: string): Promise<Buffer> {
     // DIRTY HACK START - delete this after a while. Reason: Essentials 2.1 android generates invalid script urls such as
     // ...&params={empty:0} // invalid json. - should be &params={\"empty\"":0}. DELETE this hack after a while.
-    hiveScriptUrl = hiveScriptUrl.replace("params={empty:0}", "params={\"empty\":0}");
+    hiveScriptUrl = hiveScriptUrl.replace('params={empty:0}', 'params={"empty":0}');
     // DIRTY HACK END
 
     // eslint-disable-next-line @typescript-eslint/no-misused-promises, no-async-promise-executor
-    return new Promise<Buffer>(async (resolve) => {
+    return new Promise<Buffer>(async resolve => {
       try {
-        Logger.log("GlobalHiveService", "Calling script url to download file", hiveScriptUrl);
-        let pictureBuffer = await (await this.getActiveUserVaultServices()).getScriptingService().downloadFileByHiveUrl(hiveScriptUrl);
+        Logger.log('GlobalHiveService', 'Calling script url to download file', hiveScriptUrl);
+        let pictureBuffer = await (await this.getActiveUserVaultServices())
+          .getScriptingService()
+          .downloadFileByHiveUrl(hiveScriptUrl);
 
         if (!pictureBuffer || pictureBuffer.length == 0) {
-          Logger.warn("GlobalHiveService", "Got empty data while fetching hive script picture", hiveScriptUrl);
+          Logger.warn('GlobalHiveService', 'Got empty data while fetching hive script picture', hiveScriptUrl);
           resolve(null);
-        }
-        else {
-          Logger.log("GlobalHiveService", "Got data after fetching hive script picture", hiveScriptUrl, "data length:", pictureBuffer.length);
+        } else {
+          Logger.log(
+            'GlobalHiveService',
+            'Got data after fetching hive script picture',
+            hiveScriptUrl,
+            'data length:',
+            pictureBuffer.length
+          );
           resolve(pictureBuffer);
         }
-      }
-      catch (e) {
+      } catch (e) {
         // Can't download the asset
-        Logger.warn("GlobalHiveService", "Failed to download hive asset at " + hiveScriptUrl, e);
+        Logger.warn('GlobalHiveService', 'Failed to download hive asset at ' + hiveScriptUrl, e);
         resolve(null);
       }
     });
@@ -498,8 +525,7 @@ export class GlobalHiveService extends GlobalService {
    * Ex: hive://user_did@app_did/getMainIdentityAvatar ---> "data:image/png;base64,iVe89...."
    */
   public fetchHiveScriptPictureToDataUrl(hiveScriptUrl: string): Promise<string> {
-    if (!hiveScriptUrl)
-      return null;
+    if (!hiveScriptUrl) return null;
 
     return new Promise(resolve => {
       void this.fetchHiveScriptPicture(hiveScriptUrl).then(rawPicture => {
@@ -513,8 +539,8 @@ export class GlobalHiveService extends GlobalService {
    * Returns this url if possible, or null otherwise.
    */
   public getHiveAvatarUrlFromDIDAvatarCredential(avatarCredentialSubject: JSONObject): string {
-    if (avatarCredentialSubject.type && avatarCredentialSubject.type == "elastoshive") {
-      if (avatarCredentialSubject.data && avatarCredentialSubject["content-type"]) {
+    if (avatarCredentialSubject.type && avatarCredentialSubject.type == 'elastoshive') {
+      if (avatarCredentialSubject.data && avatarCredentialSubject['content-type']) {
         let hiveUrl = avatarCredentialSubject.data as string;
         return hiveUrl;
       }
@@ -528,11 +554,23 @@ export class GlobalHiveService extends GlobalService {
    * hive vault.
    */
   public getSyncDataToHiveWasPrompted(): Promise<boolean> {
-    return this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "hiveservice", "syncdataprompted", false);
+    return this.storage.getSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'hiveservice',
+      'syncdataprompted',
+      false
+    );
   }
 
   public setSyncDataToHiveWasPrompted() {
-    return this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "hiveservice", "syncdataprompted", true);
+    return this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'hiveservice',
+      'syncdataprompted',
+      true
+    );
   }
 
   /**
@@ -543,7 +581,8 @@ export class GlobalHiveService extends GlobalService {
     let confirmed = await this.popup.showConfirmationPopup(
       this.translate.instant('launcher.hive-sync-popup-title'),
       this.translate.instant('launcher.hive-sync-popup-info'),
-      this.translate.instant('common.activate'));
+      this.translate.instant('common.activate')
+    );
 
     if (confirmed) {
       await this.setSyncDataToHiveWasPrompted();

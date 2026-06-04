@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { AppService } from './app.service';
 import { BackgroundService } from './background.service';
@@ -14,7 +15,8 @@ export class HiveManagerInitService extends GlobalService {
     private hiveService: HiveService,
     private backgroundService: BackgroundService,
     private appService: AppService,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
+    private lightweightService: GlobalLightweightService
   ) {
     super();
   }
@@ -28,8 +30,11 @@ export class HiveManagerInitService extends GlobalService {
   }
 
   public async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    await this.hiveService.init();
-    this.backgroundService.init();
+    // Only initialize hive manager functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      await this.hiveService.init();
+      this.backgroundService.init();
+    }
   }
 
   public onUserSignOut(): Promise<void> {

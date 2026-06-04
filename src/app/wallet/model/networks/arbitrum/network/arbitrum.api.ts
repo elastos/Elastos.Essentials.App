@@ -12,7 +12,7 @@ export class ArbitrumAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case ArbitrumApiType.RPC: return 'https://arb1.arbitrum.io/rpc';
-          case ArbitrumApiType.ETHERSCAN_API: return 'https://api.arbiscan.io/api';
+          case ArbitrumApiType.ETHERSCAN_API: return 'https://api.etherscan.io/v2/api';
           case ArbitrumApiType.BLOCK_EXPLORER: return 'https://arbiscan.io';
           default:
             throw new Error("Arbitrum API - Unknown api type " + type);

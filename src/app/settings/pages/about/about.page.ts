@@ -18,16 +18,16 @@ export class AboutPage implements OnInit {
     {
       type: 'settings.developer',
       links: [
-        { title: 'Elaphant Limited', link: null },
-        { title: 'common.website', link: 'https://d.web3essentials.io/' },
-        { title: 'common.email', link: 'contact@elaphant.app' },
+        { title: 'Elastos DAO LLC', link: null },
+        { title: 'common.website', link: 'elastos.com' },
+        { title: 'common.email', link: 'secretariat@elastos.com' },
       ]
     },
     {
       type: 'settings.see-also',
       links: [
         { title: 'settings.visit', link: 'https://elastos.info' },
-        { title: 'settings.join', link: 'https://www.cyberrepublic.org' },
+        { title: 'settings.join', link: 'https://www.elastos.com' },
         { title: 'settings.build', link: 'https://elastos.dev' },
         { title: 'Elastos Discord', link: 'https://discord.gg/FGdF7CRAZr' },
       ],

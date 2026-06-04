@@ -27,6 +27,33 @@ export const reducedWalletAddress = (address: string): string => {
   return `${hasPrefix ? '0x' : ''}${workedAddress.substr(0, 5)}...${workedAddress.substr(workedAddress.length - 5, 5)}`;
 }
 
+/**
+ * Check if the error indicates that the RPC server is inaccessible (e.g. returned HTML error page instead of JSON)
+ */
+function isServerInaccessibleError(e: any): boolean {
+  const getText = (): string => {
+    const parts: string[] = [];
+    if (e?.message && typeof e.message === "string") parts.push(e.message);
+    if (e?.response?.data && typeof e.response.data === "string") parts.push(e.response.data);
+    if (e?.responseText && typeof e.responseText === "string") parts.push(e.responseText);
+    if (e?.data && typeof e.data === "string") parts.push(e.data);
+    return parts.join(" ").toLowerCase();
+  };
+  const text = getText();
+  if (!text) return false;
+
+  // returned HTML instead of JSON (e.g. Cloudflare intercept page, 502/503 error page, etc.)
+  if (/<!doctype\s+html>/i.test(text)) return true;
+  if (/<html[\s>]/i.test(text)) return true;
+
+  // Cloudflare /  any access restriction related
+  if (text.includes("access denied")) return true;
+  if (text.includes("cloudflare") && text.includes("restrict")) return true;
+  if (text.includes("used cloudflare to restrict access")) return true;
+
+  return false;
+}
+
 export class WalletExceptionHelper {
     /**
      * From a raw JS exception, try to extract more usable information and return clearer
@@ -41,6 +68,10 @@ export class WalletExceptionHelper {
         if (e.message.includes("No network connection available")) {
             return new Web3Exception();
         }
+      }
+
+      if (isServerInaccessibleError(e)) {
+        return new Web3Exception();
       }
 
       Logger.log("wallet", "No specific exception info");

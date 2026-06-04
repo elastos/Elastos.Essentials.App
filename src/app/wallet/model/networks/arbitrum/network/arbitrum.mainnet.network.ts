@@ -12,8 +12,7 @@ export class ArbitrumMainNetNetwork extends ArbitrumBaseNetwork {
   private uniswapCurrencyProvider: ArbitrumMainnetUniswapCurrencyProvider = null;
 
   constructor() {
-    super(
-      "arbitrum",
+    super("arbitrum",
       "Arbitrum One",
       "Arbitrum",
       "assets/wallet/networks/arbitrum.svg",
@@ -23,16 +22,21 @@ export class ArbitrumMainNetNetwork extends ArbitrumBaseNetwork {
       42161,
       [],
       [
+        {
+          name: 'Arbitrum Mainnet RPC',
+          url: 'https://arb1.arbitrum.io/rpc'
+        }
+      ],
+      [
         arbitrumMainnetElkEarnProvider
       ],
       [
         arbitrumMainnetUniswapSwapProvider,
-        arbitrumMainnetElkSwapProvider
+      arbitrumMainnetElkSwapProvider
       ],
       [
         arbitrumMainnetElkBridgeProvider
-      ]
-    );
+      ]);
 
     this.builtInCoins = [
       new ERC20Coin(this, "USDT", "USDT", "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9", 6, false, true),

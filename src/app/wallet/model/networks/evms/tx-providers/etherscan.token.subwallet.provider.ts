@@ -6,10 +6,12 @@ import { SubWalletTransactionProvider } from "../../../tx-providers/subwallet.pr
 import { TransactionProvider } from "../../../tx-providers/transaction.provider";
 import { NetworkAPIURLType } from "../../base/networkapiurltype";
 import { AnySubWallet } from "../../base/subwallets/subwallet";
-import { ERCTokenInfo, EthTokenTransaction, EthTransaction } from "../evm.types";
+import { ERCTokenInfo, EtherscanAPIVersion, EthTokenTransaction, EthTransaction } from "../evm.types";
 import { ERC20SubWallet } from "../subwallets/erc20.subwallet";
 import { MainCoinEVMSubWallet } from "../subwallets/evm.subwallet";
 import { EtherscanHelper } from "./etherscan.helper";
+import { EVMNetwork } from "../evm.network";
+import { Util } from "src/app/model/util";
 
 const MAX_RESULTS_PER_FETCH = 30
 
@@ -38,13 +40,18 @@ enum AccountAction {
 
 export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEVMSubWallet<any>> extends SubWalletTransactionProvider<SubWalletType, EthTransaction> {
   protected canFetchMore = true;
+  private chainid = -1;
 
-  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private fetchMode: FetchMode = FetchMode.Compatibility1, private apiKey?: string) {
+  constructor(provider: TransactionProvider<any>, subWallet: SubWalletType, private fetchMode: FetchMode = FetchMode.Compatibility1, private apiKey?: string, private apiVersion = EtherscanAPIVersion.V1) {
     super(provider, subWallet);
+
+    if (apiVersion === EtherscanAPIVersion.V2) {
+      this.chainid = (this.subWallet.networkWallet.network as EVMNetwork).getMainChainID()
+    }
 
     // Discover new transactions globally for all tokens at once, in order to notify user
     // of NEW tokens received, and NEW payments received for existing tokens.
-    provider.refreshEvery(() => this.discoverTokens(), 30000);
+    provider.refreshEvery(() => this.discoverTokens(), 60000);
   }
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
@@ -61,6 +68,11 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
   }
 
   public async fetchTransactions(erc20SubWallet: ERC20SubWallet, afterTransaction?: EthTransaction): Promise<void> {
+    if (this.isFetchTransactionsBlocked()) {
+      Logger.warn('wallet', 'fetchTransactions blocked');
+      return;
+    }
+
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
     if (afterTransaction) {
@@ -81,10 +93,19 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
       accountAddress,
       contractAddress,
       page,
-      MAX_RESULTS_PER_FETCH);
+      MAX_RESULTS_PER_FETCH,
+      this.apiKey,
+      this.apiVersion,
+      this.chainid);
+
+    if (!transactions) {
+      this.blockFetch();
+      return;
+    }
+    this.unblockFetch();
 
     this.canFetchMore = canFetchMore;
-    await this.saveTransactions(transactions);
+    await this.saveTransactions(transactions, !afterTransaction);
   }
 
   public async discoverTokens(): Promise<void> {
@@ -94,8 +115,15 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
 
     if (this.fetchMode === FetchMode.Compatibility1) {
       // Mode 1: use 'tokenlist' and nothing else. All tokens are mixed.
-      const tokenListUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN) +
+      let tokenListUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN) +
         '?module=account&action=tokenlist&address=' + address;
+
+      if (this.apiKey)
+        tokenListUrl += '&apikey=' + this.apiKey;
+
+      if (this.apiVersion === EtherscanAPIVersion.V2) {
+        tokenListUrl += `&chainid=${this.chainid}`
+      }
 
       try {
         let result = await GlobalJsonRPCService.instance.httpGet(tokenListUrl, this.subWallet.networkWallet.network.key);
@@ -228,6 +256,11 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
   }
 
   private async getTokenTransferEventsByAction(address: string, action: AccountAction, startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
+    if (this.isFetchTransactionsBlocked()) {
+      Logger.warn('wallet', 'getTokenTransferEventsByAction blocked');
+      return [];
+    }
+
     let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)
       + '?module=account&action=' + action + '&address=' + address
       + '&startblock=' + startblock + '&endblock=' + endblock + '&sort=asc';
@@ -235,18 +268,37 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     if (this.apiKey)
       tokensEventUrl += '&apikey=' + this.apiKey;
 
+    if (this.apiVersion === EtherscanAPIVersion.V2) {
+      tokensEventUrl += `&chainid=${this.chainid}`
+    }
+
+    // Logger.log('wallet', ' getTokenTransferEventsByAction tokensEventUrl:', tokensEventUrl)
+
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl, this.subWallet.networkWallet.network.key);
+      if (Util.isServerRejectedOrInaccessible(null, result.result)) {
+        this.blockFetch();
+      }
+
       if (result.result instanceof Array) {
+        this.unblockFetch();
         return result.result as EthTokenTransaction[];
       } else return [];
     } catch (e) {
       Logger.error('wallet', 'getTokenTransferEventsByAction error:', e)
+      if (Util.isServerRejectedOrInaccessible(e, null)) {
+        this.blockFetch();
+      }
       return [];
     }
   }
 
   private async getTokenTransferEventsByContractAddress(address: string, contractAddress: string, action: AccountAction, startblock: number, endblock = 9999999999): Promise<EthTokenTransaction[]> {
+    if (this.isFetchTransactionsBlocked()) {
+      Logger.warn('wallet', 'getTokenTransferEventsByContractAddress blocked');
+      return [];
+    }
+
     let tokensEventUrl = this.subWallet.networkWallet.network.getAPIUrlOfType(NetworkAPIURLType.ETHERSCAN)
       + '?module=account&action=' + action + '&address=' + address
       + '&contractaddress=' + contractAddress
@@ -255,15 +307,27 @@ export class EtherscanEVMSubWalletTokenProvider<SubWalletType extends MainCoinEV
     if (this.apiKey)
       tokensEventUrl += '&apikey=' + this.apiKey;
 
-    //console.log(tokensEventUrl)
+    if (this.apiVersion === EtherscanAPIVersion.V2) {
+      tokensEventUrl += `&chainid=${this.chainid}`
+    }
+
+    // Logger.log('wallet', ' getTokenTransferEventsByContractAddress tokensEventUrl:', tokensEventUrl)
 
     try {
       let result = await GlobalJsonRPCService.instance.httpGet(tokensEventUrl, this.subWallet.networkWallet.network.key);
+      if (Util.isServerRejectedOrInaccessible(null, result.result)) {
+        this.blockFetch();
+      }
+
       if (result.result instanceof Array) {
+        this.unblockFetch();
         return result.result as EthTokenTransaction[];
       } else return [];
     } catch (e) {
       Logger.error('wallet', 'getTokenTransferEventsByContractAddress error:', e)
+      if (Util.isServerRejectedOrInaccessible(e)) {
+        this.blockFetch();
+      }
       return [];
     }
   }

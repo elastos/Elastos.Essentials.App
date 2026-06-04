@@ -50,7 +50,7 @@ export class ProposalDetails {
 
     crVotes: VoteResult[];
     originalURL: string; // Cyber Republic web page URL where the full proposal content can be seen
-    duration: string; // ?
+    duration?: number;
     rejectAmount: string; // ?
     rejectThroughAmount: string; // ?
     rejectRatio: number; // ?

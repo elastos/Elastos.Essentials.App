@@ -69,7 +69,7 @@ export class ELATransactionSigner {
     const hash = SHA256.sha256Hash(bufferHex);
 
     const { ec } = await lazyEllipticImport();
-    let curve = new ec('P256');
+    let curve = new ec('p256');
 
     const signature = curve.sign(hash, privateKey, null);
 

@@ -98,4 +98,10 @@ export enum ETHSCTransferType {
 export enum TransactionListType {
   NORMAL = 0,
   INTERNAL = 1, // contract internal transaction.
+  RECHARGE = 2, // recharge transaction.
+}
+
+export enum EtherscanAPIVersion {
+  V1 = 0,
+  V2 = 1,
 }

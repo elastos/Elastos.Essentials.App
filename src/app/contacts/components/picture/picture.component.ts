@@ -8,6 +8,7 @@ import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 's
 import { Logger } from 'src/app/logger';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { Avatar } from '../../models/avatar';
+import { dataUrlToRawImageData } from 'src/app/helpers/picture.helpers';
 
 @Component({
   selector: 'app-picture',
@@ -70,7 +71,11 @@ export class PictureComponent implements OnInit {
     navigator.camera.getPicture((imageData) => {
       this.zone.run(() => {
         Logger.log('contacts', 'Image data', imageData);
-        this.avatar.data = imageData;
+        if (imageData.startsWith("data:")) {
+          this.avatar.data = dataUrlToRawImageData(imageData);
+        } else {
+          this.avatar.data = imageData;
+        }
       });
     }, ((err) => {
       Logger.error('contacts', err);

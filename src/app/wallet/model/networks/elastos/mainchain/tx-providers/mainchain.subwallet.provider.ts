@@ -24,6 +24,10 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
   // Save the transactions not merged, these transactions will be merged when load more transactions.
   private transactionsUnmerged: ElastosTransaction[] = [];
 
+  public getInitialFetchSize(): number {
+    return this.TRANSACTION_LIMIT;
+  }
+
   protected getProviderTransactionInfo(transaction: ElastosTransaction): ProviderTransactionInfo {
     return {
       cacheKey: this.subWallet.getTransactionsCacheKey(),
@@ -92,7 +96,7 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
       // console.log("DEBUG MainchainProvider fetchTransactions txList before merge=", txList);
 
       if (txList.length > 0) {
-        await this.mergeTransactionListAndSort(txList);
+        await this.mergeTransactionListAndSort(txList, true);
       } else {
         // Notify the page to show the right time of the transactions even no new transaction.
         // TODO this.subWallet.masterWallet.walletManager.subwalletTransactionStatus.set(this.subwalletTransactionStatusID, this.paginatedTransactions.txhistory.length);
@@ -145,16 +149,16 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
     }
 
     if (txList.length > 0) {
-      await this.mergeTransactionListAndSort(txList);
+      await this.mergeTransactionListAndSort(txList, false);
     }
   }
 
-  private async mergeTransactionListAndSort(txList: PaginatedTransactions<ElastosTransaction>[]): Promise<void> {
+  private async mergeTransactionListAndSort(txList: PaginatedTransactions<ElastosTransaction>[], isNewestFetch = false): Promise<void> {
     // When you send transaction, one of the output is the address of this wallet,
     // So we must merge these transactions.
     // For send transactions, every input and output has a transactions.
     // If all the output is the address of this wallet, then this transaction direction is 'MOVED'
-    await this.mergeTransactionList(txList);
+    await this.mergeTransactionList(txList, isNewestFetch);
 
     this.timestampEnd = await this.getLastConfirmedTransactionTimestamp();
   }
@@ -170,7 +174,7 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
     return 0;
   }
 
-  private async mergeTransactionList(txList: PaginatedTransactions<ElastosTransaction>[]): Promise<void> {
+  private async mergeTransactionList(txList: PaginatedTransactions<ElastosTransaction>[], isNewestFetch = false): Promise<void> {
     if (!txList)
       throw new Error("Merge transactions: cannot merge an undefined list");
 
@@ -267,7 +271,7 @@ export class ElastosMainChainSubWalletProvider<SubWalletType extends SubWallet<E
         }
     })
 
-    await this.saveTransactions(transactions);
+    await this.saveTransactions(transactions, isNewestFetch);
   }
 
   private mergeTransactionsWithSameTxid(transactionsArray) {

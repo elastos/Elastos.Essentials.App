@@ -71,7 +71,7 @@ export class ELAAddressHelper {
     const rawPrivateKey = Buffer.from(privateKey, 'hex');
 
     const { ec } = await lazyEllipticImport();
-    let curve = new ec('P256');
+    let curve = new ec('p256');
 
     const keypair = curve.keyFromPrivate(rawPrivateKey);
     const publicKey = this.getPublicEncoded(keypair, true);

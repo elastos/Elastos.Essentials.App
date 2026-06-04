@@ -1,9 +1,27 @@
+ion-content {
+    --overflow: hidden;
+    height: 100%;
+}
+
 ion-grid {
     padding: 10px 20px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    // Scrollable container for long menu lists
+    .items-container {
+        flex: 1 1 auto; // take remaining space
+        min-height: 0; // allow child to shrink for overflow scrolling in flexbox
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch; // smooth scrolling on iOS
+        padding-bottom: 6px; // avoid last item being flush to bottom edge
+    }
 
     .header {
         margin-top: 15px;
         margin-bottom: 10px;
+        flex-shrink: 0;
 
         .arrow-icon {
             width: 10px;
@@ -14,6 +32,16 @@ ion-grid {
             font-weight: 500;
             font-size: 20px;
             margin-left: 20px;
+            display: flex;
+            align-items: center;
+
+            .title-icon {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                margin-right: 8px;
+                object-fit: cover;
+            }
         }
     }
 
@@ -23,6 +51,7 @@ ion-grid {
         border-radius: 13px;
         text-align: left;
         margin-bottom: 10px;
+        flex-shrink: 0;
 
         ion-col {
             display: flex;
@@ -34,12 +63,16 @@ ion-grid {
 
             img {
                 margin-right: 10px;
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                object-fit: cover;
             }
         }
 
         .right-col {
-          font-size: 14px;
-          justify-content: flex-end;
+            font-size: 14px;
+            justify-content: flex-end;
         }
     }
 }

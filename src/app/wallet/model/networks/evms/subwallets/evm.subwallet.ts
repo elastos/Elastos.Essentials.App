@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 import { GlobalRedPacketServiceAddresses } from 'src/app/config/globalconfig';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
@@ -16,7 +16,12 @@ import { EarnProvider } from '../../../earn/earnprovider';
 import { SwapProvider } from '../../../earn/swapprovider';
 import { WalletNetworkOptions } from '../../../masterwallets/wallet.types';
 import { AddressUsage } from '../../../safes/addressusage';
-import { TransactionDirection, TransactionInfo, TransactionStatus, TransactionType } from '../../../tx-providers/transaction.types';
+import {
+  TransactionDirection,
+  TransactionInfo,
+  TransactionStatus,
+  TransactionType
+} from '../../../tx-providers/transaction.types';
 import { WalletUtil } from '../../../wallet.util';
 import { MainCoinSubWallet } from '../../base/subwallets/maincoin.subwallet';
 import { ETHOperationType, ETHTransactionInfoParser, SwapExactTokensOperation } from '../ethtransactioninfoparser';
@@ -29,7 +34,10 @@ import type { ERC20SubWallet } from './erc20.subwallet';
 /**
  * Specialized sub wallet for EVM compatible chains main coins (elastos EID, elastos ESC, heco, etc)
  */
-export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends MainCoinSubWallet<EthTransaction, WalletNetworkOptionsType> {
+export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetworkOptions> extends MainCoinSubWallet<
+  EthTransaction,
+  WalletNetworkOptionsType
+> {
   protected ethscAddress: string = null;
   protected withdrawContractAddress: string = null;
   protected publishdidContractAddress: string = null;
@@ -53,7 +61,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     this.txInfoParser = new ETHTransactionInfoParser(this.networkWallet.network);
 
     this.tokenDecimals = 18;
-    this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals)
+    this.tokenAmountMulipleTimes = new BigNumber(10).pow(this.tokenDecimals);
     // this.erc20ABI = require( "../../../../assets/wallet/ethereum/StandardErc20ABI.json");
 
     this.redPacketServerAddress = GlobalRedPacketServiceAddresses[this.id];
@@ -86,7 +94,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public getSecondaryIcon(): string {
-    return null
+    return null;
   }
 
   public getFriendlyName(): string {
@@ -101,7 +109,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return WalletUtil.isEVMAddress(address);
   }
 
-  public getAccountAddress(usage: (AddressUsage | string) = AddressUsage.EVM_CALL): string {
+  public getAccountAddress(usage: AddressUsage | string = AddressUsage.EVM_CALL): string {
     if (!this.ethscAddress) {
       this.ethscAddress = this.getCurrentReceiverAddress(usage)?.toLowerCase();
     }
@@ -119,16 +127,40 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   public createAddress(): string {
     // Create on EVM networks always returns the same unique address.
     let addresses = this.networkWallet.safe.getAddresses(0, 1, false, AddressUsage.EVM_CALL);
-    return (addresses && addresses[0]) ? addresses[0] : null;
+    return addresses && addresses[0] ? addresses[0] : null;
   }
 
   public async getTransactionDetails(txid: string): Promise<EthTransaction> {
-    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(this.getNetwork().getRPCUrl(), txid, this.networkWallet.network.key);
+    let result = await GlobalEthereumRPCService.instance.eth_getTransactionByHash(
+      this.getNetwork().getRPCUrl(),
+      txid,
+      this.networkWallet.network.key
+    );
     if (!result) {
       // Remove error transaction.
       // TODO await this.removeInvalidTransaction(txid);
     }
     return result;
+  }
+
+  /**
+   * EVM saves to cache when packed (in evm.service checkPublicationStatusAndUpdate), not on immediate publish.
+   */
+  protected async onTransactionPublishedSuccessfully(_txid: string): Promise<void> {
+    // No-op: EVM saves when tx is packed on chain, see evm.service checkPublicationStatusAndUpdate
+  }
+
+  /**
+   * Save published transaction to cache when packed on chain. Called from evm.service when result.blockHash exists.
+   */
+  public async savePublishedTransactionToCache(transaction: EthTransaction): Promise<void> {
+    const txProvider = this.networkWallet.getTransactionDiscoveryProvider();
+    if (!txProvider) return;
+
+    if (!transaction.hash) transaction.hash = transaction.transactionHash;
+    if (!transaction.timeStamp) transaction.timeStamp = String(Math.floor(Date.now() / 1000));
+
+    await txProvider.updateTransactions(this, [transaction]);
   }
 
   /**
@@ -140,14 +172,23 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   public async getTransactionInfo(transaction: EthTransaction): Promise<TransactionInfo> {
     // There is no blockHash in the internal transactions.
-    if (transaction.hide || (transaction.blockHash === null) || (transaction.isError && transaction.isError != '0')) {
+    if (transaction.hide || transaction.blockHash === null || (transaction.isError && transaction.isError != '0')) {
       return null;
     }
+
+    if (!transaction.hash && transaction.transactionHash) {
+      transaction.hash = transaction.transactionHash;
+    }
+
+    let isCrossChain = transaction.isCrossChain || this.isCrossChain(transaction);
 
     transaction.to = transaction.to.toLowerCase();
 
     const timestamp = parseInt(transaction.timeStamp) * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+    const datetime =
+      timestamp === 0
+        ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending')
+        : WalletUtil.getDisplayDate(timestamp);
 
     const direction = await this.getTransactionDirection(transaction, transaction.to);
     transaction.Direction = direction;
@@ -160,13 +201,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     transaction.isERC20TokenTransfer = isERC20TokenTransfer;
     let erc20TokenTransactionInfo: ERC20TokenTransactionInfo = null;
     if (isERC20TokenTransfer) {
-      erc20TokenTransactionInfo = await this.getERC20TokenTransactionInfo(transaction)
-    }
-
-    let isCrossChain = this.isCrossChain(transaction);
-
-    if (!transaction.hash && transaction.transactionHash) {
-        transaction.hash = transaction.transactionHash;
+      erc20TokenTransactionInfo = await this.getERC20TokenTransactionInfo(transaction);
     }
 
     const transactionInfo: TransactionInfo = {
@@ -180,7 +215,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       name: await this.getTransactionName(transaction),
       payStatusIcon: await this.getTransactionIconPath(transaction),
       status: TransactionStatus.UNCONFIRMED, // TODO @zhiming: was: transaction.Status,
-      statusName: "TODO", // TODO @zhiming: was: this.getTransactionStatusName(transaction.Status, translate),
+      statusName: 'TODO', // TODO @zhiming: was: this.getTransactionStatusName(transaction.Status, translate),
       symbol: '',
       from: transaction.from,
       to: isERC20TokenTransfer ? erc20TokenTransactionInfo.to : transaction.to,
@@ -188,6 +223,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       txid: transaction.hash,
       type: null,
       isCrossChain: isCrossChain,
+      crossChainToAddress: isCrossChain ? await this.getCrossChainToAddress(transaction) : null,
       erc20TokenSymbol: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenSymbol : null,
       erc20TokenValue: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenValue : null,
       erc20TokenContractAddress: isERC20TokenTransfer ? erc20TokenTransactionInfo.tokenContractAddress : null,
@@ -200,17 +236,24 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     // There is no gasUsed and gasPrice, only gas (fee) on fusion network.
     // There is only gasUesd, no gasPride for some internal transactions.
     if (transaction.gasUsed?.length > 0 && transaction.gasPrice?.length > 0) {
-      transactionInfo.fee = new BigNumber(transaction.gasUsed).multipliedBy(new BigNumber(transaction.gasPrice)).dividedBy(this.tokenAmountMulipleTimes).toFixed();
+      transactionInfo.fee = new BigNumber(transaction.gasUsed)
+        .multipliedBy(new BigNumber(transaction.gasPrice))
+        .dividedBy(this.tokenAmountMulipleTimes)
+        .toFixed();
     } else if (transaction.gas.length > 0) {
       transactionInfo.fee = new BigNumber(transaction.gas).dividedBy(this.tokenAmountMulipleTimes).toFixed();
     }
 
     if (transactionInfo.confirmStatus !== 0) {
       transactionInfo.status = TransactionStatus.CONFIRMED;
-      transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+      transactionInfo.statusName = GlobalTranslationService.instance.translateInstant(
+        'wallet.coin-transaction-status-confirmed'
+      );
     } else {
       transactionInfo.status = TransactionStatus.PENDING;
-      transactionInfo.statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+      transactionInfo.statusName = GlobalTranslationService.instance.translateInstant(
+        'wallet.coin-transaction-status-pending'
+      );
     }
 
     // MESSY again - No "Direction" field in ETH transactions (contrary to other chains). Calling a private method to determine this.
@@ -234,7 +277,11 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       // Got a partial info, now compute more things (main contract operation type, events...) then save
       if (extInfo && extInfo.evm.transactionReceipt && !extInfo.evm.txInfo) {
         try {
-          extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(extInfo.evm.transactionReceipt, transaction.input, this);
+          extInfo.evm.txInfo = await this.txInfoParser.computeFromTxReceipt(
+            extInfo.evm.transactionReceipt,
+            transaction.input,
+            this
+          );
           await this.networkWallet.saveExtendedTxInfo(transaction.hash, extInfo);
         } catch (e) {
           // Silent catch
@@ -268,16 +315,30 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   protected async getTransactionName(transaction: EthTransaction): Promise<string> {
+    if (transaction.isCrossChain) {
+      if (transaction.Direction === TransactionDirection.RECEIVED) {
+        return 'wallet.coin-dir-from-mainchain';
+      }
+      else if (transaction.Direction === TransactionDirection.SENT) {
+        return 'wallet.coin-dir-to-mainchain';
+      }
+    }
+
     // Use extended info is there is some
     let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
     if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation)
-      return GlobalTranslationService.instance.translateInstant(extInfo.evm.txInfo.operation.description, extInfo.evm.txInfo.operation.descriptionTranslationParams);
+      return GlobalTranslationService.instance.translateInstant(
+        extInfo.evm.txInfo.operation.description,
+        extInfo.evm.txInfo.operation.descriptionTranslationParams
+      );
 
     // Fallback if no extended info: default transaction names
-    const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction, transaction.to);
+    const direction = transaction.Direction
+      ? transaction.Direction
+      : await this.getTransactionDirection(transaction, transaction.to);
     switch (direction) {
       case TransactionDirection.RECEIVED:
-        return "wallet.coin-op-received-token";
+        return 'wallet.coin-op-received-token';
       case TransactionDirection.SENT:
         return this.getETHSCTransactionContractType(transaction);
     }
@@ -289,21 +350,36 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
     if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
       switch (extInfo.evm.txInfo.type) {
-        case ETHOperationType.ERC20_TOKEN_APPROVE: return '/assets/wallet/tx/approve-token.svg';
-        case ETHOperationType.ERC721_TOKEN_APPROVE: return '/assets/wallet/tx/approve-token.svg';
-        case ETHOperationType.SEND_NFT: return '/assets/wallet/tx/send-nft.svg';
-        case ETHOperationType.SWAP: return '/assets/wallet/tx/swap-tokens.svg';
-        case ETHOperationType.ADD_LIQUIDITY: return '/assets/wallet/tx/add-liquidity.svg';
-        case ETHOperationType.REMOVE_LIQUIDITY: return '/assets/wallet/tx/remove-liquidity.svg';
-        case ETHOperationType.BRIDGE: return '/assets/wallet/tx/bridge.svg';
-        case ETHOperationType.WITHDRAW: return '/assets/wallet/tx/withdraw.svg';
-        case ETHOperationType.DEPOSIT: return '/assets/wallet/tx/deposit.svg';
-        case ETHOperationType.GET_REWARDS: return '/assets/wallet/tx/get-rewards.svg';
-        case ETHOperationType.STAKE: return '/assets/wallet/tx/stake.svg';
+        case ETHOperationType.ERC20_TOKEN_APPROVE:
+          return '/assets/wallet/tx/approve-token.svg';
+        case ETHOperationType.ERC721_TOKEN_APPROVE:
+          return '/assets/wallet/tx/approve-token.svg';
+        case ETHOperationType.SEND_NFT:
+          return '/assets/wallet/tx/send-nft.svg';
+        case ETHOperationType.SWAP:
+          return '/assets/wallet/tx/swap-tokens.svg';
+        case ETHOperationType.ADD_LIQUIDITY:
+          return '/assets/wallet/tx/add-liquidity.svg';
+        case ETHOperationType.REMOVE_LIQUIDITY:
+          return '/assets/wallet/tx/remove-liquidity.svg';
+        case ETHOperationType.BRIDGE:
+          return '/assets/wallet/tx/bridge.svg';
+        case ETHOperationType.WITHDRAW:
+          return '/assets/wallet/tx/withdraw.svg';
+        case ETHOperationType.DEPOSIT:
+          return '/assets/wallet/tx/deposit.svg';
+        case ETHOperationType.GET_REWARDS:
+          return '/assets/wallet/tx/get-rewards.svg';
+        case ETHOperationType.STAKE:
+          return '/assets/wallet/tx/stake.svg';
+        case ETHOperationType.BTCD:
+          return '/assets/wallet/tx/btcd.svg';
       }
     }
 
-    const direction = transaction.Direction ? transaction.Direction : await this.getTransactionDirection(transaction, transaction.to);
+    const direction = transaction.Direction
+      ? transaction.Direction
+      : await this.getTransactionDirection(transaction, transaction.to);
     switch (direction) {
       case TransactionDirection.RECEIVED:
         if (transaction.isRedPacket) {
@@ -320,23 +396,38 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     }
   }
 
-  protected async getTransactionDirection(transaction: EthTransaction, targetAddress: string): Promise<TransactionDirection> {
+  protected async getTransactionDirection(
+    transaction: EthTransaction,
+    targetAddress: string
+  ): Promise<TransactionDirection> {
     // Use extended info is there is some
     let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
     if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
       switch (extInfo.evm.txInfo.type) {
-        case ETHOperationType.SEND_NFT: return TransactionDirection.SENT;
-        case ETHOperationType.ADD_LIQUIDITY: return TransactionDirection.SENT;
-        case ETHOperationType.REMOVE_LIQUIDITY: return TransactionDirection.RECEIVED;
-        case ETHOperationType.WITHDRAW: return TransactionDirection.RECEIVED;
-        case ETHOperationType.DEPOSIT: return TransactionDirection.SENT;
-        case ETHOperationType.GET_REWARDS: return TransactionDirection.RECEIVED;
-        case ETHOperationType.STAKE: return TransactionDirection.SENT;
-        case ETHOperationType.INSCRIPTION: return TransactionDirection.SENT;
+        case ETHOperationType.SEND_NFT:
+          return TransactionDirection.SENT;
+        case ETHOperationType.ADD_LIQUIDITY:
+          return TransactionDirection.SENT;
+        case ETHOperationType.REMOVE_LIQUIDITY:
+          return TransactionDirection.RECEIVED;
+        case ETHOperationType.WITHDRAW:
+          if (transaction.isCrossChain) {
+            return TransactionDirection.SENT;
+          } else {
+            return TransactionDirection.RECEIVED;
+          }
+        case ETHOperationType.DEPOSIT:
+          return TransactionDirection.SENT;
+        case ETHOperationType.GET_REWARDS:
+          return TransactionDirection.RECEIVED;
+        case ETHOperationType.STAKE:
+          return TransactionDirection.SENT;
+        case ETHOperationType.INSCRIPTION:
+          return TransactionDirection.SENT;
         case ETHOperationType.SWAP: {
           let operation = extInfo.evm.txInfo.operation as SwapExactTokensOperation;
           if (operation.type === TransactionType.RECEIVED) {
-            return TransactionDirection.RECEIVED
+            return TransactionDirection.RECEIVED;
           }
           return TransactionDirection.SENT;
         }
@@ -344,11 +435,24 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     }
 
     const address = await this.getAccountAddress();
-    if (address === targetAddress) {
+    if (address.toLowerCase() === targetAddress.toLowerCase()) {
       return TransactionDirection.RECEIVED;
     } else {
       return TransactionDirection.SENT;
     }
+  }
+
+  protected async getCrossChainToAddress(transaction: EthTransaction): Promise<string> {
+    // Use extended info is there is some
+    let extInfo = await this.networkWallet.getExtendedTxInfo(transaction.hash);
+    if (extInfo && extInfo.evm && extInfo.evm.txInfo && extInfo.evm.txInfo.operation) {
+      // Use the main chain receiving address, if it has been resolved.
+      if (extInfo.evm.txInfo.operation.descriptionTranslationParams?.toAddress) {
+        return extInfo.evm.txInfo.operation.descriptionTranslationParams.toAddress;
+      }
+    }
+
+    return null;
   }
 
   private checkRedPacketTransaction(transaction: EthTransaction) {
@@ -372,14 +476,19 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
   protected async getERC20TokenTransactionInfo(transaction: EthTransaction): Promise<ERC20TokenTransactionInfo> {
     let contractAddress = transaction.to;
-    let toAddress = null, erc20TokenSymbol = null, erc20TokenValue = null;
+    let toAddress = null,
+      erc20TokenSymbol = null,
+      erc20TokenValue = null;
     const erc20Coin = this.networkWallet.network.getERC20CoinByContractAddress(contractAddress);
-    if (erc20Coin) {// erc20Coin is true normally.
+    if (erc20Coin) {
+      // erc20Coin is true normally.
       erc20TokenSymbol = erc20Coin.getSymbol();
       // Get transaction from erc20 token subwallet.
-      let erc20Subwallet: ERC20SubWallet = (this.networkWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet);
+      let erc20Subwallet: ERC20SubWallet = this.networkWallet.getSubWallet(erc20Coin.getID()) as ERC20SubWallet;
       if (erc20Subwallet) {
-        let erc20Tansaction: EthTokenTransaction = await erc20Subwallet.getTransactionByHash(transaction.hash) as EthTokenTransaction;
+        let erc20Tansaction: EthTokenTransaction = (await erc20Subwallet.getTransactionByHash(
+          transaction.hash
+        )) as EthTokenTransaction;
         if (erc20Tansaction) {
           toAddress = erc20Tansaction.to;
           erc20TokenValue = erc20Subwallet.getDisplayValue(erc20Tansaction.value).toFixed();
@@ -392,28 +501,33 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
       contractAddress = null;
     }
 
-    return { to: toAddress, tokenContractAddress: contractAddress, tokenSymbol: erc20TokenSymbol, tokenValue: erc20TokenValue }
+    return {
+      to: toAddress,
+      tokenContractAddress: contractAddress,
+      tokenSymbol: erc20TokenSymbol,
+      tokenValue: erc20TokenValue
+    };
   }
 
   protected getETHSCTransactionContractType(transaction: EthTransaction): string {
     let toAddressLowerCase = transaction.to.toLowerCase();
 
     if (transaction.isERC20TokenTransfer) {
-      return "wallet.coin-op-contract-token-transfer";
+      return 'wallet.coin-op-contract-token-transfer';
     } else if (toAddressLowerCase === this.withdrawContractAddress) {
       // withdraw to MainChain
-      return "wallet.coin-dir-to-mainchain";
-    } else if ((this.id === StandardCoinName.ETHDID) && (toAddressLowerCase === this.publishdidContractAddress)) {
+      return 'wallet.coin-dir-to-mainchain';
+    } else if (this.id === StandardCoinName.ETHDID && toAddressLowerCase === this.publishdidContractAddress) {
       // publish did
-      return "wallet.coin-op-identity";
+      return 'wallet.coin-op-identity';
     } else if (toAddressLowerCase === '') {
-      return "wallet.coin-op-contract-create";
+      return 'wallet.coin-op-contract-create';
     } else if (toAddressLowerCase === '0x0000000000000000000000000000000000000000') {
-      return "wallet.coin-op-contract-destroy";
+      return 'wallet.coin-op-contract-destroy';
     } else if (transaction.value !== '0') {
-      return "wallet.coin-op-sent-token";
+      return 'wallet.coin-op-sent-token';
     } else {
-      return "wallet.coin-op-contract-call";
+      return 'wallet.coin-op-contract-call';
     }
   }
 
@@ -433,8 +547,7 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     try {
       const balanceString = await (await this.getWeb3()).eth.getBalance(address);
       return new BigNumber(balanceString);
-    }
-    catch (e) {
+    } catch (e) {
       Logger.error('wallet', 'getBalanceByWeb3 exception:', e);
       return new BigNumber(NaN);
     }
@@ -451,7 +564,12 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     // this.balance = await this.getBalanceByWeb3();
     const address = await this.getAccountAddress();
-    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key, highPriority);
+    const balance = await GlobalEthereumRPCService.instance.eth_getBalance(
+      this.getNetwork().getRPCUrl(),
+      address,
+      this.networkWallet.network.key,
+      highPriority
+    );
     if (balance) {
       this.balance = balance;
       await this.saveBalanceToCache();
@@ -466,7 +584,14 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     return this.balance.gt(amount);
   }
 
-  public async createPaymentTransaction(toAddress: string, amount: BigNumber, memo: string, gasPriceArg: string = null, gasLimitArg: string = null, nonceArg = -1): Promise<string> {
+  public async createPaymentTransaction(
+    toAddress: string,
+    amount: BigNumber,
+    memo: string,
+    gasPriceArg: string = null,
+    gasLimitArg: string = null,
+    nonceArg = -1
+  ): Promise<string> {
     toAddress = await this.networkWallet.convertAddressForUsage(toAddress, AddressUsage.EVM_CALL);
 
     let gasPrice = gasPriceArg;
@@ -477,14 +602,14 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
 
     let gasLimit = gasLimitArg;
     if (gasLimit === null) {
-        gasLimit = (await this.estimateTransferTransactionGas()).toString();
+      gasLimit = (await this.estimateTransferTransactionGas()).toString();
     }
 
-    if (amount.eq(-1)) {//-1: send all.
-      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice))
+    if (amount.eq(-1)) {
+      //-1: send all.
+      let fee = new BigNumber(gasLimit).multipliedBy(new BigNumber(gasPrice));
       amount = this.balance.minus(fee);
-      if (amount.lte(0))
-        return null;
+      if (amount.lte(0)) return null;
     } else {
       amount = amount.multipliedBy(this.tokenAmountMulipleTimes);
     }
@@ -493,17 +618,30 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
     if (nonce === -1) {
       nonce = await this.getNonce();
     }
-    Logger.log('wallet', 'createPaymentTransaction amount:', amount.toFixed(), ' nonce:', nonce)
+    Logger.log('wallet', 'createPaymentTransaction amount:', amount.toFixed(), ' nonce:', nonce);
 
-    return (this.networkWallet.safe as unknown as EVMSafe).createTransferTransaction(toAddress, amount.toFixed(), gasPrice, gasLimit, nonce);
+    return (this.networkWallet.safe as unknown as EVMSafe).createTransferTransaction(
+      toAddress,
+      amount.toFixed(),
+      gasPrice,
+      gasLimit,
+      nonce
+    );
   }
 
-  public createWithdrawTransaction(toAddress: string, amount: number, memo: string, gasPrice: string, gasLimit: string, nonce: number): Promise<any> {
+  public createWithdrawTransaction(
+    toAddress: string,
+    amount: number,
+    memo: string,
+    gasPrice: string,
+    gasLimit: string,
+    nonce: number
+  ): Promise<any> {
     return Promise.resolve([]);
   }
 
   public publishTransaction(signedTransaction: string, visualFeedback = true): Promise<string> {
-    return EVMService.instance.publishTransaction(this, signedTransaction, null, visualFeedback);
+    return this.networkWallet.publishTransaction(this, signedTransaction, visualFeedback);
   }
 
   /**
@@ -511,13 +649,17 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
    */
   public async getGasPrice(): Promise<string> {
     const gasPrice = await (await this.getWeb3(true)).eth.getGasPrice();
-    //Logger.log('wallet', "GAS PRICE: ", gasPrice)
+    // Logger.log('wallet', "MainCoinEVMSubWallet getGasPrice: ", gasPrice)
     return gasPrice;
   }
 
   public async getNonce() {
     const address = await this.getAccountAddress();
-    return GlobalEthereumRPCService.instance.getETHSCNonce(this.getNetwork().getRPCUrl(), address, this.networkWallet.network.key);
+    return GlobalEthereumRPCService.instance.getETHSCNonce(
+      this.getNetwork().getRPCUrl(),
+      address,
+      this.networkWallet.network.key
+    );
   }
 
   public async estimateGas(tx): Promise<number> {
@@ -526,16 +668,21 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   }
 
   public async estimateTransferTransactionGas() {
-    let gasLimit = 100000;// Default value
+    let gasLimit = 210000; // Default value
     try {
-        const address = await this.getAccountAddress();
-        let tempGasLimit = await GlobalEthereumRPCService.instance.eth_estimateGas(this.getNetwork().getRPCUrl(), address, address, '0x186a0111', this.networkWallet.network.key);
-        gasLimit = Util.ceil(tempGasLimit * 1.5, 100);
+      const address = await this.getAccountAddress();
+      let tempGasLimit = await GlobalEthereumRPCService.instance.eth_estimateGas(
+        this.getNetwork().getRPCUrl(),
+        address,
+        address,
+        '0x186a0111',
+        this.networkWallet.network.key
+      );
+      gasLimit = Util.ceil(tempGasLimit * 1.5, 100);
+    } catch (e) {
+      Logger.warn('wallet', 'Failed to eth_estimateGas:', e);
     }
-    catch (e) {
-        Logger.warn('wallet', 'Failed to eth_estimateGas:', e);
-    }
-    return gasLimit
+    return gasLimit;
   }
 
   /**
@@ -550,7 +697,11 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
    */
   public estimateERC20TransferTransactionFees(tokenAddress: string): Promise<BigNumber> {
     let senderAddress = this.getCurrentReceiverAddress();
-    return ERC20CoinService.instance.estimateERC20TransferTransactionFees(tokenAddress, senderAddress, this.getNetwork());
+    return ERC20CoinService.instance.estimateERC20TransferTransactionFees(
+      tokenAddress,
+      senderAddress,
+      this.getNetwork()
+    );
   }
 
   /*protected async removeInvalidTransaction(hash: string) {
@@ -567,4 +718,4 @@ export class MainCoinEVMSubWallet<WalletNetworkOptionsType extends WalletNetwork
   } */
 }
 
-export class AnyMainCoinEVMSubWallet extends MainCoinEVMSubWallet<any> { }
+export class AnyMainCoinEVMSubWallet extends MainCoinEVMSubWallet<any> {}

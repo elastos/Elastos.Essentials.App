@@ -12,6 +12,14 @@ import type { AnyNetwork } from '../../model/networks/network';
 import { LocalStorage } from '../storage.service';
 import { EVMService } from './evm.service';
 
+type UnsupportedTokens = {
+  [key: number]: ERC20Coin[]
+};
+
+type InvalidPairs = {
+  [key: number]: string[]
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,6 +27,9 @@ export class UniswapCurrencyService {
   public static instance: UniswapCurrencyService = null;
 
   private stopService = false;
+
+  private unsupportedTokens: UnsupportedTokens = {}
+  private invalidPairs: InvalidPairs = {}
 
   constructor(
     private http: HttpClient,
@@ -58,6 +69,11 @@ export class UniswapCurrencyService {
     // Logger.log('walletdebug', "getTokenUSDValue", erc20coin.getSymbol(), erc20coin.getContractAddress());
 
     let chainId = network.getMainChainID();
+
+    if (this.isUnsupportedToken(chainId, erc20coin)) {
+      return 0;
+    }
+
     let swapFactoryAddress = currencyProvider.getFactoryAddress();
     let swapFactoryInitCodeHash = currencyProvider.getFactoryInitCodeHash();
     let referenceUSDcoin = currencyProvider.getReferenceUSDCoin();
@@ -86,11 +102,12 @@ export class UniswapCurrencyService {
     }
     catch (e) {
       Logger.warn("wallet", "Failed to fetch uniswap pairs to get token pricing:", evaluatedToken, network);
+      this.addToUnsupportedTokens(chainId, erc20coin);
       return 0;
     }
 
     if (tradingPairs.length == 0)
-      return 0; // No appropriate pairs could be built - should not happen
+      return 0; // No appropriate pairs could be built - should not happen, It may be a network issue.
 
     // Fictive trade: purchase 10 USD worth of the token
     let readableAmountOut = 10;
@@ -115,6 +132,7 @@ export class UniswapCurrencyService {
       let tradeImpactDecimal = parseFloat(trades[0].priceImpact.toSignificant(2));
       if (tradeImpactDecimal > 10) { // Slippage more than 10%? There is a problem...
         //Logger.warn("walletdebug", `Trade impact of ${tradeImpactDecimal}% is too high, skipping this valuation. Worthless token, or not enough liquidity`);
+        this.addToUnsupportedTokens(chainId, erc20coin);
         return 0;
       }
 
@@ -122,6 +140,7 @@ export class UniswapCurrencyService {
     }
     else {
       //Logger.log("walletdebug", "No trade found using pairs", tradingPairs);
+      this.addToUnsupportedTokens(chainId, erc20coin);
     }
 
     return 0; // No info found
@@ -142,10 +161,17 @@ export class UniswapCurrencyService {
       return null;
     }
 
+    let address = null;
+    let chainId = (<EVMNetwork>network).getMainChainID();
+
     try {
       const { Pair } = await lazyCustomUniswapSDKImport();
 
-      var address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
+      address = Pair.getAddress(tokenA, tokenB, factoryAddress, initCodeHash);
+
+      if (this.isInvalidPair(chainId, address)) {
+        return null;
+      }
 
       let uniswapPairContract = new (await EVMService.instance.getWeb3(network)).eth.Contract(<any>IUniswapV2Pair.abi, address);
       let _ref = await uniswapPairContract.methods.getReserves().call();
@@ -161,7 +187,62 @@ export class UniswapCurrencyService {
       return new Pair(currencyAmount0, currencyAmount1, factoryAddress, initCodeHash);
     } catch (e) {
       //Logger.log('walletdebug', 'fetchPairData error', tokenA, tokenB, e);
+
+      if (e && e.message && e.message.includes("Returned values aren't valid")) {
+        this.addToInvalidPairs(chainId, address)
+      }
       return null;
     }
+  }
+
+  // ********************
+  // Reduce useless API requests -- save unsupported tokens and pairs.
+  // ********************
+  addToUnsupportedTokens(chainId: number, erc20coin: ERC20Coin) {
+    let unsupportedTokens = this.unsupportedTokens[chainId]
+    if (unsupportedTokens) {
+      let index = unsupportedTokens.findIndex( (t) => t.erc20ContractAddress === erc20coin.erc20ContractAddress)
+      if (index == -1) {
+        this.unsupportedTokens[chainId].push(erc20coin)
+      }
+    } else {
+      this.unsupportedTokens[chainId] = [erc20coin]
+    }
+
+    // Logger.warn('walletdebug', 'addToUnsupportedTokens', this.unsupportedTokens);
+  }
+
+  isUnsupportedToken(chainId: number, erc20coin: ERC20Coin) {
+    let unsupportedTokens = this.unsupportedTokens[chainId]
+    if (unsupportedTokens) {
+      let index = unsupportedTokens.findIndex( (t) => t.erc20ContractAddress === erc20coin.erc20ContractAddress)
+      return index > -1 ? true : false;
+    }
+
+    return false;
+  }
+
+  addToInvalidPairs(chainId: number, address: string) {
+    let invalidPairs = this.invalidPairs[chainId]
+    if (invalidPairs) {
+      let index = invalidPairs.findIndex( (a) => a === address)
+      if (index == -1) {
+        this.invalidPairs[chainId].push(address)
+      }
+    } else {
+      this.invalidPairs[chainId] = [address]
+    }
+
+    // Logger.warn('walletdebug', 'addToInvalidPairs', this.invalidPairs);
+  }
+
+  isInvalidPair(chainId: number, address: string) {
+    let invalidPairs = this.invalidPairs[chainId]
+    if (invalidPairs) {
+      let index = invalidPairs.findIndex( (a) => a === address)
+      return index > -1 ? true : false;
+    }
+
+    return false;
   }
 }

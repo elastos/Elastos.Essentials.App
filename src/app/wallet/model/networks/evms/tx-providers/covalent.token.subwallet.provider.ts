@@ -63,7 +63,7 @@ export class CovalentSubWalletTokenProvider<SubWalletType extends MainCoinEVMSub
 
     this.canFetchMore = canFetchMore;
 
-    await this.saveTransactions(transactions);
+    await this.saveTransactions(transactions, !afterTransaction);
   }
 
   public async fetchAllTokensTransactions(): Promise<void> {

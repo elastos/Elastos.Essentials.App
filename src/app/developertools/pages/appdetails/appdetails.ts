@@ -7,7 +7,7 @@ import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.componen
 import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
 import { GlobalConfig } from 'src/app/config/globalconfig';
 import { DIDHelper } from 'src/app/helpers/did.helper';
-import { pictureMimeType, rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
+import { dataUrlToRawImageData, pictureMimeType, rawImageToBase64DataUrl } from 'src/app/helpers/picture.helpers';
 import { Logger } from 'src/app/logger';
 import { ApplicationDIDInfo, GlobalApplicationDidService } from 'src/app/services/global.applicationdid.service';
 import { GlobalHiveService } from 'src/app/services/global.hive.service';
@@ -38,7 +38,7 @@ export class AppDetailsPage {
   showPassword = false;
   passwordToggle = 'eye';
   appDIDDocumentStatusWasChecked = false; // Whether the App DID document has been checked on chain or not yet
-  private publishedAppInfo: ApplicationDIDInfo = null;
+  public publishedAppInfo: ApplicationDIDInfo = null;
   developerDIDDocument: DIDPlugin.DIDDocument = null;
   signedInUserDID: string = null;
   public publishingDid = false;
@@ -344,11 +344,15 @@ export class AppDetailsPage {
       // eslint-disable-next-line @typescript-eslint/no-floating-promises
       this.zone.run(async () => {
         if (imageData) {
-          let mimeType = await pictureMimeType(imageData);
+          if (imageData.startsWith("data:")) {
+            imageData = dataUrlToRawImageData(imageData);
+          } else {
+            let mimeType = await pictureMimeType(imageData);
 
-          if (["image/png", "image/jpg", "image/jpeg"].indexOf(mimeType) < 0) {
-            this.native.genericToast('identity.not-a-valid-picture');
-            return;
+            if (["image/png", "image/jpg", "image/jpeg"].indexOf(mimeType) < 0) {
+              this.native.genericToast('identity.not-a-valid-picture');
+              return;
+            }
           }
 
           await this.uploadAppIconToHive(imageData);

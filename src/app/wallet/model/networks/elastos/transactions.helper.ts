@@ -1,14 +1,24 @@
-import BigNumber from "bignumber.js";
-import { GlobalTranslationService } from "src/app/services/global.translation.service";
-import { Config } from "src/app/wallet/config/Config";
-import { ElastosTransaction, RawTransactionType, TransactionDirection, TransactionInfo, TransactionStatus } from "../../tx-providers/transaction.types";
-import { WalletUtil } from "../../wallet.util";
-import { MainChainSubWallet } from "./mainchain/subwallets/mainchain.subwallet";
+import { BigNumber } from 'bignumber.js';
+import { GlobalTranslationService } from 'src/app/services/global.translation.service';
+import { Config } from 'src/app/wallet/config/Config';
+import {
+  ElastosTransaction,
+  RawTransactionType,
+  TransactionDirection,
+  TransactionInfo,
+  TransactionStatus
+} from '../../tx-providers/transaction.types';
+import { WalletUtil } from '../../wallet.util';
+import { MainChainSubWallet } from './mainchain/subwallets/mainchain.subwallet';
 
 export class ElastosTransactionsHelper {
   public static getMemoString(memo: string) {
-    if (memo && memo.startsWith('type:text,msg:')) {
+    if (!memo) return memo;
+
+    if (memo.startsWith('type:text,msg:')) {
       return memo.substring(14);
+    } else if (memo.startsWith('pollvote')) {
+      return 'Elastos Mainchain Vote';
     } else {
       return memo;
     }
@@ -48,7 +58,10 @@ export class ElastosTransactionsHelper {
 
   public static getTransactionInfo(transaction: ElastosTransaction, subwallet: MainChainSubWallet): TransactionInfo {
     const timestamp = transaction.time * 1000; // Convert seconds to use milliseconds
-    const datetime = timestamp === 0 ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending') : WalletUtil.getDisplayDate(timestamp);
+    const datetime =
+      timestamp === 0
+        ? GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending')
+        : WalletUtil.getDisplayDate(timestamp);
     const transactionInfo: TransactionInfo = {
       amount: new BigNumber(-1), // Defined by inherited classes
       confirmStatus: -1, // Defined by inherited classes
@@ -75,22 +88,22 @@ export class ElastosTransactionsHelper {
   }
 
   /**
-* From a raw status, returns a UI readable string status.
-*/
+   * From a raw status, returns a UI readable string status.
+   */
   public static getTransactionStatusName(status: TransactionStatus): string {
     let statusName = null;
     switch (status) {
       case TransactionStatus.CONFIRMED:
-        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-confirmed");
+        statusName = GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-confirmed');
         break;
       case TransactionStatus.PENDING:
-        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-pending");
+        statusName = GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-pending');
         break;
       case TransactionStatus.UNCONFIRMED:
-        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-unconfirmed");
+        statusName = GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-unconfirmed');
         break;
       case TransactionStatus.NOT_PUBLISHED:
-        statusName = GlobalTranslationService.instance.translateInstant("wallet.coin-transaction-status-not-published");
+        statusName = GlobalTranslationService.instance.translateInstant('wallet.coin-transaction-status-not-published');
         break;
     }
     return statusName;
@@ -106,70 +119,82 @@ export class ElastosTransactionsHelper {
         // TODO: Show right info for others txtype.
         switch (transaction.txtype) {
           case RawTransactionType.CoinBase:
-            transactionName = "wallet.coin-op-coin-base";
+            transactionName = 'wallet.coin-op-coin-base';
             break;
           case RawTransactionType.RechargeToSideChain:
-            transactionName = "wallet.coin-dir-from-mainchain";
+            transactionName = 'wallet.coin-dir-from-mainchain';
             break;
           case RawTransactionType.WithdrawFromSideChain:
             switch (transaction.inputs[0]) {
               case Config.IDCHAIN_DEPOSIT_ADDRESS:
               case Config.ETHDID_DEPOSIT_ADDRESS:
-                transactionName = "wallet.coin-dir-from-idchain";
+                transactionName = 'wallet.coin-dir-from-idchain';
                 break;
               case Config.ETHSC_DEPOSIT_ADDRESS:
-                transactionName = "wallet.coin-dir-from-ethsc";
+                transactionName = 'wallet.coin-dir-from-ethsc';
+                break;
+              case Config.ETHECO_DEPOSIT_ADDRESS:
+                transactionName = 'wallet.coin-dir-from-eco';
+                break;
+              case Config.ETHECOPGP_DEPOSIT_ADDRESS:
+                transactionName = 'wallet.coin-dir-from-pgp';
                 break;
               default:
                 transactionName = 'wallet.coin-op-received-token';
             }
             break;
           case RawTransactionType.ReturnDepositCoin:
-            transactionName = "wallet.coin-op-producer-return";
+            transactionName = 'wallet.coin-op-producer-return';
             break;
           case RawTransactionType.ReturnCRDepositCoin:
-            transactionName = "wallet.coin-op-cr-return";
+            transactionName = 'wallet.coin-op-cr-return';
             break;
           case RawTransactionType.CrcProposalWithdraw:
-            transactionName = "wallet.coin-op-proposal-withdraw";
+            transactionName = 'wallet.coin-op-proposal-withdraw';
             break;
           case RawTransactionType.UnstakeRealWithdraw:
-            transactionName = "wallet.coin-op-unstake-withdraw";
+            transactionName = 'wallet.coin-op-unstake-withdraw';
             break;
           case RawTransactionType.DposV2ClaimRewardRealWithdraw:
             if (transaction.address === subwallet.getOwnerAddress()) {
-                transactionName = "wallet.coin-op-dpos2-node-reward-withdraw";
+              transactionName = 'wallet.coin-op-dpos2-node-reward-withdraw';
             } else {
-                transactionName = "wallet.coin-op-dpos2-reward-withdraw";
+              transactionName = 'wallet.coin-op-dpos2-reward-withdraw';
             }
             break;
         }
         break;
       case TransactionDirection.SENT:
-        transactionName = "wallet.coin-op-sent-token";
+        transactionName = 'wallet.coin-op-sent-token';
         switch (transaction.txtype) {
           case RawTransactionType.TransferCrossChainAsset:
             switch (transaction.outputs[0]) {
               case Config.IDCHAIN_DEPOSIT_ADDRESS:
               case Config.ETHDID_DEPOSIT_ADDRESS:
-                transactionName = "wallet.coin-dir-to-idchain";
+                transactionName = 'wallet.coin-dir-to-idchain';
                 break;
               case Config.ETHSC_DEPOSIT_ADDRESS:
-                transactionName = "wallet.coin-dir-to-ethsc";
+                transactionName = 'wallet.coin-dir-to-ethsc';
+                break;
+              case Config.ETHECO_DEPOSIT_ADDRESS:
+                transactionName = 'wallet.coin-dir-to-eco';
+                break;
+              case Config.ETHECOPGP_DEPOSIT_ADDRESS:
+                transactionName = 'wallet.coin-dir-to-pgp';
                 break;
               default:
-                transactionName = "wallet.coin-dir-to-mainchain";
+                transactionName = 'wallet.coin-dir-to-mainchain';
                 break;
             }
             break;
           case RawTransactionType.RegisterProducer:
-            transactionName = "wallet.coin-op-producer-register";
+            transactionName = 'wallet.coin-op-producer-register';
             break;
           case RawTransactionType.RegisterCR:
-            transactionName = "wallet.coin-op-cr-register";
+            transactionName = 'wallet.coin-op-cr-register';
             break;
           case RawTransactionType.Stake:
-            transactionName = "wallet.coin-op-stake";
+            transactionName = 'wallet.coin-op-stake';
             break;
         }
         break;
@@ -179,48 +204,48 @@ export class ElastosTransactionsHelper {
         } else {
           switch (transaction.txtype) {
             case RawTransactionType.UpdateProducer:
-                transactionName = "wallet.coin-op-producer-update";
-            break;
+              transactionName = 'wallet.coin-op-producer-update';
+              break;
             case RawTransactionType.CancelProducer:
-                transactionName = "wallet.coin-op-producer-cancel";
-            break;
+              transactionName = 'wallet.coin-op-producer-cancel';
+              break;
             case RawTransactionType.UnregisterCR:
-                transactionName = "wallet.coin-op-cr-cancel";
-            break;
+              transactionName = 'wallet.coin-op-cr-cancel';
+              break;
             case RawTransactionType.UpdateCR:
-                transactionName = "wallet.coin-op-cr-update";
-            break;
+              transactionName = 'wallet.coin-op-cr-update';
+              break;
             case RawTransactionType.CrcProposal:
-                transactionName = "wallet.coin-op-proposal";
-            break;
+              transactionName = 'wallet.coin-op-proposal';
+              break;
             case RawTransactionType.CrcProposalReview:
-                transactionName = "wallet.coin-op-proposal-review";
-            break;
+              transactionName = 'wallet.coin-op-proposal-review';
+              break;
             case RawTransactionType.CrcProposalTracking:
-                transactionName = "wallet.coin-op-proposal-tracking";
-            break;
+              transactionName = 'wallet.coin-op-proposal-tracking';
+              break;
             case RawTransactionType.CrCouncilMemberClaimNode:
-                transactionName = "wallet.coin-op-cr-claim-node";
-            break;
+              transactionName = 'wallet.coin-op-cr-claim-node';
+              break;
             case RawTransactionType.CrcProposalWithdraw:
-                transactionName = "wallet.coin-op-proposal-withdraw";
-            break;
+              transactionName = 'wallet.coin-op-proposal-withdraw';
+              break;
             case RawTransactionType.Voting:
-                // Unvote if the votecategory == 0
-                transactionName = "wallet.coin-op-voting-cancel";
-            break;
+              // Unvote if the votecategory == 0
+              transactionName = 'wallet.coin-op-voting-cancel';
+              break;
             case RawTransactionType.Unstake:
-                transactionName = "wallet.coin-op-unstake";
-            break;
+              transactionName = 'wallet.coin-op-unstake';
+              break;
             case RawTransactionType.DposV2ClaimReward:
-                transactionName = "wallet.coin-op-dpos2-claim-reward";
-            break;
+              transactionName = 'wallet.coin-op-dpos2-claim-reward';
+              break;
             case RawTransactionType.MintNFT:
-                transactionName = "wallet.coin-op-dpos2-mint-nft";
-            break;
+              transactionName = 'wallet.coin-op-dpos2-mint-nft';
+              break;
             default:
-                transactionName = "wallet.coin-op-transfered-token";
-            break;
+              transactionName = 'wallet.coin-op-transfered-token';
+              break;
           }
         }
         break;
@@ -238,37 +263,37 @@ export class ElastosTransactionsHelper {
     }
 
     if ((votecategory & 2) == 2) {
-      if (voteTypeCount) voteName += " + ";
-      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-vote')
+      if (voteTypeCount) voteName += ' + ';
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-vote');
       voteTypeCount++;
     }
 
     if ((votecategory & 4) == 4) {
-      if (voteTypeCount) voteName += " + ";
-      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-cr-proposal-against')
+      if (voteTypeCount) voteName += ' + ';
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-cr-proposal-against');
       voteTypeCount++;
     }
 
     if ((votecategory & 8) == 8) {
-      if (voteTypeCount) voteName += " + ";
-      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-impeachment')
+      if (voteTypeCount) voteName += ' + ';
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-crc-impeachment');
       voteTypeCount++;
     }
 
     if ((votecategory & 16) == 16) {
-        if (voteTypeCount) voteName += " + ";
-        voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos2-voting')
-        voteTypeCount++;
+      if (voteTypeCount) voteName += ' + ';
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-dpos2-voting');
+      voteTypeCount++;
     }
 
     if ((votecategory & 128) == 128) {
-        if (voteTypeCount) voteName += " + ";
-        voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-voting-cancel')
-        voteTypeCount++;
+      if (voteTypeCount) voteName += ' + ';
+      voteName += GlobalTranslationService.instance.translateInstant('wallet.coin-op-voting-cancel');
+      voteTypeCount++;
     }
 
-    if ((voteTypeCount > 2) || (voteTypeCount == 0)) {
-      voteName = "wallet.coin-op-vote";
+    if (voteTypeCount > 2 || voteTypeCount == 0) {
+      voteName = 'wallet.coin-op-vote';
     }
 
     return voteName;

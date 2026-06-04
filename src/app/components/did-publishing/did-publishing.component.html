@@ -21,8 +21,8 @@
     </ion-row>
   </ion-grid>
 
-  <div *ngIf="publicationFailed" class="footer">
-    <ebutton (clicked)="exitComponent()" [title]="'common.close' | translate"> </ebutton>
-  </div>
-
 </ion-content>
+
+<div *ngIf="publicationFailed" class="footer">
+  <ebutton (clicked)="exitComponent()" [title]="'common.close' | translate"> </ebutton>
+</div>

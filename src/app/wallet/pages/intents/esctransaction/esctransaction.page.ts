@@ -23,29 +23,37 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import BigNumber from "bignumber.js";
+import { BigNumber } from 'bignumber.js';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalEvents } from 'src/app/services/global.events.service';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { Config } from 'src/app/wallet/config/Config';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
-import { ApproveERC20Operation, ETHOperationType, ETHTransactionInfo, ETHTransactionInfoParser } from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
+import {
+  ApproveERC20Operation,
+  ETHOperationType,
+  ETHTransactionInfo,
+  ETHTransactionInfoParser
+} from 'src/app/wallet/model/networks/evms/ethtransactioninfoparser';
 import { ETHTransactionStatus } from 'src/app/wallet/model/networks/evms/evm.types';
-import { EVMSafe } from 'src/app/wallet/model/networks/evms/safes/evm.safe';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
-import { CurrencyService } from 'src/app/wallet/services/currency.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
 import { WalletNetworkService } from 'src/app/wallet/services/network.service';
-import { CoinTransferService, IntentTransfer, Transfer } from '../../../services/cointransfer.service';
+import { AccountAbstractionMasterWallet } from '../../../model/masterwallets/account.abstraction.masterwallet';
+import { CoinTransferService, IntentTransfer } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
@@ -53,7 +61,7 @@ import { WalletService } from '../../../services/wallet.service';
 @Component({
   selector: 'app-esctransaction',
   templateUrl: './esctransaction.page.html',
-  styleUrls: ['./esctransaction.page.scss'],
+  styleUrls: ['./esctransaction.page.scss']
 })
 export class EscTransactionPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -63,20 +71,12 @@ export class EscTransactionPage implements OnInit {
   public evmSubWallet: AnyMainCoinEVMSubWallet = null;
   private intentTransfer: IntentTransfer;
   public balance: BigNumber; // ELA
-  public gasPrice: string;
-  public gasPriceGwei: number;
-  public gasLimit: string;
-  public gasLimitDisplay: string;
-  public showEditGasPrice = false;
-  public hasOpenETHSCChain = false;
   public transactionInfo: ETHTransactionInfo;
 
   private publicationStatusSub: Subscription;
   private ethTransactionSpeedupSub: Subscription;
 
   private alreadySentIntentResponse = false;
-
-  public signingAndTransacting = false;
 
   public currentNetworkName = '';
 
@@ -99,31 +99,32 @@ export class EscTransactionPage implements OnInit {
     public uiService: UiService,
     private ethTransactionService: EVMService,
     private router: Router,
-    public events: GlobalEvents,
+    public events: GlobalEvents
   ) {
-
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
-        this.intentMode = false;
+      this.intentMode = false;
     }
   }
 
   ngOnInit() {
-    GlobalFirebaseService.instance.logEvent("wallet_esc_transaction_enter");
+    GlobalFirebaseService.instance.logEvent('wallet_esc_transaction_enter');
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.esctransaction-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
 
     void this.init();
   }
@@ -152,79 +153,88 @@ export class EscTransactionPage implements OnInit {
   }
 
   async init() {
-    Logger.log("wallet", "ESC Transaction params", this.coinTransferService.payloadParam, this.coinTransferService.sendTransactionChainId);
+    Logger.log(
+      'wallet',
+      'ESC Transaction params',
+      this.coinTransferService.payloadParam,
+      this.coinTransferService.masterWalletId,
+      this.coinTransferService.evmChainId
+    );
 
     // If there is a provided chain ID, use that chain id network (eg: wallet connect v2).
     // Otherwise, use the active network
-    if (this.coinTransferService.sendTransactionChainId) {
-      this.targetNetwork = WalletNetworkService.instance.getNetworkByChainId(this.coinTransferService.sendTransactionChainId);
-    }
-    else {
+    if (this.coinTransferService.evmChainId) {
+      this.targetNetwork = WalletNetworkService.instance.getNetworkByChainId(this.coinTransferService.evmChainId);
+    } else {
       this.targetNetwork = WalletNetworkService.instance.activeNetwork.value;
     }
 
-    this.currentNetworkName = this.targetNetwork.name;
+    // Early return if target network is not available
+    if (!this.targetNetwork) {
+      Logger.warn('wallet', 'ESC Transaction: target network not found');
+      return;
+    }
+
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
 
     this.intentTransfer = this.coinTransferService.intentTransfer;
 
-    let activeNetworkWalelt = this.walletManager.getActiveNetworkWallet();
-    if (this.coinTransferService.masterWalletId != activeNetworkWalelt.masterWallet.id) {
-      let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
-      this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    } else {
-      this.networkWallet = activeNetworkWalelt;
+    // Determine which network and wallet to use based on available parameters
+    let targetNetwork = this.targetNetwork; // Default to target network from chain ID
+    let masterWalletId = this.coinTransferService.masterWalletId;
+
+    // If no specific master wallet ID is provided, use the active wallet's master wallet
+    if (!masterWalletId) {
+      let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+      if (activeNetworkWallet) {
+        masterWalletId = activeNetworkWallet.masterWallet.id;
+      }
     }
-    if (!this.networkWallet) return;
+
+    // If no specific chain ID is provided, use the active network
+    if (!this.coinTransferService.evmChainId) {
+      targetNetwork = WalletNetworkService.instance.activeNetwork.value;
+    }
+
+    // Create network wallet with the determined network and master wallet
+    if (masterWalletId) {
+      let masterWallet = this.walletManager.getMasterWallet(masterWalletId);
+      if (!masterWallet) {
+        Logger.warn('wallet', 'ESC Transaction: master wallet not found for ID:', masterWalletId);
+        return;
+      }
+      this.networkWallet = await targetNetwork.createNetworkWallet(masterWallet, false);
+    } else {
+      // Ultimate fallback to active network wallet
+      let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+      if (!activeNetworkWallet) {
+        Logger.warn('wallet', 'ESC Transaction: network wallet not found');
+        return;
+      }
+      this.networkWallet = activeNetworkWallet;
+    }
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-    if (!this.evmSubWallet) return;
+    if (!this.evmSubWallet) {
+      Logger.warn('wallet', 'ESC Transaction: EVM subwallet not found');
+      return;
+    }
 
-    await this.evmSubWallet.updateBalance()
+    await this.evmSubWallet.updateBalance();
     this.balance = await this.evmSubWallet.getDisplayBalance();
-    this.gasPrice = this.coinTransferService.payloadParam.gasPrice;
-    if (!this.gasPrice) {
-      this.gasPrice = await this.evmSubWallet.getGasPrice();
-    }
-
-    this.gasPriceGwei = parseInt(this.gasPrice) / Config.GWEI;
-
-    if (this.coinTransferService.payloadParam.gas) {
-      this.gasLimit = Util.getDecimalString(this.coinTransferService.payloadParam.gas);
-    } else {
-      let tx = {
-        data: this.coinTransferService.payloadParam.data,
-        value: this.coinTransferService.payloadParam.value || "0",
-        from: this.coinTransferService.payloadParam.from, // Must set from for mdex.
-        to: this.coinTransferService.payloadParam.to
-      }
-      try {
-        const gasLimit = await this.evmSubWallet.estimateGas(tx);
-        // '* 1.5': Make sure the gasLimit is big enough.
-        this.gasLimit = Util.ceil(gasLimit * 1.5).toString();
-      }
-      catch (err) {
-        Logger.log("wallet", "Can not estimate the gaslimit, set default value 3000000");
-        this.gasLimit = '3000000';
-      }
-    }
-
-    this.gasLimitDisplay = this.gasLimit;
-
-    Logger.log("wallet", "ESCTransaction got gas price:", this.gasPrice);
 
     if (this.coinTransferService.payloadParam.data) {
       // Extract information about the specific transaction type we are handling
-      let transactionInfoParser = new ETHTransactionInfoParser(
-        this.evmSubWallet.networkWallet.network
-      )
+      let transactionInfoParser = new ETHTransactionInfoParser(this.evmSubWallet.networkWallet.network);
       this.transactionInfo = await transactionInfoParser.computeFromTxData(
         this.coinTransferService.payloadParam.data,
-        this.coinTransferService.payloadParam.to);
+        this.coinTransferService.payloadParam.to
+      );
       if (this.transactionInfo.type === ETHOperationType.ERC20_TOKEN_APPROVE) {
         let approveOperation = <ApproveERC20Operation>this.transactionInfo.operation;
         if (approveOperation && approveOperation.spendingCap && approveOperation.decimals) {
-          let tokenAmountMulipleTimes = new BigNumber(10).pow(approveOperation.decimals)
-          this.spendingCap = (new BigNumber(approveOperation.spendingCap).dividedBy(tokenAmountMulipleTimes)).toFixed()
+          let tokenAmountMulipleTimes = new BigNumber(10).pow(approveOperation.decimals);
+          this.spendingCap = new BigNumber(approveOperation.spendingCap).dividedBy(tokenAmountMulipleTimes).toFixed();
         }
       }
     } else {
@@ -232,46 +242,42 @@ export class EscTransactionPage implements OnInit {
         type: ETHOperationType.SEND_ERC20,
         operation: null,
         events: []
-      }
+      };
     }
-    Logger.log("wallet", "ESCTransaction got transaction info:", this.transactionInfo);
+    Logger.log('wallet', 'ESCTransaction got transaction info:', this.transactionInfo);
 
-    // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.publicationStatusSub = EVMService.instance.ethTransactionStatus.subscribe(async (status) => {
-      Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
-      switch (status.status) {
-        case ETHTransactionStatus.PACKED:
-          let resultOk = {
-            published: true,
-            txid: status.txId,
-            status: 'published'
-          }
-          // TODO: Wait for the ETHTransactionComponent exit.
-          setTimeout(() => {
-            void this.sendIntentResponse(resultOk, this.intentTransfer.intentId);
-          }, 3000);
-          break;
-        case ETHTransactionStatus.CANCEL:
-          let result = {
-            published: false,
-            txid: null,
-            status: 'cancelled'
-          }
-          await this.sendIntentResponse(result, this.intentTransfer.intentId);
-          break;
-      }
-    });
+    this.publicationStatusSub =
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
+      EVMService.instance.ethTransactionStatus.subscribe(async status => {
+        Logger.log('wallet', 'EscTransactionPage ethTransactionStatus:', status);
+        switch (status.status) {
+          case ETHTransactionStatus.PACKED:
+            let resultOk = {
+              published: true,
+              txid: status.txId,
+              status: 'published'
+            };
+            // TODO: Wait for the ETHTransactionComponent exit.
+            setTimeout(() => {
+              void this.sendIntentResponse(resultOk, this.intentTransfer.intentId);
+            }, 3000);
+            break;
+          case ETHTransactionStatus.CANCEL:
+            let result = {
+              published: false,
+              txid: null,
+              status: 'cancelled'
+            };
+            await this.sendIntentResponse(result, this.intentTransfer.intentId);
+            break;
+        }
+      });
 
-    this.ethTransactionSpeedupSub = EVMService.instance.ethTransactionSpeedup.subscribe((status) => {
-      Logger.warn('wallet', 'EscTransactionPage ethTransactionStatus:', status)
+    this.ethTransactionSpeedupSub = EVMService.instance.ethTransactionSpeedup.subscribe(status => {
+      Logger.log('wallet', 'EscTransactionPage ethTransactionStatus:', status);
       if (status) {
-        this.gasPrice = status.gasPrice;
-        this.gasLimit = status.gasLimit;
-        // Do Transaction
-        void this.goTransaction();
-        // Reset gas price.
-        this.gasPrice = null;
-        this.gasLimit = null;
+        // Forward speedup event to standard account component if needed
+        this.events.publish('gasSpeedup', status);
       }
     });
   }
@@ -281,152 +287,28 @@ export class EscTransactionPage implements OnInit {
    * sending the intent response.
    */
   async cancelOperation(navigateBack = true) {
-    await this.sendIntentResponse(
-      { txid: null, status: 'cancelled' },
-      this.intentTransfer.intentId, navigateBack
-    );
+    await this.sendIntentResponse({ txid: null, status: 'cancelled' }, this.intentTransfer.intentId, navigateBack);
   }
 
-  private async sendIntentResponse(result, intentId, navigateBack = true) {
+  /**
+   * Shared method for sending intent responses - used by both standard and AA components
+   */
+  public async sendIntentResponse(result, intentId, navigateBack = true) {
     this.alreadySentIntentResponse = true;
     if (this.intentMode) {
       await this.globalIntentService.sendIntentResponse(result, intentId, navigateBack);
     } else {
-      this.events.publish("esctransaction", {
-        result: result,
+      this.events.publish('esctransaction', {
+        result: result
       });
       this.native.pop();
     }
   }
 
-  goTransaction() {
-    void this.checkValue();
-  }
-
-  async checkValue(): Promise<void> {
-    // Nothing to check
-
-    await this.createEscTransaction();
-  }
-
-  public balanceIsEnough(): boolean {
-    return this.getTotalTransactionCostInCurrency().totalAsBigNumber.lte(this.balance);
-  }
-
-  /**
-   * Returns the total transaction cost, Currency (ELA, HT) value + fees, in currency.
-   *
-   * Input values in "payloadParam" are in WEI
-   */
-  public getTotalTransactionCostInCurrency(): { totalAsBigNumber: BigNumber, total: string, valueAsBigNumber: BigNumber, value: string, feesAsBigNumber: BigNumber, fees: string, currencyFee: string } {
-    let weiToDisplayCurrencyRatio = new BigNumber("1000000000000000000");
-
-    let gas = new BigNumber(this.gasLimit);
-    let gasPrice = new BigNumber(this.gasPrice);
-    let currencyValue = new BigNumber(this.coinTransferService.payloadParam.value || 0).dividedBy(weiToDisplayCurrencyRatio);
-    let fees = gas.multipliedBy(gasPrice).dividedBy(weiToDisplayCurrencyRatio);
-    let total = currencyValue.plus(fees);
-
-    let currencyFee = this.evmSubWallet.getAmountInExternalCurrency(fees);
-
-    // Logger.log('wallet', "gasPrice", gasPrice.toFixed())
-    // Logger.log('wallet', "gas", gas.toFixed())
-    // Logger.log('wallet', "currencyValue", currencyValue.toFixed())
-    // Logger.log('wallet', "fees/gas", fees.toFixed());
-    // Logger.log('wallet', "currencyFee", currencyFee);
-    // Logger.log('wallet', "total", total.toFixed());
-
-    return {
-      totalAsBigNumber: total,
-      total: total?.toFixed(),
-      valueAsBigNumber: currencyValue,
-      value: currencyValue?.toFixed(),
-      feesAsBigNumber: fees,
-      fees: fees?.toFixed(),
-      currencyFee: currencyFee?.toFixed()
-    }
-  }
-
-  // ELA, HT, etc
-  public getCurrencyInUse(): string {
-    return this.evmSubWallet.getDisplayTokenName();
-  }
-
-  // CNY, USD, etc
-  public getNativeCurrencyInUse(): string {
-    return CurrencyService.instance.selectedCurrency.symbol;
-  }
-
-  async createEscTransaction() {
-    Logger.log('wallet', "Calling createEscTransaction(): ", this.coinTransferService.payloadParam);
-
-    this.signingAndTransacting = true;
-    let nonce = await this.evmSubWallet.getNonce();
-    const rawTx =
-      await (this.evmSubWallet.networkWallet.safe as unknown as EVMSafe).createContractTransaction(
-        this.coinTransferService.payloadParam.to || '',
-        this.coinTransferService.payloadParam.value || "0",
-        this.gasPrice,
-        this.gasLimit,
-        nonce,
-        this.coinTransferService.payloadParam.data,
-      );
-
-    Logger.log('wallet', 'Created raw ESC transaction:', rawTx);
-
-    if (rawTx) {
-      const transfer = new Transfer();
-      Object.assign(transfer, {
-        masterWalletId: this.networkWallet.id,
-        subWalletId: this.evmSubWallet.id,
-        //rawTransaction: rawTx,
-        payPassword: '',
-        action: this.intentTransfer.action,
-        intentId: this.intentTransfer.intentId,
-      });
-
-      try {
-        const result = await this.evmSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
-        //await this.ethTransactionService.publishTransaction(this.evmSubWallet, rawTx, transfer)
-      }
-      catch (err) {
-        Logger.error('wallet', 'EscTransactionPage publishTransaction error:', err)
-        if (this.intentTransfer.intentId) {
-          await this.sendIntentResponse(
-            { txid: null, status: 'error' },
-            this.intentTransfer.intentId
-          );
-        }
-      }
-    } else {
-      if (this.intentTransfer.intentId) {
-        await this.sendIntentResponse(
-          { txid: null, status: 'error' },
-          this.intentTransfer.intentId
-        );
-      }
-    }
-
-    this.signingAndTransacting = false;
-  }
-
-  public editGasPrice() {
-    this.showEditGasPrice = !this.showEditGasPrice;
-  }
-
-  public updateGasprice(event) {
-    if (!this.gasPriceGwei) return;
-
-    this.gasPrice = Math.floor(this.gasPriceGwei * Config.GWEI).toString();
-  }
-
-  public updateGasLimit(event) {
-    if (this.gasLimitDisplay) this.gasLimit = this.gasLimitDisplay;
-  }
-
   public getApproveTokenNameWithSymbol(transactionInfo: ETHTransactionInfo): string {
-    if (!transactionInfo) // Just in case
-      return "";
+    if (!transactionInfo)
+      // Just in case
+      return '';
 
     let approveOperation = <ApproveERC20Operation>transactionInfo.operation;
     if (approveOperation.symbol) {
@@ -434,5 +316,63 @@ export class EscTransactionPage implements OnInit {
     } else {
       return approveOperation.tokenName; // ERC721
     }
+  }
+
+  /**
+   * Checks if the current master wallet is an Account Abstraction wallet
+   */
+  public isAccountAbstractionWallet(): boolean {
+    return this.networkWallet.masterWallet instanceof AccountAbstractionMasterWallet;
+  }
+
+  /**
+   * Get the coin transfer service for sub-components to access transaction data
+   */
+  public getCoinTransferService(): CoinTransferService {
+    return this.coinTransferService;
+  }
+
+  /**
+   * Get the intent transfer for sub-components
+   */
+  public getIntentTransfer(): IntentTransfer {
+    return this.intentTransfer;
+  }
+
+  /**
+   * Get the EVM subwallet for sub-components
+   */
+  public getEvmSubWallet(): AnyMainCoinEVMSubWallet {
+    return this.evmSubWallet;
+  }
+
+  /**
+   * Get the network wallet for sub-components
+   */
+  public getNetworkWallet(): AnyNetworkWallet {
+    return this.networkWallet;
+  }
+
+  /**
+   * Get the signing wallet name
+   */
+  public getSigningWalletName(): string {
+    if (this.networkWallet && this.networkWallet.masterWallet) {
+      return this.networkWallet.masterWallet.name;
+    }
+    return '';
+  }
+
+  /**
+   * Get the signing wallet address
+   */
+  public getSigningWalletAddress(): string {
+    if (this.networkWallet) {
+      const addresses = this.networkWallet.getAddresses();
+      if (addresses && addresses.length > 0) {
+        return addresses[0].address;
+      }
+    }
+    return '';
   }
 }

@@ -5,11 +5,17 @@ import { Platform } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { WidgetsService } from 'src/app/launcher/widgets/services/widgets.service';
 import { Logger } from 'src/app/logger';
 import { Util } from 'src/app/model/util';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalNativeService } from 'src/app/services/global.native.service';
 import { GlobalThemeService } from '../../../../services/theming/global.theme.service';
 import { WidgetPluginsService } from '../../services/plugin.service';
@@ -19,18 +25,18 @@ import { DisplayCategories as DisplayCategory, WidgetState } from '../widgetstat
 type Category = {
   key: DisplayCategory; // Key matching widgets
   title: string; // Display name
-}
+};
 
 @Component({
   selector: 'widget-chooser',
   templateUrl: './widget-chooser.component.html',
-  styleUrls: ['./widget-chooser.component.scss'],
+  styleUrls: ['./widget-chooser.component.scss']
 })
 export class WidgetChooserComponent implements OnInit, OnDestroy {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private widgetContainer: WidgetContainerComponent;
-  @ViewChild("widgetContainer", { static: false }) set widgetContainerContent(content: WidgetContainerComponent) {
+  @ViewChild('widgetContainer', { static: false }) set widgetContainerContent(content: WidgetContainerComponent) {
     if (content) {
       this.widgetContainer = content;
       void this.prepareWidgetsList();
@@ -38,7 +44,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   }
 
   private previewContainer: WidgetContainerComponent;
-  @ViewChild("previewContainer", { static: false }) set previewContainerContent(content: WidgetContainerComponent) {
+  @ViewChild('previewContainer', { static: false }) set previewContainerContent(content: WidgetContainerComponent) {
     if (content) {
       this.previewContainer = content;
     }
@@ -50,7 +56,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
   public categories: Category[] = [];
   public selectedCategory: Category = null;
-  public widgetUrl = "";
+  public widgetUrl = '';
   public addingCustomWidget = false;
   public customWidgetState: WidgetState = null; // Fetched widget state after adding a custom widget by user.
   public hasCustomWidgets = false;
@@ -60,6 +66,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   private pluginsListSub: Subscription = null;
 
   public isIOS = false;
+  public lightweightMode = false;
 
   constructor(
     public theme: GlobalThemeService,
@@ -71,30 +78,36 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     private clipboard: Clipboard,
     private native: GlobalNativeService,
     private globalIntentService: GlobalIntentService,
-    private platform: Platform
-  ) { }
+    private platform: Platform,
+    private lightweightService: GlobalLightweightService
+  ) {}
 
   ngOnInit() {
     // For now (3.0.7 release), hide dapps on iOS as apple complains about this.
     // We can try to disable this ios check later (with changes to get rejected).
     this.isIOS = this.platform.platforms().indexOf('android') < 0;
 
+    // Read lightweight mode synchronously
+    this.lightweightMode = this.lightweightService.getCurrentLightweightMode();
+
     const navigation = this.router.getCurrentNavigation();
     if (!Util.isEmptyObject(navigation.extras.state)) {
       this.receivedIntent = <EssentialsIntentPlugin.ReceivedIntent>navigation.extras.state.intent;
     }
 
-    this.categories = [
-      { key: DisplayCategory.FINANCE, title: "widget-category-finance" },
-      { key: DisplayCategory.IDENTITY, title: "widget-category-identity" },
-      { key: DisplayCategory.BROWSER, title: "widget-category-browser" },
-      { key: DisplayCategory.ELASTOS, title: "widget-category-elastos-tech" },
-      { key: DisplayCategory.COMMUNITY, title: "widget-category-community" },
-      // { key: DisplayCategory.DAPPS, title: "widget-category-dapps" }
-    ];
+    // Build categories, hiding Identity and Elastos entirely in lightweight mode
+    this.categories = [];
+    this.categories.push({ key: DisplayCategory.FINANCE, title: 'widget-category-finance' });
+    if (!this.lightweightMode)
+      this.categories.push({ key: DisplayCategory.IDENTITY, title: 'widget-category-identity' });
+    this.categories.push({ key: DisplayCategory.BROWSER, title: 'widget-category-browser' });
+    if (!this.lightweightMode)
+      this.categories.push({ key: DisplayCategory.ELASTOS, title: 'widget-category-elastos-tech' });
+    this.categories.push({ key: DisplayCategory.COMMUNITY, title: 'widget-category-community' });
 
+    // Show DApps category only if allowed (not iOS)
     if (!this.isIOS) {
-      this.categories.push({ key: DisplayCategory.DAPPS, title: "widget-category-dapps" })
+      this.categories.push({ key: DisplayCategory.DAPPS, title: 'widget-category-dapps' });
     }
 
     this.selectedCategory = this.categories[0];
@@ -111,7 +124,7 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
       this.pluginsListSub = null;
     }
     if (!this.alreadySentIntentResponse) {
-        this.dismiss(null);
+      this.dismiss(null);
     }
   }
 
@@ -120,27 +133,29 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
 
     if (!this.addingCustomWidget && !this.isIOS) {
-        this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-          key: "add-custom",
-          iconPath: BuiltInIcon.ADD
-        });
+      this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
+        key: 'add-custom',
+        iconPath: BuiltInIcon.ADD
+      });
     }
 
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      switch (icon.key) {
-        case 'close':
-          this.dismiss(null);
-          return;
-        case 'add-custom':
-          this.enterAddCustomWidgetMode();
-          return;
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        switch (icon.key) {
+          case 'close':
+            this.dismiss(null);
+            return;
+          case 'add-custom':
+            this.enterAddCustomWidgetMode();
+            return;
+        }
+      })
+    );
 
     this.alreadySentIntentResponse = false;
   }
@@ -158,14 +173,18 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
     if (this.selectedCategory.key !== DisplayCategory.DAPPS) {
       // Built in widgets
       let builtInWidgets = this.widgetsService.getAvailableBuiltInWidgets();
-      filteredWidgets = builtInWidgets.filter(w => w.displayCategories.includes(this.selectedCategory.key))
-    }
-    else {
+      filteredWidgets = builtInWidgets.filter(w => w.displayCategories.includes(this.selectedCategory.key));
+    } else {
       // dApps widgets
       let customPluginsList = await this.widgetPluginsService.getAvailableCustomWidgets();
       filteredWidgets = Object.values(customPluginsList);
 
       this.hasCustomWidgets = filteredWidgets.length > 0;
+    }
+
+    // In lightweight mode, filter out widgets not allowed
+    if (this.lightweightMode) {
+      filteredWidgets = filteredWidgets.filter(w => !!w.availableInLightweightMode);
     }
 
     for (let widget of filteredWidgets) {
@@ -199,15 +218,18 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
   }
 
   public async scan() {
-    let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent("https://scanner.web3essentials.io/scanqrcode", {}, this.receivedIntent.intentId);
+    let res: { result: { scannedContent: string } } = await this.globalIntentService.sendIntent(
+      'https://scanner.web3essentials.io/scanqrcode',
+      {},
+      this.receivedIntent.intentId
+    );
 
     this.widgetUrl = res.result.scannedContent;
     void this.fetchWidget();
   }
 
   private async fetchWidget() {
-    if (!this.widgetUrl || !this.widgetUrl.toLowerCase().startsWith("http"))
-      return;
+    if (!this.widgetUrl || !this.widgetUrl.toLowerCase().startsWith('http')) return;
 
     let fetchResult = await this.widgetsService.fetchWidgetPluginAndCreate(this.widgetUrl);
     if (!fetchResult) {
@@ -218,13 +240,13 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
     if (fetchResult.newsSourceAdded) {
       // News source added, show a toast and automatically exit the chooser without adding a new news widget
-      this.native.genericToast("launcher.news-source-added", 4000);
+      this.native.genericToast('launcher.news-source-added', 4000);
       this.dismiss(null);
       return;
     }
 
     this.customWidgetState = fetchResult.widgetState;
-    Logger.log("widgets", "Fetched widget state:", this.customWidgetState);
+    Logger.log('widgets', 'Fetched widget state:', this.customWidgetState);
 
     // Give time to the UI to make the preview container visible before trying to access it
     setTimeout(() => {
@@ -250,14 +272,16 @@ export class WidgetChooserComponent implements OnInit, OnDestroy {
 
   private dismiss(widgetState: WidgetState) {
     this.alreadySentIntentResponse = true;
-    void this.globalIntentService.sendIntentResponse({
-      widgetState
-    }, this.receivedIntent.intentId);
+    void this.globalIntentService.sendIntentResponse(
+      {
+        widgetState
+      },
+      this.receivedIntent.intentId
+    );
   }
 
   public selectCategory(category: Category) {
-    if (this.selectedCategory == category)
-      return;
+    if (this.selectedCategory == category) return;
 
     this.selectedCategory = category;
 

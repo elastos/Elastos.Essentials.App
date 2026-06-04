@@ -1,0 +1,104 @@
+<ion-content>
+  <app-titlebar title="text-vote-crcouncil"></app-titlebar>
+  <div class="warning ion-text-center" *ngIf="!btcSubWallet">
+    <p>{{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetworkName} }}</p>
+  </div>
+
+  <div class="warning ion-text-center" *ngIf="!isSignDataEnable">
+    <p>{{ 'wallet.signbitcoindata-enable-signdata-request' | translate }}</p>
+  </div>
+
+  <ion-spinner class='spinner ion-text-center' *ngIf="loading && btcSubWallet"></ion-spinner>
+
+  <ion-grid class="container ion-text-start" [class.dark-container]="theme.darkMode"
+    *ngIf="!loading && networkWallet && isSignDataEnable">
+    <div class="ion-text-center">
+      <ion-card>
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.getEffectiveName() }}</h1>
+      </ion-card>
+
+      <ion-card-header>
+        <ion-card-subtitle>
+          {{ 'wallet.signbitcoindata-intro' | translate }}
+        </ion-card-subtitle>
+        <ion-card-subtitle class="danger">
+          {{ 'wallet.signbitcoindata-danger' | translate }}
+        </ion-card-subtitle>
+      </ion-card-header>
+    </div>
+
+    <ion-row class="wallet-info-row ion-text-center">
+      <ion-col size="12" class="left-col">
+        <div class="wallet-info">
+          <div class="wallet-label">{{ 'wallet.signing-wallet' | translate }}</div>
+          <h1 class="wallet-name">{{ getSigningWalletName() }}</h1>
+          <div class="wallet-address">{{ getSigningWalletAddress() }}</div>
+        </div>
+      </ion-col>
+    </ion-row>
+
+    <ng-container *ngIf="intentParams?.psbtHex">
+      <div class="psbt-parse-warning" *ngIf="psbtParseError">{{ psbtParseError }}</div>
+
+      <section class="psbt-section" *ngIf="psbtInputs.length">
+        <h3 class="psbt-section-title">
+          {{ 'wallet.signbitcoinpsbt-inputs-title' | translate:{ count: psbtInputs.length } }}
+        </h3>
+        <div class="psbt-list-card">
+          <div class="psbt-list-item" *ngFor="let row of psbtInputs">
+            <div class="psbt-list-left">
+              <span class="psbt-addr" [title]="row.addressFull">{{ row.addressShort }}</span>
+              <span class="psbt-badge" *ngIf="row.toSign">{{ 'wallet.signbitcoinpsbt-to-sign-badge' | translate }}</span>
+            </div>
+            <div class="psbt-list-right">
+              <span class="psbt-amt">{{ row.amountBtc }}</span>
+              <span class="psbt-unit">BTC</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="psbt-section" *ngIf="psbtOutputs.length">
+        <h3 class="psbt-section-title">
+          {{ 'wallet.signbitcoinpsbt-outputs-title' | translate:{ count: psbtOutputs.length } }}
+        </h3>
+        <div class="psbt-list-card">
+          <div class="psbt-list-item" *ngFor="let row of psbtOutputs">
+            <div class="psbt-list-left">
+              <span class="psbt-addr" [title]="row.addressFull">{{ row.addressShort }}</span>
+            </div>
+            <div class="psbt-list-right">
+              <span class="psbt-amt">{{ row.amountBtc }}</span>
+              <span class="psbt-unit">BTC</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="psbt-section psbt-raw-section">
+        <h3 class="psbt-section-title">{{ 'wallet.signbitcoinpsbt-psbt-data-title' | translate }}</h3>
+        <div class="psbt-data-row">
+          <span class="psbt-data-hex" [title]="intentParams.psbtHex">{{ psbtHexOneLine }}</span>
+          <span class="psbt-data-meta" *ngIf="psbtHexByteLength">{{ psbtHexByteLength }} bytes</span>
+          <ion-icon class="psbt-copy-icon" mode="ios" name="copy-outline" (click)="copyPsbtHex()"
+            [attr.aria-label]="'common.copy' | translate"></ion-icon>
+        </div>
+      </section>
+
+      <section class="psbt-section" *ngIf="intentParams.options && psbtOptionsDisplay">
+        <h3 class="psbt-section-title">{{ 'wallet.signbitcoinpsbt-options-label' | translate }}</h3>
+        <div class="psbt-list-card psbt-options-card">
+          <pre class="psbt-options-pre">{{ psbtOptionsDisplay }}</pre>
+        </div>
+      </section>
+    </ng-container>
+
+    <ebutton class="btn cancel" mode="cancel"
+      (clicked)="cancelOperation()"
+      [title]="'common.cancel' | translate">
+    </ebutton>
+    <ebutton class="btn confirm" [disabled]="actionIsGoing" (clicked)="goTransaction()"
+      [title]="'common.confirm' | translate"></ebutton>
+  </ion-grid>
+</ion-content>

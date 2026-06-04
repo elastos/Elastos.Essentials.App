@@ -1,19 +1,21 @@
-import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { ArbitrumBaseNetwork } from "./arbitrum.base.network";
+import { TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { ArbitrumBaseNetwork } from './arbitrum.base.network';
 
 export class ArbitrumTestNetNetwork extends ArbitrumBaseNetwork {
   constructor() {
     super(
-      "arbitrum",
-      "Arbitrum One Testnet",
-      "Arbitrum Testnet",
-      "assets/wallet/networks/arbitrum.svg",
-      "ETH",
-      "Arbitrum ETH",
+      'arbitrum',
+      'Arbitrum One Testnet',
+      'Arbitrum Testnet',
+      'assets/wallet/networks/arbitrum.svg',
+      'ETH',
+      'Arbitrum ETH',
       TESTNET_TEMPLATE,
       421611,
+      [],
+      []
     );
 
-    this.averageBlocktime = 15 //;
+    this.averageBlocktime = 15; //;
   }
 }

@@ -1,0 +1,6 @@
+<svg width="100%" height="100%" viewBox="0 0 1080 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Outer circle -->
+<circle cx="540" cy="540" r="480" stroke="currentColor" stroke-width="60" fill="none"/>
+<!-- Letter B - centered in the viewBox -->
+<text x="540" y="540" font-family="Arial, sans-serif" font-size="600" text-anchor="middle" dominant-baseline="central" fill="currentColor">B</text>
+</svg>

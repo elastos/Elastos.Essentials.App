@@ -14,6 +14,8 @@ import { AccessPage } from './access/access.page';
 import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
+import { StandardAccountComponent } from './esctransaction/components/standard-account.component';
+import { AccountAbstractionComponent } from './esctransaction/components/account-abstraction.component';
 import { EthSignPage } from './ethsign/ethsign.page';
 import { MultiSigTxPage } from './multisigtx/multisigtx.page';
 import { PersonalSignPage } from './personalsign/personalsign.page';
@@ -22,6 +24,7 @@ import { SendBitcoinPage } from './sendbitcoin/sendbitcoin.page';
 import { SignTypedDataPage } from './signtypeddata/signtypeddata.page';
 import { ElamainSignMessagePage } from './elamainsignmessage/elamainsignmessage.page';
 import { SignBitcoinDataPage } from './signbitcoindata/signbitcoindata.page';
+import { SignBitcoinPsbtPage } from './signbitcoinpsbt/signbitcoinpsbt.page';
 import { SignBitcoinMessagePage } from './signbitcoinmessage/signbitcoinmessage.page';
 import { PushBitcoinTxPage } from './pushbitcointx/pushbitcointx.page';
 
@@ -31,6 +34,8 @@ import { PushBitcoinTxPage } from './pushbitcointx/pushbitcointx.page';
         DidTransactionPage,
         DPoSVotePage,
         EscTransactionPage,
+        StandardAccountComponent,
+        AccountAbstractionComponent,
         SelectSubwalletPage,
         SignTypedDataPage,
         PersonalSignPage,
@@ -39,6 +44,7 @@ import { PushBitcoinTxPage } from './pushbitcointx/pushbitcointx.page';
         PushBitcoinTxPage,
         SendBitcoinPage,
         SignBitcoinDataPage,
+        SignBitcoinPsbtPage,
         SignBitcoinMessagePage,
         ElamainSignMessagePage
     ],
@@ -67,6 +73,7 @@ import { PushBitcoinTxPage } from './pushbitcointx/pushbitcointx.page';
             { path: 'pushbitcointx', component: PushBitcoinTxPage },
             { path: 'sendbitcoin', component: SendBitcoinPage },
             { path: 'signbitcoindata', component: SignBitcoinDataPage },
+            { path: 'signbitcoinpsbt', component: SignBitcoinPsbtPage },
             { path: 'signbitcoinmessage', component: SignBitcoinMessagePage },
             { path: 'elamainsignmessage', component: ElamainSignMessagePage },
         ])

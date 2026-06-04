@@ -147,7 +147,7 @@ export class LedgerConnectPage implements OnInit {
         this.closeGetAddressTimeout()
     }
 
-    private async doConnect() {
+    public async doConnect() {
         Logger.log(TAG, 'LedgerConnectPage doConnect')
         try {
             if (this.transport) {
@@ -311,7 +311,7 @@ export class LedgerConnectPage implements OnInit {
         }
     }
 
-    private refreshAddressesWithTimeout() {
+    public refreshAddressesWithTimeout() {
         this.closeGetAddressTimeout();
 
         void this.refreshAddresses();

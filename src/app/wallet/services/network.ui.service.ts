@@ -23,84 +23,88 @@
 import { Injectable } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { NetworkChooserComponent, NetworkChooserComponentOptions, NetworkChooserFilter } from '../components/network-chooser/network-chooser.component';
+import {
+  NetworkChooserComponent,
+  NetworkChooserComponentOptions,
+  NetworkChooserFilter
+} from '../components/network-chooser/network-chooser.component';
 import { AnyNetwork } from '../model/networks/network';
 import { WalletNetworkService } from './network.service';
 
 export type PriorityNetworkChangeCallback = (newNetwork) => Promise<void>;
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class WalletNetworkUIService {
-    public static instance: WalletNetworkUIService = null;
+  public static instance: WalletNetworkUIService = null;
 
-    constructor(
-        private modalCtrl: ModalController,
-        private networkService: WalletNetworkService,
-        private theme: GlobalThemeService) {
-        WalletNetworkUIService.instance = this;
-    }
+  constructor(
+    private modalCtrl: ModalController,
+    private networkService: WalletNetworkService,
+    private theme: GlobalThemeService
+  ) {
+    WalletNetworkUIService.instance = this;
+  }
 
-    /**
-     * Lets user pick a network in the list of all available networks.
-     * Promise resolves when a new network is chosen or when cancelled.
-     *
-     * @dependson NetworkChooserComponentModule
-     */
-    async chooseActiveNetwork(): Promise<boolean> {
-        let options: NetworkChooserComponentOptions = {
-            currentNetwork: this.networkService.activeNetwork.value,
-        };
+  /**
+   * Lets user pick a network in the list of all available networks.
+   * Promise resolves when a new network is chosen or when cancelled.
+   *
+   * @param filter Optional filter to show only specific networks
+   * @dependson NetworkChooserComponentModule
+   */
+  async chooseActiveNetwork(filter?: NetworkChooserFilter): Promise<boolean> {
+    let options: NetworkChooserComponentOptions = {
+      currentNetwork: this.networkService.activeNetwork.value,
+      filter,
+      showActiveNetwork: true
+    };
 
-        let modal = await this.modalCtrl.create({
-            component: NetworkChooserComponent,
-            componentProps: options,
-        });
+    let modal = await this.modalCtrl.create({
+      component: NetworkChooserComponent,
+      componentProps: options
+    });
 
-        return new Promise(resolve => {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
-            modal.onWillDismiss().then(async (params) => {
-                if (params.data && params.data.selectedNetworkKey) {
-                    void this.networkService.setActiveNetwork(this.networkService.getNetworkByKey(params.data.selectedNetworkKey));
-                    resolve(true);
-                }
-                else
-                    resolve(false);
-            });
-            void modal.present();
-        });
-    }
+    return new Promise(resolve => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+      modal.onWillDismiss().then(async params => {
+        if (params.data && params.data.selectedNetworkKey) {
+          void this.networkService.setActiveNetwork(
+            this.networkService.getNetworkByKey(params.data.selectedNetworkKey)
+          );
+          resolve(true);
+        } else resolve(false);
+      });
+      void modal.present();
+    });
+  }
 
-    /**
-    * Lets the user choose a network from the list but without further action.
-    * The selected network does not become the active network.
-    */
-    async pickNetwork(filter?: NetworkChooserFilter): Promise<AnyNetwork> {
-        let options: NetworkChooserComponentOptions = {
-            currentNetwork: this.networkService.activeNetwork.value,
-            filter,
-            showActiveNetwork: false
-        };
+  /**
+   * Lets the user choose a network from the list but without further action.
+   * The selected network does not become the active network.
+   */
+  async pickNetwork(filter?: NetworkChooserFilter): Promise<AnyNetwork> {
+    let options: NetworkChooserComponentOptions = {
+      currentNetwork: this.networkService.activeNetwork.value,
+      filter,
+      showActiveNetwork: false
+    };
 
-        let modal = await this.modalCtrl.create({
-            component: NetworkChooserComponent,
-            componentProps: options,
-        });
+    let modal = await this.modalCtrl.create({
+      component: NetworkChooserComponent,
+      componentProps: options
+    });
 
-        return new Promise(resolve => {
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
-            modal.onWillDismiss().then(async (params) => {
-                if (params.data && params.data.selectedNetworkKey) {
-                    let network = this.networkService.getNetworkByKey(params.data.selectedNetworkKey);
-                    resolve(network);
-                }
-                else
-                    resolve(null);
-            });
-            void modal.present();
-        });
-    }
+    return new Promise(resolve => {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises, require-await
+      modal.onWillDismiss().then(async params => {
+        if (params.data && params.data.selectedNetworkKey) {
+          let network = this.networkService.getNetworkByKey(params.data.selectedNetworkKey);
+          resolve(network);
+        } else resolve(null);
+      });
+      void modal.present();
+    });
+  }
 }
-
-

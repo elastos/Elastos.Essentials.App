@@ -3,8 +3,7 @@ import { CeloBaseNetwork } from "./celo.base.network";
 
 export class CeloTestNetNetwork extends CeloBaseNetwork {
   constructor() {
-    super(
-      "celo",
+    super("celo",
       "Celo Alfajores Testnet",
       "Celo Alfajores Testnet",
       "assets/wallet/networks/celo.svg",
@@ -12,6 +11,13 @@ export class CeloTestNetNetwork extends CeloBaseNetwork {
       "Celo Coin",
       TESTNET_TEMPLATE,
       44787,
+      [],
+      [
+        {
+          name: 'Celo Testnet RPC',
+          url: 'https://alfajores-forno.celo-testnet.org'
+        }
+      ]
     );
 
     this.averageBlocktime = 5
