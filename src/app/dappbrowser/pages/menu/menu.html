@@ -21,32 +21,84 @@
             <div class="header">{{ 'dappbrowser.menu-active-net-wallet' | translate }}</div>
 
             <ion-grid class="switches-container">
+                <!-- EVM Network + Wallet Row -->
                 <ion-row>
                     <ion-col size="6">
-                        <ion-row class="ripple ion-activatable" (click)="pickNetwork()"
-                            *ngIf="walletNetworkService.activeNetwork.value">
+                        <ion-row class="ripple ion-activatable" (click)="pickEVMNetwork()">
                             <ion-col size="3" class="logo-container">
-                                <img class="network-logo" [src]="getActiveNetworkLogo()">
+                                <img class="network-logo" [src]="getConnectedEVMNetworkLogo()">
                             </ion-col>
                             <ion-col size="9">
                                 <div class="title">{{ 'dappbrowser.network' | translate }}</div>
                                 <div class="network">
-                                    {{ getActiveNetworkName() }}
+                                    {{ getConnectedEVMNetworkName() }}
                                 </div>
                             </ion-col>
                             <ion-ripple-effect></ion-ripple-effect>
                         </ion-row>
                     </ion-col>
+
                     <ion-col size="6">
-                        <ion-row class="ripple ion-activatable" *ngIf="walletService.activeNetworkWallet.value"
-                            (click)="pickWallet()">
+                        <ion-row class="ripple ion-activatable" (click)="pickEVMWallet()">
                             <ion-col size="3" class="logo-container">
                                 <img
                                     [src]="!theme.darkMode ? '/assets/browser/icons/icon-wallet.svg' : 'assets/browser/icons/dark_mode/icon-wallet.svg'" />
                             </ion-col>
                             <ion-col size="9">
-                                <div class="title">{{ 'dappbrowser.wallet' | translate }}</div>
-                                <div class="network">{{walletService.activeNetworkWallet.value.masterWallet.name}}</div>
+                                <div class="title">EVM {{ 'dappbrowser.wallet' | translate }}</div>
+                                <div class="network" *ngIf="connectedEVMWallet; else noEvmWallet">
+                                    {{connectedEVMWallet.masterWallet.name}}
+                                    <div class="disconnect-action" (click)="disconnectEVMWallet($event)">
+                                        <ion-icon name="close-circle-outline"></ion-icon>
+                                        <span>{{ 'dappbrowser.disconnect' | translate }}</span>
+                                    </div>
+                                </div>
+                                <ng-template #noEvmWallet>
+                                    <div class="network no-connection">{{ 'dappbrowser.no-wallet-connected' | translate
+                                        }}</div>
+                                </ng-template>
+                            </ion-col>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-row>
+                    </ion-col>
+                </ion-row>
+
+                <!-- Bitcoin Network + Wallet Row -->
+                <ion-row>
+                    <ion-col size="6">
+                        <ion-row>
+                            <ion-col size="3" class="logo-container">
+                                <img class="network-logo" [src]="getConnectedBitcoinNetworkLogo()" />
+                            </ion-col>
+                            <ion-col size="9">
+                                <div class="title">Bitcoin {{ 'dappbrowser.network' | translate }}</div>
+                                <div class="network">
+                                    {{ getConnectedBitcoinNetworkName() }}
+                                </div>
+                            </ion-col>
+                            <ion-ripple-effect></ion-ripple-effect>
+                        </ion-row>
+                    </ion-col>
+
+                    <ion-col size="6">
+                        <ion-row class="ripple ion-activatable" (click)="pickBitcoinWallet()">
+                            <ion-col size="3" class="logo-container">
+                                <img
+                                    [src]="!theme.darkMode ? '/assets/browser/icons/icon-wallet.svg' : '/assets/browser/icons/dark_mode/icon-wallet.svg'" />
+                            </ion-col>
+                            <ion-col size="9">
+                                <div class="title">Bitcoin {{ 'dappbrowser.wallet' | translate }}</div>
+                                <div class="network" *ngIf="connectedBitcoinWallet; else noBitcoinWallet">
+                                    {{connectedBitcoinWallet.masterWallet.name}}
+                                    <div class="disconnect-action" (click)="disconnectBitcoinWallet($event)">
+                                        <ion-icon name="close-circle-outline"></ion-icon>
+                                        <span>{{ 'dappbrowser.disconnect' | translate }}</span>
+                                    </div>
+                                </div>
+                                <ng-template #noBitcoinWallet>
+                                    <div class="network no-connection">{{ 'dappbrowser.no-wallet-connected' | translate
+                                        }}</div>
+                                </ng-template>
                             </ion-col>
                             <ion-ripple-effect></ion-ripple-effect>
                         </ion-row>

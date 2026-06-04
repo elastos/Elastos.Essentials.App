@@ -45,7 +45,7 @@ export class ProfilePage {
   private documentChangedSubscription: Subscription = null;
   private credentialaddedSubscription: Subscription = null;
 
-  private hiveVault: DIDPlugin.Service = null;
+  public hiveVault: DIDPlugin.Service = null;
   public hiveIsloaded = false;
 
   constructor(

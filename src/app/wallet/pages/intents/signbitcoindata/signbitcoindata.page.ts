@@ -22,16 +22,27 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
+import * as BTC from 'bitcoinjs-lib';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalPopupService } from 'src/app/services/global.popup.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
+import { BTCSignDataType } from 'src/app/wallet/model/btc.types';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
+import { BTCSafe } from 'src/app/wallet/model/networks/btc/safes/btc.safe';
 import { BTCSubWallet } from 'src/app/wallet/model/networks/btc/subwallets/btc.subwallet';
 import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { CurrencyService } from 'src/app/wallet/services/currency.service';
@@ -40,22 +51,16 @@ import { CoinTransferService } from '../../../services/cointransfer.service';
 import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
-import * as BTC from 'bitcoinjs-lib';
-import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
-import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
-import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
-import { BTCSignDataType } from 'src/app/wallet/model/btc.types';
-import { BTCSafe } from 'src/app/wallet/model/networks/btc/safes/btc.safe';
 
 type SignBitcoinDataParam = {
-  rawData: string, // including random data or a real BTC raw transaction (CAUTION).
-  type: BTCSignDataType,
-}
+  rawData: string; // including random data or a real BTC raw transaction (CAUTION).
+  type: BTCSignDataType;
+};
 
 @Component({
   selector: 'app-signbitcoindata',
   templateUrl: './signbitcoindata.page.html',
-  styleUrls: ['./signbitcoindata.page.scss'],
+  styleUrls: ['./signbitcoindata.page.scss']
 })
 export class SignBitcoinDataPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -65,7 +70,7 @@ export class SignBitcoinDataPage implements OnInit {
   public networkWallet: AnyNetworkWallet = null;
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
-  public intentParams: SignBitcoinDataParam = null
+  public intentParams: SignBitcoinDataParam = null;
   public balanceBTC: BigNumber = null;
   public feesAsBigNumber: BigNumber = null;
   public currencyFee = null;
@@ -75,7 +80,7 @@ export class SignBitcoinDataPage implements OnInit {
 
   private alreadySentIntentResponse = false;
 
-  public currentNetworkName = ''
+  public currentNetworkName = '';
 
   public transaction: BTC.Transaction = null;
 
@@ -93,12 +98,17 @@ export class SignBitcoinDataPage implements OnInit {
     public uiService: UiService,
     private router: Router,
     public globalPopupService: GlobalPopupService,
-    private prefs: GlobalPreferencesService,
+    private prefs: GlobalPreferencesService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
+      this.intentParams = this.receivedIntent.params.payload.params[0];
+    }
   }
 
   ngOnInit() {
-    GlobalFirebaseService.instance.logEvent("wallet_signbitcoindata_enter");
+    GlobalFirebaseService.instance.logEvent('wallet_signbitcoindata_enter');
 
     void this.init();
   }
@@ -107,14 +117,16 @@ export class SignBitcoinDataPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.signbitcoindata-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
   }
 
   ionViewDidEnter() {
@@ -136,71 +148,62 @@ export class SignBitcoinDataPage implements OnInit {
   }
 
   async init() {
-    const navigation = this.router.getCurrentNavigation();
-    this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.intentParams = this.receivedIntent.params.payload.params[0]
-
     // This intent is currently only enabled in development mode.
-    this.isSignDataEnable = await this.prefs.getBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate);
+    this.isSignDataEnable = await this.prefs.getBitcoinSignData(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate
+    );
 
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
-    this.currentNetworkName = this.targetNetwork.name;
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
 
     let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
     this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    if (!this.networkWallet)
-      return;
+    if (!this.networkWallet) return;
 
     this.btcSubWallet = <BTCSubWallet>this.networkWallet.getMainTokenSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-    if (!this.btcSubWallet)
-      return;
+    if (!this.btcSubWallet) return;
 
     // TODO: Show useful tx info
     // try {
     //   this.transaction = BTC.Transaction.fromHex(this.intentParams.rawData);
     //   Logger.log('wallet', 'SignBitcoinDataPage transaction:', this.transaction)
 
-      // let totalOutputValues = 0;
-      // this.transaction.outs.forEach( o => totalOutputValues += o.value)
+    // let totalOutputValues = 0;
+    // this.transaction.outs.forEach( o => totalOutputValues += o.value)
 
-      // if (this.intentParams.value > totalOutputValues) {
-      //   this.feesAsBigNumber = satsToBtc(new BigNumber(this.intentParams.value - totalOutputValues));
-      //   this.currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesAsBigNumber);
-      // }
+    // if (this.intentParams.value > totalOutputValues) {
+    //   this.feesAsBigNumber = satsToBtc(new BigNumber(this.intentParams.value - totalOutputValues));
+    //   this.currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesAsBigNumber);
+    // }
     // } catch (e) {
     //   Logger.warn('wallet', 'BTC.Transaction.fromBuffer error:', e)
     // }
 
-    void this.updateBalance();
-
     this.loading = false;
-  }
-
-  private async updateBalance() {
-    try {
-      await this.btcSubWallet.updateBalance()
-      this.balanceBTC = await this.btcSubWallet.getDisplayBalance();
-    } catch (e) {
-      setTimeout(() => {
-        void this.updateBalance();
-      }, 1000);
-    }
   }
 
   async signData() {
     try {
+      this.actionIsGoing = true;
+
       // let prevOutScripts = Buffer.from(this.intentParams.prevOutScript, 'hex')
       // // let scriptString = bitcoin.script.toASM(bitcoin.script.decompile(prevOutScripts))
       // // Logger.warn('wallet', 'SignBitcoinDataPage scriptString:', scriptString)
       // let digest = this.transaction.hashForWitnessV0(this.intentParams.inIndex, prevOutScripts, this.intentParams.value, BTC.Transaction.SIGHASH_ALL).toString('hex')
 
-      let signature = await (this.networkWallet.safe as unknown as BTCSafe).signData(this.intentParams.rawData, this.intentParams.type);
+      let signature = await (this.networkWallet.safe as unknown as BTCSafe).signData(
+        this.intentParams.rawData,
+        this.intentParams.type
+      );
       // Logger.log('wallet', 'signature:', signature)
       await this.sendIntentResponse({ signature: signature, status: 'ok' });
     } catch (e) {
-      Logger.warn('wallet', 'SignBitcoinDataPage sign data error:', e)
+      Logger.warn('wallet', 'SignBitcoinDataPage sign data error:', e);
       await this.sendIntentResponse({ signature: null, status: 'error' });
+    } finally {
+      this.actionIsGoing = false;
     }
   }
 
@@ -218,21 +221,29 @@ export class SignBitcoinDataPage implements OnInit {
   }
 
   async goTransaction() {
-    await this.signData()
+    await this.signData();
   }
 
-
-  public balanceIsEnough() {
-    return true;
+  /**
+   * Get the signing wallet name
+   */
+  public getSigningWalletName(): string {
+    if (this.networkWallet && this.networkWallet.masterWallet) {
+      return this.networkWallet.masterWallet.name;
+    }
+    return '';
   }
 
-  // ELA, HT, etc
-  public getCurrencyInUse(): string {
-    return this.btcSubWallet.getDisplayTokenName();
-  }
-
-  // CNY, USD, etc
-  public getNativeCurrencyInUse(): string {
-    return CurrencyService.instance.selectedCurrency.symbol;
+  /**
+   * Get the signing wallet address
+   */
+  public getSigningWalletAddress(): string {
+    if (this.networkWallet) {
+      const addresses = this.networkWallet.getAddresses();
+      if (addresses && addresses.length > 0) {
+        return addresses[0].address;
+      }
+    }
+    return '';
   }
 }

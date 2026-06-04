@@ -22,9 +22,13 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import BigNumber from "bignumber.js";
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalFirebaseService } from 'src/app/services/global.firebase.service';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
@@ -43,7 +47,7 @@ import { WalletService } from '../../../services/wallet.service';
 @Component({
   selector: 'app-pushbitcointx',
   templateUrl: './pushbitcointx.page.html',
-  styleUrls: ['./pushbitcointx.page.scss'],
+  styleUrls: ['./pushbitcointx.page.scss']
 })
 export class PushBitcoinTxPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -52,7 +56,7 @@ export class PushBitcoinTxPage implements OnInit {
   public networkWallet: AnyNetworkWallet = null;
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
-  public intentParams = null
+  public intentParams = null;
   public rawtx = null;
 
   public loading = true;
@@ -60,7 +64,7 @@ export class PushBitcoinTxPage implements OnInit {
 
   private alreadySentIntentResponse = false;
 
-  public currentNetworkName = ''
+  public currentNetworkName = '';
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
@@ -75,12 +79,22 @@ export class PushBitcoinTxPage implements OnInit {
     public theme: GlobalThemeService,
     public uiService: UiService,
     private router: Router,
-    public globalPopupService: GlobalPopupService,
+    public globalPopupService: GlobalPopupService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
+      this.intentParams = this.receivedIntent.params.payload.params[0];
+      if (this.intentParams?.rawtx) {
+        this.rawtx = this.intentParams.rawtx;
+      } else {
+        this.rawtx = this.intentParams;
+      }
+    }
   }
 
   ngOnInit() {
-    GlobalFirebaseService.instance.logEvent("wallet_pushbitcointx_enter");
+    GlobalFirebaseService.instance.logEvent('wallet_pushbitcointx_enter');
 
     void this.init();
   }
@@ -89,14 +103,16 @@ export class PushBitcoinTxPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.pushbitcointx-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
   }
 
   ionViewDidEnter() {
@@ -118,27 +134,16 @@ export class PushBitcoinTxPage implements OnInit {
   }
 
   async init() {
-    const navigation = this.router.getCurrentNavigation();
-    this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.intentParams = this.receivedIntent.params.payload.params[0]
-    if (this.intentParams?.rawtx) {
-      this.rawtx = this.intentParams.rawtx
-    } else {
-      this.rawtx = this.intentParams;
-    }
-
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
-    this.currentNetworkName = this.targetNetwork.name;
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
 
     let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
     this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    if (!this.networkWallet)
-      return;
+    if (!this.networkWallet) return;
 
     this.btcSubWallet = <BTCSubWallet>this.networkWallet.getMainTokenSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-    if (!this.btcSubWallet)
-      return;
+    if (!this.btcSubWallet) return;
 
     // TODO: Show tx info
     // const txBuffer = Buffer.from(this.rawtx, 'hex');
@@ -151,12 +156,14 @@ export class PushBitcoinTxPage implements OnInit {
   async pushTx() {
     if (this.receivedIntent?.params?.payload?.params[0]) {
       try {
+        this.actionIsGoing = true;
         const result = await this.btcSubWallet.sendSignedTransaction(this.rawtx, null, false);
         await this.sendIntentResponse({ txid: result.txid, status: result.status });
-      }
-      catch (err) {
-        Logger.error('wallet', 'PushBitcoinTxPage sendSignedTransaction error:', err)
+      } catch (err) {
+        Logger.error('wallet', 'PushBitcoinTxPage sendSignedTransaction error:', err);
         await this.sendIntentResponse({ txid: null, status: 'error' });
+      } finally {
+        this.actionIsGoing = false;
       }
     } else {
       await this.sendIntentResponse({ txid: null, status: 'error' });

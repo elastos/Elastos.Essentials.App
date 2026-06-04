@@ -3,11 +3,24 @@ import { IonContent, IonSlides, ModalController, ToastController } from '@ionic/
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem, TitleBarNavigationMode } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem,
+  TitleBarNavigationMode
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { App } from 'src/app/model/app.enum';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
-import { GlobalNetworksService, LRW_TEMPLATE, MAINNET_TEMPLATE, TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import {
+  GlobalNetworksService,
+  LRW_TEMPLATE,
+  MAINNET_TEMPLATE,
+  TESTNET_TEMPLATE
+} from 'src/app/services/global.networks.service';
+import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
 import { GlobalStartupService } from 'src/app/services/global.startup.service';
 import { GlobalStorageService } from 'src/app/services/global.storage.service';
 import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
@@ -29,7 +42,7 @@ import { WidgetsService } from '../../widgets/services/widgets.service';
 export class HomePage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
   @ViewChild(IonContent, { static: true }) ionContent: IonContent;
-  @ViewChild('widgetsslides', { static: true }) widgetsSlides: IonSlides;
+  @ViewChild('widgetsslides', { static: false }) widgetsSlides: IonSlides | undefined;
   @ViewChildren(WidgetContainerComponent) widgetContainersList: QueryList<WidgetContainerComponent>;
 
   private widgetContainers: WidgetContainerComponent[] = [];
@@ -47,11 +60,13 @@ export class HomePage implements OnInit {
   public widgetsSlidesOpts = {
     autoHeight: true,
     spaceBetween: 10,
-    //initialSlide: 1 // Doesn't work well, shows slide 0 during a short time first...
+    initialSlide: 1 // Start at middle slide (index 1)
   };
   public slidesShown = false;
-  public activeScreenIndex = 1;
+  public activeScreenIndex: number;
   public editingWidgets = false;
+  public lightweightMode;
+  private hasUserInteractedWithSlides = false;
 
   constructor(
     public toastCtrl: ToastController,
@@ -65,23 +80,44 @@ export class HomePage implements OnInit {
     private globalNetworksService: GlobalNetworksService,
     private globalNavService: GlobalNavService,
     private widgetsService: WidgetsService,
-    private launcherNotificationsService: NotificationManagerService
+    private launcherNotificationsService: NotificationManagerService,
+    private globalPrefs: GlobalPreferencesService,
+    private lightweightService: GlobalLightweightService
   ) {
-    this.widgetsService.registerContainer("left");
-    this.widgetsService.registerContainer("main");
-    this.widgetsService.registerContainer("right");
+    // Read lightweight mode synchronously from the service
+    this.lightweightMode = this.lightweightService.getCurrentLightweightMode();
+
+    // Register containers based on lightweight mode
+    if (!this.lightweightMode) {
+      this.widgetsService.registerContainer('left');
+      this.widgetsService.registerContainer('main');
+      this.widgetsService.registerContainer('right');
+      this.activeScreenIndex = 1;
+    } else {
+      // Lightweight mode: only one screen
+      this.widgetsService.registerContainer('main');
+      this.activeScreenIndex = 0;
+    }
   }
 
   ngOnInit() {
     this.launcherNotificationsService.init();
 
-    void this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "swipanimationshown", false).then(swipeAnimationShown => {
-      this.showSwipeIndicator = !swipeAnimationShown;
-    });
+    void this.storage
+      .getSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'launcher',
+        'swipanimationshown',
+        false
+      )
+      .then(swipeAnimationShown => {
+        this.showSwipeIndicator = !swipeAnimationShown;
+      });
   }
 
   ionViewWillEnter() {
-    Logger.log("launcher", "Launcher home screen will enter");
+    Logger.log('launcher', 'Launcher home screen will enter');
     /*  setTimeout(()=>{
        const notification = {
          key: 'storagePlanExpiring',
@@ -94,30 +130,34 @@ export class HomePage implements OnInit {
 
     this.titleBar.setNavigationMode(TitleBarNavigationMode.CUSTOM);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "home",
+      key: 'home',
       iconPath: BuiltInIcon.HOME
     });
     this.titleBar.setIcon(TitleBarIconSlot.INNER_LEFT, {
-      key: "notifications",
+      key: 'notifications',
       iconPath: BuiltInIcon.NOTIFICATIONS
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      switch (icon.key) {
-        case 'home':
-          this.widgetsService.exitEditionMode(); // Exit edition mode if needed
-          void this.widgetsSlides.slideTo(1); // re-center on the middle screen
-          return;
-        case 'notifications':
-          void this.showNotifications();
-          break;
-        case 'scan':
-          void this.globalNavService.navigateTo(App.SCANNER, "/scanner/scan");
-          break;
-        case 'settings':
-          void this.globalNavService.navigateTo(App.SETTINGS, "/settings/menu");
-          break;
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        switch (icon.key) {
+          case 'home':
+            this.widgetsService.exitEditionMode(); // Exit edition mode if needed
+            if (this.widgetsSlides && !this.lightweightMode) {
+              void this.widgetsSlides.slideTo(1); // re-center on the middle screen
+            }
+            return;
+          case 'notifications':
+            void this.showNotifications();
+            break;
+          case 'scan':
+            void this.globalNavService.navigateTo(App.SCANNER, '/scanner/scan');
+            break;
+          case 'settings':
+            void this.globalNavService.navigateTo(App.SETTINGS, '/settings/menu');
+            break;
+        }
+      })
+    );
 
     /* if (this.theme.darkMode) {
       this.titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
@@ -127,16 +167,17 @@ export class HomePage implements OnInit {
 
     this.themeSubscription = this.theme.activeTheme.subscribe(theme => {
       this.titleBar.setIcon(TitleBarIconSlot.INNER_RIGHT, {
-        key: "scan",
+        key: 'scan',
         iconPath: BuiltInIcon.SCAN
       });
       this.titleBar.setIcon(TitleBarIconSlot.OUTER_RIGHT, {
-        key: "settings",
+        key: 'settings',
         iconPath: BuiltInIcon.SETTINGS
       });
     });
 
-    if (this.didService.signedIdentity) { // Should not happen, just in case - for ionic hot reload
+    if (this.didService.signedIdentity) {
+      // Should not happen, just in case - for ionic hot reload
       this.globalNetworksService.activeNetworkTemplate.subscribe(template => {
         switch (template) {
           case MAINNET_TEMPLATE:
@@ -155,38 +196,41 @@ export class HomePage implements OnInit {
     this.widgetsEditionModeSub = WidgetsServiceEvents.editionMode.subscribe(editionMode => {
       this.editingWidgets = editionMode;
 
-      // Lock the slider during edition to avoid horizontal scrolling
-      void this.widgetsSlides.lockSwipes(editionMode);
+      // Only handle slides logic if not in lightweight mode
+      if (this.widgetsSlides && !this.lightweightMode) {
+        // Lock the slider during edition to avoid horizontal scrolling
+        void this.widgetsSlides.lockSwipes(editionMode);
 
-      // When the mode changes to edition, the active slide content will get higher
-      // as new content is shown. We need to wait for this content (invisible widgets) to be shown then
-      // force a recomputation of the slider height, otherwiser the user can't scroll down.
-      setTimeout(() => {
-        void this.widgetsSlides.updateAutoHeight(0);
-      }, 500);
+        // When the mode changes to edition, the active slide content will get higher
+        // as new content is shown. We need to wait for this content (invisible widgets) to be shown then
+        // force a recomputation of the slider height, otherwiser the user can't scroll down.
+        setTimeout(() => {
+          void this.widgetsSlides.updateAutoHeight(0);
+        }, 500);
+      }
     });
 
     //Logger.log("launcher", "Launcher home screen will enter completed")
 
     //void this.widgetsService.onLauncherHomeViewWillEnter();
 
-    // Manually slide to the middle container first, then let the slides appear.
-    // We have to do this otherzise the "initialSlide" option doesn't work well and shows the first slide during
-    // a short time.
-    if (!this.slidesShown) { // First entrance only to not come back to middle slide when coming back from other screens
-      void this.widgetsSlides.slideTo(1, 0, false).then(() => {
-        this.slidesShown = true;
-      });
-    }
+    // Initialize slides visibility
+    this.initializeSlidesVisibility();
   }
 
   ionViewDidEnter() {
-    Logger.log("launcher", "Launcher home screen did enter");
+    Logger.log('launcher', 'Launcher home screen did enter');
 
     GlobalStartupService.instance.setStartupScreenReady();
 
     //console.log(this.widgetContainers)
     this.widgetContainers = this.widgetContainersList.toArray();
+
+    // Fallback: ensure slides are shown in non-lightweight mode
+    if (!this.lightweightMode && !this.slidesShown) {
+      console.warn('Slides not shown in ionViewDidEnter, forcing visibility');
+      this.initializeSlidesVisibility();
+    }
   }
 
   ionViewWillLeave() {
@@ -227,18 +271,93 @@ export class HomePage implements OnInit {
     this.widgetContainers[this.activeScreenIndex].addWidget();
   }
 
-  public async onSlideChange(evt) {
-    this.activeScreenIndex = await this.widgetsSlides.getActiveIndex();
-    //void this.ionContent.scrollToTop(500);
+  /**
+   * Initialize slides visibility
+   */
+  private initializeSlidesVisibility() {
+    if (this.lightweightMode) {
+      // In lightweight mode, mark slides as shown since we don't use slides
+      this.slidesShown = true;
+      return;
+    }
 
-    void this.widgetsSlides.update();
+    if (this.slidesShown) {
+      console.log('Slides already shown, returning');
+      return; // Already initialized
+    }
 
-    // User has swiped at least once so he knows. We can hide the swipe indicator and remember this.
-    // Make sure to test the user reached the 0 index slide (left) because this event is received also when starting (main, 1)
-    if (this.showSwipeIndicator && this.activeScreenIndex == 0) {
+    // With initialSlide: 1, slides should start at the correct position
+    // Just show them after a brief delay to ensure they're properly initialized
+    setTimeout(() => {
+      this.slidesShown = true;
+      console.log('Slides marked as shown after timeout');
+    }, 50);
+  }
+
+  public onSlideTouchEnd() {
+    console.log('onSlideTouchEnd: user has interacted with slides');
+    this.hasUserInteractedWithSlides = true;
+    if (this.showSwipeIndicator) {
+      console.log('Hiding swipe indicator due to user touch end');
       this.showSwipeIndicator = false;
+      void this.storage.setSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'launcher',
+        'swipanimationshown',
+        true
+      );
+    }
+  }
 
-      void this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "launcher", "swipanimationshown", true);
+  public async onSlideChange(evt) {
+    console.log(
+      'onSlideChange called, lightweightMode:',
+      this.lightweightMode,
+      'showSwipeIndicator:',
+      this.showSwipeIndicator
+    );
+    console.log('widgetsSlides exists:', !!this.widgetsSlides);
+
+    // Only handle slide changes if not in lightweight mode
+    if (!this.lightweightMode) {
+      console.log('Inside slides handling block');
+
+      // Ignore initial non-user slide changes (from init)
+      if (!this.hasUserInteractedWithSlides) {
+        console.log('Ignoring slide change because user has not interacted yet');
+        return;
+      }
+
+      // Try to get widgetsSlides if available
+      if (this.widgetsSlides) {
+        this.activeScreenIndex = await this.widgetsSlides.getActiveIndex();
+        console.log('Active screen index:', this.activeScreenIndex);
+        //void this.ionContent.scrollToTop(500);
+
+        void this.widgetsSlides.update();
+      } else {
+        console.log('widgetsSlides not available yet, but still handling swipe indicator');
+      }
+
+      // User has swiped at least once so he knows. We can hide the swipe indicator and remember this.
+      // Hide indicator on any slide change (after user interaction)
+      if (this.showSwipeIndicator) {
+        console.log('Hiding swipe indicator due to slide change (after user interaction)');
+        this.showSwipeIndicator = false;
+
+        void this.storage.setSetting(
+          DIDSessionsStore.signedInDIDString,
+          NetworkTemplateStore.networkTemplate,
+          'launcher',
+          'swipanimationshown',
+          true
+        );
+      } else {
+        console.log('showSwipeIndicator is false, not hiding');
+      }
+    } else {
+      console.log('Not inside slides handling block - lightweightMode:', this.lightweightMode);
     }
   }
 }

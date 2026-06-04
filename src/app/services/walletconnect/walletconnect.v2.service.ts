@@ -1,16 +1,20 @@
 import { Injectable, NgZone } from '@angular/core';
-import type WalletConnect from "@walletconnect/client";
+import type WalletConnect from '@walletconnect/client';
 import type { SignClient } from '@walletconnect/sign-client/dist/types/client';
 import type { PairingTypes, ProposalTypes, SessionTypes } from '@walletconnect/types';
 import moment from 'moment';
-import { Subscription } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { GlobalConfig } from 'src/app/config/globalconfig';
 import { lazyWalletConnectSignClientImport } from 'src/app/helpers/import.helper';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { ConnectV2PageParams } from 'src/app/settings/pages/walletconnect/connectv2/connectv2.page';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { Logger } from '../../logger';
-import { SessionProposalEvent, SessionRequestEvent, WalletConnectSessionExtension } from '../../model/walletconnect/types';
+import {
+  SessionProposalEvent,
+  SessionRequestEvent,
+  WalletConnectSessionExtension
+} from '../../model/walletconnect/types';
 import { EVMNetwork } from '../../wallet/model/networks/evms/evm.network';
 import { WalletNetworkService } from '../../wallet/services/network.service';
 import { WalletService } from '../../wallet/services/wallet.service';
@@ -30,78 +34,67 @@ import { walletConnectStore } from './store';
 export type EvaluatedMethod = {
   method: string;
   isSupported: boolean;
-}
+};
 
 export type EvaluatedChain = {
   chain: string;
   isSupported: boolean;
-}
+};
 
 type RelayerType = {
-  value: string
-  label: string
-}
+  value: string;
+  label: string;
+};
 
 /**
  * Relayer Regions
  */
 const REGIONALIZED_RELAYER_ENDPOINTS: RelayerType[] = [
-  /* { // KO : subscribe methods not found - too old version?
-    value: 'wss://walletconnect.elastos.net/v2',
-    label: 'Essentials'
-  }, */
-
   {
     value: 'wss://relay.walletconnect.org',
-    label: 'WC fallback that works from china - linked to the .com relay'
+    label: 'Global'
   },
-
-  /* {
-    value: 'wss://walletconnect.elastos.net/v3',
-    label: 'Elastos 20221122'
-  }, */
-
-  /* {
+  {
     value: 'wss://relay.walletconnect.com',
     label: 'Default'
   },
   {
-    value: 'wss://us-east-1.relay.walletconnect.com/',
-    label: 'US'
+    value: 'wss://us-east-1.relay.walletconnect.com',
+    label: 'US East'
   },
   {
-    value: 'wss://eu-central-1.relay.walletconnect.com/',
-    label: 'EU'
+    value: 'eu-central-1.relay.walletconnect.com',
+    label: 'EU Central'
   },
   {
-    value: 'wss://ap-southeast-1.relay.walletconnect.com/',
+    value: 'ap-southeast-1.relay.walletconnect.com',
     label: 'Asia Pacific'
-  } */
+  }
 ];
 
 const supportedEIP155Methods = [
   // Tx
-  "eth_sendTransaction",
+  'eth_sendTransaction',
   // Sign
-  "eth_signTransaction",
-  "eth_sign",
-  "personal_sign",
-  "eth_signTypedData",
-  "eth_signTypedData_v3",
-  "eth_signTypedData_v4",
+  'eth_signTransaction',
+  'eth_sign',
+  'personal_sign',
+  'eth_signTypedData',
+  'eth_signTypedData_v3',
+  'eth_signTypedData_v4',
   // Networks and tokens
-  "wallet_switchEthereumChain",
-  "wallet_addEthereumChain",
-  "wallet_watchAsset",
+  'wallet_switchEthereumChain',
+  'wallet_addEthereumChain',
+  'wallet_watchAsset',
   // Bitcoin
-  "unisat_signData",
-  "unisat_sendBitcoin",
-  "unisat_signMessage",
-  "unisat_getPublicKey",
-  "unisat_getAccounts",
-  "unisat_requestAccounts",
-  "unisat_pushTx",
-]
+  'unisat_signData',
+  'unisat_sendBitcoin',
+  'unisat_signMessage',
+  'unisat_getPublicKey',
+  'unisat_getAccounts',
+  'unisat_requestAccounts',
+  'unisat_pushTx'
+];
 
 /**
  * Indicates from where a request to initiate a new WC session came from
@@ -114,7 +107,7 @@ export enum WalletConnectSessionRequestSource {
 export type ConnectorWithExtension = {
   wc: WalletConnect;
   sessionExtension: WalletConnectSessionExtension;
-}
+};
 
 @Injectable({
   providedIn: 'root'
@@ -124,6 +117,8 @@ export class WalletConnectV2Service implements GlobalService {
 
   private signClient: SignClient;
   private activeWalletSubscription: Subscription = null;
+
+  public signClientBS = new BehaviorSubject<SignClient>(null);
 
   constructor(
     private zone: NgZone,
@@ -143,23 +138,24 @@ export class WalletConnectV2Service implements GlobalService {
 
   public init(): Promise<void> {
     GlobalServiceManager.getInstance().registerService(this);
-
+    // In order to start faster, we do not wait for the signclient to be created.
     void this.createSignClient(REGIONALIZED_RELAYER_ENDPOINTS[0].value).then(async client => {
       this.signClient = client;
-
-      if (this.signClient)
+      if (this.signClient) {
         await this.restoreSessions();
+        this.signClientBS.next(this.signClient);
+      }
     });
 
     return;
   }
 
-
   onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
     // NOTE: called when the network changes as well, as a new "network wallet" is created.
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
     this.activeWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(activeWallet => {
-      if (this.signClient && activeWallet) { // null value when essentials starts, while wallets are not yet initialized.
+      if (this.signClient && activeWallet) {
+        // null value when essentials starts, while wallets are not yet initialized.
         void this.updateAllSessionsAfterWalletChange();
       }
     });
@@ -174,13 +170,44 @@ export class WalletConnectV2Service implements GlobalService {
     return;
   }
 
+  private waitForSignClient(): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      // If sign client is already created, resolve immediately
+      if (this.signClient) {
+        resolve(true);
+        return;
+      }
+
+      // Set a timeout to prevent indefinite waiting
+      const timeoutId = setTimeout(() => {
+        subscription.unsubscribe();
+        reject(new Error('Timeout waiting for SignClient'));
+      }, 10000); // 10 seconds timeout
+
+      const subscription = this.signClientBS.subscribe({
+        next: client => {
+          if (client) {
+            clearTimeout(timeoutId);
+            subscription.unsubscribe();
+            resolve(true);
+          }
+        },
+        error: error => {
+          clearTimeout(timeoutId);
+          subscription.unsubscribe();
+          reject(error);
+        }
+      });
+    });
+  }
+
   private async restoreSessions() {
     // We don't need to actually restore session as this is done by WC automatically.
     // But we update our local store model.
     for (let session of this.signClient.session.getAll()) {
       const sessionExtension = await walletConnectStore.loadSessionExtension(session.topic);
       const instance = new WalletConnectV2Instance(session, sessionExtension);
-      Logger.log("walletconnectv2", "Restoring session instance", instance);
+      Logger.log('walletconnectv2', 'Restoring session instance', instance);
       walletConnectStore.add(instance);
     }
   }
@@ -190,16 +217,23 @@ export class WalletConnectV2Service implements GlobalService {
 
     let subwallet = activeWallet.getMainEvmSubWallet();
     let ethAccounts: string[] = [];
-    if (subwallet) // Can be null, if the active network is not EVM
+    if (subwallet)
+      // Can be null, if the active network is not EVM
       ethAccounts.push(await subwallet.getCurrentReceiverAddress());
 
-    Logger.log("walletconnectv2", "Updating active connectors with new active wallet information", this.signClient, activeWallet);
+    Logger.log(
+      'walletconnectv2',
+      'Updating active connectors with new active wallet information',
+      this.signClient,
+      activeWallet
+    );
     let sessions = this.signClient.session.getAll();
     for (let session of sessions) {
       try {
         let chainId = activeWallet.network instanceof EVMNetwork ? activeWallet.network.getMainChainID() : 0;
-        let account = activeWallet.network instanceof EVMNetwork ? this.getAccountFromNetworkWallet(activeWallet) : null;
-        Logger.log("walletconnectv2", `Updating connected session`, session, chainId, account);
+        let account =
+          activeWallet.network instanceof EVMNetwork ? this.getAccountFromNetworkWallet(activeWallet) : null;
+        Logger.log('walletconnectv2', `Updating connected session`, session, chainId, account);
 
         // TODO: for now we always send the same chains as what the dapp requested. Meaning that WC v2 doesn't care about the ACTIVE NETWORK,
         // it only cares about what the dapp asked. So it's possible to change the network in essentials for now, but this change will not
@@ -211,16 +245,15 @@ export class WalletConnectV2Service implements GlobalService {
           topic: session.topic,
           namespaces: await this.buildNamespaces(ethAccounts, session.requiredNamespaces, session.optionalNamespaces)
         });
-      }
-      catch (e) {
-        Logger.warn("walletconnectv2", "Non critical updateSession() error:", e);
+      } catch (e) {
+        Logger.warn('walletconnectv2', 'Non critical updateSession() error:', e);
       }
     }
   }
 
   /**
- * Returns the eth account address associated with the given master wallet.
- */
+   * Returns the eth account address associated with the given master wallet.
+   */
   private getAccountFromNetworkWallet(wallet: AnyNetworkWallet): string {
     return wallet.getMainEvmSubWallet().getCurrentReceiverAddress();
   }
@@ -229,12 +262,19 @@ export class WalletConnectV2Service implements GlobalService {
    * Handles a scanned or received wc:// url in order to initiate a session with a wallet connect proxy
    * server and client.
    */
-  public async handleWCURIRequest(uri: string, source: WalletConnectSessionRequestSource, receivedIntent?: EssentialsIntentPlugin.ReceivedIntent) {
-    Logger.log("walletconnectv2", "Handling V2 uri request", uri, source);
+  public async handleWCURIRequest(
+    uri: string,
+    source: WalletConnectSessionRequestSource,
+    receivedIntent?: EssentialsIntentPlugin.ReceivedIntent
+  ) {
+    Logger.log('walletconnectv2', 'Handling V2 uri request', uri, source);
+
+    // If app is started through intent, the signclient may not be created yet and need to wait.
+    await this.waitForSignClient();
 
     await this.signClient.pair({ uri });
 
-    Logger.log("walletconnectv2", "Client is created:", this.signClient);
+    Logger.log('walletconnectv2', 'Client is created:', this.signClient);
   }
 
   private async createSignClient(relayUrl: string): Promise<SignClient> {
@@ -246,63 +286,61 @@ export class WalletConnectV2Service implements GlobalService {
         projectId: GlobalConfig.WallectConnect.PROJECT_ID,
         relayUrl,
         metadata: {
-          description: "Essentials",
-          url: "https://d.web3essentials.io/",
-          icons: ["https://download.elastos.io/app/elastos-essentials/Essentials.svg"],
-          name: "Essentials"
+          description: 'Essentials',
+          url: 'https://d.web3essentials.io/',
+          icons: ['https://download.elastos.io/app/elastos-essentials/Essentials.svg'],
+          name: 'Essentials'
         }
       });
 
       await this.prepareClientForEvents(signClient);
 
-      Logger.log("walletconnectv2", "Created v2 client:", signClient);
+      Logger.log('walletconnectv2', 'Created v2 client:', signClient);
 
       return signClient;
-    }
-    catch (e) {
-      Logger.warn("walletconnectv2", "Failed to create client", e);
+    } catch (e) {
+      Logger.warn('walletconnectv2', 'Failed to create client', e);
       return null;
     }
   }
 
   private prepareClientForEvents(client: SignClient) {
-    client.on("session_proposal", (event) => {
+    client.on('session_proposal', event => {
       // Show session proposal data to the user i.e. in a modal with options to approve / reject it
-      Logger.log("walletconnectv2", "Receiving session proposal", event);
+      Logger.log('walletconnectv2', 'Receiving session proposal', event);
       void this.handleSessionProposal(event);
     });
 
-    client.on("session_event", (event) => {
+    client.on('session_event', event => {
       // Handle session events, such as "chainChanged", "accountsChanged", etc.
       // TODO
-      Logger.log("walletconnectv2", "Receiving session event", event);
+      Logger.log('walletconnectv2', 'Receiving session event', event);
     });
 
-    client.on("session_request", (event) => {
+    client.on('session_request', event => {
       // Handle session method requests, such as "eth_sign", "eth_sendTransaction", etc.
-      Logger.log("walletconnectv2", "Receiving session request", event);
+      Logger.log('walletconnectv2', 'Receiving session request', event);
       void this.handleSessionRequest(event);
     });
 
-    client.on("session_ping", (event) => {
+    client.on('session_ping', event => {
       // React to session ping event
-      Logger.log("walletconnectv2", "Receiving session ping", event);
+      Logger.log('walletconnectv2', 'Receiving session ping', event);
     });
 
-    client.on("session_delete", async event => {
+    client.on('session_delete', async event => {
       // React to session delete event
-      Logger.log("walletconnectv2", "Receiving session deletion", event);
+      Logger.log('walletconnectv2', 'Receiving session deletion', event);
 
       // TOPIC = session topic here.
       // NOTE: After disconnecting from a dapp, the SESSION is disconnected, but the PAIRING remains
       if (event && event.topic) {
         let instanceToDelete = walletConnectStore.findById(event.topic);
-        if ((instanceToDelete)) {
+        if (instanceToDelete) {
           await walletConnectStore.delete(instanceToDelete);
         }
       }
     });
-
   }
 
   private getAllTopics(): string[] {
@@ -315,23 +353,24 @@ export class WalletConnectV2Service implements GlobalService {
 
   public async killAllSessions(): Promise<void> {
     if (!this.signClient) {
-      Logger.warn("walletconnectv2", "Client not initialized, unable to kill all sessions");
+      Logger.warn('walletconnectv2', 'Client not initialized, unable to kill all sessions');
       return;
     }
 
     let topics = this.getAllTopics();
-    Logger.log("walletconnectv2", "Killing " + topics.length + " v2 sessions.");
+    Logger.log('walletconnectv2', 'Killing ' + topics.length + ' v2 sessions.');
 
     for (let topic of topics) {
       await this.signClient.disconnect({
         topic,
         reason: {
-          code: 1, message: "User disconnection"
+          code: 1,
+          message: 'User disconnection'
         }
       });
     }
 
-    Logger.log("walletconnectv2", "Killed all sessions");
+    Logger.log('walletconnectv2', 'Killed all sessions');
   }
 
   private handleSessionProposal(event: SessionProposalEvent): Promise<void> {
@@ -342,7 +381,7 @@ export class WalletConnectV2Service implements GlobalService {
       let params: ConnectV2PageParams = { event };
 
       // User UI prompt
-      await this.nav.navigateTo("walletconnectsession", "/settings/walletconnect/connectv2", { state: params });
+      await this.nav.navigateTo('walletconnectsession', '/settings/walletconnect/connectv2', { state: params });
     });
     return;
   }
@@ -352,7 +391,7 @@ export class WalletConnectV2Service implements GlobalService {
       topic: event.topic,
       response: {
         id: event.id,
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         result
       }
     });
@@ -363,7 +402,7 @@ export class WalletConnectV2Service implements GlobalService {
       topic: event.topic,
       response: {
         id: event.id,
-        jsonrpc: "2.0",
+        jsonrpc: '2.0',
         error: {
           code: errorCode,
           message: errorMessage
@@ -392,61 +431,62 @@ export class WalletConnectV2Service implements GlobalService {
       //   // Custom essentials request (not ethereum) over wallet connect protocol
       //   showReturnMessage = await this.handleEssentialsCustomRequest(connector, request);
       //   break;
-      case "wallet_watchAsset":
+      case 'wallet_watchAsset':
         resultOrError = await EIP155RequestHandler.handleAddERCTokenRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
-      case "wallet_switchEthereumChain":
+      case 'wallet_switchEthereumChain':
         resultOrError = await EIP155RequestHandler.handleSwitchNetworkRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
-      case "wallet_addEthereumChain":
+      case 'wallet_addEthereumChain':
         resultOrError = await EIP155RequestHandler.handleAddNetworkRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
-      case "eth_sendTransaction":
+      case 'eth_sendTransaction':
         let chainId = this.wcChainToEIP155Chain(event.params.chainId);
         resultOrError = await EIP155RequestHandler.handleSendTransactionRequest(event.params.request.params, chainId);
         void this.approveOrReject(event, resultOrError);
         break;
       // Bitcoin
-      case "unisat_signData":
+      case 'unisat_signData':
         resultOrError = await EIP155RequestHandler.handleBitcoinSignDataTransactionRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
-      case "unisat_sendBitcoin":
+      case 'unisat_sendBitcoin':
         resultOrError = await EIP155RequestHandler.handleBitcoinSendRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
-      case "unisat_signMessage":
+      case 'unisat_signMessage':
         resultOrError = await EIP155RequestHandler.handleBitcoinSignMessageRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
-      case "unisat_getPublicKey":
+      case 'unisat_getPublicKey':
         showReturnMessage = false;
         resultOrError = await EIP155RequestHandler.handleBitcoinGetPublicKeyRequest();
         void this.approveOrReject(event, resultOrError);
         break;
-      case "unisat_getAccounts":
-      case "unisat_requestAccounts":
-          showReturnMessage = false;
-          resultOrError = await EIP155RequestHandler.handleBitcoinGetAccountsRequest();
-          void this.approveOrReject(event, resultOrError);
-          break;
-      case "unisat_pushTx":
+      case 'unisat_getAccounts':
+      case 'unisat_requestAccounts':
+        showReturnMessage = false;
+        resultOrError = await EIP155RequestHandler.handleBitcoinGetAccountsRequest();
+        void this.approveOrReject(event, resultOrError);
+        break;
+      case 'unisat_pushTx':
         resultOrError = await EIP155RequestHandler.handleBitcoinPushTxRequest(event.params.request.params);
         void this.approveOrReject(event, resultOrError);
         break;
       default:
-        if (event.params.request.method.startsWith("eth_signTypedData")) {
-          resultOrError = await EIP155RequestHandler.handleSignTypedDataRequest(event.params.request.method, event.params.request.params);
+        if (event.params.request.method.startsWith('eth_signTypedData')) {
+          resultOrError = await EIP155RequestHandler.handleSignTypedDataRequest(
+            event.params.request.method,
+            event.params.request.params
+          );
           void this.approveOrReject(event, resultOrError);
-        }
-        else if (event.params.request.method.startsWith("personal_sign")) {
+        } else if (event.params.request.method.startsWith('personal_sign')) {
           resultOrError = await EIP155RequestHandler.handlePersonalSignRequest(event.params.request.params);
           void this.approveOrReject(event, resultOrError);
-        }
-        else if (event.params.request.method.startsWith("eth_sign")) {
+        } else if (event.params.request.method.startsWith('eth_sign')) {
           resultOrError = await EIP155RequestHandler.handleEthSignRequest(event.params.request.params);
           void this.approveOrReject(event, resultOrError);
         }
@@ -456,7 +496,7 @@ export class WalletConnectV2Service implements GlobalService {
     if (showReturnMessage) {
       // Because for now we don't close Essentials after handling wallet connect requests, we simply
       // inform users to manually "alt tab" to return to the app they are coming from.
-      this.native.genericToast("settings.wallet-connect-popup", 2000);
+      this.native.genericToast('settings.wallet-connect-popup', 2000);
     }
   }
 
@@ -471,10 +511,9 @@ export class WalletConnectV2Service implements GlobalService {
     let evaluatedMethods: EvaluatedMethod[] = [];
 
     // Only EVMs are supported for now. Later, handle solana, cosmos, etc.
-    if (!("eip155" in proposal.requiredNamespaces))
-      return [];
+    if (!('eip155' in proposal.requiredNamespaces)) return [];
 
-    for (let method of proposal.requiredNamespaces["eip155"].methods) {
+    for (let method of proposal.requiredNamespaces['eip155'].methods) {
       let evaluatedMethod: EvaluatedMethod = {
         method,
         isSupported: supportedEIP155Methods.includes(method)
@@ -514,8 +553,7 @@ export class WalletConnectV2Service implements GlobalService {
    * @returns true if the chain id matches a network supported by our wallet, false otherwise.
    */
   private isSupportedEVMChain(chain: string): boolean {
-    if (!chain.startsWith("eip155"))
-      return false;
+    if (!chain.startsWith('eip155')) return false;
 
     // Parse the chain ID
     chain = chain.substring(7); // strip "eip155:"
@@ -526,12 +564,16 @@ export class WalletConnectV2Service implements GlobalService {
   }
 
   public async acceptSessionRequest(proposal: ProposalTypes.Struct, ethAccountAddresses: string[]) {
-    Logger.log("walletconnectv2", "Accepting session request with params:", proposal, ethAccountAddresses);
+    Logger.log('walletconnectv2', 'Accepting session request with params:', proposal, ethAccountAddresses);
 
     // Approve session proposal, use id from session proposal event and respond with namespace(s) that satisfy dapps request and contain approved accounts
     const { topic: sessionTopic, acknowledged } = await this.signClient.approve({
       id: proposal.id,
-      namespaces: await this.buildNamespaces(ethAccountAddresses, proposal.requiredNamespaces, proposal.optionalNamespaces)
+      namespaces: await this.buildNamespaces(
+        ethAccountAddresses,
+        proposal.requiredNamespaces,
+        proposal.optionalNamespaces
+      )
     });
 
     //console.log("Topic", topic);
@@ -545,7 +587,7 @@ export class WalletConnectV2Service implements GlobalService {
 
     let sessionExtension: WalletConnectSessionExtension = {
       timestamp: moment().unix()
-    }
+    };
 
     //const pairing = this.getPairingByTopic(proposal.pairingTopic);
     const instance = new WalletConnectV2Instance(session, sessionExtension);
@@ -554,7 +596,11 @@ export class WalletConnectV2Service implements GlobalService {
     await walletConnectStore.saveSessionExtension(instance.id, sessionExtension);
   }
 
-  private async buildNamespaces(ethAccountAddresses: string[], requiredNamespaces: ProposalTypes.RequiredNamespaces, optionNamespaces: ProposalTypes.OptionalNamespaces = null): Promise<SessionTypes.Namespaces> {
+  private async buildNamespaces(
+    ethAccountAddresses: string[],
+    requiredNamespaces: ProposalTypes.RequiredNamespaces,
+    optionNamespaces: ProposalTypes.OptionalNamespaces = null
+  ): Promise<SessionTypes.Namespaces> {
     let activeNetwork = await this.walletNetworkService.activeNetwork.value;
     let chainId: number;
 
@@ -567,35 +613,36 @@ export class WalletConnectV2Service implements GlobalService {
 
     // non-evm network
     if (ethAccountAddresses.length == 0) {
-      ethAccountAddresses.push('0x0')
+      ethAccountAddresses.push('0x0');
     }
 
     // requiredNamespace maybe is empty / undefined.
-    if (requiredNamespaces && requiredNamespaces["eip155"]) {
-      for (let chain of requiredNamespaces["eip155"].chains) {
-        accounts.push(`${chain}:${ethAccountAddresses}`)
+    if (requiredNamespaces && requiredNamespaces['eip155']) {
+      for (let chain of requiredNamespaces['eip155'].chains) {
+        accounts.push(`${chain}:${ethAccountAddresses}`);
       }
 
-      methods = requiredNamespaces["eip155"].methods;
-      events = requiredNamespaces["eip155"].events;
+      methods = requiredNamespaces['eip155'].methods;
+      events = requiredNamespaces['eip155'].events;
     }
 
     // We also need to add option namespaces, some optional methods may also be executed.
     // If we don't add option namespaces, the app may directly think that this wallet does not support this method, and does not sent the request.
-    if (optionNamespaces && optionNamespaces["eip155"]) {
-      for (let chain of optionNamespaces["eip155"].chains) {
-        accounts.push(`${chain}:${ethAccountAddresses}`)
+    if (optionNamespaces && optionNamespaces['eip155']) {
+      for (let chain of optionNamespaces['eip155'].chains) {
+        accounts.push(`${chain}:${ethAccountAddresses}`);
       }
 
-      methods = methods.concat(optionNamespaces["eip155"].methods);
-      events = events.concat(optionNamespaces["eip155"].events);
+      methods = methods.concat(optionNamespaces['eip155'].methods);
+      events = events.concat(optionNamespaces['eip155'].events);
     }
 
-    let namespaces: SessionTypes.Namespaces = { // Approved namespaces should match the request, based on our wallet capabilities
+    let namespaces: SessionTypes.Namespaces = {
+      // Approved namespaces should match the request, based on our wallet capabilities
       eip155: {
         accounts,
         methods: methods, // We have checked that we can support the requested methods earlier, so we return everything that was required here.
-        events: events,
+        events: events
         /* extension: [
           {
             accounts: ["eip:137"],
@@ -603,25 +650,30 @@ export class WalletConnectV2Service implements GlobalService {
             events: [],
           },
         ], */
-      },
+      }
     };
 
     return namespaces;
   }
 
   public async rejectSession(proposal: ProposalTypes.Struct, reason: string) {
-    Logger.log("walletconnectv2", "Rejecting session request", proposal, reason);
+    Logger.log('walletconnectv2', 'Rejecting session request', proposal, reason);
 
     // Possibly, the session is rejected before getting proposal info (if user cancels the "connecting" screen). In this case we do nothing (TBC!)
     if (proposal) {
-      // Reject session proposal
-      await this.signClient.reject({
-        id: proposal.id,
-        reason: {
-          code: 1,
-          message: "rejected",
-        },
-      });
+      try {
+        // Reject session proposal
+        await this.signClient.reject({
+          id: proposal.id,
+          reason: {
+            code: 1,
+            message: 'rejected'
+          }
+        });
+      } catch (e) {
+        // Expired：Missing or invalid. Record was recently deleted
+        Logger.warn('walletconnectv2', 'Failed to reject client', e);
+      }
     }
   }
 
@@ -630,7 +682,7 @@ export class WalletConnectV2Service implements GlobalService {
       topic: instance.id,
       reason: {
         code: 0,
-        message: "User disconnection"
+        message: 'User disconnection'
       }
     });
 
@@ -641,8 +693,7 @@ export class WalletConnectV2Service implements GlobalService {
    * From "eip155:25" to 25
    */
   private wcChainToEIP155Chain(chain: string): number {
-    if (!chain.startsWith("eip155"))
-      throw new Error("Invalid EIP155 chain format: " + chain)
+    if (!chain.startsWith('eip155')) throw new Error('Invalid EIP155 chain format: ' + chain);
 
     // Parse the chain ID
     chain = chain.substring(7); // strip "eip155:"

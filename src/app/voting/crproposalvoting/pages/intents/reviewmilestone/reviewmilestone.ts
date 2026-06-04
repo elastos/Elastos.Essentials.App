@@ -35,7 +35,7 @@ type ReviewMilestoneCommand = CRCommand & {
 export class ReviewMilestonePage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private onGoingCommand: ReviewMilestoneCommand;
+    public onGoingCommand: ReviewMilestoneCommand;
     public signingAndSendingProposalResponse = false;
     public proposalDetail: ProposalDetails;
     public proposalDetailFetched = false;

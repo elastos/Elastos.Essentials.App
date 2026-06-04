@@ -21,13 +21,11 @@ const routes: Routes = [
   { path: 'preparedid', component: PrepareDIDPage },
   { path: 'scan', component: ScanPage },
   { path: 'settings', component: SettingsPage },
-  { path: 'settings-select-net', component: SettingsSelectNetPage },
+  { path: 'settings-select-net', component: SettingsSelectNetPage }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
+  imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class DIDSessionsRoutingModule { }
+export class DIDSessionsRoutingModule {}

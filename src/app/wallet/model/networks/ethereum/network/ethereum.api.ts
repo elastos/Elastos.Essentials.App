@@ -11,7 +11,7 @@ export class EthereumAPI {
       case "mainnet":
         switch (type) {
           case EthereumAPIType.RPC: return 'https://eth.llamarpc.com';
-          case EthereumAPIType.ETHERSCAN_API: return 'https://api.etherscan.io/api';
+          case EthereumAPIType.ETHERSCAN_API: return 'https://api.etherscan.io/v2/api';
           case EthereumAPIType.BLOCK_EXPLORER: return 'https://etherscan.io';
           default:
             throw new Error("Ethereum API - Unknown api type " + type);

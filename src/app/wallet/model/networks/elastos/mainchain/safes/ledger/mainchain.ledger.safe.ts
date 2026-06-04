@@ -1,24 +1,44 @@
 import type {
-  CancelProducerInfo, ChangeCustomIDFeeOwnerInfo, ChangeProposalOwnerInfo, CRCouncilMemberClaimNodeInfo, CRCProposalInfo,
-  CRCProposalReviewInfo, CRCProposalTrackingInfo, CRCProposalWithdrawInfo, CreateNFTInfo, CRInfoJson, DPoSV2ClaimRewardInfo,
-  EncodedTx, NormalProposalOwnerInfo, PayloadStakeInfo, ProducerInfoJson, ReceiveCustomIDOwnerInfo, RegisterSidechainProposalInfo,
-  ReserveCustomIDOwnerInfo, SecretaryElectionInfo, TerminateProposalOwnerInfo, UnstakeInfo, UTXOInput, VoteContentInfo, VotingInfo
-} from "@elastosfoundation/wallet-js-sdk";
-import { ELATransactionCoder } from "src/app/helpers/ela/ela.transaction.coder";
-import { ELATransactionFactory } from "src/app/helpers/ela/ela.transaction.factory";
-import { ELATransactionSigner } from "src/app/helpers/ela/ela.transaction.signer";
-import Ela from "src/app/helpers/ledger/hw-app-ela/Ela";
-import BluetoothTransport from "src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport";
-import { Logger } from "src/app/logger";
-import { LedgerAccountType } from "src/app/wallet/model/ledger.types";
-import { LedgerMasterWallet } from "src/app/wallet/model/masterwallets/ledger.masterwallet";
-import { LedgerSafe } from "src/app/wallet/model/safes/ledger.safe";
-import { SignTransactionResult } from "src/app/wallet/model/safes/safe.types";
-import { Outputs } from "src/app/wallet/model/tx-providers/transaction.types";
-import { Transfer } from "src/app/wallet/services/cointransfer.service";
-import { WalletUIService } from "src/app/wallet/services/wallet.ui.service";
-import { AnySubWallet } from "../../../../base/subwallets/subwallet";
-import { ElastosMainChainSafe } from "../mainchain.safe";
+  CancelProducerInfo,
+  ChangeCustomIDFeeOwnerInfo,
+  ChangeProposalOwnerInfo,
+  CRCouncilMemberClaimNodeInfo,
+  CRCProposalInfo,
+  CRCProposalReviewInfo,
+  CRCProposalTrackingInfo,
+  CRCProposalWithdrawInfo,
+  CreateNFTInfo,
+  CRInfoJson,
+  DPoSV2ClaimRewardInfo,
+  EncodedTx,
+  NormalProposalOwnerInfo,
+  PayloadStakeInfo,
+  ProducerInfoJson,
+  ReceiveCustomIDOwnerInfo,
+  RegisterSidechainProposalInfo,
+  ReserveCustomIDOwnerInfo,
+  SecretaryElectionInfo,
+  TerminateProposalOwnerInfo,
+  UnstakeInfo,
+  UTXOInput,
+  VoteContentInfo,
+  VotingInfo
+} from '@elastosfoundation/wallet-js-sdk';
+import { ELATransactionCoder } from 'src/app/helpers/ela/ela.transaction.coder';
+import { ELATransactionFactory } from 'src/app/helpers/ela/ela.transaction.factory';
+import { ELATransactionSigner } from 'src/app/helpers/ela/ela.transaction.signer';
+import Ela from 'src/app/helpers/ledger/hw-app-ela/Ela';
+import BluetoothTransport from 'src/app/helpers/ledger/hw-transport-cordova-ble/src/BleTransport';
+import { Logger } from 'src/app/logger';
+import { LedgerAccountType } from 'src/app/wallet/model/ledger.types';
+import { LedgerMasterWallet } from 'src/app/wallet/model/masterwallets/ledger.masterwallet';
+import { LedgerSafe } from 'src/app/wallet/model/safes/ledger.safe';
+import { SignTransactionResult } from 'src/app/wallet/model/safes/safe.types';
+import { Outputs } from 'src/app/wallet/model/tx-providers/transaction.types';
+import { Transfer } from 'src/app/wallet/services/cointransfer.service';
+import { WalletUIService } from 'src/app/wallet/services/wallet.ui.service';
+import { AnySubWallet } from '../../../../base/subwallets/subwallet';
+import { ElastosMainChainSafe } from '../mainchain.safe';
 
 const LEDGER_UTXO_CONSOLIDATE_COUNT = 20; // Ledger: Starting UTXOs count to get TX size from
 const MAX_TX_SIZE = 1000; // for Ledger, 1024 does not work correctly
@@ -38,9 +58,9 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
 
   initELAAddress() {
     if (this.masterWallet.accountOptions) {
-      let elaOption = this.masterWallet.accountOptions.find((option) => {
-        return option.type === LedgerAccountType.ELA
-      })
+      let elaOption = this.masterWallet.accountOptions.find(option => {
+        return option.type === LedgerAccountType.ELA;
+      });
       if (elaOption) {
         this.elaAddress = elaOption.accountID;
         this.addressPath = elaOption.accountPath;
@@ -52,8 +72,7 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
   public getAddresses(startIndex: number, count: number, internalAddresses: boolean): string[] {
     if (this.elaAddress) {
       return [this.elaAddress];
-    }
-    else {
+    } else {
       return null;
     }
   }
@@ -108,21 +127,56 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public async createPaymentTransaction(inputs: UTXOInput[], outputs: Outputs[], fee: string, memo: string): Promise<any> {
-    Logger.log('wallet', 'MainChainLedgerSafe createPaymentTransaction inputs:', inputs, ' outputs:', outputs, ' fee:', fee, ' memo:', memo)
+  public async createPaymentTransaction(
+    inputs: UTXOInput[],
+    outputs: Outputs[],
+    fee: string,
+    memo: string | Buffer
+  ): Promise<any> {
+    Logger.log(
+      'wallet',
+      'MainChainLedgerSafe createPaymentTransaction inputs:',
+      inputs,
+      ' outputs:',
+      outputs,
+      ' fee:',
+      fee,
+      ' memo:',
+      memo
+    );
 
-    let tx = await ELATransactionFactory.createUnsignedSendToTx(inputs, outputs[0].Address, outputs[0].Amount,
-      this.publicKey, fee, '', memo);
-    Logger.log('wallet', 'createPaymentTransaction:', JSON.stringify(tx))
+    let tx = await ELATransactionFactory.createUnsignedSendToTx(
+      inputs,
+      outputs[0].Address,
+      outputs[0].Amount,
+      this.publicKey,
+      fee,
+      '',
+      memo
+    );
+    Logger.log('wallet', 'createPaymentTransaction:', JSON.stringify(tx));
     return tx;
   }
 
-  public createVoteTransaction(inputs: UTXOInput[], voteContent: VoteContentInfo[], fee: string, memo: string): Promise<any> {
+  public createVoteTransaction(
+    inputs: UTXOInput[],
+    voteContent: VoteContentInfo[],
+    fee: string,
+    memo: string
+  ): Promise<any> {
     // TODO: Do not support.
     return null;
   }
 
-  public createDepositTransaction(inputs: UTXOInput[], toSubwalletId: string, amount: string, toAddress: string, lockAddress: string, fee: string, memo: string) {
+  public createDepositTransaction(
+    inputs: UTXOInput[],
+    toSubwalletId: string,
+    amount: string,
+    toAddress: string,
+    lockAddress: string,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -147,7 +201,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalChangeOwnerTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createProposalChangeOwnerTransaction(
+    inputs: UTXOInput[],
+    payload: CRCProposalInfo,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -177,7 +236,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createSecretaryGeneralElectionTransaction(inputs: UTXOInput[], payload: CRCProposalInfo, fee: string, memo: string) {
+  public createSecretaryGeneralElectionTransaction(
+    inputs: UTXOInput[],
+    payload: CRCProposalInfo,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -197,7 +261,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalTrackingTransaction(inputs: UTXOInput[], payload: CRCProposalTrackingInfo, fee: string, memo: string) {
+  public createProposalTrackingTransaction(
+    inputs: UTXOInput[],
+    payload: CRCProposalTrackingInfo,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -207,7 +276,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalReviewTransaction(inputs: UTXOInput[], payload: CRCProposalReviewInfo, fee: string, memo: string) {
+  public createProposalReviewTransaction(
+    inputs: UTXOInput[],
+    payload: CRCProposalReviewInfo,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -222,7 +296,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createProposalWithdrawTransaction(inputs: UTXOInput[], payload: CRCProposalWithdrawInfo, fee: string, memo: string) {
+  public createProposalWithdrawTransaction(
+    inputs: UTXOInput[],
+    payload: CRCProposalWithdrawInfo,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -287,7 +366,13 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createRegisterProducerTransaction(inputs: UTXOInput[], payload: ProducerInfoJson, amount: string, fee: string, memo: string) {
+  public createRegisterProducerTransaction(
+    inputs: UTXOInput[],
+    payload: ProducerInfoJson,
+    amount: string,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -302,7 +387,16 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public generateProducerPayload(publicKey: string, nodePublicKey: string, nickname: string, url: string, IPAddress: string, location: number, payPasswd: string, stakeUntil = 0): Promise<any> {
+  public generateProducerPayload(
+    publicKey: string,
+    nodePublicKey: string,
+    nickname: string,
+    url: string,
+    IPAddress: string,
+    location: number,
+    payPasswd: string,
+    stakeUntil = 0
+  ): Promise<any> {
     // TODO: Do not support.
     return null;
   }
@@ -332,7 +426,13 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createRegisterCRTransaction(inputs: UTXOInput[], payload: CRInfoJson, amount: string, fee: string, memo: string) {
+  public createRegisterCRTransaction(
+    inputs: UTXOInput[],
+    payload: CRInfoJson,
+    amount: string,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
@@ -352,13 +452,26 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createCRCouncilMemberClaimNodeTransaction(version: number, inputs: UTXOInput[], payload: CRCouncilMemberClaimNodeInfo, fee: string, memo: string) {
+  public createCRCouncilMemberClaimNodeTransaction(
+    version: number,
+    inputs: UTXOInput[],
+    payload: CRCouncilMemberClaimNodeInfo,
+    fee: string,
+    memo: string
+  ) {
     // TODO: Do not support.
     return null;
   }
 
   // BPoS
-  public createStakeTransaction(inputs: UTXOInput[], payload: PayloadStakeInfo, lockAddress: string, amount: string, fee: string, memo: string): EncodedTx {
+  public createStakeTransaction(
+    inputs: UTXOInput[],
+    payload: PayloadStakeInfo,
+    lockAddress: string,
+    amount: string,
+    fee: string,
+    memo: string
+  ): EncodedTx {
     // TODO: Do not support.
     return null;
   }
@@ -373,7 +486,12 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return null;
   }
 
-  public createDPoSV2ClaimRewardTransaction(inputs: UTXOInput[], payload: DPoSV2ClaimRewardInfo, fee: string, memo: string): EncodedTx {
+  public createDPoSV2ClaimRewardTransaction(
+    inputs: UTXOInput[],
+    payload: DPoSV2ClaimRewardInfo,
+    fee: string,
+    memo: string
+  ): EncodedTx {
     // TODO: Do not support.
     return null;
   }
@@ -399,21 +517,21 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
 
     this.unsignedTx = await ELATransactionCoder.encodeTx(tx, false);
     if (Math.ceil(this.unsignedTx.length / 2) > MAX_TX_SIZE) {
-      Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction: TX size too big') // if TX size too big, try less UTXOs
+      Logger.warn('wallet', 'MainChainLedgerSafe createPaymentTransaction: TX size too big'); // if TX size too big, try less UTXOs
     }
 
     let signTransactionResult: SignTransactionResult = {
       signedTransaction: null
-    }
+    };
 
     // Wait for the ledger sign the transaction.
-    let signed = await WalletUIService.instance.connectLedgerAndSignTransaction(this.masterWallet.deviceID, this)
+    let signed = await WalletUIService.instance.connectLedgerAndSignTransaction(this.masterWallet.deviceID, this);
     if (!signed) {
       Logger.log('ledger', "MainChainLedgerSafe::signTransaction can't connect to ledger or user canceled");
       return signTransactionResult;
     }
 
-    signTransactionResult.signedTransaction = this.signedTx
+    signTransactionResult.signedTransaction = this.signedTx;
     return signTransactionResult;
   }
 
@@ -432,4 +550,3 @@ export class MainChainLedgerSafe extends LedgerSafe implements ElastosMainChainS
     return LEDGER_UTXO_CONSOLIDATE_COUNT;
   }
 }
-

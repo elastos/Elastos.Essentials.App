@@ -1,20 +1,20 @@
-import { BehaviorSubject, Subject } from "rxjs";
-import { Logger } from "src/app/logger";
-import { App } from "src/app/model/app.enum";
-import { GlobalLanguageService } from "src/app/services/global.language.service";
+import { BehaviorSubject, Subject } from 'rxjs';
+import { Logger } from 'src/app/logger';
+import { App } from 'src/app/model/app.enum';
+import { GlobalLanguageService } from 'src/app/services/global.language.service';
 
-import { GlobalNotificationsService } from "src/app/services/global.notifications.service";
-import { ERC20CoinService } from "../../services/evm/erc20coin.service";
-import { TRC20CoinService } from "../../services/tvm/trc20coin.service";
-import { ERC20Coin, StandardCoinName, TokenAddress, TokenType, TRC20Coin } from "../coin";
-import { AnyNetworkWallet } from "../networks/base/networkwallets/networkwallet";
-import { AnySubWallet, SubWallet } from "../networks/base/subwallets/subwallet";
-import { EVMNetwork } from "../networks/evms/evm.network";
-import { ERCTokenInfo, TransactionListType } from "../networks/evms/evm.types";
-import { NFTType } from "../networks/evms/nfts/nft";
-import { TronNetworkBase } from "../networks/tron/network/tron.base.network";
-import { AnySubWalletTransactionProvider } from "./subwallet.provider";
-import { AnyOfflineTransaction, GenericTransaction } from "./transaction.types";
+import { GlobalNotificationsService } from 'src/app/services/global.notifications.service';
+import { ERC20CoinService } from '../../services/evm/erc20coin.service';
+import { TRC20CoinService } from '../../services/tvm/trc20coin.service';
+import { ERC20Coin, StandardCoinName, TokenAddress, TokenType, TRC20Coin } from '../coin';
+import { AnyNetworkWallet } from '../networks/base/networkwallets/networkwallet';
+import { AnySubWallet, SubWallet } from '../networks/base/subwallets/subwallet';
+import { EVMNetwork } from '../networks/evms/evm.network';
+import { ERCTokenInfo, TransactionListType } from '../networks/evms/evm.types';
+import { NFTType } from '../networks/evms/nfts/nft';
+import { TronNetworkBase } from '../networks/tron/network/tron.base.network';
+import { AnySubWalletTransactionProvider } from './subwallet.provider';
+import { AnyOfflineTransaction, GenericTransaction } from './transaction.types';
 
 /**
  * Class that allows networks to fetch and refresh transactions in background, or when the UI needs more.
@@ -92,19 +92,29 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
 
   protected abstract getSubWalletInternalTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider;
 
+  protected getSubWalletRechargeTransactionProvider(subWallet: AnySubWallet): AnySubWalletTransactionProvider {
+    return null;
+  }
+
   /**
    * Returns transactions currently in cache.
    */
-  public getTransactions(subWallet: SubWallet<GenericTransaction, any>, transactionListType = TransactionListType.NORMAL): Promise<TransactionType[]> {
+  public getTransactions(
+    subWallet: SubWallet<GenericTransaction, any>,
+    transactionListType = TransactionListType.NORMAL
+  ): Promise<TransactionType[]> {
     if (transactionListType === TransactionListType.NORMAL) {
       return this.getSubWalletTransactionProvider(subWallet)?.getTransactions(subWallet, transactionListType);
-    } else {
+    } else if (transactionListType === TransactionListType.INTERNAL) {
       if (subWallet.supportInternalTransactions()) {
         return this.getSubWalletInternalTransactionProvider(subWallet)?.getTransactions(subWallet, transactionListType);
-      } else {
-        return null;
+      }
+    } else if (transactionListType === TransactionListType.RECHARGE) {
+     if (subWallet.supportRechargeTransactions()) {
+        return this.getSubWalletRechargeTransactionProvider(subWallet)?.getTransactions(subWallet, transactionListType);
       }
     }
+    return null;
   }
 
   public getOfflineTransactions(subWallet: SubWallet<GenericTransaction, any>): Promise<AnyOfflineTransaction[]> {
@@ -121,7 +131,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   public async fetchNewestTransactions(subWallet: AnySubWallet, transactionListType = TransactionListType.NORMAL) {
     // Make sure to not fetch when we are already fetching
     if (this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).value === true) {
-      Logger.warn("wallet", "fetchNewestTransactions() skipped. Transactions fetch already in progress");
+      Logger.warn('wallet', 'fetchNewestTransactions() skipped. Transactions fetch already in progress');
       return;
     }
 
@@ -132,25 +142,28 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
     if (transactionListType === TransactionListType.NORMAL) {
       let provider = this.getSubWalletTransactionProvider(subWallet);
       if (!provider) {
-        Logger.warn("wallet", "fetchNewestTransactions(): no transaction provider");
-      }
-      else
-        await provider.fetchTransactions(subWallet);
-    } else {
+        Logger.warn('wallet', 'fetchNewestTransactions(): no transaction provider');
+      } else await provider.fetchTransactions(subWallet);
+    } else if (transactionListType === TransactionListType.INTERNAL) {
       if (subWallet.supportInternalTransactions()) {
         let provider = this.getSubWalletInternalTransactionProvider(subWallet);
         if (!provider) {
-          Logger.warn("wallet", "fetchNewestTransactions(): no internal transaction provider");
-        }
-        else
-          await provider.fetchTransactions(subWallet);
+          Logger.warn('wallet', 'fetchNewestTransactions(): no internal transaction provider');
+        } else await provider.fetchTransactions(subWallet);
+      }
+    } else if (transactionListType === TransactionListType.RECHARGE) {
+      if (subWallet.supportRechargeTransactions()) {
+        let provider = this.getSubWalletRechargeTransactionProvider(subWallet);
+        if (!provider) {
+          Logger.warn('wallet', 'fetchNewestTransactions(): no recharge transaction provider');
+        } else await provider.fetchTransactions(subWallet);
       }
     }
 
     // Not fetching
     this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).next(false);
 
-    this.fetchTransactionTimestamp = (new Date()).valueOf();
+    this.fetchTransactionTimestamp = new Date().valueOf();
   }
 
   /**
@@ -160,15 +173,23 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
   public async fetchMoreTransactions(subWallet: AnySubWallet, afterTransaction?: TransactionType) {
     // Make sure to not fetch when we are already fetching
     if (this.transactionsFetchStatusChanged(subWallet.getUniqueIdentifierOnNetwork()).value === true) {
-      Logger.warn("wallet", "fetchMoreTransactions() skipped. Transactions fetch already in progress");
+      Logger.warn('wallet', 'fetchMoreTransactions() skipped. Transactions fetch already in progress');
       return;
     }
 
     if (!afterTransaction) {
-      // Compute the current last transaction to start fetching after that one.
+      // Use getFetchedCount when available (tracks network fetches, handles both stale cache and incremental).
+      // Fallback to last element when count not tracked (e.g. cache loaded from disk before any fetch).
       let currentTransactions = await this.getTransactions(subWallet);
-      if (currentTransactions)
-        afterTransaction = currentTransactions[currentTransactions.length - 1];
+      if (currentTransactions && currentTransactions.length > 0) {
+        const provider = this.getSubWalletTransactionProvider(subWallet);
+        const cacheKey = subWallet.getTransactionsCacheKey();
+        const fetchedCount = provider?.getFetchedCount?.(cacheKey) ?? 0;
+        const cursorIndex = fetchedCount > 0
+          ? Math.min(fetchedCount - 1, currentTransactions.length - 1)
+          : currentTransactions.length - 1;
+        afterTransaction = currentTransactions[cursorIndex];
+      }
     }
 
     // Fetching
@@ -239,17 +260,17 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    * NOTE: This method must be called only once (per refresh) with all tokens together, because it resets the NFTs list.
    */
   public async onTokenInfoFound(tokens: ERCTokenInfo[]) {
-    if (!tokens || (tokens.length === 0)) return;
+    if (!tokens || tokens.length === 0) return;
 
     let allNewCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
-    const timestamp = (new Date()).valueOf();
+    const timestamp = new Date().valueOf();
 
     let network = <EVMNetwork>this.networkWallet.network;
 
     // Clean up NFTs that have been sent
-    let nfts = tokens.filter((token) => {
-      return (token.type === TokenType.ERC_721) || (token.type === TokenType.ERC_1155);
+    let nfts = tokens.filter(token => {
+      return token.type === TokenType.ERC_721 || token.type === TokenType.ERC_1155;
     });
     if (nfts.length > 0) {
       this.networkWallet.cleanUpNFT(nfts);
@@ -275,7 +296,16 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 } else {
                   tokenDecimal = parseInt(token.decimals);
                 }
-                const newCoin = new ERC20Coin(network, token.symbol, token.name, token.contractAddress, tokenDecimal, true, false, timestamp);
+                const newCoin = new ERC20Coin(
+                  network,
+                  token.symbol,
+                  token.name,
+                  token.contractAddress,
+                  tokenDecimal,
+                  true,
+                  false,
+                  timestamp
+                );
                 if (await network.addCustomERC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);
@@ -291,24 +321,33 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 }
               }
             } catch (e) {
-              Logger.log("wallet", 'onTokenInfoFound exception:', e);
+              Logger.log('wallet', 'onTokenInfoFound exception:', e);
             }
           }
         } else {
           Logger.warn('wallet', 'Token has no name or symbol:', token);
         }
-      }
-      else if (token.type === TokenType.ERC_721) {
+      } else if (token.type === TokenType.ERC_721) {
         // We can possibly have a balance, but not the tokens IDs list. So we update the balance to show the right
         // number on UI first, and we will fetch tokens IDs later when use enters coin-home
         //
         // NOTE: We get ONE token info entry uniquely per NFT contract, not several.
-        await this.networkWallet.upsertNFT(NFTType.ERC721, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs, token.name);
-      }
-      else if (token.type === TokenType.ERC_1155) {
-        await this.networkWallet.upsertNFT(NFTType.ERC1155, token.contractAddress, Number.parseInt(token.balance), token.tokenIDs, token.name);
-      }
-      else {
+        await this.networkWallet.upsertNFT(
+          NFTType.ERC721,
+          token.contractAddress,
+          Number.parseInt(token.balance),
+          token.tokenIDs,
+          token.name
+        );
+      } else if (token.type === TokenType.ERC_1155) {
+        await this.networkWallet.upsertNFT(
+          NFTType.ERC1155,
+          token.contractAddress,
+          Number.parseInt(token.balance),
+          token.tokenIDs,
+          token.name
+        );
+      } else {
         Logger.warn('wallet', 'Unhandled token type:', token);
       }
     }
@@ -336,11 +375,11 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    * NOTE: This method must be called only once (per refresh) with all tokens together, because it resets the NFTs list.
    */
   public async onTRCTokenInfoFound(tokens: ERCTokenInfo[]) {
-    if (!tokens || (tokens.length === 0)) return;
+    if (!tokens || tokens.length === 0) return;
 
     let allNewCoinsList: ERCTokenInfo[] = [];
     let newERC20CoinsList: string[] = [];
-    const timestamp = (new Date()).valueOf();
+    const timestamp = new Date().valueOf();
 
     let network = <TronNetworkBase>this.networkWallet.network;
 
@@ -364,7 +403,16 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 } else {
                   tokenDecimal = parseInt(token.decimals);
                 }
-                const newCoin = new TRC20Coin(network, token.symbol, token.name, token.contractAddress, tokenDecimal, true, false, timestamp);
+                const newCoin = new TRC20Coin(
+                  network,
+                  token.symbol,
+                  token.name,
+                  token.contractAddress,
+                  tokenDecimal,
+                  true,
+                  false,
+                  timestamp
+                );
                 if (await network.addCustomTRC20Coin(newCoin)) {
                   // Find new coin.
                   newERC20CoinsList.push(token.symbol);
@@ -380,14 +428,13 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
                 }
               }
             } catch (e) {
-              Logger.log("wallet", 'onTokenInfoFound exception:', e);
+              Logger.log('wallet', 'onTokenInfoFound exception:', e);
             }
           }
         } else {
           Logger.warn('wallet', 'Token has no name or symbol:', token);
         }
-      }
-      else {
+      } else {
         Logger.warn('wallet', 'Unhandled token type:', token);
       }
     }
@@ -407,11 +454,17 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
    * Lets user know that new tokens have been found, through a in-app notification.
    */
   private sendTokenDiscoveredNotification(newCoinList: string[]) {
-    let message = "";
+    let message = '';
     if (newCoinList.length === 1) {
-      message = GlobalLanguageService.instance.translate('wallet.find-new-token-msg', { network: this.networkWallet.network.name, token: newCoinList[0] });
+      message = GlobalLanguageService.instance.translate('wallet.find-new-token-msg', {
+        network: this.networkWallet.network.getEffectiveName(),
+        token: newCoinList[0]
+      });
     } else {
-      message = GlobalLanguageService.instance.translate('wallet.find-new-tokens-msg', { network: this.networkWallet.network.name, count: newCoinList.length });
+      message = GlobalLanguageService.instance.translate('wallet.find-new-tokens-msg', {
+        network: this.networkWallet.network.getEffectiveName(),
+        count: newCoinList.length
+      });
     }
 
     const notification = {
@@ -420,7 +473,7 @@ export abstract class TransactionProvider<TransactionType extends GenericTransac
       title: GlobalLanguageService.instance.translate('wallet.find-new-token'),
       message: message,
       subMessage: GlobalLanguageService.instance.translate('wallet.find-new-tokens-warning-msg'),
-      url: '/wallet/coin-list' + '?network=' + this.networkWallet.network.key,
+      url: '/wallet/coin-list' + '?network=' + this.networkWallet.network.key
     };
     void GlobalNotificationsService.instance.sendNotification(notification);
   }

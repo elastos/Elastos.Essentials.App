@@ -35,7 +35,7 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
     private btcPublicKey = null;
     private btcNetwork = bitcoin;
 
-    constructor(protected masterWallet: StandardMasterWallet, protected chainId: string, protected bitcoinAddressType = BitcoinAddressType.Legacy) {
+    constructor(protected masterWallet: StandardMasterWallet, protected chainId: string, protected bitcoinAddressType = BitcoinAddressType.NativeSegwit) {
         super(masterWallet);
     }
 
@@ -102,10 +102,43 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
             // For taproot
             BTC.initEccLib(ecc)
 
+            // create wallet from seed
             let seed = await (this.masterWallet as StandardMasterWallet).getSeed(payPassword);
-            return bip32.fromSeed(Buffer.from(seed, "hex"), this.btcNetwork)
+            if (seed) {
+                Logger.log('wallet', 'BTC Safe: Using seed for wallet initialization');
+                return bip32.fromSeed(Buffer.from(seed, "hex"), this.btcNetwork);
+            }
+
+            /* If necessary, can use this code to create btc wallet by evm privatekey */
+/*
+            // create wallet from private key
+            Logger.log('wallet', 'BTC Safe: Using private key for wallet initialization');
+            let privateKey = await (this.masterWallet as StandardMasterWallet).getPrivateKey(payPassword);
+            if (privateKey) {
+                // remove 0x prefix
+                privateKey = privateKey.replace(/^0x/, '');
+                const privateKeyBuffer = Buffer.from(privateKey, 'hex');
+                // create a fixed BIP32 node
+                const chainCode = BTC.crypto.hash256(Buffer.concat([privateKeyBuffer, Buffer.from('BTC_PRIVATE_KEY_IMPORT', 'utf8')])).slice(0, 32);
+                const bip32Node = bip32.fromPrivateKey(privateKeyBuffer, chainCode, this.btcNetwork);
+                // rewrite derivePath method, always return itself (because this is the final key, no need to derive)
+                const originalDerivePath = bip32Node.derivePath.bind(bip32Node);
+                (bip32Node as any).derivePath = function(path: string) {
+                    // if the path is empty or the root path, return itself
+                    if (!path || path === 'm' || path === "m'") {
+                        return bip32Node;
+                    }
+                    // for any derived path, return itself (because the private key is the final key)
+                    // note: this will cause all address types to use the same private key, but they will generate different addresses (because the address format is different)
+                    return bip32Node;
+                };
+                return bip32Node;
+            }
+*/
+            Logger.warn('wallet', 'BTC Safe: No seed or valid private key found');
+            return null;
         } catch (e) {
-            Logger.warn('wallet', 'getKeyPair exception:', e)
+            Logger.warn('wallet', 'getRoot exception:', e)
         }
     }
 
@@ -113,6 +146,8 @@ export class BTCWalletJSSafe extends Safe implements BTCSafe {
         try {
             const root = await this.getRoot(forceShowMasterPrompt)
             if (root) {
+              // if there is a seed, use the standard derive path
+              // if the wallet is created from a private key, derivePath has been rewritten to return itself
               let derivePath = this.getDerivePath(this.bitcoinAddressType);
               const keyPair = root.derivePath(derivePath)
               return keyPair;

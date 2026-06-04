@@ -186,7 +186,7 @@ export class NodeDetailPage implements OnInit {
                 switch (item.key) {
                     case "edit-node":
                         this.dpos2Service.onlyUpdateStakeUntil = false;
-                        void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/dpos2/update');
+                        void this.globalNav.navigateTo(App.DPOS2, '/dpos2/update');
                         break;
 
                     case "withdraw":

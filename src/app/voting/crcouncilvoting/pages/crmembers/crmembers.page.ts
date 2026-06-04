@@ -55,7 +55,7 @@ export class CRMembersPage implements OnInit {
         await this.crCouncilService.getCRVotingStage();
         if (!this.crMembersFetched) {
             await this.crCouncilService.fetchCRMembers();
-            this.secretary = await this.crCouncilService.getSecretary();
+            this.secretary = this.crCouncilService.getSecretary();
             this.crMembersFetched = true;
         }
     }
@@ -72,8 +72,9 @@ export class CRMembersPage implements OnInit {
         void this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/nextcrs');
     }
 
-    async onShowMemberInfo(did: string) {
+    async onShowMemberInfo(did: string, nickname: string) {
         this.crCouncilService.selectedMemberDid = did;
+        this.crCouncilService.selectedMemberNickname = nickname;
         await this.globalNav.navigateTo(App.CRCOUNCIL_VOTING, '/crcouncilvoting/crmember');
     }
 

@@ -17,6 +17,25 @@
       </ion-card>
     </div>
 
+    <!-- Network info -->
+    <ion-row class="network-row">
+      <ion-col size="12" class="left-col">
+        <img [src]="networkWallet.network.logo">
+        <h1>{{ networkWallet.network.getEffectiveName() }}</h1>
+      </ion-col>
+    </ion-row>
+
+    <!-- Signing Wallet info -->
+    <ion-row class="wallet-info-row">
+      <ion-col size="12" class="left-col">
+        <div class="wallet-info">
+          <div class="wallet-label">{{ 'wallet.signing-wallet' | translate }}</div>
+          <h1 class="wallet-name">{{ getSigningWalletName() }}</h1>
+          <div class="wallet-address">{{ getSigningWalletAddress() }}</div>
+        </div>
+      </ion-col>
+    </ion-row>
+
     <!-- BUTTONS FOOTER -->
     <ebutton class="btn cancel" mode="cancel" (clicked)="cancelOperation()" [title]="'common.cancel' | translate">
     </ebutton>

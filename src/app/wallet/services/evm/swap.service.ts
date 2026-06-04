@@ -36,26 +36,26 @@ import type { AnyNetwork } from '../../model/networks/network';
 import { WalletNetworkService } from '../network.service';
 
 type TokenListCacheEntry = {
-    fetchTime: number; // Unix timestamp
-    tokenAddresses: string[]; // List of swappable token addresses
-}
+  fetchTime: number; // Unix timestamp
+  tokenAddresses: string[]; // List of swappable token addresses
+};
 
 type TokenListResponse = {
-    keywords: string[]; // ie elkk, defi...
-    logoURI: string;
-    name: string; // List name - ie "Elk ELASTOS Tokens"
-    timestamp: string; // last updated - ie "2021-10-17T15:43:53+00:00"
-    tokens: {
-        address: string; // ie "0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C"
-        chainId: number; // ie 20
-        decimals: number; // ie 18
-        logoURI: string; // ie "https://raw.githubusercontent.com/elkfinance/tokens/main/logos/elastos/0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C/logo.png"
-        name: string; // ie "Elk",
-        symbol: string; // ie "ELK"
-    }[]
-}
+  keywords: string[]; // ie elkk, defi...
+  logoURI: string;
+  name: string; // List name - ie "Elk ELASTOS Tokens"
+  timestamp: string; // last updated - ie "2021-10-17T15:43:53+00:00"
+  tokens: {
+    address: string; // ie "0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C"
+    chainId: number; // ie 20
+    decimals: number; // ie 18
+    logoURI: string; // ie "https://raw.githubusercontent.com/elkfinance/tokens/main/logos/elastos/0xE1C110E1B1b4A1deD0cAf3E42BfBdbB7b5d7cE1C/logo.png"
+    name: string; // ie "Elk",
+    symbol: string; // ie "ELK"
+  }[];
+};
 
-const TOKEN_LIST_CACHE_REFRESH_MIN_TIME = (1 * 24 * 60 * 60); // Min duration between updates of a token list content, seconds
+const TOKEN_LIST_CACHE_REFRESH_MIN_TIME = 1 * 24 * 60 * 60; // Min duration between updates of a token list content, seconds
 
 /**
  * Service responsible for managing token swap features (swap internally inside a network - not bridge)
@@ -69,101 +69,120 @@ const TOKEN_LIST_CACHE_REFRESH_MIN_TIME = (1 * 24 * 60 * 60); // Min duration be
  * TODO: UNISWAP/ETHEREUM: https://tokenlists.org/token-list?url=https://gateway.ipfs.io/ipns/tokens.uniswap.org
  */
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class SwapService {
-    public static instance: SwapService = null;
+  public static instance: SwapService = null;
 
-    constructor(
-        public theme: GlobalThemeService,
-        private networkService: WalletNetworkService,
-        private storage: GlobalStorageService,
-        private http: HttpClient
-    ) {
-        SwapService.instance = this;
+  constructor(
+    public theme: GlobalThemeService,
+    private networkService: WalletNetworkService,
+    private storage: GlobalStorageService,
+    private http: HttpClient
+  ) {
+    SwapService.instance = this;
+  }
+
+  public init() {
+    this.networkService.activeNetwork.subscribe(activeNetwork => {
+      if (activeNetwork) this.onActiveNetworkChanged(activeNetwork);
+    });
+  }
+
+  // TODO: optimize performance
+  public getAvailableSwapProviders(subWallet: AnySubWallet): SwapProvider[] {
+    let network = subWallet.networkWallet.network;
+
+    if (subWallet.isStandardSubWallet()) {
+      let possibleProviders = network.swapProviders.filter(p => p.canSwapNativeToken);
+      return possibleProviders;
+    } else {
+      // ERC20
+      let erc20SubWallet = subWallet as ERC20SubWallet;
+      let possibleProviders = network.swapProviders.filter(p => {
+        return p.swappableTokenContracts.indexOf(erc20SubWallet.coin.getContractAddress()) >= 0;
+      });
+      return possibleProviders;
     }
+  }
 
-    public init() {
-        this.networkService.activeNetwork.subscribe(activeNetwork => {
-            if (activeNetwork) this.onActiveNetworkChanged(activeNetwork);
-        });
-    }
+  public openSwapProvider(provider: SwapProvider, subWallet?: AnySubWallet) {
+    // Use the swap url (more accurate), if any, otherwise the default project url
+    let targetUrl = provider.swapUrl || provider.baseProvider.projectUrl;
 
-    // TODO: optimize performance
-    public getAvailableSwapProviders(subWallet: AnySubWallet): SwapProvider[] {
-        let network = subWallet.networkWallet.network;
+    // Check if the url contains specific tag that we can replace for better UX (ex: directly open the right screen)
+    var inputCurrency = subWallet ? subWallet.getSwapInputCurrency() : '';
+    targetUrl = targetUrl.replace('${inputCurrency}', inputCurrency);
+    targetUrl = targetUrl.replace('${theme}', this.theme.darkMode ? 'dark' : 'light');
 
-        if (subWallet.isStandardSubWallet()) {
-            let possibleProviders = network.swapProviders.filter(p => p.canSwapNativeToken);
-            return possibleProviders;
-        }
-        else {
-            // ERC20
-            let erc20SubWallet = subWallet as ERC20SubWallet;
-            let possibleProviders = network.swapProviders.filter(p => {
-                return p.swappableTokenContracts.indexOf(erc20SubWallet.coin.getContractAddress()) >= 0;
-            });
-            return possibleProviders;
-        }
-    }
+    void DappBrowserService.instance.openForBrowseMode(targetUrl, provider.baseProvider.name);
+  }
 
-    public openSwapProvider(provider: SwapProvider, subWallet?: AnySubWallet) {
-        // Use the swap url (more accurate), if any, otherwise the default project url
-        let targetUrl = provider.swapUrl || provider.baseProvider.projectUrl;
+  /**
+   * Handle network changes so that we can refresh token lists tokens sometimes.
+   */
+  private onActiveNetworkChanged(network: AnyNetwork) {
+    void this.updateTokenLists(network);
+  }
 
-        // Check if the url contains specific tag that we can replace for better UX (ex: directly open the right screen)
-        var inputCurrency = subWallet ? subWallet.getSwapInputCurrency() : "";
-        targetUrl = targetUrl.replace("${inputCurrency}", inputCurrency);
-        targetUrl = targetUrl.replace("${theme}", this.theme.darkMode ? "dark" : "light");
+  private async updateTokenLists(network: AnyNetwork) {
+    let activeUserDID = DIDSessionsStore.signedInDIDString;
+    let currentTime = moment().unix();
 
-        void DappBrowserService.instance.openForBrowseMode(targetUrl, provider.baseProvider.name);
-    }
+    for (let provider of network.swapProviders) {
+      for (let tokenListUrl of provider.swappableTokenLists) {
+        let listCacheKey = network.key + tokenListUrl;
+        let cacheEntry = await this.storage.getSetting<TokenListCacheEntry>(
+          activeUserDID,
+          NetworkTemplateStore.networkTemplate,
+          'wallet',
+          listCacheKey,
+          null
+        );
+        if (
+          !cacheEntry ||
+          moment.unix(cacheEntry.fetchTime).add(TOKEN_LIST_CACHE_REFRESH_MIN_TIME, 'seconds').isBefore(currentTime)
+        ) {
+          // No cache, or expired cache: fetch the tokens list
+          Logger.log(
+            'wallet',
+            'Fetching swap tokens list for',
+            provider.baseProvider.name,
+            'on network',
+            network.getEffectiveName(),
+            tokenListUrl
+          );
+          try {
+            let tokenListResponse = await this.http.get<TokenListResponse>(tokenListUrl).toPromise();
+            if (tokenListResponse) {
+              let tokensToSave = tokenListResponse.tokens.map(t => t.address.toLowerCase());
 
-    /**
-     * Handle network changes so that we can refresh token lists tokens sometimes.
-     */
-    private onActiveNetworkChanged(network: AnyNetwork) {
-        void this.updateTokenLists(network);
-    }
+              cacheEntry = {
+                fetchTime: currentTime,
+                tokenAddresses: tokensToSave
+              };
 
-    private async updateTokenLists(network: AnyNetwork) {
-        let activeUserDID = DIDSessionsStore.signedInDIDString;
-        let currentTime = moment().unix();
-
-        for (let provider of network.swapProviders) {
-            for (let tokenListUrl of provider.swappableTokenLists) {
-                let listCacheKey = network.key + tokenListUrl;
-                let cacheEntry = await this.storage.getSetting<TokenListCacheEntry>(activeUserDID, NetworkTemplateStore.networkTemplate, "wallet", listCacheKey, null);
-                if (!cacheEntry || moment.unix(cacheEntry.fetchTime).add(TOKEN_LIST_CACHE_REFRESH_MIN_TIME, "seconds").isBefore(currentTime)) {
-                    // No cache, or expired cache: fetch the tokens list
-                    Logger.log("wallet", "Fetching swap tokens list for", provider.baseProvider.name, "on network", network.name, tokenListUrl);
-                    try {
-                        let tokenListResponse = await this.http.get<TokenListResponse>(tokenListUrl).toPromise();
-                        if (tokenListResponse) {
-                            let tokensToSave = tokenListResponse.tokens.map(t => t.address.toLowerCase());
-
-                            cacheEntry = {
-                                fetchTime: currentTime,
-                                tokenAddresses: tokensToSave
-                            }
-
-                            Logger.log("wallet", "Saving swap tokens list to cache", cacheEntry);
-                            await this.storage.setSetting(activeUserDID, NetworkTemplateStore.networkTemplate, "wallet", listCacheKey, cacheEntry);
-                        }
-                    }
-                    catch (e) {
-                        Logger.warn("wallet", "Token list fetch failed:", e);
-                    }
-                }
-
-                // Append token lists to provider's token addresses
-                if (cacheEntry) {
-                    cacheEntry.tokenAddresses.forEach(addr => {
-                        if (provider.swappableTokenContracts.indexOf(addr) < 0)
-                            provider.swappableTokenContracts.push(addr);
-                    });
-                }
+              Logger.log('wallet', 'Saving swap tokens list to cache', cacheEntry);
+              await this.storage.setSetting(
+                activeUserDID,
+                NetworkTemplateStore.networkTemplate,
+                'wallet',
+                listCacheKey,
+                cacheEntry
+              );
             }
+          } catch (e) {
+            Logger.warn('wallet', 'Token list fetch failed:', e);
+          }
         }
+
+        // Append token lists to provider's token addresses
+        if (cacheEntry) {
+          cacheEntry.tokenAddresses.forEach(addr => {
+            if (provider.swappableTokenContracts.indexOf(addr) < 0) provider.swappableTokenContracts.push(addr);
+          });
+        }
+      }
     }
+  }
 }

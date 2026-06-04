@@ -142,6 +142,10 @@ class DappBrowserPlugin : CDVPlugin {
        if (url != nil) {
            let baseUrl = self.webViewEngine.url();
            let absoluteUrl = URL(string: url!, relativeTo: baseUrl)?.absoluteURL;
+           if (absoluteUrl == nil) {
+               self.error(command, "Invalid URL: \(url!)");
+               return;
+           }
 
            if (absoluteUrl != nil) {
                if (self.isSystemUrl(absoluteUrl!)) {

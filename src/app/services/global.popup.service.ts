@@ -171,7 +171,7 @@ export class GlobalPopupService {
         return new Promise(async resolve => {
             let componentProps: ConfirmationPopupComponentParams = {
                 type: "custom",
-                customIcon: customIcon ? customIcon : "/assets/launcher/icons/hive-cross.svg",
+                customIcon: customIcon || undefined, // Only set if provided, undefined means no icon
                 title,
                 text,
                 confirmationButtonText

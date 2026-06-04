@@ -50,14 +50,14 @@ export class VotePage implements OnInit, OnDestroy {
 
     public votesCasted = false;
     public totalEla = 0;
-    private votedEla = 0;
+    public votedEla = 0;
     private toast: any;
 
     public testValue = 0;
     public overflow = false;
     public less_than_10_days = false;
 
-    private selectedNodes = [];
+    public selectedNodes = [];
     public currentHeight = 0;
 
     async ngOnInit() {

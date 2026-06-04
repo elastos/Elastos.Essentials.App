@@ -9,7 +9,7 @@ import { WidgetBase } from '../../base/widgetbase';
 @Component({
   selector: 'choose-active-network',
   templateUrl: './choose-active-network.widget.html',
-  styleUrls: ['./choose-active-network.widget.scss'],
+  styleUrls: ['./choose-active-network.widget.scss']
 })
 export class ChooseActiveNetworkWidget extends WidgetBase implements OnInit, OnDestroy {
   private activeNetworkSub: Subscription = null;
@@ -54,8 +54,9 @@ export class ChooseActiveNetworkWidget extends WidgetBase implements OnInit, OnD
    * for the widget.
    */
   private prepareLastUsedNetworks(lastUsedNetworks: LastUsedNetworks) {
-    if (!lastUsedNetworks)
+    if (!lastUsedNetworks) {
       return;
+    }
 
     this.lastUsedNetworks = [];
 
@@ -64,14 +65,10 @@ export class ChooseActiveNetworkWidget extends WidgetBase implements OnInit, OnD
     // but always 4 entries.
     // By display priority order.
     const defaultNetworks: AnyNetwork[] = [
-      this.walletNetworkService.getNetworkByKey("elastossmartchain"),
-      this.walletNetworkService.getNetworkByKey("ethereum"),
-      this.walletNetworkService.getNetworkByKey("btc"),
-      this.walletNetworkService.getNetworkByKey("bsc"),
-      this.walletNetworkService.getNetworkByKey("elastos"),
-      this.walletNetworkService.getNetworkByKey("polygon"),
-      this.walletNetworkService.getNetworkByKey("iotex"),
-      this.walletNetworkService.getNetworkByKey("heco")
+      this.walletNetworkService.getNetworkByKey('bsc'), // Binance Smart Chain
+      this.walletNetworkService.getNetworkByKey('btc'), // Bitcoin
+      this.walletNetworkService.getNetworkByKey('elastoseco'), // Elastos ECO
+      this.walletNetworkService.getNetworkByKey('elastos') // Elastos mainchain
     ].filter(n => !!n); // Filter undefined networks to make sure we are ready
 
     // only one network on LRW.
@@ -84,15 +81,16 @@ export class ChooseActiveNetworkWidget extends WidgetBase implements OnInit, OnD
     let checkedIndex = 0;
     while (networksList.length < maxCount) {
       let existingIndex = networksList.findIndex(n => n.key === defaultNetworks[checkedIndex].key);
-      if (existingIndex < 0)
+      if (existingIndex < 0) {
         networksList.push(defaultNetworks[checkedIndex]);
+      }
       checkedIndex++;
     }
 
     // Among the most recent 4 networks, sort networks alphabetically to avoid changing their positions on the
     // UI every time as this looks clunky
     networksList.sort((a, b) => {
-      return a.name.localeCompare(b.key);
+      return a.getEffectiveName().localeCompare(b.getEffectiveName());
     });
 
     this.lastUsedNetworks = networksList;

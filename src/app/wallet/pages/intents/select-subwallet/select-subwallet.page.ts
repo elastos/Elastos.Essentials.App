@@ -13,11 +13,10 @@ import { Native } from '../../../services/native.service';
 import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
-
 @Component({
   selector: 'app-select-subwallet',
   templateUrl: './select-subwallet.page.html',
-  styleUrls: ['./select-subwallet.page.scss'],
+  styleUrls: ['./select-subwallet.page.scss']
 })
 export class SelectSubwalletPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -60,9 +59,6 @@ export class SelectSubwalletPage implements OnInit {
 
   async cancelOperation() {
     const intentParams = this.coinTransferService.intentTransfer;
-    await this.globalIntentService.sendIntentResponse(
-      { txid: null, status: 'cancelled' },
-      intentParams.intentId
-    );
+    await this.globalIntentService.sendIntentResponse({ txid: null, status: 'cancelled' }, intentParams.intentId);
   }
 }

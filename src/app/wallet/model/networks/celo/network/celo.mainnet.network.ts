@@ -1,27 +1,34 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { ERC20Coin } from "../../../coin";
-import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
-import { CeloMainnetUniswapCurrencyProvider } from "../currency/celo.uniswap.currency.provider";
+import { MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { ERC20Coin } from '../../../coin';
+import { UniswapCurrencyProvider } from '../../evms/uniswap.currencyprovider';
+import { CeloMainnetUniswapCurrencyProvider } from '../currency/celo.uniswap.currency.provider';
 import { GlobalJsonRPCService } from './../../../../../services/global.jsonrpc.service';
-import { CeloBaseNetwork } from "./celo.base.network";
+import { CeloBaseNetwork } from './celo.base.network';
 
 export class CeloMainNetNetwork extends CeloBaseNetwork {
   private uniswapCurrencyProvider: CeloMainnetUniswapCurrencyProvider = null;
 
   constructor() {
     super(
-      "celo",
-      "Celo",
-      "CELO",
-      "assets/wallet/networks/celo.svg",
-      "CELO",
-      "Celo Coin",
+      'celo',
+      'Celo',
+      'CELO',
+      'assets/wallet/networks/celo.svg',
+      'CELO',
+      'Celo Coin',
       MAINNET_TEMPLATE,
       42220,
+      [],
+      [
+        {
+          name: 'Celo Mainnet RPC',
+          url: 'https://forno.celo.org'
+        }
+      ]
     );
 
     this.builtInCoins = [
-      new ERC20Coin(this, "cUSD", "Celo Dollar", "0x765DE816845861e75A25fCA122bb6898B8B1282a", 18, false, true)
+      new ERC20Coin(this, 'cUSD', 'Celo Dollar', '0x765DE816845861e75A25fCA122bb6898B8B1282a', 18, false, true)
     ];
 
     this.uniswapCurrencyProvider = new CeloMainnetUniswapCurrencyProvider(this);

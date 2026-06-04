@@ -64,7 +64,7 @@
                   [title]="'wallet.coin-action-receive' | translate">
               </ebutton>
           </ion-col>
-          <ion-col [size]="getColumnSize()" *ngIf="asset.bPoSNFTInfo">
+          <ion-col [size]="getColumnSize()" *ngIf="canDestroy()">
             <ebutton class="btn-box" (clicked)="destroyBPoSNFT()" topicon="assets/wallet/buttons/curcol-cross.svg"
                 [title]="'wallet.nft-destroy' | translate">
             </ebutton>

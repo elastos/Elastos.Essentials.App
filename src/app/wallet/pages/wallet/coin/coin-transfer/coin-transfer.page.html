@@ -234,10 +234,10 @@
             </ion-row>
 
             <ion-row *ngIf="shouldShowPickBTCFeerate()" class="btc-fee-row" (click)="pickBTCFeerate()">
-              <ion-col size="7.5">
+              <ion-col size="4">
                   <span>{{ 'wallet.btc-feerate' | translate }}</span>
               </ion-col>
-              <ion-col size="3.5" class="middle-col">
+              <ion-col size="7" class="middle-col">
                   <span>{{ getCurrenttBtcFeerateTitle() }}</span>
               </ion-col>
               <ion-col size="1" class="right-col">
@@ -260,8 +260,13 @@
             <p>{{ 'wallet.ela-coinbase-warning' | translate }}</p>
         </div>
 
+        <div *ngIf="shouldShowEIDELAWarning()" class="note ela-coinbase-warning">
+            <img src="assets/settings/default/warning.svg" />
+            <p>{{ 'wallet.ela-eid-warning' | translate }}</p>
+        </div>
+
         <!------------------ SEND AND RECHARGE BUTTON ------------------>
-        <div *ngIf="!native.popup && !keyboardIsVisible() && transferType !== 3" class="footer-container ion-no-border"
+        <div *ngIf="!native.popup && transferType !== 3" class="footer-container ion-no-border"
             [class.dark-footer]="theme.darkMode">
             <ion-row class="btn-container">
                 <ebutton (clicked)="goTransaction()" [title]="getButtonLabel() | translate" [disabled]="actionIsGoing">
@@ -315,13 +320,15 @@
         <div class="footer-container ion-no-border" [class.dark-footer]="theme.darkMode">
             <p *ngIf="!checkValuesReady(false)">{{ 'wallet.insufficient-balance' | translate }}</p>
             <ion-row class="btn-row">
-                <ion-col class="btn cancel ion-activatable ripple" size="5.6" (click)="cancelPayment()">
-                    <ion-label>{{ 'common.cancel' | translate }}</ion-label>
-                    <ion-ripple-effect></ion-ripple-effect>
+                <ion-col size="6">
+                    <ebutton class="btn cancel" mode="cancel" (clicked)="cancelPayment()"
+                        [title]="'common.cancel' | translate">
+                    </ebutton>
                 </ion-col>
-                <ion-col class="btn confirm ion-activatable ripple" size="5.6" (click)="goTransaction()">
-                    <ion-label>{{ 'common.confirm' | translate }}</ion-label>
-                    <ion-ripple-effect></ion-ripple-effect>
+                <ion-col size="6">
+                    <ebutton class="btn confirm" (clicked)="goTransaction()"
+                        [title]="'common.confirm' | translate">
+                    </ebutton>
                 </ion-col>
             </ion-row>
         </div>

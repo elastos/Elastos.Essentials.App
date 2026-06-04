@@ -45,7 +45,7 @@ export class CreateProposalPage {
 
     public suggestionDetailFetched = false;
     public suggestionDetail: SuggestionDetail;
-    private onGoingCommand: CreateProposalCommand;
+    public onGoingCommand: CreateProposalCommand;
     public signingAndSendingProposalResponse = false;
     public creationDate = "";
     public bugetAmount = 0;

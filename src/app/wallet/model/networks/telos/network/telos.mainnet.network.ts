@@ -1,32 +1,33 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
-import { TelosMainnetUniswapCurrencyProvider } from "../currency/telos.uniswap.currency.provider";
-import { telosMainnetElkBridgeProvider } from "../earn/bridge.providers";
-import { telosMainnetElkSwapProvider } from "../earn/swap.providers";
-import { TelosBaseNetwork } from "./telos.base.network";
+import { MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { UniswapCurrencyProvider } from '../../evms/uniswap.currencyprovider';
+import { TelosMainnetUniswapCurrencyProvider } from '../currency/telos.uniswap.currency.provider';
+import { telosMainnetElkBridgeProvider } from '../earn/bridge.providers';
+import { telosMainnetElkSwapProvider } from '../earn/swap.providers';
+import { TelosBaseNetwork } from './telos.base.network';
 
 export class TelosMainNetNetwork extends TelosBaseNetwork {
   private uniswapCurrencyProvider: TelosMainnetUniswapCurrencyProvider = null;
 
   constructor() {
     super(
-      "telos",
-      "Telos EVM",
-      "Telos EVM",
-      "assets/wallet/networks/telos.png",
-      "TLOS",
-      "Telos",
+      'telos',
+      'Telos EVM',
+      'Telos EVM',
+      'assets/wallet/networks/telos.png',
+      'TLOS',
+      'Telos',
       MAINNET_TEMPLATE,
       40,
-      [
-      ],
       [],
       [
-        telosMainnetElkSwapProvider
+        {
+          name: 'Telos RPC',
+          url: 'https://mainnet.telos.net/evm'
+        }
       ],
-      [
-        telosMainnetElkBridgeProvider
-      ]
+      [],
+      [telosMainnetElkSwapProvider],
+      [telosMainnetElkBridgeProvider]
     );
 
     // this.builtInCoins = [
@@ -36,7 +37,7 @@ export class TelosMainNetNetwork extends TelosBaseNetwork {
 
     this.uniswapCurrencyProvider = new TelosMainnetUniswapCurrencyProvider(this);
 
-    this.averageBlocktime = 5 // 2;
+    this.averageBlocktime = 5; // 2;
   }
 
   public getUniswapCurrencyProvider(): UniswapCurrencyProvider {

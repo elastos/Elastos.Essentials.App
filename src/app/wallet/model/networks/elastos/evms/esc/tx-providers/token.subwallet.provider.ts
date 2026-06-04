@@ -1,24 +1,41 @@
-import BigNumber from "bignumber.js";
-import { Logger } from "src/app/logger";
-import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
-import { GlobalJsonRPCService } from "src/app/services/global.jsonrpc.service";
-import { StandardCoinName } from "../../../../../coin";
-import { ProviderTransactionInfo } from "../../../../../tx-providers/providertransactioninfo";
-import { SubWalletTransactionProvider } from "../../../../../tx-providers/subwallet.provider";
-import { TransactionDirection } from "../../../../../tx-providers/transaction.types";
-import { AnySubWallet } from "../../../../base/subwallets/subwallet";
-import { EthTransaction } from "../../../../evms/evm.types";
-import { ERC20SubWallet } from "../../../../evms/subwallets/erc20.subwallet";
-import { EscSubWallet } from "../subwallets/esc.evm.subwallet";
+import BigNumber from 'bignumber.js';
+import { Logger } from 'src/app/logger';
+import { GlobalElastosAPIService } from 'src/app/services/global.elastosapi.service';
+import { GlobalJsonRPCService } from 'src/app/services/global.jsonrpc.service';
+import { StandardCoinName } from '../../../../../coin';
+import { ProviderTransactionInfo } from '../../../../../tx-providers/providertransactioninfo';
+import { SubWalletTransactionProvider } from '../../../../../tx-providers/subwallet.provider';
+import { TransactionDirection } from '../../../../../tx-providers/transaction.types';
+import { AnySubWallet } from '../../../../base/subwallets/subwallet';
+import { EthTransaction } from '../../../../evms/evm.types';
+import { ERC20SubWallet } from '../../../../evms/subwallets/erc20.subwallet';
+import { ElastosEVMSubWallet } from '../../subwallets/standard/elastos.evm.subwallet';
+import { ElastosEVMChainTransactionProvider } from '../../tx-providers/elastos.evm.tx.provider';
 
-const MAX_RESULTS_PER_FETCH = 30
+const MAX_RESULTS_PER_FETCH = 30;
 
-export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<EscSubWallet, EthTransaction> {
+export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<ElastosEVMSubWallet, EthTransaction> {
   private canFetchMore = true;
+  private sideChain: StandardCoinName;
+
+  constructor(
+    provider: ElastosEVMChainTransactionProvider,
+    subWallet: ElastosEVMSubWallet,
+    sideChain: StandardCoinName
+  ) {
+    super(provider, subWallet);
+    this.sideChain = sideChain;
+  }
 
   protected getProviderTransactionInfo(transaction: EthTransaction): ProviderTransactionInfo {
     return {
-      cacheKey: this.subWallet.masterWallet.id + "-" + this.subWallet.networkWallet.network.key + "-" + transaction.contractAddress.toLowerCase() + "-transactions",
+      cacheKey:
+        this.subWallet.masterWallet.id +
+        '-' +
+        this.subWallet.networkWallet.network.key +
+        '-' +
+        transaction.contractAddress.toLowerCase() +
+        '-transactions',
       cacheEntryKey: transaction.hash,
       cacheTimeValue: parseInt(transaction.timeStamp),
       subjectKey: transaction.contractAddress
@@ -26,20 +43,19 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
   }
 
   /**
-   * For now, the elastos network gets tokens only from the ESC chain, not from EID.
+   * For now, the elastos network gets tokens only from the ESC, ECO chain, not from EID.
    */
   public async discoverTokens(): Promise<void> {
     let tokenSubWallet = this.subWallet;
     const address = await tokenSubWallet.getAccountAddress();
 
     try {
-      let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(StandardCoinName.ETHSC, address);
+      let tokenList = await GlobalElastosAPIService.instance.getERC20TokenList(this.sideChain, address);
       // Let the provider know what we have found
       await this.provider.onTokenInfoFound(tokenList);
-    }
-    catch (e) {
+    } catch (e) {
       // Potential network error
-      Logger.warn("wallet", "Elastos token discovery failed", e);
+      Logger.warn('wallet', 'Elastos token discovery failed', e);
     }
   }
 
@@ -51,8 +67,11 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     let page = 1;
     // Compute the page to fetch from the api, based on the current position of "afterTransaction" in the list
     if (afterTransaction) {
-      let afterTransactionIndex = (await this.getTransactions(erc20SubWallet)).findIndex(t => t.hash === afterTransaction.hash);
-      if (afterTransactionIndex) { // Just in case, should always be true but...
+      let afterTransactionIndex = (await this.getTransactions(erc20SubWallet)).findIndex(
+        t => t.hash === afterTransaction.hash
+      );
+      if (afterTransactionIndex) {
+        // Just in case, should always be true but...
         // Ex: if tx index in current list of transactions is 18 and we use 8 results per page
         // then the page to fetch is 2: Math.floor(18 / 8) + 1 - API page index starts at 1
         page = 1 + Math.floor((afterTransactionIndex + 1) / MAX_RESULTS_PER_FETCH);
@@ -60,7 +79,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     }
 
     let apiurltype = GlobalElastosAPIService.instance.getApiUrlTypeForBrowser(this.subWallet.id);
-    const accountApiUrl = GlobalElastosAPIService.instance.getApiUrl(apiurltype);
+    const accountApiUrl = GlobalElastosAPIService.instance.getRPCApiUrlWithOverride(apiurltype);
 
     const contractAddress = erc20SubWallet.coin.getContractAddress().toLowerCase();
     const accountAddress = (await this.subWallet.getCurrentReceiverAddress()).toLowerCase();
@@ -76,7 +95,7 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
       let result = await GlobalJsonRPCService.instance.httpGet(txListUrl, this.subWallet.networkWallet.network.key);
       let transactions = result.result as EthTransaction[];
       if (!(transactions instanceof Array)) {
-        Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions)
+        Logger.warn('wallet', 'fetchTransactions invalid transactions:', transactions);
         return null;
       }
       if (transactions.length < MAX_RESULTS_PER_FETCH) {
@@ -89,9 +108,9 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
 
       this.mergeTransactions(transactions, accountAddress);
 
-      await this.saveTransactions(transactions);
+      await this.saveTransactions(transactions, !afterTransaction);
     } catch (e) {
-      Logger.error('wallet', 'ElastosTokenSubWalletProvider fetchTransactions error:', e)
+      Logger.error('wallet', 'ElastosTokenSubWalletProvider fetchTransactions error:', e);
     }
   }
 
@@ -100,14 +119,14 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
     let txhashNeedToMerge = [];
     for (let i = 1; i < transactions.length; i++) {
       if (transactions[i].hash === transactions[i - 1].hash) {
-        if (!txhashNeedToMerge[transactions[i].hash]) txhashNeedToMerge.push(transactions[i].hash)
+        if (!txhashNeedToMerge[transactions[i].hash]) txhashNeedToMerge.push(transactions[i].hash);
       }
     }
 
     for (let i = 0; i < txhashNeedToMerge.length; i++) {
-      let txWithSameHash = transactions.filter((tx) => {
+      let txWithSameHash = transactions.filter(tx => {
         return tx.hash === txhashNeedToMerge[i];
-      })
+      });
 
       let updateInfo = this.mergeTransactionsWithSameHash(txWithSameHash, accountAddress);
       let updateArray = false;
@@ -115,9 +134,10 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
       for (let j = 0; j < transactions.length; j++) {
         if (transactions[j].hash === txhashNeedToMerge[i]) {
           if (!updateArray) {
-            let findTxToUpdate = updateInfo.direction === TransactionDirection.SENT ?
-              transactions[j].from.toLowerCase() === accountAddress :
-              transactions[j].to.toLowerCase() === accountAddress
+            let findTxToUpdate =
+              updateInfo.direction === TransactionDirection.SENT
+                ? transactions[j].from.toLowerCase() === accountAddress
+                : transactions[j].to.toLowerCase() === accountAddress;
 
             if (findTxToUpdate) {
               transactions[j].value = updateInfo.value;
@@ -138,7 +158,8 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
   }
 
   private mergeTransactionsWithSameHash(transactions: EthTransaction[], accountAddress: string) {
-    let sendValue = new BigNumber(0), receiveValue = new BigNumber(0);
+    let sendValue = new BigNumber(0),
+      receiveValue = new BigNumber(0);
     for (let i = 0; i < transactions.length; i++) {
       if (transactions[i].to.toLowerCase() === accountAddress) {
         receiveValue = receiveValue.plus(new BigNumber(transactions[i].value));
@@ -147,7 +168,8 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
       }
     }
 
-    let value = '', direction: TransactionDirection = TransactionDirection.SENT;
+    let value = '',
+      direction: TransactionDirection = TransactionDirection.SENT;
     if (sendValue.gte(receiveValue)) {
       value = sendValue.minus(receiveValue).toFixed();
     } else {
@@ -157,5 +179,4 @@ export class ElastosTokenSubWalletProvider extends SubWalletTransactionProvider<
 
     return { value, direction };
   }
-
 }

@@ -31,7 +31,7 @@ export enum CRCommandType {
 export type CRCommand = {
     command: string; // Ex: "voteforproposal"
     callbackurl?: string;
-    iss?: string; // JWT issuer (Normally, the CR website)
+    iss?: string; // JWT issuer (Normally, the Elastos DAO website)
     data?: any;
     type: CRCommandType;
 }
@@ -146,7 +146,7 @@ export class CROperationsService {
 
         let crCommand = parsedJwtresult.payload as CRCommand;
         if (!crCommand.command) {
-            await this.popup.alert("crproposal", "Received CR website command without a command field. Skipping.", "Ok");
+            await this.popup.alert("crproposal", "Received Elastos DAO website command without a command field. Skipping.", "Ok");
             return false;
         }
 
@@ -195,7 +195,7 @@ export class CROperationsService {
                 break;
 
             default:
-                Logger.warn('crproposal', "Unhandled CR command: ", crCommand.command);
+                Logger.warn('crproposal', "Unhandled Elastos DAO command: ", crCommand.command);
                 await this.globalPopupService.ionicAlert("common.error", "crproposalvoting.no-command-type");
         }
 

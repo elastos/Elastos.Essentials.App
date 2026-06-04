@@ -1,9 +1,9 @@
 export const zh = {
 
     'crcouncilvoting': {
-        'council-voting': 'CR 委员会投票',
-        'council-candidates': 'CR 委员会候选人',
-        'council-members': 'CR 委员会成员',
+        'council-voting': 'Elastos 委员会投票',
+        'council-candidates': 'Elastos 委员会候选人',
+        'council-members': 'Elastos 委员会成员',
         'my-candidates': '我的候选人',
         'vote-history': '投票历史',
         'votes': '票',
@@ -16,7 +16,7 @@ export const zh = {
         'current-rank': '当前排名',
         'current-votes': '当前投票',
         'percent-votes': '投票百分比',
-        'walletaccess-reason': 'CR委员投票',
+        'walletaccess-reason': 'Elastos 委员投票',
 
         /********** State **********/
         'Elected': '当选',
@@ -37,13 +37,13 @@ export const zh = {
         'wallet-access-request': '获取钱包信息',
         'wallet-access-request-message': '将通过钱包获取您的ELA余额，以计算您的投票权',
         'get-ela-failed-header': '无法获取 ELA 金额',
-        'get-ela-failed-message': '钱包中有 ELA 才能进行 CR 委员投票',
+        'get-ela-failed-message': '钱包中有 ELA 才能进行 Elastos 委员投票',
         'vote-failed': '投票失败',
         'vote-incomplete': '投票失败',
-        'cr-voting-ended': 'CR委员选举已经结束',
+        'cr-voting-ended': 'Elastos 委员选举已经结束',
         'cr-voting-ended-message': '在下一轮选举之前不会有任何投票',
-        'cr-council-no-available': 'CR委员投票暂时不可用, 请稍后再试',
-        'cr-member-info-no-available': 'CR委员信息获取失败, 请稍后再试',
+        'cr-council-no-available': 'Elastos 委员投票暂时不可用, 请稍后再试',
+        'cr-member-info-no-available': 'Elastos 委员信息获取失败, 请稍后再试',
         'pledge-some-ELA-to-candidates': '请给您的候选人分配一些ELA',
         'not-allow-pledge-more-than-own': '您分配的ELA不能超过您拥有的ELA',
 
@@ -61,7 +61,7 @@ export const zh = {
         'claim-dpos-node': '绑定节点',
 
         'no-member-info': '获取委员信息失败',
-        'no-members': '获取CR委员列表失败',
+        'no-members': '获取Elastos 委员列表失败',
 
         /********** Secretary General **********/
         'secretary-profile': '秘书长信息',
@@ -91,17 +91,17 @@ export const zh = {
         'unregistration-candidate': '退出选举',
         'withdraw': '取回质押金',
         'use-registered-wallet': '请使用注册候选人的钱包',
-        'reg-use-the-same-did-wallet': '请使用与DID匹配的钱包注册CR候选人',
+        'reg-use-the-same-did-wallet': '请使用与DID匹配的钱包注册 Elastos 委员候选人',
 
         'no-candidates': '目前没有候选人',
 
         'vote-end': '委员选举已结束',
         'view': '查看',
-        'next-crs': '下一届CR委员会',
+        'next-crs': '下一届 Elastos 委员会',
 
         /********** Registration **********/
         'registration': '报名参选',
-        'register-candidate': '注册CR候选人',
+        'register-candidate': '注册Elastos 委员候选人',
         'update-candidate':  '更新候选人信息',
         'update-member': '更新委员信息',
         'register': '注册',
@@ -128,10 +128,10 @@ export const zh = {
         'confirm-count-prefix': '当前',
         'confirm-count-postfix': '个确认块。',
 
-        'reg-candidate-balance-not-enough': '注册CR候选人需要5000ELA质押金以及很少的交易费',
-        'candidate-deposit-warning': '您想注册CR候选人吗？注册CR候选人需要质押5000ELA，注册交易花费少量的交易费。',
-        'text-candidate-name-already-used': '此CR候选人名称已经存在',
-        'candidate-unregister-warning': '您要注销CR候选人吗?',
+        'reg-candidate-balance-not-enough': '注册 Elastos 委员候选人需要5000ELA质押金以及很少的交易费',
+        'candidate-deposit-warning': '您想注册 Elastos 委员候选人吗？注册 Elastos 委员候选人需要质押5000ELA，注册交易花费少量的交易费。',
+        'text-candidate-name-already-used': '此 Elastos 委员候选人名称已经存在',
+        'candidate-unregister-warning': '您要注销 Elastos 委员候选人吗?',
         'candidate-withdraw-warning-pre': '您要取回质押金: ',
         'candidate-withdraw-warning-suf': ' ELA吗?',
         'text-candidate-info-dont-modify': '候选人信息没有修改。',
@@ -143,36 +143,36 @@ export const zh = {
         'withdraw-successfully': '取回质押金成功，请等待交易确认。',
 
         /********** Registration-terms **********/
-        'terms-title': 'CR委员参选协议',
+        'terms-title': 'Elastos 委员参选协议',
         'registration-terms': `<p>
-                CR委员选举面向亦来云社区成员开放，任何社区成员均可共同参与亦来云Smartweb网络的建设，参选节点（自然人或团队，下同）一
+                Elastos 委员选举面向亦来云社区成员开放，任何社区成员均可共同参与亦来云Smartweb网络的建设，参选节点（自然人或团队，下同）一
                 经参选，均视为充分理解并同意承诺遵守本协议所有内容，请您务必认真阅读：
              </p>
 
              <p>
-                 <span class="index">1.</span> 参选者在正式参选前已阅读、充分理解并认同CRC白皮书及CR委员参选规则内容。
+                 <span class="index">1.</span> 参选者在正式参选前已阅读、充分理解并认同 PoI 白皮书及 Elastos 委员参选规则内容。
              </p>
 
              <p>
-                 <span class="index">2.</span> 参选节点承诺在参与CR的过程中：遵守所在国家或地区的各项法律规定；发布、
+                 <span class="index">2.</span> 参选节点承诺在参与 Elastos DAO 的过程中：遵守所在国家或地区的各项法律规定；发布、
                  转载或提供的内容符合所在国家或地区法律法规、社会公德；尊重社区其他成员所在国家或地区的法律法规及社会公德。
              </p>
 
              <p>
-                 <span class="index">3.</span> 参选节点承诺在参与CR的过程中，在任何渠道发表的内容仅代表本人的立场和
+                 <span class="index">3.</span> 参选节点承诺在参与 Elastos DAO 的过程中，在任何渠道发表的内容仅代表本人的立场和
                  观点。参选节点对所发表的内容和发布主题负责，因所发表内容引发的一切纠纷，由参选节点承担全部法律责任及相关
-                 连带责任。同时，参选节点承诺其不会损害和侵犯亦来云社区团队及成员的权益。
+                 连带责任。同时，参选节点承诺其不会损害和侵犯Elastos 委员会团队及成员的权益。
              </p>
 
              <p>
-                 <span class="index">4.</span> 参选节点充分理解并认可Elastos是一个开源项目，亦理解和认同：CR合作的团队
-                 （目前为Gelaxy Team，后续以CR委托为准）有权根据CRC白皮书、以及CRC实际运行中出现漏洞、黑客攻击等状态可能影
-                 响到CRC运转等情形时，对代码进行更新或优化。对开源代码做出相应调整、更新或优化时造成的任何影响，参选节点无条件
-                 放弃追究CR合作或委托团队的任何法律责任。
+                 <span class="index">4.</span> 参选节点充分理解并认可Elastos是一个开源项目，亦理解和认同：Elastos DAO 合作的团队
+                 （目前为Gelaxy Team，后续以 Elastos 委员会委托为准）有权根据 PoI 白皮书、以及 PoI 实际运行中出现漏洞、黑客攻击等状态可能影
+                 响到 Elastos 委员会运转等情形时，对代码进行更新或优化。对开源代码做出相应调整、更新或优化时造成的任何影响，参选节点无条件
+                 放弃追究 Elastos DAO 合作或委托团队的任何法律责任。
              </p>
 
              <p>
-                 <span class="index">5.</span> 参选节点承诺遵守CR委员参选、CR运行以及相关惩罚机制等规则，由于触发惩罚机制
+                 <span class="index">5.</span> 参选节点承诺遵守 Elastos 委员参选、Elastos DAO 运行以及相关惩罚机制等规则，由于触发惩罚机制
                  而产生的后果由参选节点自行承担。
              </p>
 
@@ -184,7 +184,7 @@ export const zh = {
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.
-        * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the CR council voting app.
+        * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the Elastos Council voting app.
         */
         "93": "阿富汗",
         "355": "阿尔巴尼亚",
@@ -411,7 +411,6 @@ export const zh = {
         "681": "沃利斯和富图纳群岛",
         "685": "西撒哈拉",
         "967": "也门",
-        "338": "南斯拉夫",
         "260": "赞比亚",
         "263": "津巴布韦",
     }

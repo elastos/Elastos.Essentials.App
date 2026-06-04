@@ -10,11 +10,12 @@
 
   <ion-spinner class='spinner' *ngIf="loading && btcSubWallet"></ion-spinner>
 
-  <ion-grid class="container" [class.dark-container]="theme.darkMode" *ngIf="!loading && networkWallet && isSignDataEnable">
+  <ion-grid class="container" [class.dark-container]="theme.darkMode"
+    *ngIf="!loading && networkWallet && isSignDataEnable">
     <div>
       <ion-card>
         <img [src]="networkWallet.network.logo">
-        <h1>{{ networkWallet.network.name }}</h1>
+        <h1>{{ networkWallet.network.getEffectiveName() }}</h1>
       </ion-card>
 
       <ion-card-header>
@@ -27,47 +28,23 @@
       </ion-card-header>
     </div>
 
-    <!-- TX INFO -->
-    <div class="msg-container">
-      <!-- <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
-
-      <ion-row *ngIf='feesAsBigNumber' class="item-row ripple ion-activatable">
-        <ion-col size="5">
-          <div>{{ 'wallet.sendbitcoin-transaction-fee' | translate }}</div>
-        </ion-col>
-        <ion-col size="6" class="price">
-          <ion-row>
-            <ion-col class="fee">
-              <span> {{ uiService.getFixedBalance(feesAsBigNumber) }}</span> {{
-                getCurrencyInUse() }}
-            </ion-col>
-          </ion-row>
-          <ion-row>
-            <ion-col class="fee">
-              <span> {{ currencyFee }}</span> {{
-                getNativeCurrencyInUse() }}
-            </ion-col>
-          </ion-row>
-        </ion-col>
-      </ion-row> -->
-
-
-      <ion-row class="item-row ripple ion-activatable" *ngIf="balanceBTC">
-        <ion-col size="5">
-          <div>{{ 'wallet.balance-remaining' | translate }}</div>
-        </ion-col>
-        <ion-col size="7" class="price">
-          <span> {{ uiService.getFixedBalance(balanceBTC) }}</span> {{ getCurrencyInUse() }}
-        </ion-col>
-      </ion-row>
-    </div>
+    <!-- Signing Wallet info -->
+    <ion-row class="wallet-info-row">
+      <ion-col size="12" class="left-col">
+        <div class="wallet-info">
+          <div class="wallet-label">{{ 'wallet.signing-wallet' | translate }}</div>
+          <h1 class="wallet-name">{{ getSigningWalletName() }}</h1>
+          <div class="wallet-address">{{ getSigningWalletAddress() }}</div>
+        </div>
+      </ion-col>
+    </ion-row>
 
     <!-- BUTTONS FOOTER -->
-    <ebutton class="btn cancel" [class.expand]="!balanceIsEnough()" [disabled]="!balanceIsEnough()" mode="cancel"
+    <ebutton class="btn cancel" mode="cancel"
       (clicked)="cancelOperation()"
-      [title]="(!balanceIsEnough() ? 'wallet.insufficient-balance' : 'common.cancel') | translate">
+      [title]="'common.cancel' | translate">
     </ebutton>
-    <ebutton class="btn confirm" *ngIf="balanceIsEnough()" [disabled]="signingAndTransacting || actionIsGoing" (clicked)="goTransaction()"
+    <ebutton class="btn confirm" [disabled]="actionIsGoing" (clicked)="goTransaction()"
       [title]="'common.confirm' | translate"></ebutton>
   </ion-grid>
 </ion-content>

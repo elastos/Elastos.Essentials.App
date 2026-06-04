@@ -28,6 +28,7 @@
     "skipLibCheck": true,
     "typeRoots": [
       "node_modules/@types",
+      "node_modules"
     ],
     "types": [
       "node",
@@ -35,7 +36,6 @@
       "@elastosfoundation/elastos-cordova-plugin-did",
       "elastos-essentials-plugin-intent",
       "elastos-essentials-plugin-passwordmanager",
-      "elastos-essentials-plugin-wallet",
       "elastos-essentials-plugin-internal",
       "elastos-essentials-plugin-dappbrowser",
       "cordova-plugin-camera",

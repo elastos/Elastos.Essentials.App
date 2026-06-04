@@ -5,7 +5,7 @@
         <ion-row class="network-row">
             <ion-col size="12" class="left-col">
                 <img [src]="networkWallet.network.logo">
-                <h1>{{ networkWallet.network.name }}</h1>
+                <h1>{{ networkWallet.network.getEffectiveName() }}</h1>
             </ion-col>
         </ion-row>
         <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode">
@@ -35,7 +35,7 @@
         <ion-row class="available-bridge-providers">
             <h1>{{ 'wallet.bridge-tokens' | translate }}</h1>
             <p
-                [innerHtml]="'wallet.bridge-tokens-intro' | translate:{coinName: subWallet.getDisplayTokenName(), networkName: networkWallet.network.name}">
+                [innerHtml]="'wallet.bridge-tokens-intro' | translate:{coinName: subWallet.getDisplayTokenName(), networkName: networkWallet.network.getEffectiveName()}">
             </p>
             <div class="providers">
                 <div *ngFor="let provider of subWallet.getAvailableBridgeProviders()"

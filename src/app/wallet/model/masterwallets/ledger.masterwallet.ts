@@ -20,7 +20,6 @@ export class LedgerMasterWallet extends MasterWallet {
 
     // Base type deserialization
     masterWallet.deserialize(serialized);
-    Logger.warn('wallet', 'LedgerMasterWallet newFromSerializedWallet serialized:', serialized, 'masterWallet:', masterWallet)
     return masterWallet;
   }
 
@@ -46,7 +45,7 @@ export class LedgerMasterWallet extends MasterWallet {
 
   public addAccountOptions(accountOptions: LedgerAccountOptions) {
     if (this.accountOptions.findIndex(n => n.type === accountOptions.type) >= 0) {
-      Logger.warn('wallet', 'LedgerMasterWallet: This account already exists!');
+      Logger.log('wallet', 'LedgerMasterWallet: This account already exists!');
       return;
     }
     this.accountOptions.push(accountOptions);

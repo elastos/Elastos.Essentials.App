@@ -33,7 +33,7 @@ export const fr = {
         'stats-overview': 'Informations Réseau',
         'stats-last-validator': 'Dernier Validateur',
         'stats-total-voters': 'Total des votants',
-        'stats-total-votes': 'Total des votes',
+        'stats-total-votes': 'Total des droits de vote',
         'stats-ela-staking': 'Total d\'ELA utilisés',
         'stats-voters-percent': 'ELA votés VS en circulation',
         'stats-active-nodes': 'Supernoeuds actifs',
@@ -164,7 +164,7 @@ export const fr = {
         'confirm-update-prompt': 'This node is not activated. Do you want to continue updating the voting?',
 
         'confirm-mintnft-title': 'Confirm mint',
-        'confirm-mintnft-prompt': 'This node is not activated. Do you want to continue minting BPoS NFT?',
+        'confirm-mintnft-prompt': 'It takes about 12 minutes to mint BPoS NFT. After the minting is completed, please switch to Elastos Smart Chain to claim this BPoS NFT',
 
         'vote-warning': 'This node already has a large number of votes so you will get less rewards. The closer above 80k votes, the more rewards.',
 

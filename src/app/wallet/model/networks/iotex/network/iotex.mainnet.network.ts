@@ -1,6 +1,6 @@
-import { MAINNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
-import { IoTeXBaseNetwork } from "./iotex.base.network";
+import { MAINNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { UniswapCurrencyProvider } from '../../evms/uniswap.currencyprovider';
+import { IoTeXBaseNetwork } from './iotex.base.network';
 
 /**
  * Explorer: https://iotexscout.io/
@@ -14,16 +14,22 @@ import { IoTeXBaseNetwork } from "./iotex.base.network";
 export class IoTeXMainNetNetwork extends IoTeXBaseNetwork {
   constructor() {
     super(
-      "iotex",
-      "IoTeX",
-      "IoTeX",
-      "assets/wallet/networks/iotex.svg",
-      "IOTX",
-      "IOTX",
+      'iotex',
+      'IoTeX',
+      'IoTeX',
+      'assets/wallet/networks/iotex.svg',
+      'IOTX',
+      'IOTX',
       MAINNET_TEMPLATE,
       4689,
       [
         // TODO: built-in tokens
+      ],
+      [
+        {
+          name: 'Iotex Mainnet RPC',
+          url: 'https://babel-api.mainnet.iotex.io'
+        }
       ],
       [
         // TODO: earn providers

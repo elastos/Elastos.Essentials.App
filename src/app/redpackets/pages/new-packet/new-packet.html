@@ -70,7 +70,7 @@
         <div class="select-essentials" (click)="pickToken()">
           <div class="select-essentials-value">
             <div class="select-essentials-value-main">{{tokenSubwallet.getDisplayTokenName()}}</div>
-            <div class="select-essentials-value-sub">{{tokenSubwallet.networkWallet.network.name}}</div>
+            <div class="select-essentials-value-sub">{{tokenSubwallet.networkWallet.network.getEffectiveName()}}</div>
           </div>
           <div class="select-essentials-icon">
             <img src="assets/redpackets/images/select_icon.svg" alt="Select icon">

@@ -29,7 +29,7 @@ type WithdrawCommand = CRCommand & {
 export class WithdrawPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private onGoingCommand: WithdrawCommand;
+    public onGoingCommand: WithdrawCommand;
     public signingAndSendingProposalResponse = false;
     public proposalDetail: ProposalDetails;
     public proposalDetailFetched = false;

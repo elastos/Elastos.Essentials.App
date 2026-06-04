@@ -33,9 +33,6 @@ export class WithdrawPage {
     public isNodeReward = false;
     public isMuiltWallet = false;
 
-    // TODO: bug on main chain, remove it after the bug is fixed.
-    public showPromptMessage = true;
-
     constructor(
         public uxService: UXService,
         public stakeService: StakeService,
@@ -57,16 +54,13 @@ export class WithdrawPage {
         }
         if (this.isNodeReward) {
             this.available = this.stakeService.nodeRewardInfo.claimable;
-            this.address = this.stakeService.ownerAddress;
         }
         else {
             this.available = this.stakeService.rewardInfo.claimable;
-            this.address = this.stakeService.firstAddress;
         }
 
-        // TODO: bug on main chain
-        // Before this bug is fixed, the withdrawn reward needs to leave 1 ELA
-        this.available = this.available > 1 ? this.available - 1 : 0;
+        // Withdraw to the first external address so that users can stake directly
+        this.address = this.stakeService.firstAddress;
     }
 
     ionViewWillEnter() {
@@ -179,11 +173,5 @@ export class WithdrawPage {
         if (this.amount  == null) {
             this.amount  = 0;
         }
-    }
-
-    // TODO: bug on main chain
-    // Before this bug is fixed, the withdrawn reward needs to be greater than 0.0002 ( 0.0001 + 0.0001 (fee))
-    checkvalue() {
-        return this.amount >= 0.0002;
     }
 }

@@ -79,6 +79,8 @@ export class CustomNetworkService {
         for (let entry of this.customNetworkDiskEntries) {
             let network = this.createNetworkFromCustomNetworkEntry(entry);
 
+            await network.init();
+
             // Add this new instance to the global list of networks
             await this.networkService.registerNetwork(network);
         }
@@ -93,6 +95,7 @@ export class CustomNetworkService {
             entry.mainCurrencySymbol || "ETH",
             entry.networkTemplate,
             entry.rpcUrl,
+            entry.accountRpcUrl,
             parseInt(entry.chainId)
         );
     }
@@ -108,6 +111,8 @@ export class CustomNetworkService {
             this.customNetworkDiskEntries.push(networkDiskEntry);
 
             let network = this.createNetworkFromCustomNetworkEntry(networkDiskEntry);
+
+            await network.init();
 
             // Add this new instance to the global list of networks
             await this.networkService.registerNetwork(network);
@@ -128,7 +133,7 @@ export class CustomNetworkService {
 
             // If we edit the active network, then we need to recreate networkwallet.
             if (WalletNetworkService.instance.activeNetwork.value.key == networkInstance.key) {
-                WalletNetworkService.instance.setActiveNetwork(networkInstance)
+                await WalletNetworkService.instance.setActiveNetwork(networkInstance)
             }
         }
 

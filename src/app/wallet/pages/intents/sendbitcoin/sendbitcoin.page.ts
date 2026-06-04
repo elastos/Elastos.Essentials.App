@@ -22,11 +22,17 @@
 
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
-import BigNumber from "bignumber.js";
+import BigNumber from 'bignumber.js';
 import { MenuSheetMenu } from 'src/app/components/menu-sheet/menu-sheet.component';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { WalletExceptionHelper } from 'src/app/helpers/wallet.helper';
 import { Logger } from 'src/app/logger';
 import { Web3Exception } from 'src/app/model/exceptions/web3.exception';
@@ -51,15 +57,15 @@ import { UiService } from '../../../services/ui.service';
 import { WalletService } from '../../../services/wallet.service';
 
 type SendBitcoinParam = {
-  payAddress: string,
-  satAmount: number,
-  satPerVB: number
-}
+  payAddress: string;
+  satAmount: number;
+  satPerVB: number;
+};
 
 @Component({
   selector: 'app-sendbitcoin',
   templateUrl: './sendbitcoin.page.html',
-  styleUrls: ['./sendbitcoin.page.scss'],
+  styleUrls: ['./sendbitcoin.page.scss']
 })
 export class SendBitcoinPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
@@ -68,15 +74,16 @@ export class SendBitcoinPage implements OnInit {
   public networkWallet: AnyNetworkWallet = null;
   public btcSubWallet: BTCSubWallet = null;
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
-  public intentParams: SendBitcoinParam = null
+  public intentParams: SendBitcoinParam = null;
   public balanceBTC: BigNumber;
   public sendAmountOfBTC: BigNumber;
   public satPerKB: number;
   public feesBTC: BigNumber;
   private forcedFeeSpeed = BTCFeeSpeed.AVERAGE; // default
   private feeSpeedsInSatPerVB: {
-    [index: number]: number
+    [index: number]: number;
   } = {};
+  private customFeeSpeedSatPerVB: number = null; // Custom fee rate in sat/vB
   public showEditFeeRate = false;
   public loading = true;
   public actionIsGoing = false;
@@ -85,10 +92,12 @@ export class SendBitcoinPage implements OnInit {
 
   public signingAndTransacting = false;
 
-  public currentNetworkName = ''
+  private isShowingBTCFeeSpeedMenu = false;
+
+  public currentNetworkName = '';
 
   public inscriptionUtxoBalanceSATOnBTC: BigNumber;
-  public inscriptionUtxoBalanceOnBTCString = ''
+  public inscriptionUtxoBalanceOnBTCString = '';
   private useInscriptionUTXO = false; // Not using inscription utxo
 
   // Titlebar
@@ -105,11 +114,18 @@ export class SendBitcoinPage implements OnInit {
     public uiService: UiService,
     private router: Router,
     public globalPopupService: GlobalPopupService,
+    private alertCtrl: AlertController
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
+      this.intentParams = this.receivedIntent.params.payload.params[0];
+      this.sendAmountOfBTC = new BigNumber(this.intentParams.satAmount).dividedBy(Config.SATOSHI);
+    }
   }
 
   ngOnInit() {
-    GlobalFirebaseService.instance.logEvent("wallet_sendbitcoin_enter");
+    GlobalFirebaseService.instance.logEvent('wallet_sendbitcoin_enter');
 
     void this.init();
   }
@@ -118,14 +134,16 @@ export class SendBitcoinPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.sendbitcoin-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
   }
 
   ionViewDidEnter() {
@@ -147,25 +165,20 @@ export class SendBitcoinPage implements OnInit {
   }
 
   async init() {
-    const navigation = this.router.getCurrentNavigation();
-    this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.intentParams = this.receivedIntent.params.payload.params[0]
-    this.sendAmountOfBTC = new BigNumber(this.intentParams.satAmount).dividedBy(Config.SATOSHI);
-
     this.targetNetwork = WalletNetworkService.instance.getNetworkByKey('btc');
 
-    this.currentNetworkName = this.targetNetwork.name;
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
 
     let masterWallet = this.walletManager.getMasterWallet(this.coinTransferService.masterWalletId);
+    console.log('sendbitcoin', 'init', this.coinTransferService.masterWalletId, masterWallet);
+
     this.networkWallet = await this.targetNetwork.createNetworkWallet(masterWallet, false);
-    if (!this.networkWallet)
-      return;
+    if (!this.networkWallet) return;
 
     this.btcSubWallet = <BTCSubWallet>this.networkWallet.getMainTokenSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-    if (!this.btcSubWallet)
-      return;
+    if (!this.btcSubWallet) return;
 
-    await this.btcSubWallet.updateBalance()
+    await this.btcSubWallet.updateBalance();
     this.balanceBTC = await this.btcSubWallet.getDisplayBalance();
 
     // Not using inscription utxo
@@ -178,19 +191,26 @@ export class SendBitcoinPage implements OnInit {
     if (this.intentParams.satPerVB) {
       // Fee rate is forced in the intent by the caller
       this.satPerKB = this.intentParams.satPerVB * 1000;
-      this.showEditFeeRate = false;
+      this.forcedFeeSpeed = BTCFeeSpeed.CUSTOM;
+      this.customFeeSpeedSatPerVB = this.intentParams.satPerVB;
+      // allow user edit fee rate
+      this.showEditFeeRate = true;
     } else {
       this.showEditFeeRate = true;
-      void this.computeBTCFeeRate();
     }
+
+    void this.computeBTCFeeRate();
 
     let feesSAT: number = null;
     try {
-      feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(this.forcedFeeSpeed, this.satPerKB, this.sendAmountOfBTC);
-    }
-    catch (err) {
+      feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(
+        this.forcedFeeSpeed,
+        this.satPerKB,
+        this.sendAmountOfBTC
+      );
+    } catch (err) {
       // TODO:
-      Logger.warn("wallet", "Can not get the feeRate", err);
+      Logger.warn('wallet', 'Can not get the feeRate', err);
     }
 
     this.feesBTC = satsToBtc(feesSAT);
@@ -229,7 +249,15 @@ export class SendBitcoinPage implements OnInit {
    *
    * Input values in "payloadParam" are in SAT
    */
-  public getTotalTransactionCostInCurrency(): { totalAsBigNumber: BigNumber; total: string; valueAsBigNumber: BigNumber; value: string; feesAsBigNumber: BigNumber; fees: string; currencyFee: string; } {
+  public getTotalTransactionCostInCurrency(): {
+    totalAsBigNumber: BigNumber;
+    total: string;
+    valueAsBigNumber: BigNumber;
+    value: string;
+    feesAsBigNumber: BigNumber;
+    fees: string;
+    currencyFee: string;
+  } {
     let total = this.sendAmountOfBTC.plus(this.feesBTC);
     let currencyFee = this.btcSubWallet.getAmountInExternalCurrency(this.feesBTC);
 
@@ -241,7 +269,7 @@ export class SendBitcoinPage implements OnInit {
       feesAsBigNumber: this.feesBTC,
       fees: this.feesBTC?.toFixed(),
       currencyFee: currencyFee?.toFixed()
-    }
+    };
   }
 
   // ELA, HT, etc
@@ -258,19 +286,27 @@ export class SendBitcoinPage implements OnInit {
    * Creates the payment transaction and publishes it.
    */
   async createTransaction() {
-    Logger.log('wallet', "Calling createPaymentTransaction(): ", this.intentParams);
+    Logger.log('wallet', 'Calling createPaymentTransaction(): ', this.intentParams);
 
     await this.native.showLoading(this.translate.instant('common.please-wait'));
 
     this.signingAndTransacting = true;
     let rawTx = null;
     try {
+      // Determine the satPerKB to use
+      let forcedSatPerKB = this.satPerKB;
+      if (this.forcedFeeSpeed === BTCFeeSpeed.CUSTOM && this.customFeeSpeedSatPerVB) {
+        forcedSatPerKB = this.customFeeSpeedSatPerVB * 1000;
+      } else if (this.feeSpeedsInSatPerVB[this.forcedFeeSpeed]) {
+        forcedSatPerKB = this.feeSpeedsInSatPerVB[this.forcedFeeSpeed] * 1000;
+      }
+
       rawTx = await this.btcSubWallet.createPaymentTransaction(
         this.intentParams.payAddress,
         this.getTotalTransactionCostInCurrency().valueAsBigNumber,
         '',
         this.forcedFeeSpeed,
-        this.satPerKB,
+        forcedSatPerKB,
         this.useInscriptionUTXO
       );
     } catch (err) {
@@ -289,15 +325,14 @@ export class SendBitcoinPage implements OnInit {
         //rawTransaction: rawTx,
         payPassword: '',
         action: this.receivedIntent.action,
-        intentId: this.receivedIntent.intentId,
+        intentId: this.receivedIntent.intentId
       });
 
       try {
         const result = await this.btcSubWallet.signAndSendRawTransaction(rawTx, transfer, false);
         await this.sendIntentResponse({ txid: result.txid, status: result.status });
-      }
-      catch (err) {
-        Logger.error('wallet', 'SendBitcoinPage publishTransaction error:', err)
+      } catch (err) {
+        Logger.error('wallet', 'SendBitcoinPage publishTransaction error:', err);
         await this.sendIntentResponse({ txid: null, status: 'error' });
       }
     } else {
@@ -308,13 +343,13 @@ export class SendBitcoinPage implements OnInit {
   }
 
   private async parseException(err) {
-    Logger.error('wallet', "transaction error:", err);
+    Logger.error('wallet', 'transaction error:', err);
     let reworkedEx = WalletExceptionHelper.reworkedWeb3Exception(err);
     if (reworkedEx instanceof Web3Exception) {
-      await this.globalPopupService.ionicAlert("wallet.transaction-fail", "common.network-or-server-error");
+      await this.globalPopupService.ionicAlert('wallet.transaction-fail', 'common.network-or-server-error');
     } else {
-      let message: string = typeof (err) === "string" ? err : err.message;
-      await this.globalPopupService.ionicAlert("wallet.transaction-fail", message);
+      let message: string = typeof err === 'string' ? err : err.message;
+      await this.globalPopupService.ionicAlert('wallet.transaction-fail', message);
     }
   }
 
@@ -324,16 +359,25 @@ export class SendBitcoinPage implements OnInit {
   private async computeBTCFeeRate() {
     try {
       // BTC/kB to sat/vB
-      let fast = await GlobalBTCRPCService.instance.estimatesmartfee(this.btcSubWallet.rpcApiUrl, BTCFeeSpeed.FAST)
+      let fast = await GlobalBTCRPCService.instance.estimatesmartfee(
+        this.btcSubWallet.networkWallet.network.getSelectedRpcUrl(),
+        BTCFeeSpeed.FAST
+      );
       this.feeSpeedsInSatPerVB[BTCFeeSpeed.FAST] = btcToSats(fast).dividedBy(1000).toNumber();
 
-      let avg = await GlobalBTCRPCService.instance.estimatesmartfee(this.btcSubWallet.rpcApiUrl, BTCFeeSpeed.AVERAGE)
+      let avg = await GlobalBTCRPCService.instance.estimatesmartfee(
+        this.btcSubWallet.networkWallet.network.getSelectedRpcUrl(),
+        BTCFeeSpeed.AVERAGE
+      );
       this.feeSpeedsInSatPerVB[BTCFeeSpeed.AVERAGE] = btcToSats(avg).dividedBy(1000).toNumber();
 
-      let slow = await GlobalBTCRPCService.instance.estimatesmartfee(this.btcSubWallet.rpcApiUrl, BTCFeeSpeed.SLOW)
+      let slow = await GlobalBTCRPCService.instance.estimatesmartfee(
+        this.btcSubWallet.networkWallet.network.getSelectedRpcUrl(),
+        BTCFeeSpeed.SLOW
+      );
       this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW] = btcToSats(slow).dividedBy(1000).toNumber();
     } catch (e) {
-      Logger.warn('wallet', 'computeBTCFeeRate() error:', e)
+      Logger.warn('wallet', 'computeBTCFeeRate() error:', e);
     }
   }
 
@@ -347,35 +391,40 @@ export class SendBitcoinPage implements OnInit {
     this.actionIsGoing = true;
     const forcedSatsPerKB = this.feeSpeedsInSatPerVB[this.forcedFeeSpeed] * 1000;
 
-    await this.estimateBTCFees(forcedSatsPerKB)
+    await this.estimateBTCFees(forcedSatsPerKB);
     this.actionIsGoing = false;
   }
 
   public async estimateBTCFees(forcedSatsPerKB: number) {
     // Calculate fee after input amount
     try {
-        let feesSAT = await (this.btcSubWallet).estimateTransferTransactionGas(this.forcedFeeSpeed, forcedSatsPerKB, this.sendAmountOfBTC, this.useInscriptionUTXO);
-        this.feesBTC = satsToBtc(feesSAT);
-        return true;
+      let feesSAT = await this.btcSubWallet.estimateTransferTransactionGas(
+        this.forcedFeeSpeed,
+        forcedSatsPerKB,
+        this.sendAmountOfBTC,
+        this.useInscriptionUTXO
+      );
+      this.feesBTC = satsToBtc(feesSAT);
+      return true;
     } catch (e) {
-        let stringifiedError = "" + e;
-        let message = 'Failed to estimate fee';
-        if (stringifiedError.indexOf("Utxo is not enough") >= 0) {
-            message = 'wallet.insufficient-balance';
-            // Not using inscription utxo
-            // if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.useInscriptionUTXO) {
-            //     let result = await this.showConfirmIfNeedUseInscriptionUtxos(this.sendAmountOfBTC)
-            //     if (result) {
-            //         this.useInscriptionUTXO = true;
-            //         // Use inscriotion utxo to re-estimate
-            //         return await this.estimateBTCFees(forcedSatsPerKB);
-            //     }
-            // }
-        }
-        this.native.toast_trans(message, 4000);
-        return false;
+      let stringifiedError = '' + e;
+      let message = 'Failed to estimate fee';
+      if (stringifiedError.indexOf('Utxo is not enough') >= 0) {
+        message = 'wallet.insufficient-balance';
+        // Not using inscription utxo
+        // if (this.inscriptionUtxoBalanceSATOnBTC.isPositive() && this.useInscriptionUTXO) {
+        //     let result = await this.showConfirmIfNeedUseInscriptionUtxos(this.sendAmountOfBTC)
+        //     if (result) {
+        //         this.useInscriptionUTXO = true;
+        //         // Use inscriotion utxo to re-estimate
+        //         return await this.estimateBTCFees(forcedSatsPerKB);
+        //     }
+        // }
+      }
+      this.native.toast_trans(message, 4000);
+      return false;
     }
-}
+  }
 
   private buildBTCFeerateMenuItems(): MenuSheetMenu[] {
     return [
@@ -399,41 +448,169 @@ export class SendBitcoinPage implements OnInit {
         routeOrAction: () => {
           void this.setFeeSpeed(BTCFeeSpeed.SLOW);
         }
+      },
+      {
+        title: GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-custom'),
+        subtitle: this.customFeeSpeedSatPerVB ? this.customFeeSpeedSatPerVB + ' sat/vB' : '',
+        routeOrAction: () => {
+          void this.showCustomFeerateInput();
+        }
       }
-    ]
+    ];
   }
 
   /**
    * Choose a fee speed
    */
-  public pickBTCFeeSpeed() {
-    if (!this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW]) {
-      Logger.warn('wallet', 'Can not get the btc fee rate.')
-      return
+  public async pickBTCFeeSpeed() {
+    if (this.isShowingBTCFeeSpeedMenu) return;
+
+    this.isShowingBTCFeeSpeedMenu = true;
+    try {
+      if (!this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW]) {
+        await this.computeBTCFeeRate();
+
+        if (!this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW]) {
+          Logger.warn('wallet', 'Can not get the btc fee rate.');
+          return;
+        }
+      }
+
+      let menuItems: MenuSheetMenu[] = this.buildBTCFeerateMenuItems();
+
+      let menu: MenuSheetMenu = {
+        title: GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-select-title'),
+        items: menuItems
+      };
+
+      await GlobalNativeService.instance.showGenericBottomSheetMenuChooser(menu);
+    } finally {
+      this.isShowingBTCFeeSpeedMenu = false;
     }
-    let menuItems: MenuSheetMenu[] = this.buildBTCFeerateMenuItems();
-
-    let menu: MenuSheetMenu = {
-      title: GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-select-title"),
-      items: menuItems
-    };
-
-    void GlobalNativeService.instance.showGenericBottomSheetMenuChooser(menu);
   }
 
   public getFeeSpeedTitle(btcFeerate) {
     switch (btcFeerate) {
       case BTCFeeSpeed.AVERAGE:
-        return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-avg");
+        return GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-avg');
       case BTCFeeSpeed.SLOW:
-        return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-slow");
+        return GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-slow');
+      case BTCFeeSpeed.CUSTOM:
+        return GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-custom');
       default: // BTCFeeRate.Fast
-        return GlobalTranslationService.instance.translateInstant("wallet.btc-feerate-fast");
+        return GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-fast');
     }
   }
 
   public getCurrentFeeSpeedTitle() {
+    if (this.forcedFeeSpeed === BTCFeeSpeed.CUSTOM && this.customFeeSpeedSatPerVB) {
+      return `${this.getFeeSpeedTitle(this.forcedFeeSpeed)} (${this.customFeeSpeedSatPerVB} sat/vB)`;
+    }
     return this.getFeeSpeedTitle(this.forcedFeeSpeed);
+  }
+
+  /**
+   * Show a dialog for user to input custom fee rate
+   */
+  private async showCustomFeerateInput() {
+    const alert = await this.alertCtrl.create({
+      mode: 'ios',
+      header: GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-custom-input-title'),
+      message: GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-custom-input-message'),
+      inputs: [
+        {
+          name: 'feerate',
+          type: 'number',
+          placeholder: GlobalTranslationService.instance.translateInstant('wallet.btc-feerate-custom-input-placeholder'),
+          value: this.customFeeSpeedSatPerVB || '',
+          min: 1
+        }
+      ],
+      buttons: [
+        {
+          text: GlobalTranslationService.instance.translateInstant('common.cancel'),
+          role: 'cancel'
+        },
+        {
+          text: GlobalTranslationService.instance.translateInstant('common.confirm'),
+          handler: (data) => {
+            const feerate = parseFloat(data.feerate);
+            if (feerate && feerate > 0) {
+              // Check if the fee rate is too low
+              const slowFeerate = this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW] || 1;
+              if (feerate < slowFeerate) {
+                // Show warning for low fee rate
+                void this.showLowFeerateWarning(feerate);
+              } else {
+                void this.applyCustomFeerate(feerate);
+              }
+            } else {
+              this.native.toast_trans('wallet.btc-feerate-custom-input-invalid');
+              return false;
+            }
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+  /**
+   * Show a warning dialog when the custom fee rate is too low
+   */
+  private async showLowFeerateWarning(feerate: number) {
+    const slowFeerate = this.feeSpeedsInSatPerVB[BTCFeeSpeed.SLOW] || 1;
+    const confirmed = await this.globalPopupService.ionicConfirm(
+      'wallet.btc-feerate-low-warning-title',
+      this.translate.instant('wallet.btc-feerate-low-warning-message', {
+        feerate: feerate,
+        slowFeerate: slowFeerate
+      }),
+      'common.confirm',
+      'common.cancel'
+    );
+
+    if (confirmed) {
+      await this.applyCustomFeerate(feerate);
+    }
+  }
+
+  /**
+   * Apply custom fee rate and recompute fees
+   */
+  private async applyCustomFeerate(feerate: number) {
+    this.customFeeSpeedSatPerVB = feerate;
+    this.forcedFeeSpeed = BTCFeeSpeed.CUSTOM;
+    Logger.log('wallet', 'Custom BTC fee rate set to:', this.customFeeSpeedSatPerVB, 'sat/vB');
+
+    // Recomputes fees
+    this.actionIsGoing = true;
+    const forcedSatsPerKB = this.customFeeSpeedSatPerVB * 1000;
+    await this.estimateBTCFees(forcedSatsPerKB);
+    this.actionIsGoing = false;
+  }
+
+  /**
+   * Get the signing wallet name
+   */
+  public getSigningWalletName(): string {
+    if (this.networkWallet && this.networkWallet.masterWallet) {
+      return this.networkWallet.masterWallet.name;
+    }
+    return '';
+  }
+
+  /**
+   * Get the signing wallet address
+   */
+  public getSigningWalletAddress(): string {
+    if (this.networkWallet) {
+      const addresses = this.networkWallet.getAddresses();
+      if (addresses && addresses.length > 0) {
+        return addresses[0].address;
+      }
+    }
+    return '';
   }
 
   // Not using inscription utxo

@@ -393,6 +393,8 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     // Transaction key is a md5 of the raw transaction.
     let transactionKey = md5(Buffer.from(JSON.stringify(rawTx)));
 
+    let offlineTransactionId = await this.elaSubWallet.decodeTx(rawTx as EncodedTx).getHashString();
+
     Logger.log("wallet", "Creating offline transaction for the multisig signTransaction() request", rawTx);
 
     let offlineTransaction: OfflineTransaction<any> = {
@@ -414,7 +416,9 @@ export class MainChainMultiSigSafe extends Safe implements ElastosMainChainSafe,
     Native.instance.go("/wallet/coin-tx-info", params);
 
     return {
-      errorType: SignTransactionErrorType.DELEGATED
+      errorType: SignTransactionErrorType.DELEGATED,
+      offlineTransactionKey: transactionKey,
+      offlineTransactionId: offlineTransactionId,
     };
   }
 

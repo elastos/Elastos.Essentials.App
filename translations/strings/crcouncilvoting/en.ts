@@ -1,9 +1,9 @@
 export const en = {
 
     'crcouncilvoting': {
-        'council-voting': 'CR Council Voting',
-        'council-candidates': 'CR Council Candidates',
-        'council-members': 'CR Council Members',
+        'council-voting': 'Elastos Council Voting',
+        'council-candidates': 'Elastos Council Candidates',
+        'council-members': 'Elastos Council Members',
         'my-candidates': 'My Candidates',
         'vote-history': 'Vote History',
         'votes': ' Votes',
@@ -16,7 +16,7 @@ export const en = {
         'current-rank': 'Current Rank',
         'current-votes': 'Current Votes',
         'percent-votes': 'Percentage of Votes',
-        'walletaccess-reason': 'For CRC voting rights',
+        'walletaccess-reason': 'For Elastos Council voting rights',
 
         /********** State **********/
         'Elected': 'Elected',
@@ -40,10 +40,10 @@ export const en = {
         'get-ela-failed-message': 'ELA balance is needed to assess your voting rights',
         'vote-failed': 'There was an error with casting votes..',
         'vote-incomplete': 'Vote processing was incomplete',
-        'cr-voting-ended': 'The CRC Election has ended',
+        'cr-voting-ended': 'The Elastos Council Election has ended',
         'cr-voting-ended-message': 'There won\'t be any voting here until the next election cycle',
-        'cr-council-no-available': 'The CRC Council is not available at this time, please try again later',
-        'cr-member-info-no-available': 'The CRC Council\'s info is not available at this time, please try again later',
+        'cr-council-no-available': 'The Elastos Council is not available at this time, please try again later',
+        'cr-member-info-no-available': 'The Elastos Council\'s info is not available at this time, please try again later',
         'pledge-some-ELA-to-candidates': 'Please pledge some ELA to your candidates',
         'not-allow-pledge-more-than-own': 'You are not allowed to pledge more ELA than you own',
 
@@ -61,7 +61,7 @@ export const en = {
         'claim-dpos-node': 'Claim Node',
 
         'no-member-info': 'Can not get the member info',
-        'no-members': 'Can not get the CR members',
+        'no-members': 'Can not get the Elastos Council members',
 
         /********** Secretary General **********/
         'secretary-profile': 'Secretary General Profile',
@@ -72,7 +72,7 @@ export const en = {
         'impeach-council-member': 'Impeach Council Member',
         'member-name': 'Council Member Name',
 
-        /********** CRNode **********/
+        /********** Elastos DAO Node **********/
         'enter-node-publickey': 'Enter public key of your node',
         'edit-node-publickey': 'Edit public key of your node',
         'text-public-key-dont-modify': 'The Node Public Key do not modify.',
@@ -91,13 +91,13 @@ export const en = {
         'unregistration-candidate': 'Exit election',
         'withdraw': 'Withdraw deposit',
         'use-registered-wallet': 'Please use the wallet for registered candidate',
-        'reg-use-the-same-did-wallet': 'Please register as a CR candidate using a wallet that matches your DID',
+        'reg-use-the-same-did-wallet': 'Please register as a Elastos council candidate using a wallet that matches your DID',
 
         'no-candidates': 'There are no candidates at present',
 
         'vote-end': 'The election has ended',
         'view': 'View',
-        'next-crs': 'The Next CR Committee',
+        'next-crs': 'The Next Elastos Council',
 
         /********** Registration **********/
         'registration': 'Registration',
@@ -143,9 +143,9 @@ export const en = {
         'withdraw-successfully': 'Withdraw deposit successfully, please wait for transaction confirmation.',
 
         /********** Registration-terms **********/
-        'terms-title': 'CR Council Member Election Agreement',
+        'terms-title': 'Elastos Council Member Election Agreement',
         'registration-terms': `<p>
-                The CR Council Member Election is open to the entire Elastos community, and all community members can
+                The Elastos Council Member Election is open to the entire Elastos community, and all community members can
                 participate in the construction of the Elastos Smartweb. By participating in the election, candidate
                 nodes (run by either individuals or teams) effectively demonstrate a complete understanding of and
                 take on a commitment to comply with all contents of the following agreement:
@@ -153,12 +153,12 @@ export const en = {
 
             <p>
                 <span class="index">1.</span> Before participating in the election, the participants have read and
-                fully understand and agree with the content of the CRC white paper and the election rules pertaining to CR
+                fully understand and agree with the content of the PoI white paper and the election rules pertaining to Elastos
                 council members.
             </p>
 
             <p>
-                <span class="index">2.</span> While participating in CR Consensus, all candidate nodes should: abide
+                <span class="index">2.</span> While participating in Elastos DAO Consensus, all candidate nodes should: abide
                 by the laws and regulations of
                 the country or region in which they are located; ensure the content they publish, forward, or
                 provide conforms to relevant legislation, regulations, and social morality of the country or region in which
@@ -167,7 +167,7 @@ export const en = {
             </p>
 
             <p>
-                <span class="index">3.</span> While participating in CR Consensus, the content published by
+                <span class="index">3.</span> While participating in Elastos DAO Consensus, the content published by
                 candidate nodes in any channel only
                 represents the positions and opinions of its owners. All candidate nodes shall be responsible for
                 the content and topics that they publish, and the candidate nodes shall bear all legal responsibility
@@ -179,17 +179,17 @@ export const en = {
             <p>
                 <span class="index">4.</span> All candidate nodes fully understand and recognize that Elastos is an
                 open source project, and shall
-                also comply with the following provisions: CR partners (at present, the Gelaxy Team, but remaining
-                subject to CR entrustment) has the right to update or optimize code according to the CRC white paper when
-                loopholes, hacking-related exploits, or other sub-optimal conditions that impair CRC operations, are exposed. ,
+                also comply with the following provisions: Elastos DAO partners (at present, the Gelaxy Team, but remaining
+                subject to Elastos DAO entrustment) has the right to update or optimize code according to the PoI white paper when
+                loopholes, hacking-related exploits, or other sub-optimal conditions that impair PoI operations, are exposed. ,
                 For any impact caused by the corresponding adjustment, update, or optimization of the open source code, all
-                candidate nodes unconditionally waive any legal responsibility for CR partners or commissioned
+                candidate nodes unconditionally waive any legal responsibility for Elastos DAO partners or commissioned
                 teams.
             </p>
 
             <p>
-                <span class="index">5.</span> All candidate nodes shall comply with the conditions of CR member
-                elections, CR operations, and related
+                <span class="index">5.</span> All candidate nodes shall comply with the conditions of Elastos Council member
+                elections, Elastos DAO operations, and related
                 penalty mechanisms. The consequences of triggering the penalty mechanism shall be borne by all
                 candidate nodes.
             </p>
@@ -206,7 +206,7 @@ export const en = {
 
         /********** Location code **********
         * Location code - list of international phone number country code / country name.
-        * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the CR council voting app.
+        * NOTE: keys are NOT country codes, they are telephone codes, and this list may be used only in the Elastos Council voting app.
         */
         "93": "Afghanistan",
         "355": "Albania",

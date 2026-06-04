@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { runDelayed } from 'src/app/helpers/sleep.helper';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
+import { GlobalLightweightService } from 'src/app/services/global.lightweight.service';
 import { GlobalService, GlobalServiceManager } from 'src/app/services/global.service.manager';
 import { DAppService } from './dapp.service';
 
@@ -11,7 +12,8 @@ import { DAppService } from './dapp.service';
 export class DeveloperToolsInitService extends GlobalService {
   constructor(
     private dappService: DAppService,
-    private didSessions: GlobalDIDSessionsService
+    private didSessions: GlobalDIDSessionsService,
+    private lightweightService: GlobalLightweightService
   ) {
     super();
   }
@@ -22,14 +24,15 @@ export class DeveloperToolsInitService extends GlobalService {
   }
 
   public onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    // NOTE: eventhough this dappService init is mandatory we give ourselves a few seconds to
-    // release the startup from too many operations, knowing that users may never enter the developer
-    // dapp tool so quickly.
-    runDelayed(() => this.dappService.init(), 5000);
+    // Only initialize developer tools functionality if not in lightweight mode
+    if (!this.lightweightService.getCurrentLightweightMode()) {
+      // NOTE: eventhough this dappService init is mandatory we give ourselves a few seconds to
+      // release the startup from too many operations, knowing that users may never enter the developer
+      // dapp tool so quickly.
+      runDelayed(() => this.dappService.init(), 5000);
+    }
     return;
   }
 
-  public async onUserSignOut(): Promise<void> {
-
-  }
+  public async onUserSignOut(): Promise<void> {}
 }

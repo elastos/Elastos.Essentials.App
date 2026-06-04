@@ -14,7 +14,7 @@ import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.st
 type privateConfig = {
   configUrl: string;
   resolveUrl: string;
-}
+};
 
 @Injectable({
   providedIn: 'root'
@@ -39,14 +39,14 @@ export class DeveloperService extends GlobalService {
   public privateNet: privateConfig = {
     configUrl: '',
     resolveUrl: ''
-  }
+  };
 
   public init() {
     GlobalServiceManager.getInstance().registerService(this);
   }
 
   async onUserSignIn(signedInIdentity: IdentityEntry): Promise<void> {
-    Logger.log("settings", "User signing in, reloading configuration for developer networks");
+    Logger.log('settings', 'User signing in, reloading configuration for developer networks');
     await this.getCurrentConfigurations();
   }
 
@@ -56,7 +56,11 @@ export class DeveloperService extends GlobalService {
 
   async getCurrentConfigurations() {
     let networkTemplate = await this.globalNetworksService.getActiveNetworkTemplate();
-    let mode = await this.prefs.getPreference<boolean>(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "developer.backgroundservices.startonboot");
+    let mode = await this.prefs.getPreference(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'developer.backgroundservices.startonboot'
+    );
 
     this.zone.run(() => {
       this.selectedNetworkTemplate = networkTemplate;
@@ -68,7 +72,12 @@ export class DeveloperService extends GlobalService {
   async reset() {
     await this.globalSecurityService.setScreenCaptureAllowed(false);
     await this.prefs.setCollectLogs(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, false);
-    await this.prefs.setBitcoinSignData(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, false);
+    // Move this to privacy page
+    // await this.prefs.setBitcoinSignData(
+    //   DIDSessionsStore.signedInDIDString,
+    //   NetworkTemplateStore.networkTemplate,
+    //   false
+    // );
   }
 
   /* async configNetwork() {
@@ -112,10 +121,6 @@ export class DeveloperService extends GlobalService {
     }
   } */
 
-  private async setPreference(key: string, value: any): Promise<void> {
-    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, key, value);
-  }
-
   async showToast(header: string, msg?: string, duration = 4000) {
     const toast = await this.toastController.create({
       color: 'primary',
@@ -131,7 +136,7 @@ export class DeveloperService extends GlobalService {
     const toast = await this.toastController.create({
       color: 'primary',
       mode: 'ios',
-      header: 'There\'s a problem retrieving your remote file',
+      header: "There's a problem retrieving your remote file",
       message: err,
       buttons: [
         {
@@ -150,7 +155,7 @@ export class DeveloperService extends GlobalService {
 
   async loading() {
     const loader = await this.loadingCtrl.create({
-      mode: "ios",
+      mode: 'ios',
       spinner: 'bubbles',
       message: 'Please wait...',
       translucent: true,

@@ -23,16 +23,21 @@
 import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
-import { signTypedData, signTypedData_v4 } from "eth-sig-util";
+import { TypedDataUtils } from 'eth-sig-util';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterwallet';
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
@@ -44,18 +49,19 @@ import { WalletService } from '../../../services/wallet.service';
 
 type Message = {
   key: string;
-  value: string
-}
+  value: string;
+};
 
 @Component({
   selector: 'app-signtypeddata',
   templateUrl: './signtypeddata.page.html',
-  styleUrls: ['./signtypeddata.page.scss'],
+  styleUrls: ['./signtypeddata.page.scss']
 })
 export class SignTypedDataPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: AnyNetworkWallet = null;
+  public targetNetwork: AnyNetwork = null;
+  public networkWallet: AnyNetworkWallet = null;
   public evmSubWallet: AnyMainCoinEVMSubWallet = null;
   public showEditGasPrice = false;
   public hasOpenETHSCChain = false;
@@ -68,11 +74,10 @@ export class SignTypedDataPage implements OnInit {
 
   private alreadySentIntentResponse = false;
 
-  public currentNetworkName = ''
+  public currentNetworkName = '';
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-
 
   constructor(
     public walletManager: WalletService,
@@ -88,24 +93,45 @@ export class SignTypedDataPage implements OnInit {
     private router: Router,
     private ethTransactionService: EVMService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
+      this.payloadToBeSigned = this.receivedIntent.params.payload;
+      this.useV4 = this.receivedIntent.params.useV4;
+      this.dataToSign = JSON.parse(this.payloadToBeSigned);
+
+      if (this.useV4 && this.dataToSign.message) {
+        for (let p of Object.keys(this.dataToSign.message)) {
+          let value;
+          if (typeof this.dataToSign.message[p] == 'string') {
+            value = this.dataToSign.message[p];
+          } else {
+            value = JSON.stringify(this.dataToSign.message[p], null, 2);
+          }
+          this.messageList.push({ key: p, value: value });
+        }
+      }
+    }
   }
 
   ngOnInit() {
-    this.init();
+    void this.init();
   }
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.signtypeddata-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
   }
 
   ionViewDidEnter() {
@@ -126,31 +152,69 @@ export class SignTypedDataPage implements OnInit {
     }
   }
 
-  init() {
-    this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
+  async init() {
+    Logger.log(
+      'wallet',
+      'Sign Typed Data params',
+      this.coinTransferService.masterWalletId,
+      this.coinTransferService.evmChainId
+    );
 
-    this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
-    if (!this.networkWallet) return;
+    // If there is a provided chain ID, use that chain id network (eg: wallet connect v2).
+    // Otherwise, use the active network
+    if (this.coinTransferService.evmChainId) {
+      this.targetNetwork = WalletNetworkService.instance.getNetworkByChainId(this.coinTransferService.evmChainId);
+    } else {
+      this.targetNetwork = WalletNetworkService.instance.activeNetwork.value;
+    }
+
+    // Early return if target network is not available
+    if (!this.targetNetwork) {
+      Logger.warn('wallet', 'Sign Typed Data: target network not found');
+      return;
+    }
+
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
+
+    // Determine which network and wallet to use based on available parameters
+    let targetNetwork = this.targetNetwork; // Default to target network from chain ID
+    let masterWalletId = this.coinTransferService.masterWalletId;
+
+    // If no specific master wallet ID is provided, use the active wallet's master wallet
+    if (!masterWalletId) {
+      let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+      if (activeNetworkWallet) {
+        masterWalletId = activeNetworkWallet.masterWallet.id;
+      }
+    }
+
+    // If no specific chain ID is provided, use the active network
+    if (!this.coinTransferService.evmChainId) {
+      targetNetwork = WalletNetworkService.instance.activeNetwork.value;
+    }
+
+    // Create network wallet with the determined network and master wallet
+    if (masterWalletId) {
+      let masterWallet = this.walletManager.getMasterWallet(masterWalletId);
+      if (!masterWallet) {
+        Logger.warn('wallet', 'Sign Typed Data: master wallet not found for ID:', masterWalletId);
+        return;
+      }
+      this.networkWallet = await targetNetwork.createNetworkWallet(masterWallet, false);
+    } else {
+      // Ultimate fallback to active network wallet
+      let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+      if (!activeNetworkWallet) {
+        Logger.warn('wallet', 'Sign Typed Data: network wallet not found');
+        return;
+      }
+      this.networkWallet = activeNetworkWallet;
+    }
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-
-    const navigation = this.router.getCurrentNavigation();
-
-    this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-    this.payloadToBeSigned = this.receivedIntent.params.payload;
-    this.useV4 = this.receivedIntent.params.useV4;
-    this.dataToSign = JSON.parse(this.payloadToBeSigned);
-
-    if (this.useV4 && this.dataToSign.message) {
-      for (let p of Object.keys(this.dataToSign.message)) {
-        let value;
-        if (typeof this.dataToSign.message[p] == "string") {
-          value = this.dataToSign.message[p]
-        } else {
-          value = JSON.stringify(this.dataToSign.message[p], null, 2)
-        }
-        this.messageList.push({key: p, value: value})
-      }
+    if (!this.evmSubWallet) {
+      Logger.warn('wallet', 'Sign Typed Data: EVM subwallet not found');
+      return;
     }
   }
 
@@ -159,10 +223,7 @@ export class SignTypedDataPage implements OnInit {
    * sending the intent response.
    */
   async cancelOperation(navigateBack = true) {
-    await this.sendIntentResponse(
-      { data: null },
-      this.receivedIntent.intentId, navigateBack
-    );
+    await this.sendIntentResponse({ data: null }, this.receivedIntent.intentId, navigateBack);
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
@@ -172,39 +233,61 @@ export class SignTypedDataPage implements OnInit {
 
   async confirmSign(): Promise<void> {
     const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id);
-    if (payPassword === null) { // cancelled by user
+    if (payPassword === null) {
+      // cancelled by user
       return;
     }
 
-    let privateKeyHexNoprefix = await (await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword)).replace("0x", "");
-
-    let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
-    let signedData: string = null;
-
     try {
-      if (this.useV4) {
-        signedData = signTypedData_v4(privateKey, {
-          data: this.dataToSign
-        });
-      }
-      else {
-        signedData = signTypedData(privateKey, {
-          data: this.dataToSign
-        });
-      }
+      // Create the digest for typed data
+      const digest = TypedDataUtils.sign(this.dataToSign, this.useV4);
+      const digestHex = digest.toString('hex');
 
-      void this.sendIntentResponse({
-        signedData
-      }, this.receivedIntent.intentId);
-    }
-    catch (e) {
+      // Get the wallet address for signing
+      const walletAddress = this.evmSubWallet.getCurrentReceiverAddress();
+
+      // Use networkWallet.signDigest() instead of accessing private key directly
+      const signature = await this.networkWallet.signDigest(walletAddress, digestHex, payPassword);
+
+      if (signature) {
+        void this.sendIntentResponse(
+          {
+            signedData: signature
+          },
+          this.receivedIntent.intentId
+        );
+      } else {
+        Logger.error('wallet', 'Sign typed data - signature is null');
+        await this.sendIntentResponse({ data: null }, this.receivedIntent.intentId);
+      }
+    } catch (e) {
       // Sign method can throw exception in case some provided content has an invalid format
       // i.e.: array value, with "address" type. In such case, we fail silently.
-      Logger.error("wallet", "Sign typed data - unable to sign, sending empty response:", e);
-      await this.sendIntentResponse(
-        { data: null },
-        this.receivedIntent.intentId
-      );
+      Logger.error('wallet', 'Sign typed data - unable to sign, sending empty response:', e);
+      await this.sendIntentResponse({ data: null }, this.receivedIntent.intentId);
     }
+  }
+
+  /**
+   * Get the signing wallet name
+   */
+  public getSigningWalletName(): string {
+    if (this.networkWallet && this.networkWallet.masterWallet) {
+      return this.networkWallet.masterWallet.name;
+    }
+    return '';
+  }
+
+  /**
+   * Get the signing wallet address
+   */
+  public getSigningWalletAddress(): string {
+    if (this.networkWallet) {
+      const addresses = this.networkWallet.getAddresses();
+      if (addresses && addresses.length > 0) {
+        return addresses[0].address;
+      }
+    }
+    return '';
   }
 }

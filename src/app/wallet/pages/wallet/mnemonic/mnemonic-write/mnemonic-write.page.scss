@@ -22,7 +22,8 @@
     ion-slides {
         margin: 0;
         width: 100%;
-        --bullet-background-active: var(--ion-text-color);
+        --bullet-background: var(--essentials-pagination-color) ;
+        --bullet-background-active: var(--essentials-pagination-active-color);
 
         ion-slide {
             width: 100%;

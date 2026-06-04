@@ -1,0 +1,68 @@
+<!-- Standard EOA Account Transaction Component -->
+<div class="msg-container" *ngIf="totalTransactionCost">
+  <p>{{ 'wallet.esctransaction-you-are-using' | translate }}</p>
+  <h1><span>{{ uiService.getFixedBalance(totalTransactionCost.totalAsBigNumber) }} {{
+      getCurrencyInUse() }}</span> </h1>
+
+  <!-- Value -->
+  <div class="item-row ripple ion-activatable">
+    <div class="item-label">{{ 'wallet.esctransaction-value' | translate }}</div>
+    <div class="item-value">
+      <span>{{ uiService.getFixedBalance(totalTransactionCost.valueAsBigNumber) }} {{ getCurrencyInUse() }}</span>
+    </div>
+  </div>
+
+  <!-- Fees -->
+  <div class="item-row ripple ion-activatable">
+    <div class="item-label">{{ 'wallet.esctransaction-fees' | translate }}</div>
+    <div class="item-value">
+      <div class="fee-primary">
+        <span>{{ uiService.getFixedBalance(totalTransactionCost.feesAsBigNumber) }} {{ getCurrencyInUse() }}</span>
+      </div>
+      <div class="fee-secondary">
+        <span>{{ totalTransactionCost.currencyFee }}</span> {{ getNativeCurrencyInUse() }}
+      </div>
+    </div>
+    <div class="edit-gas-col">
+      <ion-icon name="create-outline" (click)="editGasPrice()"></ion-icon>
+    </div>
+  </div>
+
+  <!-- Gas price editing row -->
+  <div class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
+    <div class="item-label">{{ 'wallet.eth-gasprice' | translate }}</div>
+    <div class="item-input">
+      <ion-input type="number" autosize clearInput name="gasPriceGwei" ngDefaultControl [(ngModel)]="gasPriceGwei"
+        (ionChange)="updateGasprice($event)" mode="ios">
+      </ion-input>
+    </div>
+  </div>
+
+  <!-- Gas limit editing row -->
+  <div class="item-row ripple ion-activatable" *ngIf="showEditGasPrice">
+    <div class="item-label">{{ 'wallet.eth-gaslimit' | translate }}</div>
+    <div class="item-input">
+      <ion-input type="number" autosize clearInput name="gasLimit" ngDefaultControl [(ngModel)]="gasLimitDisplay"
+        (ionChange)="updateGasLimit($event)" mode="ios">
+      </ion-input>
+    </div>
+  </div>
+
+  <!-- Balance remaining -->
+  <div class="item-row ripple ion-activatable">
+    <div class="item-label">{{ 'wallet.balance-remaining' | translate }}</div>
+    <div class="item-value">
+      <span>{{ uiService.getFixedBalance(balance) }} {{ getCurrencyInUse() }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- BUTTONS FOOTER -->
+<div class="footer-buttons" *ngIf="totalTransactionCost">
+  <ebutton class="btn cancel" [class.expand]="!balanceIsEnough()" [disabled]="!balanceIsEnough()" mode="cancel"
+    (clicked)="cancelOperation()"
+    [title]="(!balanceIsEnough() ? 'wallet.insufficient-balance' : 'common.cancel') | translate">
+  </ebutton>
+  <ebutton class="btn confirm" *ngIf="balanceIsEnough()" [disabled]="signingAndTransacting" (clicked)="goTransaction()"
+    [title]="'common.confirm' | translate"></ebutton>
+</div>

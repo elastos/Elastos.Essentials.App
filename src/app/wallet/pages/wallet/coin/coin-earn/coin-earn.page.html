@@ -5,7 +5,7 @@
         <ion-row class="network-row">
             <ion-col size="12" class="left-col">
                 <img [src]="networkWallet.network.logo">
-                <h1>{{ networkWallet.network.name }}</h1>
+                <h1>{{ networkWallet.network.getEffectiveName() }}</h1>
             </ion-col>
         </ion-row>
         <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode">

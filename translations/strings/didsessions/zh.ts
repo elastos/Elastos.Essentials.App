@@ -1,6 +1,5 @@
 export const zh = {
-
-  'didsessions': {
+  didsessions: {
     // Titlebar
     'create-identity': '创建身份',
     'import-my-did': '导入身份',
@@ -28,7 +27,7 @@ export const zh = {
     'wrong-password': '密码错误',
     'mnemonics-incorrect': '助记词错误',
     'check-mnemonics': '请检查您的助记词',
-    'Okay': '确定',
+    Okay: '确定',
     'id-already-added': '身份已添加',
     'import-again': '您是否要导入其他身份？',
     'import-again-cancel': '取消',
@@ -40,10 +39,15 @@ export const zh = {
     // Create screen
     'welcome-message1': '欢迎来到 Web3，在这里您可以控制自己的数字身份',
     'welcome-message2': '使用一份助记词，管理您的多网络加密钱包、您的 Web3 DID 身份和您自己的存储空间。',
-    'welcome-message3': "让我们首先创建一个新身份或导入现有身份。您将在 30 秒内为 Web3 做好准备！",
+    'welcome-message3': '让我们首先创建一个新身份或导入现有身份。您将在 30 秒内为 Web3 做好准备！',
     'create-message': '您可以创建一个全新的身份，也可以导入一个已有的身份',
-    'new': '新建',
-    'import': '导入',
+    new: '新建',
+    import: '导入',
+
+    // Lightweight mode
+    'create-wallet': '创建钱包',
+    'create-wallet-message': '创建新钱包或导入现有钱包以开始使用加密货币',
+    'import-wallet': '导入钱包',
 
     // Edit
     'your-name': '您的名称？',
@@ -57,6 +61,7 @@ export const zh = {
     'import-from-wallet': '从钱包导入',
     'enter-mnemonic': '请在此输入助记词',
     'import-prompt': '请输入您的12个安全字（助记词）以导入您的身份',
+    'import-wallet-prompt': '请输入您的12个安全字（助记词）以导入您的钱包',
 
     // Multiple DIDs to import screen
     'more-than-one-import-did-pick-one': '有多个身份，请选择一个进行导入',
@@ -87,12 +92,13 @@ export const zh = {
     'print-yes': '是',
 
     // Scan
-    'scan-title': "扫描助记词",
+    'scan-title': '扫描助记词',
 
     // Prepare DID
     'getting-ready': '准备',
-    'ready': '准备好啦！',
+    ready: '准备好啦！',
     prepare: {
+      'lightweight-message-1': '欢迎来到 Essentials 的 Web3 未来。请稍等，我们正在准备一切。',
       'publish-title': '将您的身份发布到公共链',
       'publish-intro': '这一步是强制性的，只需要几秒钟，请稍等...',
       'sign-in-title': '登录中',
@@ -109,8 +115,6 @@ export const zh = {
     'error-hive-storage-setup-failed': '配置Hive存储失败: ',
     'error-can-not-publish': '抱歉，您的身份暂时无法发布',
     'error-failed-to-publish': '发布身份失败: ',
-    'error-failed-to-sign': '登录失败: ',
+    'error-failed-to-sign': '登录失败: '
   }
 };
-
-

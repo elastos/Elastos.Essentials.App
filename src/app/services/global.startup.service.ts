@@ -21,6 +21,7 @@ export class GlobalStartupService {
   public static instance: GlobalStartupService;
 
   private startupScreenReady = false;
+  private splashAnimationEnded = false;
 
   constructor(
     private storage: GlobalStorageService,
@@ -29,31 +30,36 @@ export class GlobalStartupService {
     private globalNav: GlobalNavService,
     private globalSecurityService: GlobalSecurityService,
     private didSessions: GlobalDIDSessionsService,
-    private theme: GlobalThemeService) {
-        GlobalStartupService.instance = this;
+    private theme: GlobalThemeService
+  ) {
+    GlobalStartupService.instance = this;
   }
 
   init() {
-    lottie.splashscreen.on("lottieAnimationEnd", (event)=> {
-        if (this.startupScreenReady)
-            lottie.splashscreen.hide();
-    })
+    this.splashAnimationEnded = false;
+    const lottie = (window as any).lottie;
+    lottie.splashscreen.on('lottieAnimationEnd', event => {
+      this.splashAnimationEnded = true;
+      if (this.startupScreenReady) void lottie.splashscreen.hide();
+    });
   }
 
   /**
    * Navigate to the right startup screen
    */
   public async navigateToFirstScreen(): Promise<void> {
-    Logger.log("Global", "Navigating to start screen");
+    Logger.log('Global', 'Navigating to start screen');
 
     // Warn user about the device being a rooted device if necessary
-    if (!(await this.globalSecurityService.rootedDeviceWarningWasDismissed()) && (await this.globalSecurityService.isDeviceRooted())) {
+    if (
+      !(await this.globalSecurityService.rootedDeviceWarningWasDismissed()) &&
+      (await this.globalSecurityService.isDeviceRooted())
+    ) {
       await this.globalNav.navigateTo(App.SECURITY, '/security/rootedwarning');
-    }
-    else {
+    } else {
       let entry = await this.didSessions.getSignedInIdentity();
       if (entry != null) {
-        Logger.log("Global", "An active DID exists, navigating to startup screen");
+        Logger.log('Global', 'An active DID exists, navigating to startup screen');
 
         // Make sure to load the active user theme preference before entering the home screen
         // to avoid blinking from light to dark modes while theme is fetched from preferences
@@ -61,11 +67,10 @@ export class GlobalStartupService {
 
         await this.navigateToStartupScreen();
       } else {
-        Logger.log("Global", "No active DID, navigating to DID sessions");
+        Logger.log('Global', 'No active DID, navigating to DID sessions');
 
         // Navigate to DID creation
-        await this.globalNav.navigateTo("didsessions", '/didsessions/pickidentity');
-        // await this.globalNav.navigateTo("didsessions", '/didsessions/chooseimporteddid');
+        await this.globalNav.navigateTo('didsessions', '/didsessions/pickidentity');
       }
     }
   }
@@ -99,15 +104,14 @@ export class GlobalStartupService {
    */
   public setStartupScreenReady() {
     this.startupScreenReady = true;
-    if (lottie.splashscreen.animationEnded)
-        lottie.splashscreen.hide();
+    if (this.splashAnimationEnded) void lottie.splashscreen.hide();
   }
 
   public getStartupScreen(did: string): Promise<string> {
-    return this.prefs.getPreference<string>(did, NetworkTemplateStore.networkTemplate, "ui.startupscreen");
+    return this.prefs.getPreference(did, NetworkTemplateStore.networkTemplate, 'ui.startupscreen');
   }
 
   public setStartupScreen(did: string, screenKey: string): Promise<void> {
-    return this.prefs.setPreference(did, NetworkTemplateStore.networkTemplate, "ui.startupscreen", screenKey);
+    return this.prefs.setPreference(did, NetworkTemplateStore.networkTemplate, 'ui.startupscreen', screenKey);
   }
 }

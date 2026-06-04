@@ -89,15 +89,21 @@ export class PictureComponent implements OnInit {
         //Logger.log('Identity', "Chosen image data base64:", imageData);
 
         if (imageData) {
-          let mimeType = await pictureMimeType(imageData);
+          if (imageData.startsWith("data:")) {
+            PictureComponent.shared.rawBase64ImageOut = dataUrlToRawImageData(imageData);
+            PictureComponent.shared.dataUrlImageOut = imageData;
+          } else {
+            let mimeType = await pictureMimeType(imageData);
 
-          if (["image/png", "image/jpg", "image/jpeg"].indexOf(mimeType) < 0) {
-            this.native.genericToast('identity.not-a-valid-picture');
-            return;
+            if (["image/png", "image/jpg", "image/jpeg"].indexOf(mimeType) < 0) {
+              Logger.warn('identity mimeType:', mimeType);
+              this.native.genericToast('identity.not-a-valid-picture');
+              return;
+            }
+            PictureComponent.shared.rawBase64ImageOut = imageData;
+            PictureComponent.shared.dataUrlImageOut = 'data:' + mimeType + ';base64,' + imageData;
           }
 
-          PictureComponent.shared.rawBase64ImageOut = imageData;
-          PictureComponent.shared.dataUrlImageOut = 'data:' + mimeType + ';base64,' + imageData;
           this.dataUrlImage = PictureComponent.shared.dataUrlImageOut;
         }
       });

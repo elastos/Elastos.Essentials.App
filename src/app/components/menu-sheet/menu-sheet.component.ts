@@ -3,11 +3,12 @@ import { Component, OnInit } from '@angular/core';
 import { ModalController, NavParams } from '@ionic/angular';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
-import { Stack } from "stack-typescript";
+import { Stack } from 'stack-typescript';
 
 export type MenuSheetMenu = {
   icon?: string;
   title: string;
+  titleIcon?: string;
   subtitle?: string;
   items?: MenuSheetMenu[];
   routeOrAction?: string | (() => void | Promise<void>);
@@ -15,7 +16,7 @@ export type MenuSheetMenu = {
 
 export type MenuSheetComponentOptions = {
   menu: MenuSheetMenu;
-}
+};
 
 @Component({
   selector: 'app-menu-sheet',
@@ -23,10 +24,13 @@ export type MenuSheetComponentOptions = {
   styleUrls: ['./menu-sheet.component.scss'],
   animations: [
     trigger('enterTrigger', [
-      state('fadeIn', style({
-        opacity: '1',
-        transform: 'translateY(0%)'
-      })),
+      state(
+        'fadeIn',
+        style({
+          opacity: '1',
+          transform: 'translateY(0%)'
+        })
+      ),
       transition('void => *', [style({ opacity: '0', transform: 'translateY(50%)' }), animate('500ms')])
     ])
   ]
@@ -42,7 +46,7 @@ export class MenuSheetComponent implements OnInit {
     public theme: GlobalThemeService,
     private modalCtrl: ModalController,
     private nav: GlobalNavService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     let options = this.navParams.data as MenuSheetComponentOptions;
@@ -50,19 +54,16 @@ export class MenuSheetComponent implements OnInit {
     this.selectedMenu = this.menu;
   }
 
-  ionViewWillEnter() {
-  }
+  ionViewWillEnter() {}
 
   public onMenuItemClicked(menuItem: MenuSheetMenu) {
     if (menuItem.items) {
       this.navStack.push(this.selectedMenu); // Saves the current menu to be able to go back
       this.selectedMenu = menuItem; // Enters the submenu
-    }
-    else {
+    } else {
       this.dismiss();
 
-      if (typeof menuItem.routeOrAction === "string")
-        void this.nav.navigateTo(null, menuItem.routeOrAction);
+      if (typeof menuItem.routeOrAction === 'string') void this.nav.navigateTo(null, menuItem.routeOrAction);
       else {
         void menuItem.routeOrAction();
       }

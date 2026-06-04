@@ -299,7 +299,11 @@ class WebViewHandler:  NSObject {
             self.webView.loadFileURL(url, allowingReadAccessTo: url);
         }
         else {
-            let request = URLRequest.init(url: url);
+            var fixedUrl = url;
+            if (url.scheme == nil) {
+                fixedUrl = URL(string: "https://" + url.absoluteString)!
+            }
+            let request = URLRequest.init(url: fixedUrl);
             self.webView.load(request);
         }
     }
@@ -501,8 +505,8 @@ extension WebViewHandler: WKNavigationDelegate {
             return
         }
 
-        //if is an app store, tel, sms, mailto or geo link, let the system handle it, otherwise it fails to load it
-    //        let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
+        // if is an app store, tel, sms, mailto or geo link, let the system handle it, otherwise it fails to load it
+        // let allowedSchemes = ["itms-appss", "itms-apps", "tel", "sms", "mailto", "geo"];
         let allowedSchemes = ["https", "http"];
         if (!allowedSchemes.contains(url!.scheme!)) {
             if (isDefinedCustomScheme(url!.absoluteString)) {

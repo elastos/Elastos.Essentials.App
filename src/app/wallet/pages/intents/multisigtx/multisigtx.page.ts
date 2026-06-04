@@ -45,24 +45,24 @@ import { CoinTxInfoParams } from '../../wallet/coin/coin-tx-info/coin-tx-info.pa
 type MultiSigTxIntent = IntentTransfer & {
   params: {
     t: string;
-  }
-}
+  };
+};
 
 @Component({
   selector: 'app-multisigtx',
   templateUrl: './multisigtx.page.html',
-  styleUrls: ['./multisigtx.page.scss'],
+  styleUrls: ['./multisigtx.page.scss']
 })
 export class MultiSigTxPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
   private networkWallet: AnyNetworkWallet = null;
   private receivedIntent: MultiSigTxIntent;
-  private multiSigWallet: StandardMultiSigMasterWallet = null;
+  public multiSigWallet: StandardMultiSigMasterWallet = null;
 
   public initializationComplete = false;
   public txInfo: PendingMultiSigTransaction = null;
-  public transactionKey = "";
+  public transactionKey = '';
   public unknownNetworkError = false;
 
   constructor(
@@ -79,20 +79,18 @@ export class MultiSigTxPage implements OnInit {
     private networksService: WalletNetworkService,
     private offlineTransactionsService: OfflineTransactionsService,
     private multiSigService: MultiSigService
-  ) {
-  }
+  ) {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('wallet.multi-sig-tx-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener((icon) => {
+    this.titleBar.addOnItemClickedListener(icon => {
       if (icon.key === 'close') {
         void this.cancelOperation();
       }
@@ -101,8 +99,7 @@ export class MultiSigTxPage implements OnInit {
     void this.init();
   }
 
-  ionViewWillLeave() {
-  }
+  ionViewWillLeave() {}
 
   ngOnDestroy() {
     void this.cancelOperation(false);
@@ -112,12 +109,12 @@ export class MultiSigTxPage implements OnInit {
     this.receivedIntent = <MultiSigTxIntent>this.coinTransferService.intentTransfer;
     //this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
 
-    Logger.log("wallet", "Multisig Transaction intent params", this.receivedIntent.params);
+    Logger.log('wallet', 'Multisig Transaction intent params', this.receivedIntent.params);
 
     this.initializationComplete = false;
     this.transactionKey = this.receivedIntent.params.t;
     void this.multiSigService.fetchPendingTransaction(this.receivedIntent.params.t).then(async txInfo => {
-      Logger.log("wallet", "Pending transaction info retrieved:", txInfo);
+      Logger.log('wallet', 'Pending transaction info retrieved:', txInfo);
       this.txInfo = txInfo;
 
       if (txInfo) {
@@ -126,13 +123,14 @@ export class MultiSigTxPage implements OnInit {
         let network = this.networksService.getNetworkByKey(targetNetworkKey);
         if (!network) {
           this.unknownNetworkError = true;
-        }
-        else {
+        } else {
           if (this.networksService.activeNetwork.value.key !== network.key) {
             // Not the right network, auto switch + informa user
             await this.networksService.setActiveNetwork(network);
 
-            this.globalNativeService.genericToast(this.translate.instant('wallet.multi-sig-tx-switched-to-network', { network: network.name }));
+            this.globalNativeService.genericToast(
+              this.translate.instant('wallet.multi-sig-tx-switched-to-network', { network: network.getEffectiveName() })
+            );
           }
         }
       }
@@ -142,15 +140,17 @@ export class MultiSigTxPage implements OnInit {
   }
 
   public async pickMultiSigWallet() {
-    let pickedWallet = await this.walletUIService.pickWallet(networkWallet => {
+    let pickedMasterWallet = await this.walletUIService.pickWallet(walletEntry => {
+      const { masterWallet } = walletEntry;
+
       // Choose only among multisig wallets
-      if (!(networkWallet.masterWallet instanceof StandardMultiSigMasterWallet))
-        return false;
+      if (!(masterWallet instanceof StandardMultiSigMasterWallet)) return false;
 
       return true;
     });
-    if (pickedWallet) {
-      this.multiSigWallet = <StandardMultiSigMasterWallet>pickedWallet.masterWallet;
+
+    if (pickedMasterWallet) {
+      this.multiSigWallet = <StandardMultiSigMasterWallet>pickedMasterWallet;
       this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.multiSigWallet.id);
     }
   }
@@ -189,13 +189,18 @@ export class MultiSigTxPage implements OnInit {
 
     await this.offlineTransactionsService.storeTransaction(subWallet, offlineTransaction);
 
-    Logger.log("wallet", "Multisig intent screen created an initial offline transaction from an api info:", offlineTransaction, this.txInfo);
+    Logger.log(
+      'wallet',
+      'Multisig intent screen created an initial offline transaction from an api info:',
+      offlineTransaction,
+      this.txInfo
+    );
 
     let params: CoinTxInfoParams = {
       masterWalletId: this.networkWallet.id,
       subWalletId: subWallet.id,
       offlineTransaction
     };
-    Native.instance.go("/wallet/coin-tx-info", params);
+    Native.instance.go('/wallet/coin-tx-info', params);
   }
 }

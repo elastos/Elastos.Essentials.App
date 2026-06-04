@@ -3,6 +3,7 @@ import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
 import { LedgerSignComponent } from './ledger-sign.component';
+import { SharedComponentsModule } from 'src/app/components/sharedcomponents.module';
 
 @NgModule({
   declarations: [
@@ -11,7 +12,8 @@ import { LedgerSignComponent } from './ledger-sign.component';
   imports: [
     CommonModule,
     IonicModule,
-    TranslateModule
+    TranslateModule,
+    SharedComponentsModule
   ],
   exports: [
     LedgerSignComponent

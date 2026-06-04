@@ -1,24 +1,32 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
-import { App } from "src/app/model/app.enum";
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
+import { App } from 'src/app/model/app.enum';
 import { GlobalNavService } from 'src/app/services/global.nav.service';
 import { GlobalPreferencesService } from 'src/app/services/global.preferences.service';
+import { DIDSessionsStore } from 'src/app/services/stores/didsessions.store';
+import { NetworkTemplateStore } from 'src/app/services/stores/networktemplate.store';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
 import { UXService } from '../../services/ux.service';
 
 @Component({
   selector: 'app-didsessions-settings',
   templateUrl: './settings.page.html',
-  styleUrls: ['./settings.page.scss'],
+  styleUrls: ['./settings.page.scss']
 })
 export class SettingsPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
-  public hasConfigSections = false
+  public hasConfigSections = false;
+  public isLightweightMode = true; // Whether lightweight UI mode is enabled
 
   constructor(
     public theme: GlobalThemeService,
@@ -30,20 +38,22 @@ export class SettingsPage implements OnInit {
     this.init();
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   init() {
     this.hasConfigSections = true;
   }
 
-  ionViewWillEnter() {
+  async ionViewWillEnter() {
     this.titleBar.setTitle(this.translate.instant('launcher.app-settings'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, { key: 'back', iconPath: BuiltInIcon.BACK });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      this.uxService.onTitleBarItemClicked(icon);
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        this.uxService.onTitleBarItemClicked(icon);
+      })
+    );
+    await this.fetchLightweightMode();
   }
 
   ionViewWillLeave() {
@@ -52,5 +62,30 @@ export class SettingsPage implements OnInit {
 
   open(router: string) {
     void this.nav.navigateTo(App.SETTINGS, router);
+  }
+
+  private async fetchLightweightMode(): Promise<void> {
+    this.isLightweightMode = await this.prefsService.getLightweightMode(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      true
+    );
+  }
+
+  public getLightweightModeTitle(): string {
+    if (this.isLightweightMode) {
+      return this.translate.instant('settings.lightweight-mode-enabled');
+    } else {
+      return this.translate.instant('settings.lightweight-mode-disabled');
+    }
+  }
+
+  async toggleLightweightMode(): Promise<void> {
+    this.isLightweightMode = !this.isLightweightMode;
+    await this.prefsService.setLightweightMode(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      this.isLightweightMode
+    );
   }
 }

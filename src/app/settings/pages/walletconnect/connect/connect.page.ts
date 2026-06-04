@@ -50,13 +50,14 @@ export class WalletConnectConnectPage implements OnInit {
 
   ngOnInit() {
     // eslint-disable-next-line @typescript-eslint/no-misused-promises
-    this.route.queryParams.subscribe(async params => {
+    this.route.queryParams.subscribe(params => {
       this.sessionRequest = params as any;
 
       // Use only the active master wallet.
       this.ethAccounts = [];
 
       // Sometimes it is necessary to wait for the wallet to initialize.
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       this.activeNetworkWalletSubscription = this.walletManager.activeNetworkWallet.subscribe(async (activeWallet) => {
         if (activeWallet) {
             let subwallet = activeWallet.getMainEvmSubWallet();

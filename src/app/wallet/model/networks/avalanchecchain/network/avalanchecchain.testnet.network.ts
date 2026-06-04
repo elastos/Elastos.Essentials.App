@@ -1,19 +1,26 @@
-import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { AvalancheCChainBaseNetwork } from "./avalanchecchain.base.network";
+import { TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { AvalancheCChainBaseNetwork } from './avalanchecchain.base.network';
 
 export class AvalancheCChainTestNetNetwork extends AvalancheCChainBaseNetwork {
   constructor() {
     super(
-      "avalanchecchain",
-      "Avalanche FUJI C-Chain",
-      "Avalanche FUJI C",
-      "assets/wallet/networks/avalance.png",
-      "AVAX",
-      "Avalanche Token",
+      'avalanchecchain',
+      'Avalanche FUJI C-Chain',
+      'Avalanche FUJI C',
+      'assets/wallet/networks/avalance.png',
+      'AVAX',
+      'Avalanche Token',
       TESTNET_TEMPLATE,
       43113,
+      [],
+      [
+        {
+          name: 'Avalanchecchain Testnet RPC',
+          url: 'https://api.avax-test.network/ext/bc/C/rpc'
+        }
+      ]
     );
 
-    this.averageBlocktime = 5 // 2;
+    this.averageBlocktime = 5; // 2;
   }
 }

@@ -29,7 +29,7 @@ class IntentManagerImpl implements EssentialsIntentPlugin.IntentManager {
     sendIntent(action: string, params: any): Promise<any> {
         return new Promise((resolve, reject)=>{
             exec((ret)=>{
-                if ((typeof (ret.result) == "string") && (ret.result.length > 0)) {
+                if (ret && (typeof (ret.result) == "string") && (ret.result.length > 0)) {
                     ret.result = JSON.parse(ret.result);
                 }
                 resolve(ret);
@@ -44,7 +44,7 @@ class IntentManagerImpl implements EssentialsIntentPlugin.IntentManager {
     sendUrlIntent(url: string): Promise<any> {
         return new Promise((resolve, reject)=>{
             exec((ret)=>{
-                if ((typeof (ret.result) == "string") && (ret.result.length > 0)) {
+                if (ret && (typeof (ret.result) == "string") && (ret.result.length > 0)) {
                     ret.result = JSON.parse(ret.result);
                 }
                 resolve(ret);
@@ -58,7 +58,7 @@ class IntentManagerImpl implements EssentialsIntentPlugin.IntentManager {
 
     addIntentListener(callback: (msg: EssentialsIntentPlugin.ReceivedIntent) => void) {
         function _onReceiveIntent(ret) {
-            if ((typeof (ret.params) == "string") && (ret.params.length > 0)) {
+            if (ret && (typeof (ret.params) == "string") && (ret.params.length > 0)) {
                 ret.params = JSON.parse(ret.params);
             }
             if (callback) {

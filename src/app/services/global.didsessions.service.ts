@@ -11,9 +11,9 @@ import { Direction, GlobalNavService } from './global.nav.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 import { GlobalServiceManager } from './global.service.manager';
 import { GlobalStorageService } from './global.storage.service';
-import { MigrationService } from './migrator/migration.service';
 import { DIDSessionsStore } from './stores/didsessions.store';
 import { NetworkTemplateStore } from './stores/networktemplate.store';
+import { GlobalLightweightService } from './global.lightweight.service';
 
 declare let internalManager: InternalPlugin.InternalManager;
 
@@ -24,6 +24,7 @@ export type SignInOptions = {
   /** Suggested session language code to use? */
   sessionLanguage?: string;
   showBlockingSignInDialog?: boolean;
+  lightweightMode?: boolean;
 }
 
 @Injectable({
@@ -38,11 +39,11 @@ export class GlobalDIDSessionsService {
   public activeIdentityBackedUp = new BehaviorSubject<boolean>(true); // Whether the active identity is backed up or not. Tru by default whilte loading, to now show any false backup prompt to users.
 
   constructor(private storage: GlobalStorageService,
-    private migrationService: MigrationService,
     private globalNavService: GlobalNavService,
     private globalNetworkService: GlobalNetworksService,
     private globalIntentService: GlobalIntentService,
     public globalNativeService: GlobalNativeService,
+    private lightweightService: GlobalLightweightService,
     public translate: TranslateService,
   ) {
     GlobalDIDSessionsService.instance = this;
@@ -100,11 +101,6 @@ export class GlobalDIDSessionsService {
     if (this.getIdentityIndex(entry.didString) >= 0) {
       // Delete before adding again (update)
       this.deleteIdentityEntryIfExists(entry.didString);
-    }
-    else {
-      // Real DID creation
-      // Let the migration service know about this newly created session
-      await this.migrationService.onDIDSessionCreated(entry.didString);
     }
 
     // Save the session creation date
@@ -180,13 +176,12 @@ export class GlobalDIDSessionsService {
       await this.saveDidSessionsToDisk();
     }
 
-    // Check if some migrations are due - fully block the process and UI until all
-    // migrations are fully completed
-    await this.migrationService.checkAndNavigateToMigration(entry);
-
     this.signedInIdentity = entry;
 
     DIDSessionsStore.signedInDIDString = this.signedInIdentity.didString;
+
+    if (options && options.lightweightMode)
+      await this.lightweightService.setLightweightMode(options.lightweightMode);
 
     if (!options || options.showBlockingSignInDialog)
       await this.globalNativeService.showLoading(this.translate.instant("didsessions.prepare.sign-in-title"));

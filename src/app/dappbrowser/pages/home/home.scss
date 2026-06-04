@@ -101,6 +101,15 @@
         margin-bottom: 15px;
     }
 
+    // Cap recent apps visible height to about 4 rows and allow scroll for more
+    .recent-list {
+        &.scrollable {
+            max-height: calc((60px + 20px) * 4 + 10px * 2); // approx: icon 50 + padding 20 per row, plus margins
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+
     .dapp-row {
         margin-bottom: 10px;
         border-radius: 17px;

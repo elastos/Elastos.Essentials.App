@@ -1,26 +1,44 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid class="subsetting-grid" [class.dark-subsetting-grid]="theme.darkMode">
-    <ion-row class="section-row" *ngFor="let instance of activeInstances">
-      <ion-col size="2" class="icon-col">
-        <img class="connector-logo" [src]="getSessionLogo(instance)" src-fallback="assets/settings/icon/walletconnect.svg"/>
-      </ion-col>
-      <ion-col size="8" class="left-col">
-        <div class="name">{{ getSessionName(instance) }}</div>
-        <div class="description" *ngIf="getSessionDescription(instance)">{{ getSessionDescription(instance) }}</div>
-        <div class="url" *ngIf="getSessionUrl(instance)">{{ getSessionUrl(instance) }}
+  <div class="sessions-container" [class.dark-sessions-container]="theme.darkMode">
+    <div class="session-card" *ngFor="let instance of activeInstances">
+      <div class="card-header">
+        <div class="app-info">
+          <img class="connector-logo" [src]="getSessionLogo(instance)"
+            src-fallback="assets/settings/icon/walletconnect.svg" />
+          <div class="app-details">
+            <h3 class="app-name">{{ getSessionName(instance) }}</h3>
+            <p class="app-description" *ngIf="getSessionDescription(instance)">{{ getSessionDescription(instance) }}</p>
+          </div>
         </div>
-        <div class="sessionid">{{ getSessionID(instance) }}</div>
-        <div class="creation-date" *ngIf="getSessionCreationDate(instance)">{{ getSessionCreationDate(instance) }}</div>
-      </ion-col>
-      <ion-col size="2" class="right-col" (click)="killSession(instance)">
-        <img
-          [src]="theme.darkMode ? '/assets/settings/icon/delete-white.svg' : '/assets/settings/icon/delete-black.svg'">
-      </ion-col>
-    </ion-row>
-    <div class="no-session" *ngIf="activeInstances && activeInstances.length == 0">
-      <h3>{{ 'settings.wallet-connect-no-session' | translate }}</h3>
-      <p>{{ 'settings.wallet-connect-no-session-info' | translate }}</p>
+        <button class="delete-button" (click)="killSession(instance)" aria-label="Disconnect session">
+          <img
+            [src]="theme.darkMode ? '/assets/settings/icon/delete-white.svg' : '/assets/settings/icon/delete-black.svg'">
+        </button>
+      </div>
+
+      <div class="card-details">
+        <div class="detail-row" *ngIf="getSessionUrl(instance)">
+          <span class="label">URL:</span>
+          <span class="value url-value">{{ getSessionUrl(instance) }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="label">Connected:</span>
+          <span class="value" *ngIf="getSessionCreationDate(instance)">{{ getSessionCreationDate(instance) }}</span>
+        </div>
+        <div class="detail-row session-id-row" *ngIf="developer.developerMode">
+          <span class="label">Session ID:</span>
+          <span class="value session-id">{{ getSessionID(instance) }}</span>
+        </div>
+      </div>
     </div>
-  </ion-grid>
+
+    <div class="no-sessions" *ngIf="activeInstances && activeInstances.length == 0">
+      <div class="empty-state">
+        <img src="assets/settings/icon/walletconnect.svg" alt="WalletConnect" class="empty-icon">
+        <h3>{{ 'settings.wallet-connect-no-session' | translate }}</h3>
+        <p>{{ 'settings.wallet-connect-no-session-info' | translate }}</p>
+      </div>
+    </div>
+  </div>
 </ion-content>

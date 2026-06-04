@@ -15,6 +15,17 @@
       </ion-col>
     </ion-row>
 
+    <ion-row class="section">
+      <ion-col size="10.5" class="title-col">
+        <h1>{{ 'settings.developer-bitcoin-signdata' | translate }}</h1>
+        <h2 class="secondary-text">{{ getAllowBitcoinSignDataTitle() }}</h2>
+      </ion-col>
+      <ion-col size="1.5" class="right-col">
+        <ion-toggle [(ngModel)]="allowBitcoinSignData" (ionChange)="toggleAllowBitcoinSignDataChanged()" mode="ios">
+        </ion-toggle>
+      </ion-col>
+    </ion-row>
+
     <!-- Hive data sync -->
     <ion-row class="section">
       <ion-col size="10.5" class="title-col">
@@ -30,7 +41,7 @@
     </ion-row>
 
     <!-- Publish identity -->
-    <ion-row class="section">
+    <ion-row class="section" *ngIf="!lightweightMode">
       <ion-col size="10.5" class="title-col">
         <h1>{{ 'settings.identity-publishing' | translate }}</h1>
         <h2 class="secondary-text">{{ getPublishIdentityTitle() }}</h2>
@@ -44,7 +55,7 @@
     </ion-row>
 
     <!-- Main API provider -->
-    <ion-row class="section" (click)="open('/settings/privacy/elastosapiprovider')">
+    <ion-row class="section" *ngIf="!lightweightMode" (click)="open('/settings/privacy/elastosapiprovider')">
       <ion-col size="11" class="title-col">
         <h1>{{ 'settings.elastos-api-provider' | translate }}</h1>
         <h2 class="secondary-text">{{ 'settings.elastos-api-provider-des' | translate }}</h2>
@@ -56,7 +67,7 @@
     </ion-row>
 
     <!-- Credential stats -->
-    <ion-row class="section">
+    <ion-row class="section" *ngIf="!lightweightMode">
       <ion-col size="10.5" class="title-col">
         <h1>{{ 'settings.privacy-toolbox-stats' | translate }}</h1>
         <h2 class="secondary-text">{{ getCredentialToolboxTitle() }}</h2>

@@ -1,0 +1,75 @@
+<ion-content>
+    <app-titlebar></app-titlebar>
+    <ion-grid class="container" [class.dark-container]="theme.darkMode">
+        <!-- Network info header -->
+        <ion-row class="network-header">
+            <ion-col size="12">
+                <div class="network-name">{{ network?.getEffectiveName() }}</div>
+                <div class="network-subtitle">{{ 'wallet.rpc-providers-subtitle' | translate }}</div>
+            </ion-col>
+        </ion-row>
+
+        <!-- RPC Providers List -->
+        <div class="rpc-providers-section">
+            <div class="rpc-provider" [class.builtin-provider]="isBuiltinProvider(provider)"
+                *ngFor="let provider of allRpcProviders; trackBy: trackByUrl">
+                <ion-row class="rpc-provider-row">
+                    <ion-col size="8" class="rpc-provider-info">
+                        <div class="rpc-provider-name">{{ provider.name || 'Unnamed Provider' }}</div>
+                        <div class="rpc-provider-url">{{ provider.url }}</div>
+                        <div class="rpc-provider-meta">
+                            <div class="rpc-provider-type">
+                                <span class="type-badge" [class.builtin]="isBuiltinProvider(provider)"
+                                    [class.custom]="!isBuiltinProvider(provider)">
+                                    <span *ngIf="isBuiltinProvider(provider)">
+                                        {{ 'wallet.builtin' | translate }}
+                                    </span>
+                                    <ion-icon *ngIf="!isBuiltinProvider(provider)" name="person"
+                                        class="custom-icon"></ion-icon>
+                                </span>
+                            </div>
+                            <div class="rpc-provider-quality">
+                                <ion-icon [name]="getStatusIcon(provider)" [class]="getStatusColorClass(provider)"
+                                    class="status-icon"></ion-icon>
+                                <span class="ping-time">{{ formatPingTime(provider) }}</span>
+                            </div>
+                        </div>
+                    </ion-col>
+                    <ion-col size="4" class="rpc-provider-actions">
+                        <ion-radio-group [(ngModel)]="selectedRpcUrl" name="selectedRpc">
+                            <ion-radio [value]="provider.url" mode="md"></ion-radio>
+                        </ion-radio-group>
+                        <ion-button fill="clear" size="small" color="danger" *ngIf="!isBuiltinProvider(provider)"
+                            (click)="removeRpcProvider(provider)">
+                            <ion-icon name="trash" slot="icon-only"></ion-icon>
+                        </ion-button>
+                    </ion-col>
+                </ion-row>
+            </div>
+        </div>
+
+        <!-- Add new RPC provider button -->
+        <ion-row class="add-provider-row">
+            <ion-col size="12">
+                <ion-button fill="outline" size="default" (click)="addRpcProvider()">
+                    <ion-icon name="add" slot="start"></ion-icon>
+                    {{ 'wallet.add-rpc-provider' | translate }}
+                </ion-button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+
+    <div class="footer" [class.dark-container]="theme.darkMode">
+        <ion-grid>
+            <ion-row>
+                <ion-col size="6">
+                    <ebutton mode="cancel" (clicked)="cancel()" [title]="'common.cancel' | translate">
+                    </ebutton>
+                </ion-col>
+                <ion-col size="6">
+                    <ebutton (clicked)="saveChanges()" [title]="'common.save-changes' | translate"></ebutton>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </div>
+</ion-content>

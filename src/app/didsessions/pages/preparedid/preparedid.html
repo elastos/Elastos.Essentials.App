@@ -1,98 +1,17 @@
 <ion-content>
   <app-titlebar></app-titlebar>
-  <ion-grid class="container ion-text-center" [class.dark-container]="theme.darkMode">
 
-    <ion-row class="slide-bar-row">
-      <ion-col size="2.2">
-        <div [class.fillBar]="slideIndex >= 0"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="slideIndex >= 1"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="slideIndex >= 2"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="slideIndex >= 3"></div>
-      </ion-col>
-      <ion-col size="2.2">
-        <div [class.fillBar]="slideIndex >= 4"></div>
-      </ion-col>
-    </ion-row>
+  <!-- Advanced Mode Component -->
+  <app-prepare-did-advanced-mode *ngIf="!isLightweightMode" [hidden]="hidden" [slideIndex]="slideIndex"
+    [slideOpts]="slideOpts" [publishError]="publishError" [signInError]="signInError" [hiveError]="hiveError"
+    [finalizingPreparation]="finalizingPreparation" (slideIndexChange)="onSlideIndexChange($event)"
+    (cancelPreparation)="cancelPreparation()" (finalizePreparation)="finalizePreparation()">
+  </app-prepare-did-advanced-mode>
 
-    <ion-slides #slide [options]="slideOpts" [class.hidden]="hidden">
-      <ion-slide class="ion-text-center">
-        <div class="slide-card">
-          <img
-            [src]="!theme.darkMode ? 'assets/didsessions/onboard/slide1.svg' : 'assets/didsessions/onboard/dark_mode/slide1.svg'">
-          <h1>{{ 'didsessions.prepare.publish-title' | translate }}</h1>
-          <p>{{ 'didsessions.prepare.publish-intro' | translate }}</p>
-          <div class="error-box" *ngIf="publishError">
-            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
-            <span class="error">{{ publishError }}</span>
-          </div>
-        </div>
-      </ion-slide>
-
-      <ion-slide class="ion-text-center">
-        <div class="slide-card">
-          <img src="assets/didsessions/onboard/slide2.svg">
-          <h1>{{ 'didsessions.prepare.sign-in-title' | translate }}</h1>
-          <p>{{ 'didsessions.prepare.sign-in-intro' | translate }}</p>
-          <div class="error-box" *ngIf="signInError">
-            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
-            <span class="error">{{ signInError }}</span>
-          </div>
-        </div>
-      </ion-slide>
-
-      <ion-slide class="ion-text-center">
-        <div class="slide-card">
-          <img class="img-3" src="assets/didsessions/onboard/slide3.svg">
-          <h1>{{ 'didsessions.prepare.hive-title' | translate }}</h1>
-          <p>{{ 'didsessions.prepare.hive-intro' | translate }}</p>
-          <div class="error-box" *ngIf="hiveError">
-            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
-            <span class="error">{{ hiveError }}</span>
-          </div>
-        </div>
-      </ion-slide>
-
-      <ion-slide class="ion-text-center">
-        <div class="slide-card">
-          <img src="assets/didsessions/onboard/slide4.svg">
-          <h1>{{ 'didsessions.prepare.wallet-title' | translate }}</h1>
-          <p>{{ 'didsessions.prepare.wallet-intro' | translate }}</p>
-          <div class="error-box" *ngIf="signInError">
-            <ebutton (clicked)="cancelPreparation()" [title]="'common.back' | translate"></ebutton>
-            <span class="error">{{ signInError }}</span>
-          </div>
-        </div>
-      </ion-slide>
-
-      <ion-slide class="ion-text-center">
-        <div class="slide-card">
-          <img src="assets/shared/essentials-black-circle.svg">
-          <h1>{{ 'didsessions.prepare.done-title' | translate }}</h1>
-          <p>{{ 'didsessions.prepare.done-intro' | translate }}</p>
-          <ebutton (clicked)="finalizePreparation()" *ngIf="!finalizingPreparation"
-            [title]="'common.continue' | translate"></ebutton>
-        </div>
-      </ion-slide>
-
-    </ion-slides>
-
-    <ion-row *ngIf="(slideIndex < 4 || finalizingPreparation) && !(signInError || hiveError || publishError)"
-      class="slide-circle-row">
-      <ion-col size="12">
-        <lottie-player src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1"
-          style="width: 160x; height: 160px;" autoplay loop></lottie-player>
-        <span>{{ 'common.please-wait' | translate }}</span>
-      </ion-col>
-    </ion-row>
-
-    <!--     <div class="progress-circle progress-1"><span>1</span></div>   -->
-
-  </ion-grid>
+  <!-- Lightweight Mode Component -->
+  <app-prepare-did-lightweight-mode *ngIf="isLightweightMode" [hidden]="hidden" [slideIndex]="slideIndex"
+    [slideOpts]="slideOpts" [finalizingPreparation]="finalizingPreparation"
+    (slideIndexChange)="onSlideIndexChange($event)" (finalizePreparation)="finalizePreparation()">
+  </app-prepare-did-lightweight-mode>
 
 </ion-content>

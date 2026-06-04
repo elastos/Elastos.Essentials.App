@@ -11,7 +11,7 @@
             <ion-row class="displayed-network ripple ion-activatable" (click)="pickNetwork()">
                 <ion-col offset="2" size="7">
                     <img [src]="currentNetwork.logo">
-                    <ion-label>{{ currentNetwork.name }}</ion-label>
+                    <ion-label>{{ currentNetwork.getEffectiveName() }}</ion-label>
                 </ion-col>
                 <ion-col offset="1" size="1">
                     <img class="arrow-icon"
@@ -53,7 +53,7 @@
                                 WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance(),
                                 networkWallet.getDecimalPlaces())
                                 }}</span>
-                            <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
+                            <span class="ela"> {{ networkWallet.getDisplayTokenName() }}</span>
                         </h4>
                         <h4 *ngIf="currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(networkWallet.getDisplayBalanceInActiveCurrency())
@@ -69,7 +69,7 @@
                     <h3 *ngIf="stakedBalance">{{ getStakeTitle() | translate }}</h3>
                     <div *ngIf="stakedBalance" (click)="currencyService.toggleCurrencyDisplay()">
                         <h5 *ngIf="!currencyService.useCurrency">{{ getStakedBalanceInNative() }}
-                            <span class="ela">{{ networkWallet.getDisplayTokenName() }}</span>
+                            <span class="ela"> {{ networkWallet.getDisplayTokenName() }}</span>
                         </h5>
                         <h5 *ngIf="currencyService.useCurrency">{{ getStakedBalanceInCurrency() }}
                             <span class="ela"> {{ currencyService.selectedCurrency.symbol }}</span>
@@ -77,25 +77,24 @@
                     </div>
 
                     <!-- Single address - directly copy -->
-                    <div class="single-address"
-                      *ngIf="networkWallet && walletAddresses.length === 1"
-                      (click)="copySingleAddressToClipboard($event, walletAddresses[0].address)">
-                      <div class="bottom">
-                        <div class="address">
-                          {{ walletAddresses[0].title }} {{ 'launcher.address' | translate }} {{getReducedWalletAddress(walletAddresses[0].address)}}
+                    <div class="single-address" *ngIf="networkWallet && walletAddresses.length === 1"
+                        (click)="copySingleAddressToClipboard($event, walletAddresses[0].address)">
+                        <div class="bottom">
+                            <div class="address">
+                                {{ walletAddresses[0].title }} {{ 'launcher.address' | translate }}
+                                {{getReducedWalletAddress(walletAddresses[0].address)}}
+                            </div>
+                            <img
+                                [src]="theme.darkMode ? 'assets/launcher/icons/dark_mode/copy.svg' : 'assets/launcher/icons/copy.svg'">
                         </div>
-                        <img
-                          [src]="theme.darkMode ? 'assets/launcher/icons/dark_mode/copy.svg' : 'assets/launcher/icons/copy.svg'">
-                      </div>
                     </div>
 
                     <!-- Several addresses - need to open a popup to select -->
-                    <div class="addresses"
-                      *ngIf="networkWallet && walletAddresses.length > 1"
-                      (click)="pickWalletAddress($event)">
-                      {{ 'launcher.addresses' | translate }}
-                      <img
-                        [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/down-arrow.svg' : 'assets/wallet/icons/down-arrow.svg'">
+                    <div class="addresses" *ngIf="networkWallet && walletAddresses.length > 1"
+                        (click)="pickWalletAddress($event)">
+                        {{ 'launcher.addresses' | translate }}
+                        <img
+                            [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/down-arrow.svg' : 'assets/wallet/icons/down-arrow.svg'">
                     </div>
                 </ion-row>
             </ion-row>
@@ -115,7 +114,7 @@
                 <ion-ripple-effect></ion-ripple-effect>
             </ion-row>
             <ion-row *ngIf="!networkWallet && !noAddressForLedgerWallet">
-                {{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetwork.name} }}
+                {{ 'wallet.wallet-unsupported-on-network' | translate:{network: currentNetwork.getEffectiveName()} }}
             </ion-row>
             <div *ngIf="networkWallet && !noAddressForLedgerWallet" style="width:100%">
                 <!-- TOKENS -->
@@ -142,7 +141,8 @@
                     </ion-col>
                     <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 7.5 : 5" class="middle-col">
                         <h1>{{ uiService.getSubwalletTitle(subWallet) }}</h1>
-                        <p class="secondary-text">{{ uiService.getSubwalletSubtitle(subWallet) }}</p>
+                        <!-- <p class="secondary-text">{{ uiService.getSubwalletSubtitle(subWallet) }}</p> -->
+                        <p class="secondary-text">{{ subWallet.getDisplayCoinPrice() }}</p>
                     </ion-col>
                     <ion-col [size]="subWallet.getDisplayBalance().isZero() ? 2.5 : 5" class="right-col">
                         <h1>{{ uiService.getFixedBalance(subWallet.getDisplayBalance()) }}</h1>
@@ -153,7 +153,8 @@
                         </p>
                     </ion-col>
                     <ion-col offset="2" size="10" class="bottom-col">
-                        <span *ngIf="subWallet.type === CoinType.ERC20 || subWallet.type === CoinType.TRC20" class="secondary-text">{{
+                        <span *ngIf="subWallet.type === CoinType.ERC20 || subWallet.type === CoinType.TRC20"
+                            class="secondary-text">{{
                             subWallet.getDisplayableERC20TokenInfo() }}</span>
                     </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>
@@ -178,7 +179,7 @@
                     <ion-col size="8" class="middle-col">
                         <h1>{{ nft.name }}</h1>
                         <div class="bottom-col">
-                            <p class="secondary-text">{{ currentNetwork.name }} {{nft.type}} NFT</p>
+                            <p class="secondary-text">{{ currentNetwork.getEffectiveName() }} {{nft.type}} NFT</p>
                         </div>
                     </ion-col>
                     <ion-col size="2" class="right-col">

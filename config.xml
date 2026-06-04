@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-packageName="io.web3essentials.app" android-versionCode="301070" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="3.1.7" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
+<widget android-packageName="io.web3essentials.app" android-versionCode="3021400" id="org.elastos.essentials.app" ios-CFBundleVersion="100" version="3.2.14" xmlns="http://www.w3.org/ns/widgets" xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools">
     <name>Essentials</name>
     <description>
         Essentials web3 wallet
     </description>
-    <author email="contact@web3essentials.io" href="https://web3essentials.io">
-        Elaphant Limited.
+    <author email="secretariat@elastos.com" href="https://www.elastos.com">
+        Elastos DAO LLC
     </author>
     <content src="index.html" />
     <access origin="*" />
@@ -33,16 +33,21 @@
     <preference name="CustomSchemeFilters" value="wc:" />
     <preference name="LoadUrlTimeoutValue" value="50000" />
     <preference name="GradlePluginGoogleServicesEnabled" value="true" />
-    <preference name="GradlePluginGoogleServicesVersion" value="4.3.14" />
+    <preference name="GradlePluginGoogleServicesVersion" value="4.3.15" />
     <platform name="android">
         <preference name="AndroidLaunchMode" value="singleTask" />
         <preference name="AndroidXEnabled" value="true" />
-        <preference name="GradleVersion" value="8.4" />
+        <preference name="GradleVersion" value="8.7" />
         <preference name="GradlePluginKotlinEnabled" value="true" />
+        <preference name="GradlePluginKotlinVersion" value="1.9.0" />
+        <preference name="GradlePluginKotlinCodeStyle" value="official" />
+        <preference name="AndroidGradlePluginVersion" value="8.5.1" />
         <preference name="LottieEnableHardwareAcceleration" value="true" />
-        <preference name="android-targetSdkVersion" value="33" />
+        <preference name="android-targetSdkVersion" value="35" />
+        <preference name="android-compileSdkVersion" value="35" />
         <preference name="android-minSdkVersion" value="24" />
         <preference name="SplashScreenDelay" value="1" />
+        <preference name="LottieHideTimeout" value="10000" />
         <preference name="AndroidWindowSplashScreenBackground" value="#000000" />
         <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest">
             <manifest xmlns:tools="http://schemas.android.com/tools" />
@@ -164,13 +169,17 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </config-file>
+        <config-file parent="/resources/style" target="app/src/main/res/values/themes.xml">
+            <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+        </config-file>
         <resource-file src="resources/android/xml/network_security_config.xml" target="app/src/main/res/xml/network_security_config.xml" />
         <allow-intent href="market:*" />
-        <icon background="resources/android/values/ic_launcher_background.xml" density="mdpi" foreground="resources/android/mipmap-mdpi/ic_launcher_foreground.png" src="resources/android/mipmap-mdpi/ic_launcher_round.png" />
-        <icon background="resources/android/values/ic_launcher_background.xml" density="hdpi" foreground="resources/android/mipmap-hdpi/ic_launcher_foreground.png" src="resources/android/mipmap-hdpi/ic_launcher_round.png" />
-        <icon background="resources/android/values/ic_launcher_background.xml" density="xhdpi" foreground="resources/android/mipmap-xhdpi/ic_launcher_foreground.png" src="resources/android/mipmap-xhdpi/ic_launcher_round.png" />
-        <icon background="resources/android/values/ic_launcher_background.xml" density="xxhdpi" foreground="resources/android/mipmap-xxhdpi/ic_launcher_foreground.png" src="resources/android/mipmap-xxhdpi/ic_launcher_round.png" />
-        <icon background="resources/android/values/ic_launcher_background.xml" density="xxxhdpi" foreground="resources/android/mipmap-xxxhdpi/ic_launcher_foreground.png" src="resources/android/mipmap-xxxhdpi/ic_launcher_round.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="mdpi" foreground="resources/android/mipmap-mdpi/ic_launcher_foreground.png" src="resources/android/icon/drawable-mdpi-icon.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="hdpi" foreground="resources/android/mipmap-hdpi/ic_launcher_foreground.png" src="resources/android/icon/drawable-hdpi-icon.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="xhdpi" foreground="resources/android/mipmap-xhdpi/ic_launcher_foreground.png" src="resources/android/icon/drawable-xhdpi-icon.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="xxhdpi" foreground="resources/android/mipmap-xxhdpi/ic_launcher_foreground.png" src="resources/android/icon/drawable-xxhdpi-icon.png" />
+        <icon background="resources/android/values/ic_launcher_background.xml" density="xxxhdpi" foreground="resources/android/mipmap-xxxhdpi/ic_launcher_foreground.png" src="resources/android/icon/drawable-xxxhdpi-icon.png" />
+        <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <resource-file src="resources/android/values/ic_launcher_background.xml" target="app/src/main/res/values/ic_launcher_background.xml" />
         <resource-file src="resources/android/mipmap-anydpi-v26/ic_launcher.xml" target="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" />
         <resource-file src="resources/android/notifications/drawable-mdpi/notification_icon.png" target="app/src/main/res/drawable-mdpi/notification_icon.png" />
@@ -179,12 +188,14 @@
         <resource-file src="resources/android/notifications/drawable-xxhdpi/notification_icon.png" target="app/src/main/res/drawable-xxhdpi/notification_icon.png" />
         <resource-file src="resources/android/notifications/drawable-xxxhdpi/notification_icon.png" target="app/src/main/res/drawable-xxxhdpi/notification_icon.png" />
         <resource-file src="resources/android/notifications/drawable-xxxhdpi/notification_icon_large.png" target="app/src/main/res/drawable-xxxhdpi/notification_icon_large.png" />
+        <resource-file src="google-services.json" target="app/google-services.json" />
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
         <preference name="deployment-target" value="13.0" />
         <preference name="WKWebViewOnly" value="true" />
+        <preference name="LottieHideTimeout" value="10" />
         <feature name="CDVWKWebViewEngine">
             <param name="ios-package" value="CDVWKWebViewEngine" />
         </feature>
@@ -219,7 +230,10 @@
             </array>
         </config-file>
         <config-file parent="NSPhotoLibraryUsageDescription" target="*-Info.plist">
-            <string>Maybe access the photo library</string>
+            <string>Allow access to your photo library to let you choose profile pictures and to scan QR codes from saved images.</string>
+        </config-file>
+        <config-file parent="NSCameraUsageDescription" target="*-Info.plist">
+            <string>Allow access to the camera to scan QR codes for wallet addresses and transaction signing.</string>
         </config-file>
         <preference name="SwiftVersion" value="5.2" />
         <preference name="UseSwiftLanguageVersion" value="5.2" />
@@ -302,6 +316,7 @@
                 </dict>
             </array>
         </privacy-manifest>
+        <resource-file src="GoogleService-Info.plist" />
         <icon height="57" src="resources/ios/icon/icon.png" width="57" />
         <icon height="114" src="resources/ios/icon/icon@2x.png" width="114" />
         <icon height="20" src="resources/ios/icon/icon-20.png" width="20" />
@@ -350,7 +365,6 @@
         <splash height="1792" src="resources/ios/splash/Default-1792h~iphone.png" width="828" />
         <splash height="828" src="resources/ios/splash/Default-Landscape-1792h~iphone.png" width="1792" />
     </platform>
-    <hook src="scripts/download_3rdparty.js" type="after_platform_add" />
     <hook src="scripts/modify_xcode_project.js" type="after_platform_add" />
     <hook src="scripts/apply_patches.js" type="before_plugin_install" />
     <hook src="scripts/podDeploymentTargetFix.js" type="after_prepare" />

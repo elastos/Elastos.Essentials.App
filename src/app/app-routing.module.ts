@@ -23,10 +23,10 @@ const routes: Routes = [
   { path: 'dappbrowser', loadChildren: () => import('./dappbrowser/module').then(x => x.DAppBrowserModule), canActivate: [AuthGuardService] },
   { path: 'redpackets', loadChildren: () => import('./redpackets/module').then(x => x.RedPacketsModule), canActivate: [AuthGuardService] },
   { path: 'security', loadChildren: () => import('./security/module').then(x => x.SecurityModule) },
-  { path: 'migrator', loadChildren: () => import('./migrator/module').then(x => x.MigratorModule) },
   //{ path: 'easybridge', loadChildren: () => import('./easybridge/module').then(x => x.EasyBridgeModule) },
-  { path: 'multiswap', loadChildren: () => import('./multiswap/module').then(x => x.MultiSwapModule) },
+  // { path: 'multiswap', loadChildren: () => import('./multiswap/module').then(x => x.MultiSwapModule) },
   { path: 'staking', loadChildren: () => import('./voting/staking/module').then(x => x.StakingModule), canActivate: [AuthGuardService] },
+  { path: 'mainchainpolls', loadChildren: () => import('./voting/mainchainpolls/module').then(x => x.MainchainPollsModule), canActivate: [AuthGuardService] },
 
   // Prevent angular from calling a random default route sometimes when starting,
   // leading to crashes if platform is not ready yet

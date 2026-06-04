@@ -1,0 +1,552 @@
+@import "../../root.scss";
+
+ion-content {
+    --padding-bottom: 80px;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    margin-top: 80px;
+}
+
+.container {
+    padding: 10px;
+
+    .poll-header {
+        border-radius: 17px;
+        padding: 20px 15px;
+        margin: 0 10px 12.5px;
+        background: var(--essentials-box-color);
+        display: flex;
+        flex-direction: column;
+
+        .poll-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--ion-text-color);
+            line-height: 1.4;
+        }
+
+        .poll-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .poll-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+
+            &.active {
+                background: rgba(0, 185, 120, 0.15);
+                color: #00b978;
+            }
+
+            &.ended {
+                background: rgba(255, 152, 0, 0.15);
+                color: #ff9800;
+            }
+
+            &.upcoming {
+                background: rgba(115, 44, 206, 0.15);
+                color: #732cce;
+            }
+        }
+
+        .poll-dates {
+            margin-top: 8px;
+
+            ion-row {
+                margin: 0;
+            }
+
+            ion-col {
+                padding: 0;
+            }
+
+            .date-label {
+                font-size: 12px;
+                color: var(--ion-color-medium);
+                margin: 0 0 4px 0;
+                font-weight: 400;
+                opacity: 0.7;
+            }
+
+            .date-value {
+                font-size: 13px;
+                color: var(--ion-text-color);
+                margin: 0;
+                font-weight: 500;
+            }
+        }
+
+        .poll-url {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+
+            .url-label {
+                font-size: 12px;
+                color: var(--ion-color-medium);
+                margin: 0;
+                font-weight: 500;
+                opacity: 0.8;
+            }
+
+            .url-value {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                background: var(--ion-background-color);
+                border-radius: 10px;
+                border: 1px solid var(--essentials-border-separator-color);
+
+                a {
+                    color: var(--ion-text-color);
+                    text-decoration: none;
+                    font-size: 13px;
+                    word-break: break-all;
+                    flex: 1;
+                }
+
+                .copy-url-button {
+                    height: 28px;
+                    width: 28px;
+                    min-width: 28px;
+                    --padding-start: 0;
+                    --padding-end: 0;
+                }
+            }
+        }
+    }
+
+    .vote-section {
+        margin: 0 10px;
+        padding: 20px 15px;
+        background: var(--essentials-box-color);
+        border-radius: 17px;
+        margin-bottom: 20px;
+
+        h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--ion-text-color);
+        }
+
+        .wallet-info {
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--essentials-border-separator-color);
+            margin-bottom: 16px;
+
+            .wallet-address-label {
+                font-size: 12px;
+                color: var(--ion-color-medium);
+                margin-bottom: 6px;
+                opacity: 0.7;
+            }
+
+            .wallet-address {
+                font-size: 13px;
+                font-family: monospace;
+                word-break: break-all;
+                color: var(--ion-text-color);
+                font-weight: 500;
+            }
+        }
+
+        .voted-info {
+            text-align: center;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            .voted-badge,
+            .vote-pending {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 8px;
+                color: #00b978;
+                font-weight: 600;
+                margin-bottom: 16px;
+                font-size: 16px;
+                width: 100%;
+
+                ion-icon {
+                    font-size: 24px;
+                }
+            }
+
+            .vote-pending {
+                color: #ffd534;
+            }
+
+            .vote-details {
+                font-size: 14px;
+                color: var(--ion-color-medium);
+                margin: 8px 0;
+                font-weight: 400;
+            }
+        }
+
+        .not-voted-info {
+            .balance-loading {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                padding: 20px;
+                margin-bottom: 20px;
+
+                ion-spinner {
+                    margin-bottom: 12px;
+                }
+
+                p {
+                    font-size: 14px;
+                    color: var(--ion-color-medium);
+                    margin: 0;
+                }
+            }
+
+            .wallet-balance-section {
+                margin-top: 20px;
+                margin-bottom: 20px;
+
+                .wallet-info {
+                    padding-bottom: 12px;
+                    margin-bottom: 12px;
+                    border-bottom: 1px solid var(--essentials-border-separator-color);
+
+                    .wallet-address-label {
+                        font-size: 12px;
+                        color: var(--ion-color-medium);
+                        margin-bottom: 6px;
+                        opacity: 0.7;
+                    }
+
+                    .wallet-address {
+                        font-size: 13px;
+                        font-family: monospace;
+                        word-break: break-all;
+                        color: var(--ion-text-color);
+                        font-weight: 500;
+                    }
+                }
+
+                .available-balance {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: var(--ion-color-medium);
+                    margin-bottom: 12px;
+                    text-align: left;
+                    padding: 10px 12px;
+                    background: transparent;
+                    border: 1px solid var(--essentials-border-separator-color);
+                    border-radius: 8px;
+                    opacity: 0.8;
+                }
+            }
+
+            .choices-list {
+                margin-bottom: 0;
+
+                h3 {
+                    font-size: 14px;
+                    font-weight: 600;
+                    margin-bottom: 12px;
+                    color: var(--ion-text-color);
+                }
+
+                ion-radio-group {
+                    width: 100%;
+                }
+
+                ion-item {
+                    --padding-start: 0;
+                    --inner-padding-start: 12px;
+                    --padding-end: 0px;
+                    --padding-top: 12px;
+                    --padding-bottom: 12px;
+                    --min-height: 48px;
+                    --inner-padding-end: 0px;
+                    margin-bottom: 8px;
+                    border-radius: 8px;
+                    --background: var(--ion-background-color);
+                    --border-radius: 8px;
+                    --border-width: 0px;
+                    --border-style: none;
+                    --inner-border-width: 0px;
+                    display: flex;
+                    align-items: center;
+                    width: 100%;
+                    white-space: normal;
+
+                    &::part(native) {
+                        border: none;
+                        border-bottom: none;
+                        padding-right: 0px;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    &.selected {
+                        --background: rgba(0, 185, 120, 0.15);
+
+                        ion-label {
+                            h2 {
+                                color: #00b978;
+                                font-weight: 600;
+                            }
+                        }
+                    }
+
+                    ion-label {
+                        display: flex;
+                        align-items: center;
+                        margin: 0;
+                        flex: 1;
+                        white-space: normal;
+                        overflow: visible;
+                        text-overflow: clip;
+                        min-height: 24px;
+
+                        h2 {
+                            font-size: 15px;
+                            font-weight: 500;
+                            color: var(--ion-text-color);
+                            margin: 0;
+                            line-height: 1.4;
+                            white-space: normal;
+                            overflow: visible;
+                            text-overflow: clip;
+                            word-wrap: break-word;
+                            word-break: break-word;
+                            display: flex;
+                            align-items: center;
+                        }
+                    }
+
+                    ion-radio {
+                        margin: 0;
+                        margin-right: 15px;
+                        align-self: center;
+                    }
+                }
+            }
+
+            .vote-button-container {
+                margin-top: 20px;
+                width: 100%;
+            }
+
+            .other-votes-warning {
+                margin-top: 16px;
+                padding: 12px;
+                background: rgba(255, 152, 0, 0.1);
+                border-radius: 8px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+
+                ion-icon {
+                    font-size: 24px;
+                    min-width: 24px;
+                }
+
+                p {
+                    margin: 0;
+                    color: var(--ion-text-color);
+                    font-size: 13px;
+                    line-height: 1.4;
+                    font-weight: 500;
+                }
+            }
+
+            .test-memo-button {
+                margin-top: 12px;
+                --border-radius: 8px;
+                height: 40px;
+                font-size: 12px;
+                --color: var(--ion-color-medium);
+            }
+        }
+
+        .cannot-vote-info {
+            text-align: center;
+            padding: 20px 0;
+            font-size: 14px;
+            font-weight: 500;
+
+            p {
+                margin: 0;
+                padding: 12px 16px;
+                border-radius: 8px;
+                display: inline-block;
+            }
+
+            &.upcoming {
+                p {
+                    background: rgba(115, 44, 206, 0.15);
+                    color: #732cce;
+                }
+            }
+
+            &.finished {
+                p {
+                    background: rgba(255, 152, 0, 0.15);
+                    color: #ff9800;
+                }
+            }
+
+            &:not(.upcoming):not(.finished) {
+                p {
+                    color: var(--ion-color-medium);
+                }
+            }
+        }
+
+        .insufficient-balance-warning {
+            margin-bottom: 16px;
+            padding: 12px;
+            background: rgba(255, 56, 56, 0.1);
+            border-radius: 8px;
+            text-align: center;
+
+            p {
+                margin: 4px 0;
+                color: var(--ion-color-danger);
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            .warning-note {
+                font-size: 12px;
+                color: var(--ion-color-medium);
+                font-weight: 400;
+                margin-top: 8px;
+            }
+        }
+    }
+
+    .poll-results-section {
+        margin: 0 10px;
+        padding: 20px 15px;
+        background: var(--essentials-box-color);
+        border-radius: 17px;
+        margin-bottom: 20px;
+
+        h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--ion-text-color);
+        }
+
+        .results-summary {
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--essentials-border-separator-color);
+
+            .total-votes {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--ion-text-color);
+                margin: 0;
+            }
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+
+            .result-item {
+                padding: 16px;
+                background: var(--ion-background-color);
+                border-radius: 8px;
+                border: 1px solid var(--essentials-border-separator-color);
+
+                .result-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-start;
+                    margin-bottom: 12px;
+
+                    .choice-title {
+                        font-size: 15px;
+                        font-weight: 600;
+                        color: var(--ion-text-color);
+                        margin: 0;
+                        flex: 1;
+                        line-height: 1.4;
+                        padding-right: 12px;
+                    }
+
+                    .result-percentage {
+                        font-size: 16px;
+                        font-weight: 600;
+                        color: #00b978;
+                        white-space: nowrap;
+                    }
+                }
+
+                .result-details {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 12px;
+                    gap: 12px;
+
+                    .vote-amount {
+                        font-size: 14px;
+                        font-weight: 500;
+                        color: var(--ion-text-color);
+                        margin: 0;
+                    }
+
+                    .vote-count {
+                        font-size: 12px;
+                        color: var(--ion-color-medium);
+                        margin: 0;
+                        opacity: 0.7;
+                    }
+                }
+
+                .result-bar-container {
+                    width: 100%;
+                    height: 8px;
+                    background: var(--essentials-border-separator-color);
+                    border-radius: 4px;
+                    overflow: hidden;
+
+                    .result-bar {
+                        height: 100%;
+                        background: linear-gradient(90deg, #00b978 0%, rgba(0, 185, 120, 0.8) 100%);
+                        border-radius: 4px;
+                        transition: width 0.3s ease;
+                    }
+                }
+            }
+        }
+    }
+}
+
+.no-data {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ion-color-medium);
+    font-size: 14px;
+    font-weight: 500;
+}

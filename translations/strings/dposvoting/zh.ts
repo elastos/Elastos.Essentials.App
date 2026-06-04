@@ -33,7 +33,7 @@ export const zh = {
         'stats-overview': 'ELA网络统计',
         'stats-last-validator': '最近验证节点',
         'stats-total-voters': '总投票地址',
-        'stats-total-votes': '总投票',
+        'stats-total-votes': '总投票权',
         'stats-ela-staking': '参与投票的ELA总量',
         'stats-voters-percent': 'ELA投票数 / 总流通量',
         'stats-active-nodes': '激活的超级节点',
@@ -165,7 +165,7 @@ export const zh = {
         'confirm-update-prompt': '此节点未激活，是否继续更新投票？',
 
         'confirm-mintnft-title': '确认铸造 BPoS NFT',
-        'confirm-mintnft-prompt': '此节点未激活，是否继续铸造 BPoS NFT？',
+        'confirm-mintnft-prompt': '铸造 BPoS NFT 大约需要12分钟。铸造完成后，请切换到 Elastos Smart Chain 申领此BPoS NFT',
 
         'vote-warning': '此节点已经有大量的投票，因此您将获得较少的奖励。票权越接近8万，奖励就越多',
 

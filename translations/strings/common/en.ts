@@ -48,6 +48,7 @@ export const en = {
         // Popups, error messages
         'something-went-wrong': 'Something went wrong, please try again later',
         'please-wait': "Please wait...",
+        'ready-soon': "Ready soon",
         'sorry': 'Sorry',
         'name-is-missing': "Please enter a name",
         'error': 'Error',
