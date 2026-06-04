@@ -47,6 +47,6 @@ export class CovalentEvmSubWalletProvider<SubWalletType extends MainCoinEVMSubWa
 
     this.canFetchMore = canFetchMore;
 
-    await this.saveTransactions(transactions);
+    await this.saveTransactions(transactions, !afterTransaction);
   }
 }

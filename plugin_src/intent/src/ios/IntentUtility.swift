@@ -152,7 +152,9 @@
         guard let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
               let queryItems = components.queryItems else { return nil }
         return queryItems.reduce(into: [String: String]()) { (result, item) in
-            result[item.name] = item.value
+           // handle query parameters without value (e.g. ?key instead of ?key=value)
+           // if value is nil, use empty string as default value
+           result[item.name] = item.value ?? ""
         }
     }
  }

@@ -58,7 +58,7 @@ export class PacketDetailsPage implements OnInit {
   public justNoMorePackets = false;
   public captchaChallengeRequired = false;
   public packetIsInactive = false; // Whether the packet is live for everyone or not (paid)
-  private walletAddress: string;
+  public walletAddress: string;
   public promptMessage = '';
 
   // UI Model

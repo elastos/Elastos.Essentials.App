@@ -20,7 +20,7 @@
                 </ion-col>
                 <ion-col size="5" (click)="pickNetwork()" class="pick-network flex flex-justify-content-end">
                     <img *ngIf="selectedNetwork" [src]="selectedNetwork.logo" class="network-logo" />
-                    <ion-label *ngIf="selectedNetwork">{{ selectedNetwork.name }}</ion-label>
+                    <ion-label *ngIf="selectedNetwork">{{ selectedNetwork.getEffectiveName() }}</ion-label>
                     <ion-label *ngIf="!selectedNetwork">{{ 'wallet.ledger-pick-network' | translate }}</ion-label>
                     <img src="assets/wallet/icons/right-arrow-alt.svg" class="go-arrow" />
                 </ion-col>
@@ -73,7 +73,7 @@
             <ion-row class="account-row ripple ion-activatable" *ngFor="let address of addresses"
                 (click)="selectAddress(address)">
                 <ion-col size="1.25" class="index">
-                  <ion-label>{{ address.pathIndex + 1 }}</ion-label>
+                    <ion-label>{{ address.pathIndex + 1 }}</ion-label>
                 </ion-col>
                 <ion-col size="9.75">
                     <ion-label>{{ address.address }}</ion-label>
@@ -85,7 +85,8 @@
             </ion-row>
 
             <ion-row class="btn-row" *ngIf="shouldShowGetAddressButton()">
-                <ebutton [disabled]="gettingAddresses" (clicked)="refreshAddressesWithTimeout()" [title]="getButtonLabel() | translate">
+                <ebutton [disabled]="gettingAddresses" (clicked)="refreshAddressesWithTimeout()"
+                    [title]="getButtonLabel() | translate">
                 </ebutton>
             </ion-row>
         </ng-container>

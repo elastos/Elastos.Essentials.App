@@ -172,7 +172,7 @@ export class ERC20CoinService {
             // '* 1.5': Make sure the gaslimit is big enough - add a bit of margin for fluctuating gas price
             gasLimit = Math.ceil(gasTemp * 1.5).toString();
         } catch (error) {
-            Logger.error("redpackets", 'estimateGas error:', error);
+            Logger.error("wallet", 'estimateGas error:', error);
         }
 
         //Logger.log("redpackets","gasLimit", gasLimit);

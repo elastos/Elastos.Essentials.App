@@ -83,7 +83,7 @@ export class ProfileService extends GlobalService {
 
   // Publish status
   public didNeedsToBePublished = false;
-  private publishStatusFetched = false;
+  public publishStatusFetched = false;
 
   // Store contollers
   public popover: HTMLIonPopoverElement = null; // Store generic popover

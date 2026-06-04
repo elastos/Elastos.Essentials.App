@@ -45,7 +45,7 @@ export class FusionEvmTokenSubWalletProvider extends EtherscanEVMSubWalletTokenP
 
       this.canFetchMore = canFetchMore;
 
-      await this.saveTransactions(transactions);
+      await this.saveTransactions(transactions, !afterTransaction);
     } catch (e) {
       Logger.error('wallet', 'FusionEvmTokenSubWalletProvider fetchTransactions error:', e)
     }

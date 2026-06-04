@@ -13,7 +13,7 @@ export class BttcApi {
       case MAINNET_TEMPLATE:
         switch (type) {
           case BttcApiType.RPC: return 'https://rpc.bt.io';
-          case BttcApiType.ETHERSCAN_API: return 'https://api.bttcscan.com/api';
+          case BttcApiType.ETHERSCAN_API: return 'https://api.etherscan.io/v2/api';
           case BttcApiType.BLOCK_EXPLORER: return 'https://bttcscan.com';
           default:
             throw new Error("Bttc API - Unknown api type " + type);

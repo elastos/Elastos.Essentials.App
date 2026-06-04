@@ -1,25 +1,31 @@
-import { TESTNET_TEMPLATE } from "src/app/services/global.networks.service";
-import { UniswapCurrencyProvider } from "../../evms/uniswap.currencyprovider";
-import { IoTeXBaseNetwork } from "./iotex.base.network";
+import { TESTNET_TEMPLATE } from 'src/app/services/global.networks.service';
+import { UniswapCurrencyProvider } from '../../evms/uniswap.currencyprovider';
+import { IoTeXBaseNetwork } from './iotex.base.network';
 
 /**
  * See "mainnet" for more info
- * 
+ *
  * Faucet: https://faucet.iotex.io/
  */
 export class IoTeXTestNetNetwork extends IoTeXBaseNetwork {
   constructor() {
     super(
-      "iotex",
-      "IoTeX Testnet",
-      "IoTeX Testnet",
-      "assets/wallet/networks/iotex.svg",
-      "IOTX",
-      "IOTX",
+      'iotex',
+      'IoTeX Testnet',
+      'IoTeX Testnet',
+      'assets/wallet/networks/iotex.svg',
+      'IOTX',
+      'IOTX',
       TESTNET_TEMPLATE,
       4690,
       [
         // TODO: built-in tokens
+      ],
+      [
+        {
+          name: 'Iotex Testnet RPC',
+          url: 'https://babel-api.testnet.iotex.io'
+        }
       ],
       [
         // TODO: earn providers

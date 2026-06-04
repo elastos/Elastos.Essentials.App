@@ -1,4 +1,3 @@
-import type { ConfigInfo } from "@elastosfoundation/wallet-js-sdk";
 import { GlobalElastosAPIService } from "src/app/services/global.elastosapi.service";
 import { ERC20Coin, StandardCoinName } from "../../../../coin";
 import { NetworkAPIURLType } from "../../../base/networkapiurltype";
@@ -22,13 +21,5 @@ export class ElastosLRWNetwork extends ElastosMainChainNetworkBase {
 
   public getMainChainID(): number {
     return -1; // No ETHSC on LRW
-  }
-
-  public updateSPVNetworkConfig(onGoingConfig: ConfigInfo) {
-    onGoingConfig['ELA'] = {
-    };
-    onGoingConfig["IDChain"] = {
-    };
-    onGoingConfig['ETHDID'] = { chainID: '24', NetworkID: '24' };
   }
 }

@@ -2,7 +2,9 @@
   <app-titlebar></app-titlebar>
 
   <ion-grid class="container" [class.light-container]="!theme.darkMode" [class.dark-container]="theme.darkMode">
-    <ion-slides #widgetsslides [options]="widgetsSlidesOpts" (ionSlideDidChange)="onSlideChange($event)"
+    <!-- Non lightweight mode: 3 panels with slides -->
+    <ion-slides *ngIf="!lightweightMode" #widgetsslides [options]="widgetsSlidesOpts"
+      (ionSlideDidChange)="onSlideChange($event)" (ionSlideTouchEnd)="onSlideTouchEnd()"
       class="widgets-containers-slides" [class.hidden]="!slidesShown">
       <ion-slide>
         <widget-container name="left"></widget-container>
@@ -17,13 +19,18 @@
       </ion-slide>
     </ion-slides>
 
+    <!-- Lightweight mode: single container without slides -->
+    <div *ngIf="lightweightMode" class="lightweight-container">
+      <widget-container name="main"></widget-container>
+    </div>
+
   </ion-grid>
 
   <div class="home-footer">
     <div class="edit" (click)="toggleEditWidgets()">
       <img [src]="theme.darkMode ? '/assets/launcher/icons/dark_mode/edit.svg' : '/assets/launcher/icons/edit.svg'" />
     </div>
-    <div class="nav">
+    <div class="nav" *ngIf="!lightweightMode">
       <div class="dot" [class.active]="activeScreenIndex === 0"></div>
       <div class="dot" [class.active]="activeScreenIndex === 1"></div>
       <div class="dot" [class.active]="activeScreenIndex === 2"></div>

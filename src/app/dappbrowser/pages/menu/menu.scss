@@ -63,11 +63,46 @@
     font-size: 12px;
   }
 
+  .network {
+    font-size: 14px;
+    font-weight: 500;
+    margin-top: 2px;
+
+    &.no-connection {
+      opacity: 0.5;
+      font-style: italic;
+    }
+
+    .disconnect-action {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+      font-size: 11px;
+      opacity: 0.6;
+      color: var(--ion-color-danger);
+      cursor: pointer;
+      transition: opacity 0.2s ease;
+
+      &:hover {
+        opacity: 0.8;
+      }
+
+      ion-icon {
+        font-size: 12px;
+        margin-right: 3px;
+      }
+
+      span {
+        font-weight: 400;
+      }
+    }
+  }
+
   .switches-container {
     .logo-container {
       display: flex;
       align-items: center;
-    //   background: var(--ion-background-color);
+      //   background: var(--ion-background-color);
       border-radius: 10px;
       justify-content: center;
     }

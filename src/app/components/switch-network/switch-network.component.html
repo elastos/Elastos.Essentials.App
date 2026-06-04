@@ -8,7 +8,7 @@
         <ion-row class="networks">
           <ion-col size="5" class="network">
             <img [src]="currentNetwork.logo">
-            <ion-label>{{ currentNetwork.name }}</ion-label>
+            <ion-label>{{ currentNetwork.getEffectiveName() }}</ion-label>
           </ion-col>
           <ion-col size="2" class="arrow">
             <img class="arrow-icon"
@@ -16,7 +16,7 @@
           </ion-col>
           <ion-col size="5" class="network">
             <img [src]="targetNetwork.logo">
-            <ion-label>{{ targetNetwork.name }}</ion-label>
+            <ion-label>{{ targetNetwork.getEffectiveName() }}</ion-label>
           </ion-col>
         </ion-row>
       </ion-col>

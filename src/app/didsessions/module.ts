@@ -9,11 +9,15 @@ import { InlineSVGModule } from 'ng-inline-svg-2';
 import { SharedComponentsModule } from '../components/sharedcomponents.module';
 import { ComponentsModule } from './components/components.module';
 import { ChooseImportedDIDPage } from './pages/chooseimporteddid/chooseimporteddid.page';
+import { AdvancedModeComponent } from './pages/createidentity/components/advanced-mode/advanced-mode.component';
+import { LightweightModeComponent } from './pages/createidentity/components/lightweight-mode/lightweight-mode.component';
 import { CreateIdentityPage } from './pages/createidentity/createidentity';
 import { EditProfilePage } from './pages/editprofile/editprofile';
 import { ImportDIDPage } from './pages/importdid/importdid';
 import { LanguagePage } from './pages/language/language.page';
 import { PickIdentityPage } from './pages/pickidentity/pickidentity';
+import { AdvancedModeComponent as PrepareDIDAdvancedModeComponent } from './pages/preparedid/components/advanced-mode/advanced-mode.component';
+import { LightweightModeComponent as PrepareDIDLightweightModeComponent } from './pages/preparedid/components/lightweight-mode/lightweight-mode.component';
 import { PrepareDIDPage } from './pages/preparedid/preparedid';
 import { ScanPage } from './pages/scan/scan.page';
 import { SettingsSelectNetPage } from './pages/settings-select-net/settings-select-net.page';
@@ -24,6 +28,10 @@ import { DIDSessionsRoutingModule } from './routing';
   declarations: [
     LanguagePage,
     CreateIdentityPage,
+    AdvancedModeComponent,
+    LightweightModeComponent,
+    PrepareDIDAdvancedModeComponent,
+    PrepareDIDLightweightModeComponent,
     EditProfilePage,
     ImportDIDPage,
     ChooseImportedDIDPage,
@@ -43,14 +51,8 @@ import { DIDSessionsRoutingModule } from './routing';
     DIDSessionsRoutingModule,
     InlineSVGModule
   ],
-  entryComponents: [
-  ],
-  providers: [
-    QRScanner,
-    Platform,
-    WebView,
-    LoadingController
-  ],
+  entryComponents: [],
+  providers: [QRScanner, Platform, WebView, LoadingController],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class DIDSessionsModule { }
+export class DIDSessionsModule {}

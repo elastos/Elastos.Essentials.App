@@ -75,7 +75,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
     private displayableSubWallets: AnySubWallet[] = null;
     public stakingAssets: StakingData[] = null;
 
-    private walletAddresses: WalletAddressInfo[] = null;
+    public walletAddresses: WalletAddressInfo[] = null;
 
     public stakedBalance = null; // Staked on ELA main chain or Tron
 
@@ -98,8 +98,6 @@ export class WalletHomePage implements OnInit, OnDestroy {
     public hideRefresher = true;
 
     private updateInterval = null;
-
-    public shownSubWalletDetails: AnySubWallet = null;
 
     // Dummy Current Network
     public currentNetwork: AnyNetwork = null;
@@ -169,20 +167,15 @@ export class WalletHomePage implements OnInit, OnDestroy {
                 void this.updateCurrentWalletInfo()
             }
             else {
-                if (this.masterWallet && (this.masterWallet.type === WalletType.LEDGER)) {
-                    if (!this.masterWallet.supportsNetwork(this.networkService.activeNetwork.value)) {
-                        this.noAddressForLedgerWallet = true;
-                    }
-                }
+                this.checkLedgerWallet();
                 // Nothing to do, unsupported wallet for the active network
             }
         });
+
+        // When switching network, if the current wallet does not support this network, you can still get the current network name.
         this.activeNetworkSubscription = this.networkService.activeNetwork.subscribe(activeNetwork => {
             this.currentNetwork = activeNetwork;
-
             this.checkLedgerWallet();
-
-            this.stakedBalance = null;
         });
 
         this.sendTransactionSubscription = this.events.subscribe("wallet:transactionpublished", () => {
@@ -352,8 +345,8 @@ export class WalletHomePage implements OnInit, OnDestroy {
 
     async updateCurrentWalletInfo() {
         if (this.networkWallet) {
-            await this.networkWallet.update();
             await this.getStakedBalance();
+            await this.networkWallet.update();
             // TODO - FORCE REFRESH ALL COINS BALANCES ? this.currencyService.fetch();
         }
     }
@@ -546,7 +539,7 @@ export class WalletHomePage implements OnInit, OnDestroy {
       event.preventDefault();
       event.stopPropagation();
 
-      let confirmationMessage = this.translate.instant('launcher.address-copied-to-clipboard', { address });
+      let confirmationMessage = this.translate.instant('common.copied-to-clipboard');
       this.native.toast(confirmationMessage);
       void this.native.copyClipboard(address);
     }

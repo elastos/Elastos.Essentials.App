@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import * as moment from 'moment';
-import "moment/locale/es";
-import "moment/locale/fr";
-import "moment/locale/it";
-import "moment/locale/zh-cn";
+import 'moment/locale/es';
+import 'moment/locale/fr';
+import 'moment/locale/it';
+import 'moment/locale/zh-cn';
 import { BehaviorSubject } from 'rxjs';
 import { Logger } from '../logger';
 import { IdentityEntry } from '../model/didsessions/identityentry';
@@ -31,38 +31,31 @@ export class GlobalLanguageService extends GlobalService {
     {
       name: 'English',
       code: 'en',
-      icon: '/assets/icon/english.jpg',
-    },
-    {
-      name: 'Français',
-      code: 'fr',
-      icon: '/assets/icon/french.jpg',
-    },
-    {
-      name: 'Italiano',
-      code: 'it',
-      icon: '/assets/icon/italia.png',
+      icon: '/assets/icon/english.jpg'
     },
     {
       name: '中文（简体）',
       code: 'zh',
-      icon: '/assets/icon/chinese.png',
+      icon: '/assets/icon/chinese.png'
     },
-    /*{
-      name: 'Deutsche',
-      code: 'de',
-      icon: '/assets/icon/german.png',
-    }*/
+    {
+      name: 'Français',
+      code: 'fr',
+      icon: '/assets/icon/french.jpg'
+    },
+    {
+      name: 'Italiano',
+      code: 'it',
+      icon: '/assets/icon/italia.png'
+    }
   ];
 
   private systemLanguage: string = null;
   public selectedLanguage: string = null;
 
-  public activeLanguage = new BehaviorSubject<string>("en"); // Default: english
+  public activeLanguage = new BehaviorSubject<string>('en'); // Default: english
 
-  constructor(
-    private translationService: TranslateService,
-    private prefs: GlobalPreferencesService) {
+  constructor(private translationService: TranslateService, private prefs: GlobalPreferencesService) {
     super();
     GlobalLanguageService.instance = this;
   }
@@ -72,8 +65,8 @@ export class GlobalLanguageService extends GlobalService {
 
     this.setupAvailableLanguages();
 
-    this.prefs.preferenceListener.subscribe((prefChanged) => {
-      if (prefChanged.key == "locale.language") {
+    this.prefs.preferenceListener.subscribe(prefChanged => {
+      if (prefChanged.key == 'locale.language') {
         let lang = prefChanged.value as string;
         this.activeLanguage.next(lang);
       }
@@ -107,11 +100,21 @@ export class GlobalLanguageService extends GlobalService {
    * Set language for all modules
    */
   private setAppLanguage(language: string) {
-    if (language === 'zh') {
-      moment.locale('zh-cn');
-    } else {
-      moment.locale(language);
+    switch (language) {
+      case 'zh':
+        moment.locale('zh-cn');
+        break;
+      case 'fr':
+        moment.locale('fr');
+        break;
+      case 'it':
+        moment.locale('it');
+        break;
+      default:
+        moment.locale('en');
+        break;
     }
+
     // Set language for the ionic translate module that does the actual screen items translations
     this.translationService.setDefaultLang(language);
     this.translationService.use(language);
@@ -123,25 +126,34 @@ export class GlobalLanguageService extends GlobalService {
    * Retrieves and stores system language, and current user-defined language.
    */
   async fetchLanguageInfo(): Promise<void> {
-    Logger.log("LanguageService", "Fetching language information");
+    Logger.log('LanguageService', 'Fetching language information');
 
     this.systemLanguage = this.translationService.getBrowserLang();
     if (DIDSessionsStore.signedInDIDString) {
-      let languageFromPref: string = await this.prefs.getPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "locale.language");
-      if (!languageFromPref || languageFromPref == "native system") {
+      let languageFromPref: string = await this.prefs.getPreference(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'locale.language'
+      );
+      if (!languageFromPref || languageFromPref == 'native system') {
         // Use the language that the user selected in didsession.
         if (this.selectedLanguage) {
-          await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "locale.language", this.selectedLanguage, true);
+          await this.prefs.setPreference(
+            DIDSessionsStore.signedInDIDString,
+            NetworkTemplateStore.networkTemplate,
+            'locale.language',
+            this.selectedLanguage,
+            true
+          );
         }
       } else {
         this.selectedLanguage = languageFromPref;
       }
-    }
-    else {
+    } else {
       this.selectedLanguage = 'native system';
     }
 
-    Logger.log("LanguageService", "System language:", this.systemLanguage, "Selected language:", this.selectedLanguage);
+    Logger.log('LanguageService', 'System language:', this.systemLanguage, 'Selected language:', this.selectedLanguage);
 
     let actualLanguage = this.userNotDefinedLanguageInUse() ? this.systemLanguage : this.selectedLanguage;
     this.setAppLanguage(actualLanguage);
@@ -153,7 +165,7 @@ export class GlobalLanguageService extends GlobalService {
    * Tells whether the current language is a language defined by the user, or the default system one.
    */
   public userNotDefinedLanguageInUse(): boolean {
-    return !this.selectedLanguage || this.selectedLanguage == "native system";
+    return !this.selectedLanguage || this.selectedLanguage == 'native system';
   }
 
   /**
@@ -168,21 +180,26 @@ export class GlobalLanguageService extends GlobalService {
    * Pass null to restore to the default system language.
    */
   public async setSelectedLanguage(code: string | null) {
-    if (!code)
-      code = "native system";
+    if (!code) code = 'native system';
 
     if (this.selectedLanguage !== code) {
       this.selectedLanguage = code;
     }
-    if (code === "native system") {
+    if (code === 'native system') {
       code = this.systemLanguage;
     }
 
     this.setAppLanguage(code);
 
     // Save current choice to disk
-    Logger.log('LanguageService', "Saving global language code:", code);
-    await this.prefs.setPreference(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "locale.language", code, true);
+    Logger.log('LanguageService', 'Saving global language code:', code);
+    await this.prefs.setPreference(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'locale.language',
+      code,
+      true
+    );
 
     // Notify listeners of language changes
     this.activeLanguage.next(code);

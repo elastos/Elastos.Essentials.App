@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import moment from 'moment';
+import PQueue from 'p-queue';
+import { sleep } from '../helpers/sleep.helper';
 import { lazyTronWebImport } from '../helpers/import.helper';
 import { Logger } from '../logger';
 import { AnyNetwork } from '../wallet/model/networks/network';
@@ -10,6 +12,8 @@ import { WalletNetworkService } from '../wallet/services/network.service';
 import { GlobalJsonRPCService } from './global.jsonrpc.service';
 import { GlobalNetworksService, MAINNET_TEMPLATE } from './global.networks.service';
 
+const TRON_HTTP_MIN_INTERVAL_MS = 100; // 10 requests per second max
+
 @Injectable({
     providedIn: 'root'
 })
@@ -17,6 +21,7 @@ export class GlobalTronGridService {
     public static instance: GlobalTronGridService = null;
     // Currently using Trongrid to request, the Shasta/Nile testnet does not need to set an API Key.
     private apikey_testnet = '';
+    private httpQueue = new PQueue({ concurrency: 1 });
     private apikeyList_mainnet = ['e01b9d55-e787-4c0f-8074-8fbe40fddb91', '470282b1-82e6-4417-885b-27b7e340b513'];
     private apikey = '';
 
@@ -32,7 +37,7 @@ export class GlobalTronGridService {
         if (network !== MAINNET_TEMPLATE) {
             this.apikey = this.apikey_testnet;
         } else {
-            this.apikey = this.apikeyList_mainnet[Math.floor(Math.random() * 2)];;
+            this.apikey = this.apikeyList_mainnet[Math.floor(Math.random() * this.apikeyList_mainnet.length)];
         }
 
         WalletNetworkService.instance.activeNetwork.subscribe(activeNetwork => {
@@ -60,13 +65,13 @@ export class GlobalTronGridService {
     /**
      * Get balance and trc20 tokens.
      */
-    public async account(rpcApiUrl: string, address: string): Promise<AccountResult> {
+    public async account(rpcApiUrl: string, address: string): Promise<AccountResult | null> {
         let requestUrl = rpcApiUrl + '/v1/accounts/' + address;
 
         try {
             let ret = await this.httpGet(requestUrl);
             if (ret && ret.data) {
-                return ret.data[0] ? ret.data[0] : {};
+                return (ret.data[0] ? ret.data[0] : {}) as AccountResult;
             } else return null;
         }
         catch (err) {
@@ -360,43 +365,54 @@ export class GlobalTronGridService {
         return this.tronWeb.toSun(value);
     }
 
-    httpGet(url): Promise<any> {
-        let options = {
-            headers: {
-                'TRON_PRO_API_KEY': this.apikey,
-            }
-        }
-
-        return new Promise((resolve, reject) => {
-            this.http.get<any>(url, options).subscribe((res) => {
-                resolve(res);
-            }, (err) => {
-                Logger.error('GlobalTronGridService', 'http get error:', err);
-                reject(err);
+    httpGet(url: string): Promise<any> {
+        return this.httpQueue.add(async () => {
+            const result = await new Promise<any>((resolve, reject) => {
+                const options = {
+                    headers: this.apikey ? { 'TRON-PRO-API-KEY': this.apikey } : {}
+                };
+                this.http.get<any>(url, options).subscribe(
+                    (res) => {
+                        resolve(res);
+                    },
+                    (err) => {
+                        Logger.error('GlobalTronGridService', 'http get error:', err);
+                        reject(err);
+                    }
+                );
             });
+            await sleep(TRON_HTTP_MIN_INTERVAL_MS);
+            return result;
         });
     }
 
-    httpPost(url, body: any): Promise<any> {
-        let options = {
-            headers: this.apikey ? {
-                'TRON_PRO_API_KEY': this.apikey,
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            } :
-            {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            }
-        }
-
-        return new Promise((resolve, reject) => {
-            this.http.post<any>(url, body, options).subscribe((res) => {
-                resolve(res);
-            }, (err) => {
-                Logger.error('GlobalTronGridService', 'http post error:', err);
-                reject(err);
+    httpPost(url: string, body: any): Promise<any> {
+        return this.httpQueue.add(async () => {
+            const result = await new Promise<any>((resolve, reject) => {
+                const options = {
+                    headers: this.apikey
+                        ? {
+                              'TRON-PRO-API-KEY': this.apikey,
+                              Accept: 'application/json',
+                              'Content-Type': 'application/json'
+                          }
+                        : {
+                              Accept: 'application/json',
+                              'Content-Type': 'application/json'
+                          }
+                };
+                this.http.post<any>(url, body, options).subscribe(
+                    (res) => {
+                        resolve(res);
+                    },
+                    (err) => {
+                        Logger.error('GlobalTronGridService', 'http post error:', err);
+                        reject(err);
+                    }
+                );
             });
+            await sleep(TRON_HTTP_MIN_INTERVAL_MS);
+            return result;
         });
     }
 }

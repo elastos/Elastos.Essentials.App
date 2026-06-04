@@ -23,7 +23,7 @@
                                 WalletUtil.getWholeBalance(networkWallet.getDisplayBalance()) }}<span class="dot"
                                     *ngIf="!networkWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance())">.</span>
                                 <span>{{ WalletUtil.getDecimalBalance(networkWallet.getDisplayBalance(),
-                                  networkWallet.getDecimalPlaces())
+                                    networkWallet.getDecimalPlaces())
                                     }}</span>
                                 <span>{{ networkWallet.getDisplayTokenName() }}</span>
                             </h4>
@@ -39,12 +39,12 @@
                         </div>
                         <div class="wallet-amount" *ngIf="!networkWallet">
                             {{ 'wallet.unsupported-on-network' | translate:{network:
-                            networkService.activeNetwork.value.name} }}
+                            networkService.activeNetwork.value.getEffectiveName()} }}
                         </div>
                     </ion-col>
                     <ion-col size="1.5" class="right-col">
-                      <img [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/change-wallet.svg' : 'assets/wallet/icons/change-wallet.svg'"
-                          *ngIf="getPotentialActiveWallets().length > 1" (click)="pickOtherWallet()">
+                        <img [src]="theme.darkMode ? 'assets/wallet/icons/darkmode/change-wallet.svg' : 'assets/wallet/icons/change-wallet.svg'"
+                            *ngIf="getPotentialActiveWallets().length > 1" (click)="pickOtherWallet()">
                     </ion-col>
                     <ion-ripple-effect></ion-ripple-effect>
                 </ion-row>
@@ -63,7 +63,8 @@
                     <ion-col size="5" class="left-col">
                         {{ item.title }}
                     </ion-col>
-                    <ion-col [size]="item.rewardItems.length > 1 ? 6.5 : 7" class="right-col align-right rewardWithArraw">
+                    <ion-col [size]="item.rewardItems.length > 1 ? 6.5 : 7"
+                        class="right-col align-right rewardWithArraw">
                         {{ item.value }} ELA
                     </ion-col>
 
@@ -76,18 +77,18 @@
                     </ion-col>
 
                     <ion-col *ngIf="detail && (detailType == i)" class="details-col" size="12">
-                      <ion-grid>
-                          <div *ngFor="let subItem of item.rewardItems" class="item">
-                              <ion-row>
-                                  <ion-col size="5" class="left-col">
-                                      <p>{{ subItem.title }}</p>
-                                  </ion-col>
-                                  <ion-col size="6.5" class="right-col align-right">
-                                      <p>{{ subItem.value }} ELA</p>
-                                  </ion-col>
-                              </ion-row>
-                          </div>
-                      </ion-grid>
+                        <ion-grid>
+                            <div *ngFor="let subItem of item.rewardItems" class="item">
+                                <ion-row>
+                                    <ion-col size="5" class="left-col">
+                                        <p>{{ subItem.title }}</p>
+                                    </ion-col>
+                                    <ion-col size="6.5" class="right-col align-right">
+                                        <p>{{ subItem.value }} ELA</p>
+                                    </ion-col>
+                                </ion-row>
+                            </div>
+                        </ion-grid>
                     </ion-col>
                 </ion-row>
 
@@ -95,8 +96,8 @@
                     <ion-col size="9.5" class="left-col">
                         {{ 'staking.staked-for-votes' | translate }}
                     </ion-col>
-                    <ion-col class="middle-col" [size]="votesShowArrow ? 2 : 2.5"
-                            [class.align-center]="votesShowArrow" [class.align-right]="!votesShowArrow" >
+                    <ion-col class="middle-col" [size]="votesShowArrow ? 2 : 2.5" [class.align-center]="votesShowArrow"
+                        [class.align-right]="!votesShowArrow">
                         {{ stakeService.votesRight.maxStakedRatio }}%
                     </ion-col>
 
@@ -124,7 +125,8 @@
                                             translate }}: {{ item.stakeuntilExpiredIn }}</p>
                                     </ion-col>
                                     <ion-col size="2" class="right-col" (click)="clickDetails($event, item.type)">
-                                          <ebutton class="details-btn align-right" [title]="'staking.details' | translate"></ebutton>
+                                        <ebutton class="details-btn align-right"
+                                            [title]="'staking.details' | translate"></ebutton>
                                     </ion-col>
                                 </ion-row>
                             </div>
@@ -134,7 +136,8 @@
                                     <h5>{{'staking.locked-ela' | translate}}</h5>
                                 </ion-col>
                                 <ion-col size="7" class="right-col">
-                                    <h5 class="align-right">{{ uxService.toThousands(stakeService.votesRight.maxStaked) }} ELA</h5>
+                                    <h5 class="align-right">{{ uxService.toThousands(stakeService.votesRight.maxStaked)
+                                        }} ELA</h5>
                                 </ion-col>
                             </ion-row>
                         </ion-grid>
@@ -145,7 +148,7 @@
     </div>
 
     <div *ngIf="signingAndTransacting">
-      <ion-spinner></ion-spinner>
+        <ion-spinner></ion-spinner>
     </div>
 
     <div *ngIf="dataFetched">

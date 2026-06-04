@@ -1,7 +1,7 @@
 <div class="container" [class.darkContainer]="theme.darkMode">
   <ion-row class="header">
     <img class="logo" *ngIf="type === 'danger'" src="/assets/contacts/images/warning.svg">
-    <img class="logo" *ngIf="type === 'custom'" [src]="customIcon">
+    <img class="logo" *ngIf="type === 'custom' && customIcon" [src]="customIcon">
     <h1 class="ion-padding-horizontal ion-text-center">{{ title }}</h1>
   </ion-row>
 

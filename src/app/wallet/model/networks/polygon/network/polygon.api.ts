@@ -13,7 +13,7 @@ export class PolygonAPI {
       case MAINNET_TEMPLATE:
         switch (type) {
           case PolygonAPIType.RPC: return 'https://polygon-rpc.com/';
-          case PolygonAPIType.ETHERSCAN_API: return 'https://api.polygonscan.com/api';
+          case PolygonAPIType.ETHERSCAN_API: return 'https://api.etherscan.io/v2/api';
           case PolygonAPIType.BLOCK_EXPLORER: return 'https://polygonscan.com';
           default:
             throw new Error("Polygon API - Unknown api type " + type);

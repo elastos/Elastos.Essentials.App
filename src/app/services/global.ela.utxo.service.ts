@@ -8,7 +8,6 @@ import { StandardCoinName } from '../wallet/model/coin';
 import { AnyNetworkWallet } from '../wallet/model/networks/base/networkwallets/networkwallet';
 import { MainChainSubWallet } from '../wallet/model/networks/elastos/mainchain/subwallets/mainchain.subwallet';
 import { Utxo } from '../wallet/model/tx-providers/transaction.types';
-import { WalletNetworkService } from '../wallet/services/network.service';
 import { WalletService } from '../wallet/services/wallet.service';
 import { GlobalLanguageService } from './global.language.service';
 import { GlobalNotificationsService } from './global.notifications.service';
@@ -21,7 +20,6 @@ import { GlobalService, GlobalServiceManager } from './global.service.manager';
 })
 export class GlobalELAUtxoService extends GlobalService {
   private activeWalletSubscription: Subscription = null;
-  private activeNetworkSubscription: Subscription = null;
 
   private activeNetworkWallet: AnyNetworkWallet = null;
   private mainChainSubwallet: MainChainSubWallet = null;
@@ -29,7 +27,6 @@ export class GlobalELAUtxoService extends GlobalService {
   private fetchUtxoTimer: any = null;
 
   constructor(
-    private walletNetworkService: WalletNetworkService,
     private walletManager: WalletService,
     public globalPopupService: GlobalPopupService,
   ) {
@@ -48,12 +45,6 @@ export class GlobalELAUtxoService extends GlobalService {
       this.restartCheckELAUtxosTimeout();
     });
 
-    this.activeNetworkSubscription = this.walletNetworkService.activeNetwork.subscribe(activeNetwork => {
-      if (activeNetwork) {
-        this.restartCheckELAUtxosTimeout();
-      }
-    })
-
     return;
   }
 
@@ -66,10 +57,6 @@ export class GlobalELAUtxoService extends GlobalService {
     if (this.activeWalletSubscription) {
       this.activeWalletSubscription.unsubscribe();
     }
-
-    if (this.activeNetworkSubscription) {
-      this.activeNetworkSubscription.unsubscribe();
-    }
     return;
   }
 
@@ -81,7 +68,7 @@ export class GlobalELAUtxoService extends GlobalService {
 
     if (!this.activeNetworkWallet) return;
 
-    if (this.walletNetworkService.isActiveNetworkElastosMainchain()) {
+    if (this.activeNetworkWallet.network.key === 'elastos') {
       this.mainChainSubwallet = this.activeNetworkWallet.getSubWallet(StandardCoinName.ELA) as unknown as MainChainSubWallet;
       this.fetchUtxoTimer = setTimeout(() => {
         void this.checkELAUtxos();

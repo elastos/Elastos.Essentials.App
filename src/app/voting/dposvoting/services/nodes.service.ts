@@ -20,55 +20,54 @@ import { Block, Mainchain, Price, Voters } from '../model/stats.model';
 import { DIDSessionsStore } from './../../../services/stores/didsessions.store';
 
 export type DPoSRegistrationInfo = {
-    active?: boolean;
-    cancelheight?: number;
-    illegalheight?: number;
-    inactiveheight?: number;
-    index?: number;
-    location?: number;
-    nickname?: string;
-    nodepublickey?: string;
-    ownerpublickey?: string;
-    registerheight?: number;
-    state: string;
-    url?: string;
-    votes?: string;
-    txConfirm?: boolean; // For after register and update info, the transaction don't confirm
+  active?: boolean;
+  cancelheight?: number;
+  illegalheight?: number;
+  inactiveheight?: number;
+  index?: number;
+  location?: number;
+  nickname?: string;
+  nodepublickey?: string;
+  ownerpublickey?: string;
+  registerheight?: number;
+  state: string;
+  url?: string;
+  votes?: string;
+  txConfirm?: boolean; // For after register and update info, the transaction don't confirm
 
-    identity?: string;
-}
+  identity?: string;
+};
 
 @Injectable({
-    providedIn: 'root'
+  providedIn: 'root'
 })
 export class NodesService {
+  //Registration
+  public dposInfo: DPoSRegistrationInfo;
 
-    //Registration
-    public dposInfo: DPoSRegistrationInfo;
+  // Nodes
+  public _nodes: DPosNode[] = [];
+  public activeNodes: DPosNode[] = [];
+  public totalVotes = 0;
+  public dposList: DPosNode[] = [];
 
-    // Nodes
-    public _nodes: DPosNode[] = [];
-    public activeNodes: DPosNode[] = [];
-    public totalVotes = 0;
-    public dposList: DPosNode[] = [];
+  // Stats
+  public statsFetched = false;
+  public currentHeight = 0;
+  public mainchain: Mainchain;
+  public voters: Voters;
+  public price: Price;
+  public block: Block;
 
-    // Stats
-    public statsFetched = false;
-    public currentHeight = 0;
-    public mainchain: Mainchain;
-    public voters: Voters;
-    public price: Price;
-    public block: Block;
+  // Empty List - Used to loop dummy items while data is being fetched
+  public emptyList = [];
 
-    // Empty List - Used to loop dummy items while data is being fetched
-    public emptyList = [];
+  private initOngoning = false;
 
-    private initOngoning = false;
-
-    // Storage
-    private firstVisit = false;
-    public _votes: Vote[] = [
-        /*{
+  // Storage
+  private firstVisit = false;
+  public _votes: Vote[] = [
+    /*{
             date: new Date(2000,10,13,11,33,0),
             tx: 'a2677487ba6c406f70b22c6902b3b2ffe582f99b58848bbfba9127c5fa47c712',
             keys: [
@@ -96,284 +95,306 @@ export class NodesService {
                 '02b6052f5f65089be3b94efb91c98a5f94c0bf7fbefdbd85c1d547aa7b3d547710'
             ]
         }*/
-    ];
+  ];
 
-    // Fetch
-    private nodeApi = 'https://node1.elaphant.app/api/';
-    private logoUrl = 'https://api.elastos.io/images/';
+  // Fetch
+  private nodeApi = 'https://node1.elaphant.app/api/';
+  private logoUrl = 'https://api.elastos.io/images/';
 
-    // This is too slow, so call once.
-    private isFetchingRewardOrDone = false;
-    private rewardResult: any = null;
+  // This is too slow, so call once.
+  private isFetchingRewardOrDone = false;
+  private rewardResult: any = null;
 
-    constructor(
-        private storage: GlobalStorageService,
-        private globalIntentService: GlobalIntentService,
-        private globalJsonRPCService: GlobalJsonRPCService,
-        private globalElastosAPIService: GlobalElastosAPIService,
-        public voteService: VoteService,
-        public popupProvider: GlobalPopupService,
-        public events: GlobalEvents,
-        public zone: NgZone,
-    ) {
+  constructor(
+    private storage: GlobalStorageService,
+    private globalIntentService: GlobalIntentService,
+    private globalJsonRPCService: GlobalJsonRPCService,
+    private globalElastosAPIService: GlobalElastosAPIService,
+    public voteService: VoteService,
+    public popupProvider: GlobalPopupService,
+    public events: GlobalEvents,
+    public zone: NgZone
+  ) {}
 
+  get nodes(): DPosNode[] {
+    return [...this._nodes.filter((a, b) => this._nodes.indexOf(a) === b)];
+  }
+
+  getNode(id: string): DPosNode {
+    return { ...this._nodes.find(node => node.nodepublickey === id) };
+  }
+
+  getVote(id: string): Vote {
+    return { ...this._votes.find(vote => vote.tx === id) };
+  }
+
+  async init() {
+    Logger.log('dposvoting', 'Initializing the nodes service');
+    if (this.initOngoning) return;
+
+    this.initOngoning = true;
+    for (let i = 0; i < 20; i++) {
+      this.emptyList.push('');
     }
 
-    get nodes(): DPosNode[] {
-        return [...this._nodes.filter((a, b) => this._nodes.indexOf(a) === b)];
+    try {
+      // await this.getVisit();
+      await this.getStoredVotes();
+      await this.fetchNodes();
+    } catch (err) {
+      Logger.warn('dposvoting', 'Initialize node error:', err);
     }
+    this.initOngoning = false;
 
-    getNode(id: string): DPosNode {
-        return { ...this._nodes.find(node => node.nodepublickey === id) };
+    if (!this.isFetchingRewardOrDone) {
+      this.isFetchingRewardOrDone = true;
+      // Too slow, don't await
+      void this.fetchReward();
     }
+  }
 
-    getVote(id: string): Vote {
-        return { ...this._votes.find(vote => vote.tx === id) };
-    }
+  // Titlebar
+  setTitlebar(titleBar: TitleBarComponent) {
+    titleBar.setBackgroundColor('#A25BFE');
+    titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
+    titleBar.setTitle('DPoS Voting');
+  }
 
-    async init() {
-        Logger.log("dposvoting", "Initializing the nodes service");
-        if (this.initOngoning) return;
-
-        this.initOngoning = true;
-        for (let i = 0; i < 20; i++) {
-            this.emptyList.push('');
+  // Storage
+  getVisit() {
+    void this.storage
+      .getSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'dposvoting',
+        'visited',
+        false
+      )
+      .then(data => {
+        if (data || data === true) {
+          this.firstVisit = false;
         }
+      });
+  }
 
-        try {
-            // await this.getVisit();
-            await this.getStoredVotes();
-            await this.fetchNodes();
-        }
-        catch (err) {
-            Logger.warn('dposvoting', 'Initialize node error:', err)
-        }
-        this.initOngoning = false;
+  sortVotes() {
+    this._votes.sort((a, b) => {
+      if (b.date > a.date) return 1;
+      else return -1;
+    });
+  }
 
-        if (!this.isFetchingRewardOrDone) {
-            this.isFetchingRewardOrDone = true
-            // Too slow, don't await
-            void this.fetchReward();
+  async getStoredVotes() {
+    this._votes = [];
+
+    await this.storage
+      .getSetting(
+        DIDSessionsStore.signedInDIDString,
+        NetworkTemplateStore.networkTemplate,
+        'dposvoting',
+        this.voteService.masterWalletId + '-votes',
+        []
+      )
+      .then(data => {
+        if (data && data.length > 0) {
+          // filter invalid votes.
+          this._votes = data.filter(c => {
+            return c.tx;
+          });
+          this.sortVotes();
+          Logger.log('dposvoting', 'Vote history', this._votes);
         }
+      });
+  }
+
+  async setStoredVotes() {
+    this.sortVotes();
+    Logger.log('dposvoting', 'Vote history updated', this._votes);
+    await this.storage.setSetting(
+      DIDSessionsStore.signedInDIDString,
+      NetworkTemplateStore.networkTemplate,
+      'dposvoting',
+      this.voteService.masterWalletId + '-votes',
+      this._votes
+    );
+  }
+
+  // getStoredNodes() {
+  //     this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
+  //         Logger.log('dposvoting', data);
+  //         this._nodes.map(node => {
+  //             if (data && data.includes(node.ownerpublickey) && node.state === 'Active') {
+  //                 node.isChecked = true;
+  //             }
+  //         });
+  //     });
+  // }
+
+  async checkBalanceForRegDposNode(): Promise<boolean> {
+    if (!(await this.voteService.checkBalanceForRegistration(this.voteService.deposit5K))) {
+      await this.popupProvider.ionicAlert(
+        'wallet.insufficient-balance',
+        'dposregistration.reg-dpos-balance-not-enough'
+      );
+      return false;
+    }
+    return true;
+  }
+
+  async fetchStats() {
+    try {
+      let widgetsApi = GlobalElastosAPIService.instance.getRPCApiUrlWithOverride(ElastosApiUrlType.WIDGETS);
+      let result = await this.globalJsonRPCService.httpGet(widgetsApi);
+      if (result) {
+        this.statsFetched = true;
+        this.mainchain = result.mainchain;
+        this.voters = result.voters;
+        this.price = result.price;
+        this.block = result.block;
+      }
+    } catch (err) {
+      Logger.error('dposvoting', 'fetchStats error:', err);
+    }
+  }
+
+  async fetchNodes() {
+    var ownerPublicKey = '';
+    //The wallet imported by private key has no ELA subwallet.
+    if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
+      ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
+    }
+    this.dposInfo = {
+      nickname: '',
+      location: 0,
+      url: '',
+
+      state: 'Unregistered',
+      nodepublickey: ownerPublicKey,
+      ownerpublickey: ownerPublicKey
+    };
+
+    this.activeNodes = [];
+    this.dposList = [];
+    var vote: Vote = null;
+    if (this._votes.length > 0) {
+      vote = this._votes[0];
     }
 
-    // Titlebar
-    setTitlebar(titleBar: TitleBarComponent) {
-        titleBar.setBackgroundColor("#A25BFE");
-        titleBar.setForegroundMode(TitleBarForegroundMode.LIGHT);
-        titleBar.setTitle('DPoS Voting');
-    }
+    try {
+      const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.DPoS);
 
-    // Storage
-    getVisit() {
-        void this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', 'visited', false).then(data => {
-            if (data || data === true) {
-                this.firstVisit = false;
+      if (result && !Util.isEmptyObject(result.producers)) {
+        Logger.log(App.DPOS_VOTING, 'dposlist:', result.producers);
+        this.totalVotes = parseFloat(result.totalvotes);
+        this._nodes = result.producers as DPosNode[];
+        for (const node of this._nodes) {
+          if (node.identity && node.identity == 'DPoSV2') {
+            continue;
+          }
+
+          if (node.ownerpublickey == ownerPublicKey) {
+            this.dposInfo = node;
+          }
+          node.index += 1;
+
+          if (node.state === 'Active' || node.state === 'Inactive') {
+            if (node.state === 'Active') {
+              this.activeNodes.push(node);
+              if (vote != null && vote.keys.indexOf(node.ownerpublickey) != -1) {
+                node.isChecked = true;
+              }
             }
-        });
+
+            this.dposList.push(node);
+          }
+
+          this.getNodeIcon(node);
+        }
+        Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
+        // this.setupRewardInfo();
+      }
+    } catch (err) {
+      Logger.error('dposvoting', 'fetchNodes error:', err);
+      await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
     }
 
-    sortVotes() {
-        this._votes.sort((a, b) => {
-            if (b.date > a.date)
-                return 1;
-            else
-                return -1;
-        });
-    }
-
-    async getStoredVotes() {
-        this._votes = [];
-
-        await this.storage.getSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, 'dposvoting', this.voteService.masterWalletId + '-votes', []).then(data => {
-            if (data && data.length > 0) {
-                // filter invalid votes.
-                this._votes = data.filter(c => { return c.tx; });
-                this.sortVotes();
-                Logger.log('dposvoting', 'Vote history', this._votes);
+    this.dposInfo.txConfirm = true;
+    if (this.voteService.sourceSubwallet) {
+      // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
+      let txhistory = await this.voteService.sourceSubwallet.getTransactions();
+      for (let i in txhistory) {
+        if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
+          if (this.dposInfo.state == 'Unregistered') {
+            if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
+              this.dposInfo.txConfirm = false;
+              break;
             }
-        });
+          } else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
+            this.dposInfo.txConfirm = false;
+            break;
+          }
+        }
+      }
+    }
+  }
+
+  async getConfirmCount(txid: string): Promise<number> {
+    //Get ower dpos info
+    const result = await GlobalElastosAPIService.instance.getRawTransaction(txid);
+    if (result && result.confirmations) {
+      return result.confirmations;
     }
 
-    async setStoredVotes() {
-        this.sortVotes();
-        Logger.log('dposvoting', 'Vote history updated', this._votes);
-        await this.storage.setSetting(DIDSessionsStore.signedInDIDString, NetworkTemplateStore.networkTemplate, "dposvoting", this.voteService.masterWalletId + '-votes', this._votes);
+    return -1;
+  }
+
+  async fetchCurrentHeight(): Promise<number> {
+    Logger.log('dposvoting', 'Fetching height');
+    try {
+      let result = await this.globalJsonRPCService.httpGet(this.nodeApi + '1/currHeight');
+      if (result) {
+        this.currentHeight = result.result;
+      }
+    } catch (err) {
+      Logger.error('dposvoting', 'fetchStats error:', err);
     }
 
-    // getStoredNodes() {
-    //     this.storage.getSetting(DIDSessionsStore.signedInDIDString, 'dposvoting', 'nodes', []).then(data => {
-    //         Logger.log('dposvoting', data);
-    //         this._nodes.map(node => {
-    //             if (data && data.includes(node.ownerpublickey) && node.state === 'Active') {
-    //                 node.isChecked = true;
-    //             }
-    //         });
-    //     });
-    // }
+    return this.currentHeight;
+  }
 
-    async checkBalanceForRegDposNode(): Promise<boolean> {
-        if (!await this.voteService.checkBalanceForRegistration(this.voteService.deposit5K)) {
-            await this.popupProvider.ionicAlert('wallet.insufficient-balance', 'dposregistration.reg-dpos-balance-not-enough');
-            return false;
-        }
-        return true;
+  async fetchReward() {
+    Logger.log('dposvoting', 'start fetchReward');
+    try {
+      const height: number = await this.fetchCurrentHeight();
+      // this api is too slow.
+      let result = await this.globalJsonRPCService.httpGet(
+        this.nodeApi + 'v1/dpos/rank/height/' + height + '?state=active'
+      );
+      if (result) {
+        this.rewardResult = result.result;
+        this.setupRewardInfo();
+      } else {
+        this.isFetchingRewardOrDone = false;
+      }
+    } catch (err) {
+      this.isFetchingRewardOrDone = false;
+      Logger.error('dposvoting', 'fetchStats error:', err);
     }
+  }
 
-    async fetchStats() {
-        try {
-            let widgetsApi = GlobalElastosAPIService.instance.getApiUrl(ElastosApiUrlType.WIDGETS);
-            let result = await this.globalJsonRPCService.httpGet(widgetsApi);
-            if (result) {
-                this.statsFetched = true;
-                this.mainchain = result.mainchain;
-                this.voters = result.voters;
-                this.price = result.price;
-                this.block = result.block;
-            }
-        } catch (err) {
-            Logger.error('dposvoting', 'fetchStats error:', err);
-        }
-    }
+  setupRewardInfo() {
+    if (this.rewardResult === null || this.activeNodes === null) return;
 
-    async fetchNodes() {
-        var ownerPublicKey = '';
-        //The wallet imported by private key has no ELA subwallet.
-        if (this.voteService.networkWallet.hasSubWallet(StandardCoinName.ELA)) {
-            ownerPublicKey = this.voteService.sourceSubwallet.getOwnerPublicKey();
-        }
-        this.dposInfo = {
-            nickname: "",
-            location: 0,
-            url: '',
+    this.rewardResult.forEach(element => {
+      let index = this.activeNodes.findIndex(e => e.ownerpublickey === element.Ownerpublickey);
+      if (this.activeNodes[index]) {
+        this.activeNodes[index].Reward = element.Reward;
+        this.activeNodes[index].EstRewardPerYear = element.EstRewardPerYear;
+      }
+    });
+  }
 
-            state: "Unregistered",
-            nodepublickey: ownerPublicKey,
-            ownerpublickey: ownerPublicKey,
-        };
-
-        this.activeNodes = [];
-        this.dposList = [];
-        var vote: Vote = null;
-        if (this._votes.length > 0) {
-            vote = this._votes[0];
-        }
-
-        try {
-            const result = await GlobalElastosAPIService.instance.fetchDposNodes('all', NodeType.DPoS);
-
-            if (result && !Util.isEmptyObject(result.producers)) {
-                Logger.log(App.DPOS_VOTING, "dposlist:", result.producers);
-                this.totalVotes = parseFloat(result.totalvotes);
-                this._nodes = result.producers as DPosNode[];;
-                for (const node of this._nodes) {
-                    if (node.identity && node.identity == "DPoSV2") {
-                        continue;
-                    }
-
-                    if (node.ownerpublickey == ownerPublicKey) {
-                        this.dposInfo = node;
-                    }
-                    node.index += 1;
-
-                    if (node.state === 'Active' || (node.state === 'Inactive')) {
-                        if (node.state === 'Active') {
-                            this.activeNodes.push(node);
-                            if ((vote != null) && (vote.keys.indexOf(node.ownerpublickey) != -1)) {
-                                node.isChecked = true;
-                            }
-                        }
-
-                        this.dposList.push(node);
-                    }
-
-                    this.getNodeIcon(node);
-                }
-                Logger.log('dposvoting', 'Active Nodes..', this.activeNodes);
-                // this.setupRewardInfo();
-            }
-
-        } catch (err) {
-            Logger.error('dposvoting', 'fetchNodes error:', err);
-            await this.popupProvider.ionicAlert('common.error', 'dposvoting.dpos-node-info-no-available');
-        }
-
-        this.dposInfo.txConfirm = true;
-        if (this.voteService.sourceSubwallet) {
-            // TODO await this.voteService.sourceSubwallet.getTransactionsByRpc();
-            let txhistory = await this.voteService.sourceSubwallet.getTransactions();
-            for (let i in txhistory) {
-                if (txhistory[i].Status !== TransactionStatus.CONFIRMED) {
-                    if (this.dposInfo.state == 'Unregistered') {
-                        if (txhistory[i].txtype == RawTransactionType.RegisterProducer) {
-                            this.dposInfo.txConfirm = false;
-                            break;
-                        }
-                    }
-                    else if (txhistory[i].txtype == RawTransactionType.UpdateProducer) {
-                        this.dposInfo.txConfirm = false;
-                        break;
-                    }
-                }
-            }
-        }
-    }
-
-    async getConfirmCount(txid: string): Promise<number> {
-        //Get ower dpos info
-        const result = await GlobalElastosAPIService.instance.getRawTransaction(txid);
-        if (result && result.confirmations) {
-            return result.confirmations;
-        }
-
-        return -1;
-    }
-
-    async fetchCurrentHeight(): Promise<number> {
-        Logger.log('dposvoting', 'Fetching height');
-        try {
-            let result = await this.globalJsonRPCService.httpGet(this.nodeApi + '1/currHeight');
-            if (result) {
-                this.currentHeight = result.result;
-            }
-        } catch (err) {
-            Logger.error('dposvoting', 'fetchStats error:', err);
-        }
-
-        return this.currentHeight;
-    }
-
-    async fetchReward() {
-        Logger.log('dposvoting', 'start fetchReward');
-        try {
-            const height: number = await this.fetchCurrentHeight();
-            // this api is too slow.
-            let result = await this.globalJsonRPCService.httpGet(this.nodeApi + 'v1/dpos/rank/height/' + height + '?state=active');
-            if (result) {
-                this.rewardResult = result.result;
-                this.setupRewardInfo();
-            } else {
-                this.isFetchingRewardOrDone = false;
-            }
-        } catch (err) {
-            this.isFetchingRewardOrDone = false;
-            Logger.error('dposvoting', 'fetchStats error:', err);
-        }
-    }
-
-    setupRewardInfo() {
-        if (this.rewardResult === null || this.activeNodes === null) return;
-
-        this.rewardResult.forEach(element => {
-            let index = this.activeNodes.findIndex(e => e.ownerpublickey === element.Ownerpublickey);
-            if (this.activeNodes[index]) {
-                this.activeNodes[index].Reward = element.Reward;
-                this.activeNodes[index].EstRewardPerYear = element.EstRewardPerYear;
-            }
-        });
-    }
-
-    /* getNodeIcon() {
+  /* getNodeIcon() {
       this._nodes.map(node => {
         if (node.Url && node.state === 'Active') {
           this.http.get<any>(node.Url + '/bpinfo.json').subscribe(responce => {
@@ -387,153 +408,153 @@ export class NodesService {
       });
     } */
 
-    getNodeIcon(node: DPosNode) {
-        switch (node.nickname) {
-            case '韩锋/SunnyFengHan':
-                node.imageUrl = this.logoUrl + 'Sunny_Feng_Han_min.png';
-                node.Location = 'United States';
-                break;
-            case 'Elephant Wallet':
-                node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
-                node.Location = 'Singapore';
-                break;
-            case 'Elastos Scandinavia':
-                node.imageUrl = 'https://api.elastos.io/images/Scandinavia.png';
-                node.Location = 'Sweden';
-                break;
-            case 'Wild Strawberries Atlas':
-                node.imageUrl = 'https://i.ibb.co/qDdmLQJ/EPpf-VIMW4-AIx-J30.jpg';
-                node.Location = 'United States';
-                break;
-            case 'Wild Strawberries Apollo':
-                node.imageUrl = 'https://i.ibb.co/F7L83NH/EPpf-VIa-Wk-AAUM3d.jpg';
-                node.Location = 'Ireland';
-                break;
-            case 'WeFilmchain':
-                node.imageUrl = 'https://api.elastos.io/images/wefilmchain.png';
-                node.Location = 'Canada';
-                break;
-            case 'Elastos HIVE':
-                node.imageUrl = 'https://api.elastos.io/images/Hive.png';
-                node.Location = 'Hong Kong';
-                break;
-            case 'Wild Strawberries Calypso':
-                node.imageUrl = 'https://i.ibb.co/ZfCj6Yj/EPpf-VJGXs-AEq0-X1.jpg';
-                node.Location = 'Brazil';
-                break;
-            case 'Elate.ch':
-                node.imageUrl = 'https://api.elastos.io/images/ELATE.CH.png';
-                node.Location = 'Switzerland';
-                break;
-            case 'ThaiEla':
-                node.imageUrl = 'https://i.ibb.co/qF16Mgn/download-1.png';
-                node.Location = 'Thailand';
-                break;
-            case 'Elastos Carrier':
-                node.imageUrl = 'https://api.elastos.io/images/Carrier.png';
-                node.Location = 'Hong Kong';
-                break;
-            case 'ELA News (ELA新闻)':
-                node.imageUrl = 'https://api.elastos.io/images/ELA_News.png';
-                node.Location = 'South Africa';
-                break;
-            case 'elafans':
-                node.imageUrl = 'https://api.elastos.io/images/ELA_Fans.png';
-                node.Location = 'Singapore';
-                break;
-            case 'Witzer（无智）':
-                node.imageUrl = 'https://api.elastos.io/images/Witzer.png';
-                node.Location = 'China';
-                break;
-            case 'ElastosDMA':
-                node.imageUrl = 'https://api.elastos.io/images/Elastos_DMA_min.png';
-                node.Location = 'United States';
-                break;
-            case 'Starfish':
-                node.imageUrl = 'https://api.elastos.io/images/Starfish.png';
-                node.Location = 'United States';
-                break;
-            case 'greengang':
-                node.imageUrl = 'https://api.elastos.io/images/Greengang.png';
-                node.Location = 'China';
-                break;
-            case 'Elastos Australia':
-                node.imageUrl = 'https://api.elastos.io/images/Elastos_Australia.png';
-                node.Location = 'Australia';
-                break;
-            case 'DACA区块链技术公开课':
-                node.imageUrl = 'https://i.ibb.co/jRdhF7L/download-2.png';
-                node.Location = 'China';
-                break;
-            case 'KuCoin':
-                node.imageUrl = 'https://api.elastos.io/images/KuCoin.png';
-                node.Location = 'China';
-                break;
-            case 'IOEX(ioeX Network)':
-                node.imageUrl = 'https://api.elastos.io/images/IOEX.png';
-                node.Location = 'Hong Kong';
-                break;
-            case 'Antpool-ELA':
-                node.imageUrl = 'https://api.elastos.io/images/Antpool.png';
-                node.Location = 'Brazil';
-                break;
-            case 'CR Herald | CR 先锋资讯':
-                node.imageUrl = 'https://api.elastos.io/images/CR_Herald.png';
-                node.Location = 'China';
-                break;
-            case '曲率区动':
-                node.imageUrl = 'https://api.elastos.io/images/Curvature_Zone.png';
-                node.Location = 'China';
-                break;
-            case 'F2Pool':
-                node.imageUrl = 'https://api.elastos.io/images/F2Pool.png';
-                node.Location = 'China';
-                break;
-            case 'BTC.com':
-                node.imageUrl = 'https://i.ibb.co/0sddwC5/download.jpg';
-                node.Location = 'China';
-                break;
-            case 'ELA.SYDNEY':
-                node.Location = 'Australia';
-                break;
-            case 'ManhattanProjectFund':
-                node.Location = 'United States';
-                break;
-            case 'Elastos Blockchain':
-                node.Location = 'China';
-                break;
-            case 'llamamama':
-                node.Location = 'South Korea';
-                break;
-            case 'Dragonela':
-            case 'Dragonela 2.0':
-                node.imageUrl = 'https://api.elastos.io/images/dragonela.png';
-                node.Location = 'United States';
-                break;
-            case 'Glide':
-                node.imageUrl = 'https://api.elastos.io/images/Glide.png';
-                node.Location = 'United States';
-                break;
-            case 'ElaboxSN1':
-                node.imageUrl = 'assets/dposvoting/supernodes/elabox.png';
-                node.Location = 'France';
-                break;
-            case 'ElaboxSN2':
-                node.imageUrl = 'assets/dposvoting/supernodes/elabox.png';
-                node.Location = 'Malta';
-                break;
-            case 'Elastos.info':
-                node.imageUrl = 'https://api.elastos.io/images/Elastos.info.png';
-                node.Location = 'Japan';
-                break;
-        }
-
-        if (node.state !== 'Active') {
-            node.Location = 'Inactive';
-        }
+  getNodeIcon(node: DPosNode) {
+    switch (node.nickname) {
+      case '韩锋/SunnyFengHan':
+        node.imageUrl = this.logoUrl + 'Sunny_Feng_Han_min.png';
+        node.Location = 'United States';
+        break;
+      case 'Elephant Wallet':
+        node.imageUrl = 'https://api.elastos.io/images/elephant-wallet.png';
+        node.Location = 'Singapore';
+        break;
+      case 'Elastos Scandinavia':
+        node.imageUrl = 'https://api.elastos.io/images/Scandinavia.png';
+        node.Location = 'Sweden';
+        break;
+      case 'Wild Strawberries Atlas':
+        node.imageUrl = 'https://i.ibb.co/qDdmLQJ/EPpf-VIMW4-AIx-J30.jpg';
+        node.Location = 'United States';
+        break;
+      case 'Wild Strawberries Apollo':
+        node.imageUrl = 'https://i.ibb.co/F7L83NH/EPpf-VIa-Wk-AAUM3d.jpg';
+        node.Location = 'Ireland';
+        break;
+      case 'WeFilmchain':
+        node.imageUrl = 'https://api.elastos.io/images/wefilmchain.png';
+        node.Location = 'Canada';
+        break;
+      case 'Elastos HIVE':
+        node.imageUrl = 'https://api.elastos.io/images/Hive.png';
+        node.Location = 'Hong Kong';
+        break;
+      case 'Wild Strawberries Calypso':
+        node.imageUrl = 'https://i.ibb.co/ZfCj6Yj/EPpf-VJGXs-AEq0-X1.jpg';
+        node.Location = 'Brazil';
+        break;
+      case 'Elate.ch':
+        node.imageUrl = 'https://api.elastos.io/images/ELATE.CH.png';
+        node.Location = 'Switzerland';
+        break;
+      case 'ThaiEla':
+        node.imageUrl = 'https://i.ibb.co/qF16Mgn/download-1.png';
+        node.Location = 'Thailand';
+        break;
+      case 'Elastos Carrier':
+        node.imageUrl = 'https://api.elastos.io/images/Carrier.png';
+        node.Location = 'Hong Kong';
+        break;
+      case 'ELA News (ELA新闻)':
+        node.imageUrl = 'https://api.elastos.io/images/ELA_News.png';
+        node.Location = 'South Africa';
+        break;
+      case 'elafans':
+        node.imageUrl = 'https://api.elastos.io/images/ELA_Fans.png';
+        node.Location = 'Singapore';
+        break;
+      case 'Witzer（无智）':
+        node.imageUrl = 'https://api.elastos.io/images/Witzer.png';
+        node.Location = 'China';
+        break;
+      case 'ElastosDMA':
+        node.imageUrl = 'https://api.elastos.io/images/Elastos_DMA_min.png';
+        node.Location = 'United States';
+        break;
+      case 'Starfish':
+        node.imageUrl = 'https://api.elastos.io/images/Starfish.png';
+        node.Location = 'United States';
+        break;
+      case 'greengang':
+        node.imageUrl = 'https://api.elastos.io/images/Greengang.png';
+        node.Location = 'China';
+        break;
+      case 'Elastos Australia':
+        node.imageUrl = 'https://api.elastos.io/images/Elastos_Australia.png';
+        node.Location = 'Australia';
+        break;
+      case 'DACA区块链技术公开课':
+        node.imageUrl = 'https://i.ibb.co/jRdhF7L/download-2.png';
+        node.Location = 'China';
+        break;
+      case 'KuCoin':
+        node.imageUrl = 'https://api.elastos.io/images/KuCoin.png';
+        node.Location = 'China';
+        break;
+      case 'IOEX(ioeX Network)':
+        node.imageUrl = 'https://api.elastos.io/images/IOEX.png';
+        node.Location = 'Hong Kong';
+        break;
+      case 'Antpool-ELA':
+        node.imageUrl = 'https://api.elastos.io/images/Antpool.png';
+        node.Location = 'Brazil';
+        break;
+      case 'CR Herald | CR 先锋资讯':
+        node.imageUrl = 'https://api.elastos.io/images/CR_Herald.png';
+        node.Location = 'China';
+        break;
+      case '曲率区动':
+        node.imageUrl = 'https://api.elastos.io/images/Curvature_Zone.png';
+        node.Location = 'China';
+        break;
+      case 'F2Pool':
+        node.imageUrl = 'https://api.elastos.io/images/F2Pool.png';
+        node.Location = 'China';
+        break;
+      case 'BTC.com':
+        node.imageUrl = 'https://i.ibb.co/0sddwC5/download.jpg';
+        node.Location = 'China';
+        break;
+      case 'ELA.SYDNEY':
+        node.Location = 'Australia';
+        break;
+      case 'ManhattanProjectFund':
+        node.Location = 'United States';
+        break;
+      case 'Elastos Blockchain':
+        node.Location = 'China';
+        break;
+      case 'llamamama':
+        node.Location = 'South Korea';
+        break;
+      case 'Dragonela':
+      case 'Dragonela 2.0':
+        node.imageUrl = 'https://api.elastos.io/images/dragonela.png';
+        node.Location = 'United States';
+        break;
+      case 'Glide':
+        node.imageUrl = 'https://api.elastos.io/images/Glide.png';
+        node.Location = 'United States';
+        break;
+      case 'ElaboxSN1':
+        node.imageUrl = 'assets/dposvoting/supernodes/elabox.png';
+        node.Location = 'France';
+        break;
+      case 'ElaboxSN2':
+        node.imageUrl = 'assets/dposvoting/supernodes/elabox.png';
+        node.Location = 'Malta';
+        break;
+      case 'Elastos.info':
+        node.imageUrl = 'https://api.elastos.io/images/Elastos.info.png';
+        node.Location = 'Japan';
+        break;
     }
 
-    openLink(url: string) {
-        void this.globalIntentService.sendIntent('openurl', { url: url });
+    if (node.state !== 'Active') {
+      node.Location = 'Inactive';
     }
+  }
+
+  openLink(url: string) {
+    void this.globalIntentService.sendIntent('openurl', { url: url });
+  }
 }

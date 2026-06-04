@@ -9,7 +9,7 @@ import { EditCustomNetworkRoutingParams } from '../edit-custom-network/edit-cust
 
 /**
  * @deprecated
- * 
+ *
  * This screen is not used any more, it was replaced by manage-networks
  */
 @Component({

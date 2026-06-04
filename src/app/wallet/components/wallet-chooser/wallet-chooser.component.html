@@ -19,7 +19,7 @@
                 <ion-col size="8" class="left-col" *ngFor="let netWallet of [getNetworkWallet(masterWallet)]">
                     <!-- ngFor: Hack to get a netWallet variable -->
                     <div class="wallet-name">{{ masterWallet.name }}</div>
-                    <div class="wallet-amount" *ngIf="netWallet">
+                    <div class="wallet-amount" *ngIf="netWallet && options.showBalances">
                         <h4 *ngIf="!currencyService.useCurrency">{{
                             WalletUtil.getWholeBalance(netWallet.getDisplayBalance()) }}<span class="dot"
                                 *ngIf="!netWallet.getDisplayBalance().isZero() && WalletUtil.getDecimalBalance(netWallet.getDisplayBalance())">.</span>
@@ -38,9 +38,9 @@
                             <span> {{ currencyService.selectedCurrency.symbol }}</span>
                         </h4>
                     </div>
-                    <div class="wallet-amount" *ngIf="!netWallet">
+                    <div class="wallet-amount" *ngIf="!netWallet && !options.masterWalletMode">
                         {{ 'wallet.unsupported-on-network' | translate:{network:
-                        networkService.activeNetwork.value.name} }}
+                        networkService.activeNetwork.value.getEffectiveName()} }}
                     </div>
                 </ion-col>
                 <ion-col size="2" class="right-col">

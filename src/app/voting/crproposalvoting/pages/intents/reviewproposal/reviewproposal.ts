@@ -31,7 +31,7 @@ type ReviewProposalCommand = CRCommand & {
 export class ReviewProposalPage {
     @ViewChild(TitleBarComponent, { static: false }) titleBar: TitleBarComponent;
 
-    private onGoingCommand: ReviewProposalCommand;
+    public onGoingCommand: ReviewProposalCommand;
     public signingAndSendingProposalResponse = false;
     public voteResult = "";
     public proposalDetail: ProposalDetails;

@@ -1,4 +1,5 @@
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,6 +12,7 @@ import { ETHTransactionComponent } from './eth-transaction.component';
   ],
   imports: [
     CommonModule,
+    FormsModule,
     IonicModule,
     TranslateModule,
     SharedComponentsModule

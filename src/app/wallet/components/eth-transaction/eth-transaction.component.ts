@@ -8,6 +8,7 @@ import { Config } from '../../config/Config';
 import { ETHTransactionStatus } from '../../model/networks/evms/evm.types';
 import { ETHTransactionSpeedup, ETHTransactionStatusInfo, EVMService } from '../../services/evm/evm.service';
 import { WalletService } from '../../services/wallet.service';
+import { Native } from '../../services/native.service';
 
 @Component({
   selector: 'app-eth-transaction',
@@ -40,6 +41,9 @@ export class ETHTransactionComponent implements OnInit {
     this.publishing = true;
     this.publicationSuccessful = false;
     this.publicationFailed = false;
+
+    // Hide the loading indicator if it is still visible
+    void Native.instance.hideLoading();
 
     // Listen to publication event
     this.publicationStatusSub = this.evmService.ethTransactionStatus.subscribe((status) => {

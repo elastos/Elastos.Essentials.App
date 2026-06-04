@@ -46,6 +46,10 @@ export class TronSubWalletProvider<SubWalletType extends TronSubWallet> extends 
         return this.canFetchMore;
     }
 
+    public getInitialFetchSize(): number {
+        return MAX_RESULTS_PER_FETCH;
+    }
+
     /**
      * Call this when import a new wallet or get the latest transactions.
      * @param timestamp get the transactions after the timestamp
@@ -70,7 +74,7 @@ export class TronSubWalletProvider<SubWalletType extends TronSubWallet> extends 
             }
 
             this.updateTransactionsInfo(transactions);
-            await this.saveTransactions(transactions);
+            await this.saveTransactions(transactions, !afterTransaction);
         } catch (e) {
             Logger.error('wallet', 'TronSubWalletProvider fetchTransactions error:', e)
         }

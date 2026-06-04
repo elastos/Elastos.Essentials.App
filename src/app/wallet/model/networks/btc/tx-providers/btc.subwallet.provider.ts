@@ -34,6 +34,10 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
         return this.canFetchMore;
     }
 
+    public getInitialFetchSize(): number {
+        return MAX_RESULTS_PER_FETCH;
+    }
+
     /**
      * Call this when import a new wallet or get the latest transactions.
      * @param timestamp get the transactions after the timestamp
@@ -61,18 +65,18 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
                     this.canFetchMore = true;
                 }
                 if (btcInfo.txids.length > 0) {
-                    await this.getRawTransactionByTxid(subWallet, btcInfo.txids);
+                    await this.getRawTransactionByTxid(subWallet, btcInfo.txids, false);
                 }
             }
         } else {
             let txidList = subWallet.getTxidList();
             if (!txidList) return;
 
-            await this.getRawTransactionByTxid(subWallet, txidList);
+            await this.getRawTransactionByTxid(subWallet, txidList, true);
         }
     }
 
-    private async getRawTransactionByTxid(subWallet: BTCSubWallet, txidList: string[]) {
+    private async getRawTransactionByTxid(subWallet: BTCSubWallet, txidList: string[], isNewestFetch: boolean) {
         if (!txidList) return;
 
         this.transactions = await this.getTransactions(this.subWallet);
@@ -91,7 +95,7 @@ export class BTCSubWalletProvider<SubWalletType extends AnySubWallet> extends Su
             }
         }
 
-        await this.saveTransactions(this.transactions);
+        await this.saveTransactions(this.transactions, isNewestFetch);
     }
 
     private updateTransactionInfo(subWallet: BTCSubWallet, transaction: BTCTransaction) {

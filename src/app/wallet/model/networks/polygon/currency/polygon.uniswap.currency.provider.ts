@@ -10,7 +10,7 @@ export class PolygonMainnetUniswapCurrencyProvider extends UniswapCurrencyProvid
     super();
 
     this.referenceUSDCoin = new ERC20Coin(network, "USDT", "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f", 6, false, true);
-    this.wrappedNativeCoin = new ERC20Coin(network, "WMATIC", "Wrapped MATIC", "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", 18, false, true);
+    this.wrappedNativeCoin = new ERC20Coin(network, "WPOL", "Wrapped POL", "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270", 18, false, true);
   }
 
   public getFactoryAddress(): string {

@@ -25,7 +25,12 @@ import { Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ecsign, stripHexPrefix, toRpcSig } from 'ethereumjs-util';
 import { TitleBarComponent } from 'src/app/components/titlebar/titlebar.component';
-import { BuiltInIcon, TitleBarIcon, TitleBarIconSlot, TitleBarMenuItem } from 'src/app/components/titlebar/titlebar.types';
+import {
+  BuiltInIcon,
+  TitleBarIcon,
+  TitleBarIconSlot,
+  TitleBarMenuItem
+} from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
 import { GlobalIntentService } from 'src/app/services/global.intent.service';
 import { GlobalThemeService } from 'src/app/services/theming/global.theme.service';
@@ -33,6 +38,7 @@ import { StandardMasterWallet } from 'src/app/wallet/model/masterwallets/masterw
 import { WalletType } from 'src/app/wallet/model/masterwallets/wallet.types';
 import { AnyNetworkWallet } from 'src/app/wallet/model/networks/base/networkwallets/networkwallet';
 import { AnyMainCoinEVMSubWallet } from 'src/app/wallet/model/networks/evms/subwallets/evm.subwallet';
+import { AnyNetwork } from 'src/app/wallet/model/networks/network';
 import { AuthService } from 'src/app/wallet/services/auth.service';
 import { ERC20CoinService } from 'src/app/wallet/services/evm/erc20coin.service';
 import { EVMService } from 'src/app/wallet/services/evm/evm.service';
@@ -49,12 +55,13 @@ import { WalletService } from '../../../services/wallet.service';
 @Component({
   selector: 'app-ethsign',
   templateUrl: './ethsign.page.html',
-  styleUrls: ['./ethsign.page.scss'],
+  styleUrls: ['./ethsign.page.scss']
 })
 export class EthSignPage implements OnInit {
   @ViewChild(TitleBarComponent, { static: true }) titleBar: TitleBarComponent;
 
-  private networkWallet: AnyNetworkWallet = null;
+  public targetNetwork: AnyNetwork = null;
+  public networkWallet: AnyNetworkWallet = null;
   public evmSubWallet: AnyMainCoinEVMSubWallet = null;
 
   private receivedIntent: EssentialsIntentPlugin.ReceivedIntent;
@@ -62,11 +69,10 @@ export class EthSignPage implements OnInit {
 
   private alreadySentIntentResponse = false;
 
-  public currentNetworkName = ''
+  public currentNetworkName = '';
 
   // Titlebar
   private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
-
 
   constructor(
     public walletManager: WalletService,
@@ -82,6 +88,13 @@ export class EthSignPage implements OnInit {
     private router: Router,
     private ethTransactionService: EVMService
   ) {
+    const navigation = this.router.getCurrentNavigation();
+    if (navigation && navigation.extras && navigation.extras.state) {
+      this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
+      if (this.receivedIntent.params) {
+        this.payloadToBeSigned = this.receivedIntent.params.data;
+      }
+    }
   }
 
   ngOnInit() {
@@ -92,14 +105,16 @@ export class EthSignPage implements OnInit {
     this.titleBar.setTitle(this.translate.instant('wallet.signtypeddata-title'));
     this.titleBar.setNavigationMode(null);
     this.titleBar.setIcon(TitleBarIconSlot.OUTER_LEFT, {
-      key: "close",
+      key: 'close',
       iconPath: BuiltInIcon.CLOSE
     });
-    this.titleBar.addOnItemClickedListener(this.titleBarIconClickedListener = (icon) => {
-      if (icon.key === 'close') {
-        void this.cancelOperation();
-      }
-    });
+    this.titleBar.addOnItemClickedListener(
+      (this.titleBarIconClickedListener = icon => {
+        if (icon.key === 'close') {
+          void this.cancelOperation();
+        }
+      })
+    );
   }
 
   ionViewDidEnter() {
@@ -121,19 +136,69 @@ export class EthSignPage implements OnInit {
   }
 
   async init() {
-    this.currentNetworkName = WalletNetworkService.instance.activeNetwork.value.name;
+    Logger.log(
+      'wallet',
+      'ETH Sign params',
+      this.coinTransferService.masterWalletId,
+      this.coinTransferService.evmChainId
+    );
 
-    this.networkWallet = this.walletManager.getNetworkWalletFromMasterWalletId(this.coinTransferService.masterWalletId);
-    if (!this.networkWallet) return;
+    // If there is a provided chain ID, use that chain id network (eg: wallet connect v2).
+    // Otherwise, use the active network
+    if (this.coinTransferService.evmChainId) {
+      this.targetNetwork = WalletNetworkService.instance.getNetworkByChainId(this.coinTransferService.evmChainId);
+    } else {
+      this.targetNetwork = WalletNetworkService.instance.activeNetwork.value;
+    }
+
+    // Early return if target network is not available
+    if (!this.targetNetwork) {
+      Logger.warn('wallet', 'ETH Sign: target network not found');
+      return;
+    }
+
+    this.currentNetworkName = this.targetNetwork.getEffectiveName();
+
+    // Determine which network and wallet to use based on available parameters
+    let targetNetwork = this.targetNetwork; // Default to target network from chain ID
+    let masterWalletId = this.coinTransferService.masterWalletId;
+
+    // If no specific master wallet ID is provided, use the active wallet's master wallet
+    if (!masterWalletId) {
+      let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+      if (activeNetworkWallet) {
+        masterWalletId = activeNetworkWallet.masterWallet.id;
+      }
+    }
+
+    // If no specific chain ID is provided, use the active network
+    if (!this.coinTransferService.evmChainId) {
+      targetNetwork = WalletNetworkService.instance.activeNetwork.value;
+    }
+
+    // Create network wallet with the determined network and master wallet
+    if (masterWalletId) {
+      let masterWallet = this.walletManager.getMasterWallet(masterWalletId);
+      if (!masterWallet) {
+        Logger.warn('wallet', 'ETH Sign: master wallet not found for ID:', masterWalletId);
+        return;
+      }
+      this.networkWallet = await targetNetwork.createNetworkWallet(masterWallet, false);
+    } else {
+      // Ultimate fallback to active network wallet
+      let activeNetworkWallet = this.walletManager.getActiveNetworkWallet();
+      if (!activeNetworkWallet) {
+        Logger.warn('wallet', 'ETH Sign: network wallet not found');
+        return;
+      }
+      this.networkWallet = activeNetworkWallet;
+    }
 
     this.evmSubWallet = this.networkWallet.getMainEvmSubWallet(); // Use the active network main EVM subwallet. This is ETHSC for elastos.
-
-    const navigation = this.router.getCurrentNavigation();
-
-    this.receivedIntent = navigation.extras.state as EssentialsIntentPlugin.ReceivedIntent;
-
-    if (this.receivedIntent.params)
-      this.payloadToBeSigned = this.receivedIntent.params.data;
+    if (!this.evmSubWallet) {
+      Logger.warn('wallet', 'ETH Sign: EVM subwallet not found');
+      return;
+    }
 
     // No message ? Just exit immediatelly
     if (!this.payloadToBeSigned) {
@@ -146,10 +211,7 @@ export class EthSignPage implements OnInit {
    * sending the intent response.
    */
   async cancelOperation(navigateBack = true) {
-    await this.sendIntentResponse(
-      { data: null },
-      this.receivedIntent.intentId, navigateBack
-    );
+    await this.sendIntentResponse({ data: null }, this.receivedIntent.intentId, navigateBack);
   }
 
   private async sendIntentResponse(result, intentId, navigateBack = true) {
@@ -159,14 +221,17 @@ export class EthSignPage implements OnInit {
 
   async confirmSign(): Promise<void> {
     const payPassword = await this.authService.getWalletPassword(this.networkWallet.masterWallet.id, true, true);
-    if (payPassword === null) { // cancelled by user
+    if (payPassword === null) {
+      // cancelled by user
       await this.cancelOperation();
       return;
     }
 
-    let privateKeyHexNoprefix = await (await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword)).replace("0x", "");
+    let privateKeyHexNoprefix = await (
+      await (this.networkWallet.masterWallet as StandardMasterWallet).getPrivateKey(payPassword)
+    ).replace('0x', '');
 
-    let privateKey = Buffer.from(privateKeyHexNoprefix, "hex");
+    let privateKey = Buffer.from(privateKeyHexNoprefix, 'hex');
 
     // Implementation taken from Metamask unsafe signing:
     // https://github.com/MetaMask/eth-simple-keyring/blob/main/index.js
@@ -175,18 +240,40 @@ export class EthSignPage implements OnInit {
       const msgSig = ecsign(Buffer.from(message, 'hex'), privateKey);
       const rawMsgSig = toRpcSig(msgSig.v, msgSig.r, msgSig.s);
 
-      void this.sendIntentResponse({
-        signedData: rawMsgSig
-      }, this.receivedIntent.intentId);
-    }
-    catch (e) {
-      // Sign method can throw exception in case some provided content has an invalid format
-      // i.e.: array value, with "address" type. In such case, we fail silently.
-      Logger.warn('wallet', 'eth_sign intent error:', e)
-      await this.sendIntentResponse(
-        { data: null },
+      void this.sendIntentResponse(
+        {
+          signedData: rawMsgSig
+        },
         this.receivedIntent.intentId
       );
+    } catch (e) {
+      // Sign method can throw exception in case some provided content has an invalid format
+      // i.e.: array value, with "address" type. In such case, we fail silently.
+      Logger.warn('wallet', 'eth_sign intent error:', e);
+      await this.sendIntentResponse({ data: null }, this.receivedIntent.intentId);
     }
+  }
+
+  /**
+   * Get the signing wallet name
+   */
+  public getSigningWalletName(): string {
+    if (this.networkWallet && this.networkWallet.masterWallet) {
+      return this.networkWallet.masterWallet.name;
+    }
+    return '';
+  }
+
+  /**
+   * Get the signing wallet address
+   */
+  public getSigningWalletAddress(): string {
+    if (this.networkWallet) {
+      const addresses = this.networkWallet.getAddresses();
+      if (addresses && addresses.length > 0) {
+        return addresses[0].address;
+      }
+    }
+    return '';
   }
 }

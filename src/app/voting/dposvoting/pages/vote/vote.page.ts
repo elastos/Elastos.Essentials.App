@@ -181,13 +181,6 @@ export class VotePage implements OnInit {
                 Logger.log('dposvoting', 'Intent sent failed', err);
                 void this.voteFailed(err);
             }
-
-            // If no response is sent from wallet, show vote transaction has failed
-            setTimeout(() => {
-                if (votesSent === false) {
-                    void this.voteFailed('dposvoting.vote-timeout');
-                }
-            }, 10000)
         }
         else {
             void this.noNodesChecked();

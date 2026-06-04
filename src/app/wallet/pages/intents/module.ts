@@ -14,6 +14,8 @@ import { AccessPage } from './access/access.page';
 import { DidTransactionPage } from './didtransaction/didtransaction.page';
 import { DPoSVotePage } from './dposvote/dposvote.page';
 import { EscTransactionPage } from './esctransaction/esctransaction.page';
+import { StandardAccountComponent } from './esctransaction/components/standard-account.component';
+import { AccountAbstractionComponent } from './esctransaction/components/account-abstraction.component';
 import { EthSignPage } from './ethsign/ethsign.page';
 import { MultiSigTxPage } from './multisigtx/multisigtx.page';
 import { PersonalSignPage } from './personalsign/personalsign.page';
@@ -31,6 +33,8 @@ import { PushBitcoinTxPage } from './pushbitcointx/pushbitcointx.page';
         DidTransactionPage,
         DPoSVotePage,
         EscTransactionPage,
+        StandardAccountComponent,
+        AccountAbstractionComponent,
         SelectSubwalletPage,
         SignTypedDataPage,
         PersonalSignPage,

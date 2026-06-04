@@ -96,7 +96,7 @@ export const it = {
         'proposaltype-changeproposaladdress': 'Change Proposal Address',
         'proposaltype-changeproposal': 'Change Proposal',
         'proposaltype-closeproposal': 'Terminate Proposal',
-        'proposaltype-secretarygeneral': 'Motion for new CR Council Secretary General',
+        'proposaltype-secretarygeneral': 'Motion for new Elastos Council Secretary General',
         'proposaltype-reservecustomizedid': 'Motion to reserve Customized DID',
         'proposaltype-receivecustomizedid': 'Enable Customized DID',
         'proposaltype-changecustomizedidfee': 'Change DID fee',
@@ -168,12 +168,12 @@ export const it = {
         'withdraw-successfully': 'Withdraw is successfully, please wait for transaction confirmation.',
         'withdraw-failed': 'Withdraw failed, please withdraw again.',
 
-        'crc-proposals-today': 'Proposte CRC oggi',
-        'crc-proposals-today-msg': 'C\'è una nuova proposta CRC oggi, clicca per visualizzarla.',
+        'crc-proposals-today': 'Proposte oggi',
+        'crc-proposals-today-msg': 'C\'è una nuova proposta oggi, clicca per visualizzarla.',
         'crc-proposals-today-msg1': 'Hai ',
         'crc-proposals-today-msg2': ' nuove proposte oggi, clicca per visualizzarle.',
 
-        'new-crc-proposals': 'Nuove proposte CRC',
+        'new-crc-proposals': 'Nuove proposte',
         'new-crc-proposals-msg': 'C\'è una nuova proposta dalla tua ultima visita. Tocca per visualizzarla.',
         'new-crc-proposals-msg1': 'Hai ',
         'new-crc-proposals-msg2': ' nuove proposte dalla tua ultima visita, clicca per visualizzarle.',
@@ -201,7 +201,7 @@ export const it = {
         'no-draft-data': 'Can not get the draft data for now.',
         'no-message-data': 'Can not get the message data for now.',
         'no-opinion-data': 'Can not get the opinion data for now.',
-        'no-command-type': 'This CR commond type is currently not supported.',
+        'no-command-type': 'This Elastos DAO commond type is currently not supported.',
         'no-data': 'Can not get the data for now, please try again.',
     }
 

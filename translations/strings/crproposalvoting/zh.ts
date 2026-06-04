@@ -96,7 +96,7 @@ export const zh = {
         'proposaltype-changeproposaladdress': '改变接收地址',
         'proposaltype-changeproposal': '修改提案',
         'proposaltype-closeproposal': '关闭提议',
-        'proposaltype-secretarygeneral': '新的CR委员秘书长',
+        'proposaltype-secretarygeneral': '新的 Elastos 委员会秘书长',
         'proposaltype-reservecustomizedid': '预留自定义DID动议',
         'proposaltype-receivecustomizedid': '启用预留自定义DID',
         'proposaltype-changecustomizedidfee': '调整DID费率',
@@ -165,12 +165,12 @@ export const zh = {
         'withdraw-successfully': '取款成功，请等待交易确认',
         'withdraw-failed': '取款失败, 请重新取款。',
 
-        'crc-proposals-today': '今天的CRC提案',
-        'crc-proposals-today-msg': '今天有新的CRC提案，点击查看',
+        'crc-proposals-today': '今天的提案',
+        'crc-proposals-today-msg': '今天有新的提案，点击查看',
         'crc-proposals-today-msg1': '您今天有 ',
         'crc-proposals-today-msg2': ' 个新提案，点击查看',
 
-        'new-crc-proposals': '新的CRC提案',
+        'new-crc-proposals': '新的提案',
         'new-crc-proposals-msg': '自上次访问以来，有一个新提案，点击查看',
         'new-crc-proposals-msg1': '自上次访问以来，有 ',
         'new-crc-proposals-msg2': ' 个新提案，点击查看',
@@ -197,7 +197,7 @@ export const zh = {
         'no-draft-data': '暂时不能获取draftData。',
         'no-message-data': '暂时不能获取messageData。',
         'no-opinion-data': '暂时不能获取opinionData。',
-        'no-command-type': '这个CR操作类型目前不支持。',
+        'no-command-type': '这个 Elastos DAO 操作类型目前不支持。',
         'no-data': '暂时不能获取数据, 请重新操作。',
     }
 

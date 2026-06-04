@@ -3,7 +3,7 @@ import { PopoverController } from '@ionic/angular';
 import { TranslateService } from '@ngx-translate/core';
 import { TitleBarIcon } from 'src/app/components/titlebar/titlebar.types';
 import { Logger } from 'src/app/logger';
-import { App } from "src/app/model/app.enum";
+import { App } from 'src/app/model/app.enum';
 import { IdentityEntry } from 'src/app/model/didsessions/identityentry';
 import { GlobalDIDSessionsService } from 'src/app/services/global.didsessions.service';
 import { GlobalEvents } from 'src/app/services/global.events.service';
@@ -14,6 +14,19 @@ import { OptionsComponent } from '../components/options/options.component';
 import { WarningComponent } from '../components/warning/warning.component';
 
 let selfUxService: UXService = null;
+
+export const DIDSessionRoute = [
+  '/didsessions/language',
+  '/didsessions/pickidentity',
+  '/didsessions/createidentity',
+  '/didsessions/importdid',
+  '/didsessions/editprofile',
+  '/didsessions/chooseimporteddid',
+  '/didsessions/preparedid',
+  '/didsessions/scan',
+  '/didsessions/settings',
+  '/didsessions/settings-select-net'
+] as const;
 
 @Injectable({
   providedIn: 'root'
@@ -38,15 +51,14 @@ export class UXService {
     selfUxService = this;
     UXService.instance = this;
 
-    this.events.subscribe('showDeleteIdentityPrompt', (identity) => {
+    this.events.subscribe('showDeleteIdentityPrompt', identity => {
       this.zone.run(() => {
         void this.showDeletePrompt(identity);
       });
     });
   }
 
-  async init() {
-  }
+  async init() {}
 
   onTitleBarItemClicked(icon: TitleBarIcon) {
     // Dimiss controllers before using titlebar icons
@@ -89,17 +101,16 @@ export class UXService {
     // Redirect to the appropriate screen depending on available identities
     let identities = await GlobalDIDSessionsService.instance.getIdentityEntries();
     if (identities.length == 0) {
-      Logger.log("didsessions", "No existing identity. Navigating to language chooser then createidentity");
-      await this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/language", { animationDirection: Direction.FORWARD });
-    }
-    else {
-      Logger.log("didsessions", "Navigating to pickidentity");
-      await this.nav.navigateRoot(App.DID_SESSIONS, "didsessions/pickidentity", { animationDirection: Direction.BACK });
+      Logger.log('didsessions', 'No existing identity. Navigating to language chooser then createidentity');
+      await this.nav.navigateRoot(App.DID_SESSIONS, 'didsessions/language', { animationDirection: Direction.FORWARD });
+    } else {
+      Logger.log('didsessions', 'Navigating to pickidentity');
+      await this.nav.navigateRoot(App.DID_SESSIONS, 'didsessions/pickidentity', { animationDirection: Direction.BACK });
     }
   }
 
   // Sensitive data should not be passed through queryParams
-  public go(page: any, options: any = {}) {
+  public go(page: (typeof DIDSessionRoute)[number], options: any = {}) {
     this.zone.run(() => {
       void this.native.hideLoading();
       void this.nav.navigateTo(App.DID_SESSIONS, page, { state: options });

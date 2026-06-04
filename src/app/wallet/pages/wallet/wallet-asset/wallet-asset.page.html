@@ -19,7 +19,8 @@
 
             <!-- update progress -->
             <ion-row class="update-progress-row" *ngIf="getUpdatingProgressInfo() != '100'">
-                <p class='updateprogress'> {{ 'wallet.refresh-refreshing-text' | translate }} {{ getUpdatingProgressInfo() }}% </p>
+                <p class='updateprogress'> {{ 'wallet.refresh-refreshing-text' | translate }} {{
+                    getUpdatingProgressInfo() }}% </p>
             </ion-row>
 
             <!-- Wallets list -->
@@ -82,23 +83,24 @@
                             </p>
                         </ion-col>
 
-                        <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode" *ngIf="network.stakedBalance">
-                          <ion-col size="2" class="left-col">
-                              <div class="icon-container">
-                                  <img [src]="network.logo">
-                              </div>
-                          </ion-col>
-                          <ion-col [size]="5" class="middle-col">
-                            <!-- subWallets[0] is the MainCoinSubWallet -->
-                            <h1>{{ uiService.getSubwalletTitle(network.subWallets[0]) }}</h1>
-                            <p>{{ uiService.getSubwalletSubtitle(network.subWallets[0]) }}</p>
-                          </ion-col>
-                          <ion-col [size]="5" class="right-col">
-                              <p>
-                                  {{ network.stakedBalanceString }}
-                                  {{ currencyService.selectedCurrency.symbol }}
-                              </p>
-                          </ion-col>
+                        <ion-row class="subwallet-row" [class.dark-subwallet-row]="theme.darkMode"
+                            *ngIf="network.stakedBalance">
+                            <ion-col size="2" class="left-col">
+                                <div class="icon-container">
+                                    <img [src]="network.logo">
+                                </div>
+                            </ion-col>
+                            <ion-col [size]="5" class="middle-col">
+                                <!-- subWallets[0] is the MainCoinSubWallet -->
+                                <h1>{{ uiService.getSubwalletTitle(network.subWallets[0]) }}</h1>
+                                <p>{{ uiService.getSubwalletSubtitle(network.subWallets[0]) }}</p>
+                            </ion-col>
+                            <ion-col [size]="5" class="right-col">
+                                <p>
+                                    {{ network.stakedBalanceString }}
+                                    {{ currencyService.selectedCurrency.symbol }}
+                                </p>
+                            </ion-col>
                         </ion-row>
 
                         <!-- staking assets from tin network -->

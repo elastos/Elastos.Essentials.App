@@ -34,7 +34,7 @@ export class AppIdCredentialIssueRequestPage {
     private titleBarIconClickedListener: (icon: TitleBarIcon | TitleBarMenuItem) => void;
 
     private appDid: string = null;
-    private publishedAppInfo: ApplicationDIDInfo = null;
+    public publishedAppInfo: ApplicationDIDInfo = null;
     public receivedIntent: AppIdCredIssueIdentityIntent = null;
     public displayableCredential: IssuedAppIdCredential = null; // Displayable reworked material
     public preliminaryChecksCompleted = false;

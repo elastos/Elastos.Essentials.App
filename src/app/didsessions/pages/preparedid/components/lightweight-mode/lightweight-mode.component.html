@@ -1,0 +1,37 @@
+<ion-grid class="container ion-text-center" [class.dark-container]="theme.darkMode">
+
+  <ion-row class="slide-bar-row">
+    <ion-col size="6">
+      <div [class.fillBar]="slideIndex >= 0"></div>
+    </ion-col>
+    <ion-col size="6">
+      <div [class.fillBar]="slideIndex >= 1"></div>
+    </ion-col>
+  </ion-row>
+
+  <ion-slides #slide [options]="slideOpts" [class.hidden]="hidden">
+    <ion-slide class="ion-text-center">
+      <div class="slide-card">
+        <img src="assets/didsessions/onboard/slide4.svg">
+        <h1>{{ 'didsessions.prepare.wallet-title' | translate }}</h1>
+        <p>{{ 'didsessions.prepare.lightweight-message-1' | translate }}</p>
+      </div>
+    </ion-slide>
+
+    <ion-slide class="ion-text-center">
+      <div class="slide-card">
+        <img src="assets/didsessions/onboard/slide4.svg">
+        <span>{{ 'common.ready-soon' | translate }}</span>
+      </div>
+    </ion-slide>
+  </ion-slides>
+
+  <ion-row class="slide-circle-row">
+    <ion-col size="12">
+      <lottie-player src="../../../assets/identity/animations/block-loader.json" background="transparent" speed="1"
+        style="width: 160x; height: 160px;" autoplay loop></lottie-player>
+      <span>{{ 'common.please-wait' | translate }}</span>
+    </ion-col>
+  </ion-row>
+
+</ion-grid>

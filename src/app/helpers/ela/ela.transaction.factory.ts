@@ -55,7 +55,7 @@ const elaAssetId = 'A3D0EAA466DF74983B5D7C543DE6904F4C9418EAD5FFD6D25814234A96DB
 
 export class ELATransactionFactory {
 
-  static async createSignedSendToTx(privateKey, unspentTransactionOutputs, sendToAddress, sendAmount, feeAmountSats, feeAccount, txMemo): Promise<string> {
+  static async createSignedSendToTx(privateKey, unspentTransactionOutputs, sendToAddress, sendAmount, feeAmountSats, feeAccount, memo): Promise<string> {
     if (Number.isNaN(sendAmount)) {
       throw new Error(`sendAmount ${sendAmount} is not a number`);
     }
@@ -63,7 +63,7 @@ export class ELATransactionFactory {
       throw new Error(`feeAmountSats ${feeAmountSats} is not a number`);
     }
     const publicKey = await ELAAddressHelper.getPublic(privateKey);
-    const tx = this.createUnsignedSendToTx(unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, txMemo);
+    const tx = this.createUnsignedSendToTx(unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, memo);
     const signature = await ELATransactionSigner.getSignature(tx, privateKey);
     const encodedSignedTx = ELATransactionSigner.addSignatureToTx(tx, publicKey, signature);
 
@@ -73,7 +73,7 @@ export class ELATransactionFactory {
     return encodedSignedTx;
   }
 
-  static createUnsignedSendToTx = async (unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, txMemo) => {
+  static createUnsignedSendToTx = async (unspentTransactionOutputs, sendToAddress, sendAmount, publicKey, feeAmountSats, feeAccount, memo) => {
     if (unspentTransactionOutputs == undefined) {
       throw new Error(`unspentTransactionOutputs is undefined`);
     }
@@ -95,10 +95,10 @@ export class ELATransactionFactory {
     /* eslint-disable */
     const sendAmountSats = new BigNumber(sendAmount, 10);
     /* eslint-enable */
-    return await this.createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountSats, feeAccount, txMemo);
+    return await this.createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountSats, feeAccount, memo);
   };
 
-  static async createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountStr, feeAccount, txMemo) {
+  static async createUnsignedSendToTxSats(unspentTransactionOutputs, sendToAddress, sendAmountSats, publicKey, feeAmountStr, feeAccount, memo) {
     if (unspentTransactionOutputs == undefined) {
       throw new Error(`unspentTransactionOutputs is undefined`);
     }
@@ -137,10 +137,11 @@ export class ELATransactionFactory {
       };
       tx.TxAttributes.push(txAttribute);
 
-      if (txMemo !== undefined && txMemo !== "") {
+      if (memo !== undefined && memo !== "") {
+        let finalMemo = typeof memo === "string" ? Buffer.from("type:text,msg:" + memo, 'utf8').toString('hex') : memo;
         const txAttribute2 = {
           Usage: 0x81,
-          Data: Buffer.from("type:text,msg:" + txMemo, 'utf8').toString('hex')
+          Data: finalMemo
         };
         tx.TxAttributes.push(txAttribute2);
       }

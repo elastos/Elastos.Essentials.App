@@ -21,7 +21,7 @@
                             <ion-col size="2" class="img-container">
                                 <img-svg-fallback class="img" [src]="node.imageUrl" default="assets/launcher/default/default-avatar.svg"></img-svg-fallback>
                                                         </ion-col>
-                            <ion-col [size]="canMintBPoSNFT ? 8.5 : 7" class="label-col">
+                            <ion-col [size]="canMintBPoSNFT ? 8.5 : 7" class="label-col" [class.node-inactive]="node.nodeState != 'Active'">
                                 <h4>{{ node.nickname }}</h4>
                                 <p>
                                     <!-- <span [class.inactive]="node.state !== 'Active'">

@@ -12,8 +12,8 @@ import { DIDService } from '../../services/did.service';
 })
 export class WarningComponent implements OnInit {
 
-  warning: string = "";
-  password: string = "";
+  public warning = "";
+  public password = "";
 
   constructor(
     public theme: GlobalThemeService,
@@ -46,23 +46,23 @@ export class WarningComponent implements OnInit {
   }
 
   cancel() {
-    this.popover.dismiss();
+    void this.popover.dismiss();
   }
 
   confirmDelete() {
-    this.popover.dismiss({
+    void this.popover.dismiss({
       action: 'confirmDeleteCredentials'
     });
   }
 
   confirmPublishDID() {
-    this.popover.dismiss({
+    void this.popover.dismiss({
       action: 'publishDIDDocumentReal'
     });
   }
 
   confirmPublishVisibility() {
-    this.popover.dismiss({
+    void this.popover.dismiss({
       action: 'publishDIDDocumentReal'
     });
   }
