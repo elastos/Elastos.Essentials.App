@@ -362,7 +362,8 @@ export class WalletNetworkService {
       'btc',
       'polygon',
       'arbitrum',
-      'avalanchecchain'
+      'avalanchecchain',
+      'base'
     ];
 
     // If user has explicitly set visibility, use that preference
