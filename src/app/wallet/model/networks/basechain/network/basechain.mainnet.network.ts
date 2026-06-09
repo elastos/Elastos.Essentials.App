@@ -31,10 +31,10 @@ export class BaseChainMainNetNetwork extends BaseChainNetwork {
 
     // Built-in tokens — addresses verified against BaseScan ("Exact Match") + issuer sources.
     this.builtInCoins = [
-      new ERC20Coin(this, "USDC", "USD Coin", "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", 6, false, true),
-      new ERC20Coin(this, "WETH", "Wrapped Ether", "0x4200000000000000000000000000000000000006", 18, false, true),
-      new ERC20Coin(this, "DAI", "Dai Stablecoin", "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb", 18, false, true),
-      new ERC20Coin(this, "cbETH", "Coinbase Wrapped Staked ETH", "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22", 18, false)
+      new ERC20Coin(this, "USDC", "USD Coin", "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913", 6, false, true).setIconPath("assets/wallet/coins/usdc.png"),
+      new ERC20Coin(this, "WETH", "Wrapped Ether", "0x4200000000000000000000000000000000000006", 18, false, true).setIconPath("assets/wallet/coins/weth.png"),
+      new ERC20Coin(this, "DAI", "Dai Stablecoin", "0x50c5725949A6F0c72E6C4a641F24049A917DB0Cb", 18, false, true).setIconPath("assets/wallet/coins/dai.png"),
+      new ERC20Coin(this, "cbETH", "Coinbase Wrapped Staked ETH", "0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22", 18, false).setIconPath("assets/wallet/coins/cbeth.png")
     ];
 
     this.uniswapCurrencyProvider = new BaseChainMainnetUniswapCurrencyProvider(this);

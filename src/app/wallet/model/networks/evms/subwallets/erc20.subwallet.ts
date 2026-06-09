@@ -250,13 +250,15 @@ export class ERC20SubWallet extends SubWallet<EthTransaction, any> {
   }
 
   public getMainIcon(): string {
-    return this.networkWallet.network.logo;
+    // Use the token's own icon when one is defined, otherwise fall back
+    // to the network logo (historical behavior for coins without icons).
+    return this.coin.iconPath || this.networkWallet.network.logo;
   }
 
   public getSecondaryIcon(): string {
-    return null;
-    // TODO: show real token icon for famous tokens, or placeholder image for unknown tokens.
-    //return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAQAAAAm93DmAAAAJklEQVR42u3MMQEAAAgDINc/9AyhJwQg7byKUCgUCoVCoVAoFN4sl/dP2UHkSR8AAAAASUVORK5CYII=";
+    // When the token has a dedicated icon, show the network logo as a small
+    // badge so the user still knows which chain the token belongs to.
+    return this.coin.iconPath ? this.networkWallet.network.logo : null;
   }
 
   /**
