@@ -11,6 +11,7 @@ import { ELADomainResolver } from '../model/address-resolvers/resolvers/ELADomai
 import { IdrissResolver } from '../model/address-resolvers/resolvers/IdrissAddressResolver';
 import { UnstoppableDomainsAddressResolver } from '../model/address-resolvers/resolvers/UnstoppableDomainsAddressResolver';
 import { ArbitrumMainNetNetwork } from '../model/networks/arbitrum/network/arbitrum.mainnet.network';
+import { BaseChainMainNetNetwork } from '../model/networks/basechain/network/basechain.mainnet.network';
 import { ArbitrumTestNetNetwork } from '../model/networks/arbitrum/network/arbitrum.testnet.network';
 import { AvalancheCChainMainNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.mainnet.network';
 import { AvalancheCChainTestNetNetwork } from '../model/networks/avalanchecchain/network/avalanchecchain.testnet.network';
@@ -205,6 +206,7 @@ export class WalletInitService extends GlobalService {
     await this.createAndRegisterNetwork(new TronMainNetNetwork());
     await this.createAndRegisterNetwork(new CeloMainNetNetwork());
     await this.createAndRegisterNetwork(new BttcMainNetNetwork());
+    await this.createAndRegisterNetwork(new BaseChainMainNetNetwork());
 
     await this.createAndRegisterNetwork(new ElastosMainChainTestNetNetwork());
     await this.createAndRegisterNetwork(new ElastosSmartChainTestNetNetwork(), networkTemplate === TESTNET_TEMPLATE);

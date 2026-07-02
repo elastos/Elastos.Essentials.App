@@ -127,6 +127,9 @@ export class ERC20Coin extends Coin {
   @JsonProperty() public decimals: number;
   @JsonProperty() private isCustom: boolean;
   @JsonProperty() public initiallyShowInWallet = false;
+  // Optional path to a dedicated token icon (e.g. "assets/wallet/coins/usdc.png").
+  // When unset, the UI falls back to the network logo (historical behavior).
+  @JsonProperty() public iconPath: string = null;
 
   constructor(
     network: AnyNetwork,
@@ -160,6 +163,15 @@ export class ERC20Coin extends Coin {
     // Make contract addresses always lowercase for easier comparisons later one.
     if (erc20ContractAddress)
       this.erc20ContractAddress = erc20ContractAddress.toLowerCase();
+  }
+
+  /**
+   * Sets a dedicated icon for this coin and returns the coin itself,
+   * so this can be chained fluently after the constructor.
+   */
+  public setIconPath(iconPath: string): ERC20Coin {
+    this.iconPath = iconPath;
+    return this;
   }
 
   /**
